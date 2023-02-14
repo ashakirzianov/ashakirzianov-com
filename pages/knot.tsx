@@ -1,3 +1,5 @@
+'use client';
+
 import { Canvas } from "@/components/Canvas";
 import { useSketcher } from "@/hooks/sketcher";
 import knot from "@/sketches/knot";

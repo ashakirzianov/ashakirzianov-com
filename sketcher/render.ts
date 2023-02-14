@@ -33,7 +33,7 @@ export function zoomToFit(): RenderTransform {
             return max - min;
         }
 
-        return function render({ canvas, universe }) {
+        return function ({ canvas, universe }) {
             canvas.context.save();
             let uwidth = rangeLength(universe.dimensions.x);
             let uheight = rangeLength(universe.dimensions.y);

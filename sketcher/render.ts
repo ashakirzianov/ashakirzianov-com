@@ -1,4 +1,5 @@
 import { Color, NumRange, Universe, UniverseObject, Vector } from "./base";
+import { withinDimensions } from "./utils";
 import vector from "./vector";
 
 export type Canvas = {
@@ -34,14 +35,22 @@ export function zoomToFit(): RenderTransform {
         }
 
         return function ({ canvas, universe }) {
-            canvas.context.save();
             let uwidth = rangeLength(universe.dimensions.x);
             let uheight = rangeLength(universe.dimensions.y);
             let xratio = canvas.width / uwidth;
             let yratio = canvas.height / uheight;
             let ratio = Math.min(xratio, yratio);
+            let shiftx = xratio > yratio ? canvas.width / 2 - uwidth * 2 : 0;
+            let shifty = yratio > xratio ? canvas.height / 2 - uheight * 2 : 0;
+            canvas.context.save();
+            canvas.context.translate(
+                shiftx, shifty,
+            );
             canvas.context.scale(ratio, ratio);
-            canvas.context.translate(-universe.dimensions.x.min, -universe.dimensions.y.min);
+            canvas.context.translate(
+                - universe.dimensions.x.min,
+                - universe.dimensions.y.min,
+            );
             render({ canvas, universe });
             canvas.context.restore();
         }

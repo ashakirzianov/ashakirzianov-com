@@ -1,4 +1,4 @@
-import { NumRange } from "./base";
+import { Dimensions, NumRange, Vector } from "./base";
 
 export function mapRange({ from, to, value }: {
     from: NumRange,
@@ -16,4 +16,23 @@ export function randomRange(range: NumRange) {
         to: range,
         value: Math.random(),
     });
+}
+
+export function withinRange({
+    range: { min, max }, value,
+}: {
+    range: NumRange,
+    value: number,
+}) {
+    return min < value && value < max;
+}
+
+export function withinDimensions({ dimensions, point: [x, y, z] }: {
+    dimensions: Dimensions,
+    point: Vector,
+}) {
+    return withinRange({ range: dimensions.x, value: x })
+        && withinRange({ range: dimensions.y, value: y })
+        // && withinRange({ range: dimensions.z, value: z })
+        ;
 }

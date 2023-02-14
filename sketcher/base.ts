@@ -1,6 +1,9 @@
 export type Vector = number[];
 export type Color = string;
 export type NumRange = { min: number, max: number };
+export type Dimensions = {
+    x: NumRange, y: NumRange, z: NumRange,
+};
 export type UniverseObject = {
     position: Vector,
     velocity: Vector,
@@ -8,6 +11,6 @@ export type UniverseObject = {
     radius: number,
 };
 export type Universe = {
-    dimensions: { x: NumRange, y: NumRange, z: NumRange },
+    dimensions: Dimensions,
     objects: UniverseObject[],
 };

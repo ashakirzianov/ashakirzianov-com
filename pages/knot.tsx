@@ -13,9 +13,8 @@ function KnotComp() {
     return <Canvas
         renderFrame={props => {
             renderFrame(props);
-            console.log('here')
         }}
-        fps={30}
+        animated={true}
         width={400}
         height={600}
     />
@@ -34,13 +33,6 @@ export default function KnotSketch() {
                     <KnotComp />
                 </div>
             </main>
-            <style jsx>{`
-            .sketch {
-                border: 1px solid green;
-                width: 100vw;
-                height: 100vh;
-            }
-            `}</style>
         </>
     )
 }

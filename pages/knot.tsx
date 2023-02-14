@@ -33,6 +33,12 @@ export default function KnotSketch() {
                 <div className="sketch">
                     <KnotComp />
                 </div>
+                <style jsx>{`
+                .sketch {
+                    width: 100vw;
+                    height: 100vh;
+                }
+                `}</style>
             </main>
         </>
     )

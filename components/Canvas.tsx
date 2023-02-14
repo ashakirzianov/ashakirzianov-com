@@ -1,5 +1,3 @@
-'use client';
-
 // @refresh reset
 import {
     useEffect, useRef,
@@ -14,18 +12,14 @@ export type RenderFrameFunc = (props: RenderFrameProps) => void;
 export type CanvasProps = {
     renderFrame: RenderFrameFunc,
     animated?: boolean,
-    width: number,
-    height: number,
-    className?: string,
 };
 export function Canvas({
-    renderFrame, className,
-    width, height, animated,
+    renderFrame,
+    animated,
 }: CanvasProps) {
-    let divRef = useRef<HTMLDivElement>(null);
-    let canvasRef = useRef<HTMLCanvasElement>(null);
+    let canvasRef = useCanvasRef();
     function draw(next?: () => void) {
-        requestAnimationFrame(() => {
+        return requestAnimationFrame(() => {
             let current = canvasRef.current;
             let context = current?.getContext('2d');
             if (!context || !current) {
@@ -42,30 +36,59 @@ export function Canvas({
         });
     }
     useEffect(() => {
-        let stop = false;
+        let frameHandle = 0;
         if (animated) {
             let loop = function () {
-                if (stop) {
-                    // console.log('last draw');
-                    draw();
-                } else {
-                    // console.log('animation');
-                    draw(loop);
-                }
+                frameHandle = draw(loop);
             }
             loop();
         } else {
-            draw();
+            frameHandle = draw();
         }
         return function cleanup() {
-            stop = true;
+            if (frameHandle) {
+                cancelAnimationFrame(frameHandle);
+            }
         }
-    }, [canvasRef.current, divRef.current]);
-    return <div ref={divRef} className={className}>
+    }, [canvasRef.current]);
+    return <>
         <canvas
+            className="canvas"
             ref={canvasRef}
-            width={width}
-            height={height}
         />
-    </div>;
+        <style jsx>{`
+        .canvas {
+            width: 100%;
+            height: 100%;
+        }
+        `}</style>
+    </>;
+}
+
+function useCanvasRef() {
+    function setupCanvas(canvas: HTMLCanvasElement) {
+        console.log('setup canvas');
+        let dpi = window.devicePixelRatio || 1;
+        // dpi *= 2;
+        console.log('dpi', dpi);
+        let style = getComputedStyle(canvas);
+        let styleWidth = style.getPropertyValue('width');
+        let styleHeight = style.getPropertyValue('height');
+        let width = parseInt(styleWidth, 10) * dpi;
+        let height = parseInt(styleHeight, 10) * dpi;
+        console.log('current', canvas.width, canvas.height);
+        console.log('attributes to set', width, height, styleWidth, styleHeight);
+        canvas.setAttribute('width', width.toString());
+        canvas.setAttribute('height', height.toString());
+        // canvas.getContext('2d')?.scale(dpi, dpi);
+    }
+
+    let canvasRef = useRef<HTMLCanvasElement>(null);
+    useEffect(() => {
+        if (canvasRef.current) {
+            setupCanvas(canvasRef.current);
+        }
+    }, [canvasRef.current]);
+
+    return canvasRef;
 }

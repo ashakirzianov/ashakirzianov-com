@@ -11,11 +11,9 @@ function KnotComp() {
         color: 'orange',
     }));
     return <Canvas
-        renderFrame={props => {
-            renderFrame(props);
-        }}
+        renderFrame={renderFrame}
         animated={true}
-        width={400}
+        width={500}
         height={600}
     />
 }

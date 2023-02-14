@@ -1,3 +1,5 @@
+"use client";
+// @refresh reset
 import {
     useEffect, useRef,
 } from "react";
@@ -21,31 +23,41 @@ export function Canvas({
 }: CanvasProps) {
     let divRef = useRef<HTMLDivElement>(null);
     let canvasRef = useRef<HTMLCanvasElement>(null);
-    useEffect(() => {
-        function draw(next?: () => void) {
-            requestAnimationFrame(() => {
-                let current = canvasRef.current;
-                let context = current?.getContext('2d');
-                if (!context || !current) {
-                    return;
-                }
-                renderFrame({
-                    context,
-                    width: current.width,
-                    height: current.height,
-                });
-                if (next) {
-                    next();
-                }
+    function draw(next?: () => void) {
+        requestAnimationFrame(() => {
+            let current = canvasRef.current;
+            let context = current?.getContext('2d');
+            if (!context || !current) {
+                return;
+            }
+            renderFrame({
+                context,
+                width: current.width,
+                height: current.height,
             });
-        }
+            if (next) {
+                next();
+            }
+        });
+    }
+    useEffect(() => {
+        let stop = false;
         if (animated) {
             let loop = function () {
-                draw(loop);
+                if (stop) {
+                    // console.log('last draw');
+                    draw();
+                } else {
+                    // console.log('animation');
+                    draw(loop);
+                }
             }
             loop();
         } else {
             draw();
+        }
+        return function cleanup() {
+            stop = true;
         }
     }, [canvasRef.current, divRef.current]);
     return <div ref={divRef} className={className}>

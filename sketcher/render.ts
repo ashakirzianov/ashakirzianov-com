@@ -144,9 +144,7 @@ export function combineTransforms(...transforms: RenderTransform[]): RenderTrans
     }
 }
 
-export const emptyRender: Render = () => {
-    console.log('noop');
-};
+export const emptyRender: Render = () => { };
 
 export function renderFromTransforms(...transforms: RenderTransform[]): Render {
     return combineTransforms(...transforms)(emptyRender);

@@ -9,11 +9,22 @@ export type RenderFrameFunc = (props: RenderFrameProps) => void;
 export type CanvasProps = {
     renderFrame: RenderFrameFunc,
     fps?: number,
+    width: number,
+    height: number,
+    className?: string,
 };
-export function Canvas({ renderFrame, fps }: CanvasProps) {
+export function Canvas({
+    renderFrame, fps, className,
+    width, height,
+}: CanvasProps) {
+    let divRef = useRef<HTMLDivElement>(null);
     let canvasRef = useRef<HTMLCanvasElement>(null);
     useEffect(() => {
-        if (!canvasRef.current) return;
+        let timeoutId: any = undefined;
+        if (!canvasRef.current || !divRef.current) return;
+        // let { width, height } = divRef.current.getBoundingClientRect();
+        // canvasRef.current.width = width;
+        // canvasRef.current.height = height;
         let context = canvasRef.current.getContext('2d');
         if (!context) return;
         if (fps) {
@@ -28,7 +39,11 @@ export function Canvas({ renderFrame, fps }: CanvasProps) {
                         width: canvasRef.current.width,
                         height: canvasRef.current.height,
                     });
-                    setTimeout(loop, period);
+                    if (timeoutId) {
+                        // clearTimeout(timeoutId);
+                        timeoutId = undefined;
+                    }
+                    timeoutId = setTimeout(loop, period);
                 });
             }
             loop();
@@ -39,6 +54,22 @@ export function Canvas({ renderFrame, fps }: CanvasProps) {
                 height: canvasRef.current.height,
             });
         }
-    }, [canvasRef.current]);
-    return <canvas ref={canvasRef} />;
+
+        // return function clear() {
+        //     if (timeoutId) {
+        //         clearTimeout(timeoutId);
+        //     }
+        // }
+    }, [canvasRef.current, divRef.current]);
+    return <div ref={divRef} className={className}>
+        <canvas
+            ref={canvasRef}
+            width={width}
+            height={height} />
+        <style jsx>{`
+        canvas {
+            border: 1px solid red;
+        }
+        `}</style>
+    </div>;
 }

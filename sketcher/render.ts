@@ -1,5 +1,7 @@
-import { Color, NumRange, Universe, UniverseObject, Vector } from "./base";
-import { rangeLength, withinDimensions } from "./utils";
+import {
+    Color, Dimensions, Universe, UniverseObject, Vector,
+} from "./base";
+import { rangeLength } from "./utils";
 import vector from "./vector";
 
 export type Canvas = {
@@ -36,8 +38,8 @@ export function zoomToFit(): RenderTransform {
             let xratio = canvas.width / uwidth;
             let yratio = canvas.height / uheight;
             let ratio = Math.min(xratio, yratio);
-            let shiftx = xratio > yratio ? canvas.width / 2 - uwidth * 2 : 0;
-            let shifty = yratio > xratio ? canvas.height / 2 - uheight * 2 : 0;
+            let shiftx = xratio > yratio ? (canvas.width - uwidth * ratio) / 2 : 0;
+            let shifty = yratio > xratio ? (canvas.height - uheight * ratio) / 2 : 0;
             canvas.context.save();
             canvas.context.translate(
                 shiftx, shifty,
@@ -51,6 +53,22 @@ export function zoomToFit(): RenderTransform {
             canvas.context.restore();
         }
     }
+}
+
+export function strokeDimensions({
+    context, color, dimensions,
+}: {
+    color: Color,
+    dimensions: Dimensions,
+    context: CanvasRenderingContext2D,
+}) {
+    context.save();
+    context.strokeStyle = color;
+    context.strokeRect(
+        dimensions.x.min, dimensions.y.min,
+        rangeLength(dimensions.x), rangeLength(dimensions.y),
+    );
+    context.restore();
 }
 
 export function centerOnObject({ index }: {

@@ -18,6 +18,10 @@ export function randomRange(range: NumRange) {
     });
 }
 
+export function rangeLength({ min, max }: NumRange) {
+    return max - min;
+}
+
 export function withinRange({
     range: { min, max }, value,
 }: {
@@ -33,6 +37,6 @@ export function withinDimensions({ dimensions, point: [x, y, z] }: {
 }) {
     return withinRange({ range: dimensions.x, value: x })
         && withinRange({ range: dimensions.y, value: y })
-        // && withinRange({ range: dimensions.z, value: z })
+        && withinRange({ range: dimensions.z, value: z })
         ;
 }

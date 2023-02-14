@@ -1,5 +1,5 @@
 import { Color, NumRange, Universe, UniverseObject, Vector } from "./base";
-import { withinDimensions } from "./utils";
+import { rangeLength, withinDimensions } from "./utils";
 import vector from "./vector";
 
 export type Canvas = {
@@ -30,10 +30,6 @@ export function clearFrame({ color }: {
 
 export function zoomToFit(): RenderTransform {
     return function zoomToFitTransform(render) {
-        function rangeLength({ min, max }: NumRange) {
-            return max - min;
-        }
-
         return function ({ canvas, universe }) {
             let uwidth = rangeLength(universe.dimensions.x);
             let uheight = rangeLength(universe.dimensions.y);

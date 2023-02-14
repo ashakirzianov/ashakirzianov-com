@@ -11,6 +11,9 @@ export type StartUniverseProps = {
     canvas?: Canvas,
     background?: string,
 };
+export type StartUniverseOut = {
+    renderFrame: (canvad: Canvas) => void,
+};
 export function startUniverse({
     universe,
     render,
@@ -19,7 +22,7 @@ export function startUniverse({
     skip,
     canvas,
     background,
-}: StartUniverseProps) {
+}: StartUniverseProps): StartUniverseOut {
     let firstPeriod = period;
     if (skip) {
         let count = Math.floor(skip / period);
@@ -45,8 +48,8 @@ export function startUniverse({
         canvas.context.restore();
     }
 
-    function drawFrame(canvas: Canvas) {
+    function renderFrame(canvas: Canvas) {
         render({ canvas, universe });
     }
-    return { drawFrame };
+    return { renderFrame };
 }

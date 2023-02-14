@@ -12,7 +12,7 @@ export default function knot({
   velocityAmp: number,
   color: Color,
 }) {
-  let { renderFrame } = startUniverse({
+  return startUniverse({
     universe: function (): Universe {
       let dimensions = {
         x: { min: -100, max: 100 },
@@ -53,5 +53,4 @@ export default function knot({
     period: 20,
     skip: 0,
   });
-  return { renderFrame };
 }

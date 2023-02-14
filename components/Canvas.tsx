@@ -67,17 +67,13 @@ export function Canvas({
 
 function useCanvasRef() {
     function setupCanvas(canvas: HTMLCanvasElement) {
-        console.log('setup canvas');
         let dpi = window.devicePixelRatio || 1;
         // dpi *= 2;
-        console.log('dpi', dpi);
         let style = getComputedStyle(canvas);
         let styleWidth = style.getPropertyValue('width');
         let styleHeight = style.getPropertyValue('height');
         let width = parseInt(styleWidth, 10) * dpi;
         let height = parseInt(styleHeight, 10) * dpi;
-        console.log('current', canvas.width, canvas.height);
-        console.log('attributes to set', width, height, styleWidth, styleHeight);
         canvas.setAttribute('width', width.toString());
         canvas.setAttribute('height', height.toString());
         // canvas.getContext('2d')?.scale(dpi, dpi);

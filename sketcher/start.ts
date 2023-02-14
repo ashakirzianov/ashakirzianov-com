@@ -13,34 +13,15 @@ export type StartUniverseProps = {
 };
 export type StartUniverseOut = {
     renderFrame: (canvad: Canvas) => void,
+    tick: () => void,
 };
 export function startUniverse({
     universe,
     render,
     law,
-    period,
-    skip,
     canvas,
     background,
 }: StartUniverseProps): StartUniverseOut {
-    let firstPeriod = period;
-    if (skip) {
-        let count = Math.floor(skip / period);
-        for (let i = 0; i < count; i++) {
-            if (canvas) {
-                render({ canvas, universe });
-            }
-            let next = law({ universe });
-            universe = next.universe;
-        }
-        firstPeriod = skip % period;
-    }
-    function loop() {
-        let next = law({ universe });
-        universe = next.universe;
-        setTimeout(loop, period);
-    }
-    setTimeout(loop, firstPeriod);
     if (background && canvas) {
         canvas.context.save();
         canvas.context.fillStyle = background;
@@ -51,5 +32,9 @@ export function startUniverse({
     function renderFrame(canvas: Canvas) {
         render({ canvas, universe });
     }
-    return { renderFrame };
+    function tick() {
+        let next = law({ universe });
+        universe = next.universe;
+    }
+    return { renderFrame, tick };
 }

@@ -1,15 +1,27 @@
-import { RenderFrameFunc } from "@/components/Canvas";
 import { StartUniverseOut } from "@/sketcher";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect } from "react";
 
-function noop() { }
-export function useSketcher(starter: () => StartUniverseOut) {
-    let outRef = useRef<RenderFrameFunc>();
+export function useSketcher({ sketch, period }: {
+    sketch: StartUniverseOut,
+    period: number,
+}) {
     useEffect(() => {
-        let { renderFrame } = starter();
-        outRef.current = renderFrame;
+        let timeout: any;
+        function cleanup() {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = undefined;
+            }
+        }
+        function loop() {
+            sketch.tick();
+            cleanup();
+            timeout = setTimeout(loop, period);
+        }
+        loop();
+        return cleanup;
     }, []);
     return {
-        renderFrame: outRef.current ? outRef.current : noop,
+        renderFrame: sketch.renderFrame,
     };
 }

@@ -38,8 +38,33 @@ export function zoomToFit(): RenderTransform {
             let xratio = canvas.width / uwidth;
             let yratio = canvas.height / uheight;
             let ratio = Math.min(xratio, yratio);
-            let shiftx = xratio > yratio ? (canvas.width - uwidth * ratio) / 2 : 0;
-            let shifty = yratio > xratio ? (canvas.height - uheight * ratio) / 2 : 0;
+            let shiftx = (canvas.width - uwidth * ratio) / 2;
+            let shifty = (canvas.height - uheight * ratio) / 2;
+            canvas.context.save();
+            canvas.context.translate(
+                shiftx, shifty,
+            );
+            canvas.context.scale(ratio, ratio);
+            canvas.context.translate(
+                - universe.dimensions.x.min,
+                - universe.dimensions.y.min,
+            );
+            render({ canvas, universe });
+            canvas.context.restore();
+        }
+    }
+}
+
+export function zoomToFill(): RenderTransform {
+    return function zoomToFitTransform(render) {
+        return function ({ canvas, universe }) {
+            let uwidth = rangeLength(universe.dimensions.x);
+            let uheight = rangeLength(universe.dimensions.y);
+            let xratio = canvas.width / uwidth;
+            let yratio = canvas.height / uheight;
+            let ratio = Math.max(xratio, yratio);
+            let shiftx = (canvas.width - uwidth * ratio) / 2;
+            let shifty = (canvas.height - uheight * ratio) / 2;
             canvas.context.save();
             canvas.context.translate(
                 shiftx, shifty,

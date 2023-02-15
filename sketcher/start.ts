@@ -5,6 +5,7 @@ import { Canvas, Render } from "./render";
 export type StartUniverseProps = {
     universe: Universe,
     render: Render,
+    setup?: Render,
     law: Law,
     period: number,
     skip?: number,

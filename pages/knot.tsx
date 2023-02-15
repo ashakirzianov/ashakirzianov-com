@@ -1,12 +1,9 @@
 // 'use client';
 
 import { Canvas } from "@/components/Canvas";
-import { Card } from "@/components/Card";
-import { Poster } from "@/components/Poster";
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
 import knot from "@/sketches/knot";
-import Head from "next/head";
 
 function KnotComp() {
     let { renderFrame } = useSketcher({
@@ -20,6 +17,17 @@ function KnotComp() {
     });
     return <Canvas
         renderFrame={renderFrame}
+        setup={({ context, width, height }) => {
+            context.save();
+            var gradient = context.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, "#CCCCCC");
+            gradient.addColorStop(0.2, "#DDDDDD");
+            gradient.addColorStop(1, "#FFFFFF");
+
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, width, height);
+            context.restore();
+        }}
         animated={true}
     />
 }

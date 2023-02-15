@@ -1,5 +1,6 @@
 // @refresh reset
 import {
+    RefObject,
     useEffect, useRef,
 } from "react";
 
@@ -11,31 +12,48 @@ export type RenderFrameProps = {
 export type RenderFrameFunc = (props: RenderFrameProps) => void;
 export type CanvasProps = {
     renderFrame: RenderFrameFunc,
+    setup?: RenderFrameFunc,
     animated?: boolean,
 };
 export function Canvas({
-    renderFrame,
+    renderFrame, setup,
     animated,
 }: CanvasProps) {
+    function getRenderFrameProps(ref: RefObject<HTMLCanvasElement>): RenderFrameProps | undefined {
+        if (canvasRef.current) {
+            let context = canvasRef.current.getContext('2d');
+            if (context) {
+                return {
+                    context,
+                    width: canvasRef.current.width,
+                    height: canvasRef.current.height,
+                };
+            } else {
+                return undefined;
+            }
+        }
+        return undefined;
+    }
     let canvasRef = useCanvasRef();
     function draw(next?: () => void) {
         return requestAnimationFrame(() => {
-            let current = canvasRef.current;
-            let context = current?.getContext('2d');
-            if (!context || !current) {
+            let props = getRenderFrameProps(canvasRef);
+            if (!props) {
                 return;
             }
-            renderFrame({
-                context,
-                width: current.width,
-                height: current.height,
-            });
+            renderFrame(props);
             if (next) {
                 next();
             }
         });
     }
     useEffect(() => {
+        if (setup) {
+            let props = getRenderFrameProps(canvasRef);
+            if (props) {
+                setup(props);
+            }
+        }
         let frameHandle = 0;
         if (animated) {
             let loop = function () {

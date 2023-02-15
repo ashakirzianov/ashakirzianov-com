@@ -3,6 +3,7 @@
 import { Canvas } from "@/components/Canvas";
 import { Card } from "@/components/Card";
 import { Poster } from "@/components/Poster";
+import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
 import knot from "@/sketches/knot";
 import Head from "next/head";
@@ -24,28 +25,7 @@ function KnotComp() {
 }
 
 export default function KnotSketch() {
-    return (
-        <>
-            <Head>
-                <title>Knot</title>
-                <meta name="description" content="Knot sketch" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-            </Head>
-            <main>
-                <div className="sketch">
-                    <Card>
-                        <Poster>
-                            <KnotComp />
-                        </Poster>
-                    </Card>
-                </div>
-                <style jsx>{`
-                .sketch {
-                    width: 100vw;
-                    height: 100vh;
-                }
-                `}</style>
-            </main>
-        </>
-    )
+    return <PosterPage title="Knot" description="Knot sketch">
+        <KnotComp />
+    </PosterPage>;
 }

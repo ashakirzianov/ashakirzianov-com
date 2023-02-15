@@ -1,6 +1,7 @@
 // 'use client';
 
 import { Canvas } from "@/components/Canvas";
+import { Poster } from "@/components/Poster";
 import { useSketcher } from "@/hooks/sketcher";
 import knot from "@/sketches/knot";
 import Head from "next/head";
@@ -31,7 +32,9 @@ export default function KnotSketch() {
             </Head>
             <main>
                 <div className="sketch">
-                    <KnotComp />
+                    <Poster>
+                        <KnotComp />
+                    </Poster>
                 </div>
                 <style jsx>{`
                 .sketch {

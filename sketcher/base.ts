@@ -1,5 +1,12 @@
 export type Vector = number[];
-export type Color = string;
+export type StringColor = string;
+export type RGBAColor = {
+    red: number,
+    green: number,
+    blue: number,
+    alpha?: number,
+};
+export type Color = StringColor;
 export type NumRange = { min: number, max: number };
 export type Dimensions = {
     x: NumRange, y: NumRange, z: NumRange,

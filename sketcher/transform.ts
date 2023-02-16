@@ -1,19 +1,9 @@
 import {
-    Color, Dimensions, Universe, UniverseObject, Vector,
+    Color, Render, UniverseObject, Vector,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
 
-export type Canvas = {
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-};
-export type RenderProps = {
-    canvas: Canvas,
-    universe: Universe,
-};
-export type Render = (props: RenderProps) => void;
 export type RenderTransform = (render: Render) => Render;
 
 export function clearFrame({ color }: {
@@ -80,22 +70,6 @@ export function zoomToFill(): RenderTransform {
     }
 }
 
-export function strokeDimensions({
-    context, color, dimensions,
-}: {
-    color: Color,
-    dimensions: Dimensions,
-    context: CanvasRenderingContext2D,
-}) {
-    context.save();
-    context.strokeStyle = color;
-    context.strokeRect(
-        dimensions.x.min, dimensions.y.min,
-        rangeLength(dimensions.x), rangeLength(dimensions.y),
-    );
-    context.restore();
-}
-
 export function centerOnObject({ index }: {
     index: number,
 }): RenderTransform {
@@ -144,42 +118,6 @@ export function centerOnMidpoint(): RenderTransform {
             render({ canvas, universe });
             canvas.context.restore();
         }
-    }
-}
-
-export function drawObjects({ drawObject }: {
-    drawObject: (props: { object: UniverseObject, canvas: Canvas }) => void,
-}): RenderTransform {
-    return function transform(render) {
-        return function ({ canvas, universe }) {
-            for (let object of universe.objects) {
-                let { position: [x, y] } = object;
-                canvas.context.save();
-                canvas.context.translate(x, y);
-                drawObject({ object, canvas });
-                canvas.context.restore();
-            }
-            render({ canvas, universe });
-        }
-    }
-}
-
-export function drawObjectAsCircle({ lineWidth, fill, stroke }: {
-    lineWidth: number,
-    fill: Color,
-    stroke: Color,
-}) {
-    return function ({ object, canvas: { context } }: {
-        object: UniverseObject,
-        canvas: Canvas,
-    }) {
-        context.lineWidth = lineWidth;
-        context.fillStyle = fill;
-        context.strokeStyle = stroke;
-        context.beginPath();
-        context.arc(0, 0, object.radius, 0, Math.PI * 2);
-        context.fill();
-        context.stroke();
     }
 }
 

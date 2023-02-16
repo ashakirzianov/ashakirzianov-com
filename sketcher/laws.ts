@@ -1,13 +1,10 @@
-import { Universe, UniverseObject } from './base';
+import { Animator, Universe, UniverseObject } from './base';
 import vector from './vector';
 
-export type LawState = {
-    universe: Universe,
-};
-export type Law = (props: LawState) => LawState;
+type Law = Animator;
 
 export function velocityStep(): Law {
-    return function velocityLaw({ universe }) {
+    return function velocityLaw(universe) {
         let next = {
             ...universe,
             objects: universe.objects.map(object => ({
@@ -15,12 +12,12 @@ export function velocityStep(): Law {
                 position: vector.add(object.position, object.velocity),
             })),
         };
-        return { universe: next };
+        return next;
     }
 }
 
 export function preserveMomentum(law: Law): Law {
-    function calculateMomentum({ universe }: LawState) {
+    function calculateMomentum(universe: Universe) {
         let momentum = universe.objects.reduce(
             (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
             0,
@@ -28,12 +25,12 @@ export function preserveMomentum(law: Law): Law {
         return momentum;
     }
 
-    return function preserveLaw(state) {
-        let momentum = calculateMomentum(state);
-        let next = law(state);
+    return function preserveLaw(universe) {
+        let momentum = calculateMomentum(universe);
+        let next = law(universe);
         let nextmom = calculateMomentum(next);
         let coef = momentum / nextmom;
-        for (let object of next.universe.objects) {
+        for (let object of universe.objects) {
             object.velocity = vector.mults(object.velocity, coef);
         }
         return next;
@@ -54,7 +51,7 @@ export function gravity({ gravity, power }: GravityProps): Law {
         return result;
     }
 
-    return function gravityLaw({ universe }) {
+    return function gravityLaw(universe) {
         let objects = universe.objects.map(obj => ({ ...obj }));
         for (let left = 0; left < objects.length; left++) {
             for (let right = 0; right < objects.length; right++) {
@@ -68,20 +65,18 @@ export function gravity({ gravity, power }: GravityProps): Law {
             }
         }
         let result = {
-            universe: {
-                ...universe,
-                objects,
-            },
+            ...universe,
+            objects,
         };
         return result;
     }
 }
 
-export function combineLaws(...laws: Law[]) {
-    return function combined(state: LawState) {
+export function combineLaws(...laws: Law[]): Law {
+    return function combined(universe) {
         return laws.reduce(
             (s, law) => law(s),
-            state,
+            universe,
         );
     };
 }

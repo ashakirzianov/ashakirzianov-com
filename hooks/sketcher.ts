@@ -1,10 +1,17 @@
-import { StartUniverseOut } from "@/sketcher";
+import { Canvas, Scene } from "@/sketcher";
 import { useEffect } from "react";
 
-export function useSketcher({ sketch, period }: {
-    sketch: StartUniverseOut,
+export type UseSketcherOut = {
+    renderFrame: (canvas: Canvas) => void,
+    setupFrame?: (canvas: Canvas) => void,
+};
+export function useSketcher({
+    scene: { universe, animator, setupFrame, renderFrame },
+    period,
+}: {
+    scene: Scene,
     period: number,
-}) {
+}): UseSketcherOut {
     useEffect(() => {
         let timeout: any;
         function cleanup() {
@@ -14,7 +21,7 @@ export function useSketcher({ sketch, period }: {
             }
         }
         function loop() {
-            sketch.tick();
+            universe = animator(universe);
             cleanup();
             timeout = setTimeout(loop, period);
         }
@@ -22,6 +29,13 @@ export function useSketcher({ sketch, period }: {
         return cleanup;
     }, []);
     return {
-        renderFrame: sketch.renderFrame,
+        renderFrame(canvas) {
+            renderFrame({ canvas, universe });
+        },
+        setupFrame(canvas) {
+            if (setupFrame) {
+                setupFrame({ canvas, universe });
+            }
+        },
     };
 }

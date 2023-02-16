@@ -1,4 +1,5 @@
-import { Color, Vector } from "./base";
+import { Color, Dimensions, Vector } from "./base";
+import { rangeLength } from "./utils";
 
 export function circle({
     lineWidth, fill, stroke,
@@ -35,4 +36,20 @@ export function createLinearGradient({
     let gradient = context.createLinearGradient(start[0], start[1], end[0], end[1]);
     colorStops.forEach(({ offset, color }) => gradient.addColorStop(offset, color));
     return gradient;
+}
+
+export function strokeDimensions({
+    context, color, dimensions,
+}: {
+    color: Color,
+    dimensions: Dimensions,
+    context: CanvasRenderingContext2D,
+}) {
+    context.save();
+    context.strokeStyle = color;
+    context.strokeRect(
+        dimensions.x.min, dimensions.y.min,
+        rangeLength(dimensions.x), rangeLength(dimensions.y),
+    );
+    context.restore();
 }

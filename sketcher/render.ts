@@ -1,6 +1,5 @@
 import {
-    Canvas,
-    Color, Dimensions, Render, Universe, UniverseObject, Vector,
+    Color, Render, UniverseObject, Vector,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
@@ -71,22 +70,6 @@ export function zoomToFill(): RenderTransform {
     }
 }
 
-export function strokeDimensions({
-    context, color, dimensions,
-}: {
-    color: Color,
-    dimensions: Dimensions,
-    context: CanvasRenderingContext2D,
-}) {
-    context.save();
-    context.strokeStyle = color;
-    context.strokeRect(
-        dimensions.x.min, dimensions.y.min,
-        rangeLength(dimensions.x), rangeLength(dimensions.y),
-    );
-    context.restore();
-}
-
 export function centerOnObject({ index }: {
     index: number,
 }): RenderTransform {
@@ -134,19 +117,6 @@ export function centerOnMidpoint(): RenderTransform {
             canvas.context.translate(-shiftx, -shifty);
             render({ canvas, universe });
             canvas.context.restore();
-        }
-    }
-}
-
-export function drawObjects({ drawObject }: {
-    drawObject: (props: { object: UniverseObject, canvas: Canvas, universe: Universe }) => void,
-}): RenderTransform {
-    return function transform(render) {
-        return function ({ canvas, universe }) {
-            for (let object of universe.objects) {
-                drawObject({ object, canvas, universe });
-            }
-            render({ canvas, universe });
         }
     }
 }

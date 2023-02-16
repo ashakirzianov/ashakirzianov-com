@@ -1,16 +1,22 @@
+import { fromRGBA, gray, multRGBA, makeStops, unifromStops } from '@/sketcher/color';
 import {
   velocityStep, combineLaws, gravity,
   circle,
-  renderFromTransforms, centerOnMidpoint, zoomToFit, Universe, random3d, randomRange, NumRange, Color, Scene, Canvas, rangeArray,
+  renderFromTransforms, centerOnMidpoint, zoomToFit, Universe, random3d, randomRange, NumRange, Color, Scene, Canvas, rangeArray, ColorStop, RGBAColor, Vector,
 } from '../sketcher';
 
 export default function knot({
-  count, radiusRange, velocityAmp, color,
+  count, radiusRange, velocityAmp, variant,
+  palette: { main, complimentary },
 }: {
   count: number,
   radiusRange: NumRange,
   velocityAmp: number,
-  color: Color,
+  palette: {
+    main: RGBAColor,
+    complimentary: RGBAColor,
+  },
+  variant: 'corner' | 'gradient' | 'pain',
 }): Scene {
   return {
     universe: {
@@ -42,7 +48,7 @@ export default function knot({
           for (let object of universe.objects) {
             circle({
               lineWidth: 0.5,
-              fill: color,
+              fill: fromRGBA(main),
               stroke: 'black',
               position: object.position,
               radius: object.radius,
@@ -53,71 +59,113 @@ export default function knot({
       },
     ),
     setupFrame({ canvas }) {
-      corner({ canvas, offset: 0.4, angle: 0.7 });
+      switch (variant) {
+        case 'corner':
+          corner({
+            canvas,
+            color: complimentary,
+            offset: 0.3, angle: 0.7,
+          });
+          break;
+        case 'gradient':
+          gradient({
+            canvas,
+            stops: makeStops({
+              0: fromRGBA(complimentary),
+              0.2: fromRGBA(multRGBA(complimentary, 1.2)),
+              1: gray(255),
+            }),
+          });
+          break;
+        default:
+          break;
+      }
     },
   };
 }
 
-function corner({
+function gradient({
   canvas: { context, width, height },
-  offset, angle,
+  stops,
+}: {
+  canvas: Canvas,
+  stops: ColorStop[],
+}) {
+  context.save();
+  var gradient = context.createLinearGradient(0, 0, 0, height);
+  stops.forEach(
+    ({ offset, color }) => gradient.addColorStop(offset, color),
+  );
+
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, width, height);
+  context.restore();
+}
+
+function corner({
+  canvas, offset, angle, border, color,
 }: {
   canvas: Canvas,
   offset: number,
   angle: number,
+  border?: number,
+  color: RGBAColor,
 }) {
-  function wall({ context, width, height }: Canvas) {
+  let { context, width, height } = canvas;
+  context.save();
+
+  function wall({
+    stops, border,
+  }: {
+    stops: ColorStop[],
+    border?: number,
+  }) {
     context.save();
     var gradient = context.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, "#DDDDDD");
-    gradient.addColorStop(1, "#FFFFFF");
+    stops.forEach(
+      ({ offset, color }) => gradient.addColorStop(offset, color),
+    );
 
     context.fillStyle = gradient;
     context.fillRect(0, 0, width, height);
 
-    context.lineWidth = 2;
-    context.strokeStyle = 'black';
-    context.beginPath();
-    context.moveTo(0, height);
-    context.lineTo(width, height);
-    context.lineTo(width, 0);
-    context.stroke();
+    if (border) {
+      context.lineWidth = 2;
+      context.strokeStyle = 'black';
+      context.beginPath();
+      context.moveTo(0, height);
+      context.lineTo(width, height);
+      context.lineTo(width, 0);
+      context.stroke();
+    }
     context.restore();
   }
+
+  let base = fromRGBA(color);
+  let lightest = fromRGBA(multRGBA(color, 1.2));
+  let light = fromRGBA(multRGBA(color, 1.05));
+  let dark = fromRGBA(multRGBA(color, 0.95));
+  context.fillStyle = lightest;
+  context.fillRect(0, 0, width, height);
   let skew = Math.cos(-Math.PI * angle);
   context.save();
   context.translate(-offset * width, 0);
   context.transform(1, skew, 0, 1, 0, 0);
-  wall({ context, width, height });
+  wall({
+    stops: unifromStops([base, light]),
+    border,
+  });
   context.restore();
   context.save();
   context.scale(-1, 1);
   context.translate(-width, 0);
   context.translate(-(1 - offset) * width, 0);
   context.transform(1, skew, 0, 1, 0, 0);
-  wall({ context, width, height });
+  wall({
+    stops: unifromStops([dark, base]),
+    border,
+  });
   context.restore();
-}
 
-function colorRect({ context, width, height }: Canvas) {
-  context.beginPath();
-  context.moveTo(0, 0);
-  context.lineTo(0, height);
-  context.strokeStyle = 'red';
-  context.stroke();
-  context.beginPath();
-  context.moveTo(0, height);
-  context.lineTo(width, height);
-  context.strokeStyle = 'green';
-  context.stroke();
-  context.beginPath();
-  context.moveTo(width, height);
-  context.lineTo(width, 0);
-  context.strokeStyle = 'blue';
-  context.stroke();
-  context.beginPath();
-  context.moveTo(width, 0);
-  context.lineTo(0, 0);
-  context.strokeStyle = 'orange';
-  context.stroke();
+  context.restore();
 }

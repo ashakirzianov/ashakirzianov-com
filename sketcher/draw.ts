@@ -53,3 +53,37 @@ export function strokeDimensions({
     );
     context.restore();
 }
+
+export function colorRect({
+    context, width, height, start: [x, y],
+    colors: [top, bottom, left, right],
+}: {
+    context: CanvasRenderingContext2D,
+    start: Vector,
+    width: number,
+    height: number,
+    colors: [Color, Color, Color, Color],
+}) {
+    context.save();
+    context.beginPath();
+    context.moveTo(x, y);
+    context.lineTo(x, height);
+    context.strokeStyle = left;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(x, height);
+    context.lineTo(width, height);
+    context.strokeStyle = bottom;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(width, height);
+    context.lineTo(width, y);
+    context.strokeStyle = right;
+    context.stroke();
+    context.beginPath();
+    context.moveTo(width, y);
+    context.lineTo(x, y);
+    context.strokeStyle = top;
+    context.stroke();
+    context.restore();
+}

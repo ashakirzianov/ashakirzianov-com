@@ -1,6 +1,6 @@
 import {
     Canvas,
-    Color, Dimensions, Render, UniverseObject, Vector,
+    Color, Dimensions, Render, Universe, UniverseObject, Vector,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
@@ -139,38 +139,15 @@ export function centerOnMidpoint(): RenderTransform {
 }
 
 export function drawObjects({ drawObject }: {
-    drawObject: (props: { object: UniverseObject, canvas: Canvas }) => void,
+    drawObject: (props: { object: UniverseObject, canvas: Canvas, universe: Universe }) => void,
 }): RenderTransform {
     return function transform(render) {
         return function ({ canvas, universe }) {
             for (let object of universe.objects) {
-                let { position: [x, y] } = object;
-                canvas.context.save();
-                canvas.context.translate(x, y);
-                drawObject({ object, canvas });
-                canvas.context.restore();
+                drawObject({ object, canvas, universe });
             }
             render({ canvas, universe });
         }
-    }
-}
-
-export function drawObjectAsCircle({ lineWidth, fill, stroke }: {
-    lineWidth: number,
-    fill: Color,
-    stroke: Color,
-}) {
-    return function ({ object, canvas: { context } }: {
-        object: UniverseObject,
-        canvas: Canvas,
-    }) {
-        context.lineWidth = lineWidth;
-        context.fillStyle = fill;
-        context.strokeStyle = stroke;
-        context.beginPath();
-        context.arc(0, 0, object.radius, 0, Math.PI * 2);
-        context.fill();
-        context.stroke();
     }
 }
 

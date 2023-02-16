@@ -1,5 +1,5 @@
 export * from './base';
-export * from './gradient';
+export * from './draw';
 export * from './laws';
 export * from './render';
 export * from './utils';

@@ -1,6 +1,6 @@
 import {
   velocityStep, combineLaws, gravity,
-  drawObjectAsCircle, drawObjects,
+  circle, drawObjects,
   renderFromTransforms, centerOnMidpoint, zoomToFit, Universe, random3d, randomRange, NumRange, Color, Scene,
 } from '../sketcher';
 
@@ -43,11 +43,19 @@ export default function knot({
       zoomToFit(),
       centerOnMidpoint(),
       drawObjects({
-        drawObject: drawObjectAsCircle({
-          lineWidth: 0.5,
-          fill: color,
-          stroke: 'black',
-        })
+        drawObject({
+          canvas: { context },
+          object: { position, radius },
+        }) {
+          circle({
+            lineWidth: 0.5,
+            fill: color,
+            stroke: 'black',
+            position,
+            radius,
+            context,
+          });
+        },
       }),
     ),
     setupFrame({ canvas: { context, width, height } }) {

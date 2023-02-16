@@ -40,3 +40,11 @@ export function withinDimensions({ dimensions, point: [x, y, z] }: {
         && withinRange({ range: dimensions.z, value: z })
         ;
 }
+
+export function rangeArray({ min, max }: NumRange) {
+    let result = [];
+    for (let idx = min; idx < max; idx++) {
+        result.push(idx);
+    }
+    return result;
+}

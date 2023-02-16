@@ -1,7 +1,7 @@
 import {
   velocityStep, combineLaws, gravity,
-  startUniverse, drawObjectAsCircle, drawObjects,
-  renderFromTransforms, centerOnMidpoint, zoomToFit, Universe, random3d, randomRange, NumRange, Color,
+  drawObjectAsCircle, drawObjects,
+  renderFromTransforms, centerOnMidpoint, zoomToFit, Universe, random3d, randomRange, NumRange, Color, Scene,
 } from '../sketcher';
 
 export default function knot({
@@ -11,8 +11,8 @@ export default function knot({
   radiusRange: NumRange,
   velocityAmp: number,
   color: Color,
-}) {
-  return startUniverse({
+}): Scene {
+  return {
     universe: function (): Universe {
       let dimensions = {
         x: { min: -100, max: 100 },
@@ -34,12 +34,12 @@ export default function knot({
         dimensions, objects,
       };
     }(),
-    law: (combineLaws(
+    animator: (combineLaws(
       gravity({ gravity: 0.2, power: 2 }),
       gravity({ gravity: -0.002, power: 5 }),
       velocityStep(),
     )),
-    render: renderFromTransforms(
+    renderFrame: renderFromTransforms(
       zoomToFit(),
       centerOnMidpoint(),
       drawObjects({
@@ -50,7 +50,7 @@ export default function knot({
         })
       }),
     ),
-    setup({ canvas: { context, width, height } }) {
+    setupFrame({ canvas: { context, width, height } }) {
       context.save();
       var gradient = context.createLinearGradient(0, 0, 0, height);
       gradient.addColorStop(0, "#CCCCCC");
@@ -61,7 +61,5 @@ export default function knot({
       context.fillRect(0, 0, width, height);
       context.restore();
     },
-    period: 20,
-    skip: 0,
-  });
+  };
 }

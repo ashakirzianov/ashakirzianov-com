@@ -14,3 +14,21 @@ export type Universe = {
     dimensions: Dimensions,
     objects: UniverseObject[],
 };
+export type Animator = (universe: Universe) => Universe;
+// TODO: rename Canvas ?
+export type Canvas = {
+    context: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+};
+export type RenderProps = {
+    canvas: Canvas,
+    universe: Universe,
+};
+export type Render = (props: RenderProps) => void;
+export type Scene = {
+    universe: Universe,
+    animator: Animator,
+    renderFrame: Render,
+    setupFrame?: Render,
+};

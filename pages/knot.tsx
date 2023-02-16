@@ -7,7 +7,7 @@ import knot from "@/sketches/knot";
 
 function KnotComp() {
     let { renderFrame, setupFrame } = useSketcher({
-        sketch: knot({
+        scene: knot({
             count: 8,
             velocityAmp: 0.5,
             radiusRange: { min: 0.5, max: 5 },

@@ -1,19 +1,10 @@
 import {
-    Color, Dimensions, Universe, UniverseObject, Vector,
+    Canvas,
+    Color, Dimensions, Render, UniverseObject, Vector,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
 
-export type Canvas = {
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-};
-export type RenderProps = {
-    canvas: Canvas,
-    universe: Universe,
-};
-export type Render = (props: RenderProps) => void;
 export type RenderTransform = (render: Render) => Render;
 
 export function clearFrame({ color }: {

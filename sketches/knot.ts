@@ -50,6 +50,17 @@ export default function knot({
         })
       }),
     ),
+    setup({ canvas: { context, width, height } }) {
+      context.save();
+      var gradient = context.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, "#CCCCCC");
+      gradient.addColorStop(0.2, "#DDDDDD");
+      gradient.addColorStop(1, "#FFFFFF");
+
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, width, height);
+      context.restore();
+    },
     period: 20,
     skip: 0,
   });

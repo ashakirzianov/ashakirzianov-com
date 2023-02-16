@@ -13,7 +13,8 @@ export type StartUniverseProps = {
     background?: string,
 };
 export type StartUniverseOut = {
-    renderFrame: (canvad: Canvas) => void,
+    setupFrame?: (canvas: Canvas) => void,
+    renderFrame: (canvas: Canvas) => void,
     tick: () => void,
 };
 export function startUniverse({
@@ -22,6 +23,7 @@ export function startUniverse({
     law,
     canvas,
     background,
+    setup,
 }: StartUniverseProps): StartUniverseOut {
     if (background && canvas) {
         canvas.context.save();
@@ -33,9 +35,14 @@ export function startUniverse({
     function renderFrame(canvas: Canvas) {
         render({ canvas, universe });
     }
+    function setupFrame(canvas: Canvas) {
+        if (setup) {
+            setup({ canvas, universe });
+        }
+    }
     function tick() {
         let next = law({ universe });
         universe = next.universe;
     }
-    return { renderFrame, tick };
+    return { renderFrame, setupFrame, tick };
 }

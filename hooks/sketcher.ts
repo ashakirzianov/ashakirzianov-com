@@ -23,5 +23,6 @@ export function useSketcher({ sketch, period }: {
     }, []);
     return {
         renderFrame: sketch.renderFrame,
+        setupFrame: sketch.setupFrame,
     };
 }

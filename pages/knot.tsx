@@ -6,7 +6,7 @@ import { useSketcher } from "@/hooks/sketcher";
 import knot from "@/sketches/knot";
 
 function KnotComp() {
-    let { renderFrame } = useSketcher({
+    let { renderFrame, setupFrame } = useSketcher({
         sketch: knot({
             count: 8,
             velocityAmp: 0.5,
@@ -17,17 +17,7 @@ function KnotComp() {
     });
     return <Canvas
         renderFrame={renderFrame}
-        setup={({ context, width, height }) => {
-            context.save();
-            var gradient = context.createLinearGradient(0, 0, 0, height);
-            gradient.addColorStop(0, "#CCCCCC");
-            gradient.addColorStop(0.2, "#DDDDDD");
-            gradient.addColorStop(1, "#FFFFFF");
-
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, width, height);
-            context.restore();
-        }}
+        setup={setupFrame}
         animated={true}
     />
 }

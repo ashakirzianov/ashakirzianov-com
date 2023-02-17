@@ -15,16 +15,13 @@ export type NumRange = { min: number, max: number };
 export type Dimensions = {
     x: NumRange, y: NumRange, z: NumRange,
 };
-export type StateObject = {
-    position: Vector,
-    velocity: Vector,
-    mass: number,
-    radius: number,
-};
-export type StateType = {
-    dimensions: Dimensions,
-    objects: StateObject[],
-};
+export type WithPosition = { position: Vector };
+export type WithVelocity = { velocity: Vector };
+export type WithMass = { mass: number };
+export type WithRadius = { radius: number };
+export type WithObjects<T> = { objects: T[] };
+export type WithDimensions = { dimensions: Dimensions };
+
 export type Animator<State> = (state: State) => State;
 export type Canvas2DContext = CanvasRenderingContext2D;
 export type Canvas = {

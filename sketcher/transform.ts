@@ -1,5 +1,5 @@
 import {
-    Color, Render, StateObject, StateType, Vector,
+    Color, Render, Vector, WithDimensions, WithMass, WithObjects, WithPosition,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
@@ -20,7 +20,7 @@ export function clearFrame<State>({ color }: {
     }
 }
 
-export function zoomToFit<State extends StateType>(): RenderTransform<State> {
+export function zoomToFit<State extends WithDimensions>(): RenderTransform<State> {
     return function zoomToFitTransform(render) {
         return function ({ canvas, state }) {
             let uwidth = rangeLength(state.dimensions.x);
@@ -45,7 +45,7 @@ export function zoomToFit<State extends StateType>(): RenderTransform<State> {
     }
 }
 
-export function zoomToFill<State extends StateType>(): RenderTransform<State> {
+export function zoomToFill<State extends WithDimensions>(): RenderTransform<State> {
     return function zoomToFitTransform(render) {
         return function ({ canvas, state }) {
             let uwidth = rangeLength(state.dimensions.x);
@@ -70,7 +70,7 @@ export function zoomToFill<State extends StateType>(): RenderTransform<State> {
     }
 }
 
-export function centerOnObject<State extends StateType>({ index }: {
+export function centerOnObject<State extends WithObjects<WithPosition>>({ index }: {
     index: number,
 }): RenderTransform<State> {
     return function transform(render) {
@@ -99,8 +99,8 @@ export function centerOnPoint<State>({ point: [shiftx, shifty] }: {
     }
 }
 
-export function centerOnMidpoint<State extends StateType>(): RenderTransform<State> {
-    function calcMidpoint(objects: StateObject[]) {
+export function centerOnMidpoint<State extends WithObjects<WithPosition & WithMass>>(): RenderTransform<State> {
+    function calcMidpoint(objects: State['objects']) {
         let { position, mass } = objects.reduce(
             (res, curr) => ({
                 position: vector.add(res.position, vector.mults(curr.position, curr.mass)),

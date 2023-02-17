@@ -2,9 +2,11 @@ import { fromRGBA, gray, multRGBA, makeStops, unifromStops } from '@/sketcher/co
 import {
   velocityStep, combineLaws, gravity,
   circle,
-  renderFromTransforms, centerOnMidpoint, zoomToFit, StateType, random3d, randomRange, NumRange, Color, Scene, Canvas, rangeArray, ColorStop, RGBAColor, Vector,
+  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithDimensions, WithObjects, WithRadius, WithMass, WithVelocity,
 } from '../sketcher';
 
+type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
+type KnotState = WithDimensions & WithObjects<KnotObject>;
 export default function knot({
   count, radiusRange, velocityAmp, variant,
   palette: { main, complimentary },
@@ -17,7 +19,7 @@ export default function knot({
     complimentary: RGBAColor,
   },
   variant: 'corner' | 'gradient' | 'pain',
-}): Scene<StateType> {
+}): Scene<KnotState> {
   return {
     state: {
       dimensions: {

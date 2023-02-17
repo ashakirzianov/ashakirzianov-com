@@ -1,9 +1,12 @@
-import { Animator, StateType, StateObject } from './base';
+import { Animator, WithMass, WithObjects, WithPosition, WithVelocity } from './base';
 import vector from './vector';
 
-type Law = Animator;
+// TODO: rethink this file to animators
+type LawObject = WithPosition & WithVelocity & WithMass;
+type LawState = WithObjects<LawObject>;
+type Law<State extends LawState> = Animator<State>;
 
-export function velocityStep(): Law {
+export function velocityStep<State extends LawState>(): Law<State> {
     return function velocityLaw(state) {
         let next = {
             ...state,
@@ -16,8 +19,8 @@ export function velocityStep(): Law {
     }
 }
 
-export function preserveMomentum(law: Law): Law {
-    function calculateMomentum(state: StateType) {
+export function preserveMomentum<State extends LawState>(law: Law<State>): Law<State> {
+    function calculateMomentum(state: LawState) {
         let momentum = state.objects.reduce(
             (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
             0,
@@ -41,8 +44,8 @@ export type GravityProps = {
     gravity: number,
     power: number,
 };
-export function gravity({ gravity, power }: GravityProps): Law {
-    function force(o1: StateObject, o2: StateObject) {
+export function gravity<State extends LawState>({ gravity, power }: GravityProps): Law<State> {
+    function force(o1: LawObject, o2: LawObject) {
         let dist = vector.distance(o1.position, o2.position);
         let direction = vector.sub(o1.position, o2.position);
         let mass = o1.mass * o2.mass;
@@ -72,7 +75,7 @@ export function gravity({ gravity, power }: GravityProps): Law {
     }
 }
 
-export function combineLaws(...laws: Law[]): Law {
+export function combineLaws<State extends LawState>(...laws: Law<State>[]): Law<State> {
     return function combined(state) {
         return laws.reduce(
             (s, law) => law(s),

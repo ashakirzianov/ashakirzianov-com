@@ -1,67 +1,19 @@
-import { Canvas, Scene } from "@/sketcher";
+import { Canvas, launch, LaunchProps, Scene } from "@/sketcher";
 import { useEffect } from "react";
 import { getCanvasFromRef, useCanvases } from "./canvas";
 
-export function useSketcher({
-    scene: { universe, animator, layers },
-    period, skip, chunk,
-}: {
-    scene: Scene,
-    period: number,
-    skip?: number,
-    chunk?: number,
-}) {
-    let { node, refs } = useCanvases(layers.length);
+export type GetCanvasFunc = (idx: number) => Canvas | undefined;
+export type UseSketcherProps = Omit<LaunchProps, 'getCanvas'>;
+export function useSketcher(props: UseSketcherProps) {
+    let { node, refs } = useCanvases(props.scene.layers.length);
     useEffect(() => {
-        let timeout: any;
-        function cleanup() {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = undefined;
-            }
-        }
+        let { cleanup } = launch({
+            ...props,
+            getCanvas(idx) {
+                return getCanvasFromRef(refs[idx]);
+            },
+        });
 
-        let frame = 0;
-        let doneStatic = new Set();
-        function loop(current?: number) {
-            universe = animator(universe);
-            let rendered = false;
-            for (let idx = 0; idx < layers.length; idx++) {
-                let layer = layers[idx];
-                if (layer.hidden) {
-                    continue;
-                }
-                if (layer.static && doneStatic.has(idx)) {
-                    continue;
-                }
-                let ref = refs[idx];
-                let canvas = getCanvasFromRef(ref);
-                if (!canvas) {
-                    continue;
-                }
-                layer.render({ canvas, universe });
-                if (layer.static) {
-                    doneStatic.add(idx);
-                }
-                rendered = true;
-            }
-            if (rendered) {
-                frame++;
-            }
-            if (frame < (skip ?? 0)) {
-                if ((current ?? 0) < (chunk ?? 100)) {
-                    loop((current ?? 0) + 1);
-                } else {
-                    cleanup();
-                    timeout = setTimeout(loop, period);
-                }
-            } else {
-                cleanup();
-                timeout = setTimeout(loop, period);
-            }
-            return rendered;
-        }
-        loop();
         return cleanup;
     }, []);
     return { node };

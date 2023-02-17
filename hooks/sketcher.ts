@@ -1,11 +1,48 @@
 import { Canvas, Scene } from "@/sketcher";
 import { useEffect } from "react";
+import { getCanvasFromRef, useCanvases } from "./canvas";
+
+export function useSketcher({
+    scene: { universe, animator, layers },
+    period,
+}: {
+    scene: Scene,
+    period: number,
+}) {
+    let { node, refs } = useCanvases(layers.length);
+    useEffect(() => {
+        let timeout: any;
+        function cleanup() {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = undefined;
+            }
+        }
+
+        function loop() {
+            universe = animator(universe);
+            for (let idx = 0; idx < layers.length; idx++) {
+                let ref = refs[idx];
+                let canvas = getCanvasFromRef(ref);
+                if (!canvas) {
+                    continue;
+                }
+                let layer = layers[idx];
+                layer.render({ canvas, universe });
+            }
+            cleanup();
+            timeout = setTimeout(loop, period);
+        }
+        loop();
+        return cleanup;
+    }, []);
+    return { node };
+}
 
 export type UseSketcherOut = {
     renderFrame: (canvas: Canvas) => void,
-    setupFrame?: (canvas: Canvas) => void,
 };
-export function useSketcher({
+export function useSingleLayeredSketcher({
     scene: { universe, animator, layers },
     period,
 }: {
@@ -30,14 +67,8 @@ export function useSketcher({
     }, []);
     return {
         renderFrame(canvas) {
-            for (let idx = 1; idx < layers.length; idx++) {
+            for (let idx = 0; idx < layers.length; idx++) {
                 let layer = layers[idx];
-                layer.render({ canvas, universe });
-            }
-        },
-        setupFrame(canvas) {
-            let layer = layers[0];
-            if (layer) {
                 layer.render({ canvas, universe });
             }
         },

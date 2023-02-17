@@ -22,9 +22,9 @@ export type Universe = {
     objects: UniverseObject[],
 };
 export type Animator = (universe: Universe) => Universe;
-// TODO: rename Canvas ?
+export type Canvas2DContext = CanvasRenderingContext2D;
 export type Canvas = {
-    context: CanvasRenderingContext2D,
+    context: Canvas2DContext,
     width: number,
     height: number,
 };
@@ -33,9 +33,15 @@ export type RenderProps = {
     universe: Universe,
 };
 export type Render = (props: RenderProps) => void;
+export type Layer = {
+    render: Render,
+}
 export type Scene = {
     universe: Universe,
     animator: Animator,
-    renderFrame: Render,
-    setupFrame?: Render,
+    dimensions: {
+        width: number,
+        height: number,
+    },
+    layers: Layer[],
 };

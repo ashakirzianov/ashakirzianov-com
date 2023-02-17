@@ -1,4 +1,4 @@
-import { Color, Dimensions, Vector } from "./base";
+import { Canvas2DContext, Color, Dimensions, Vector } from "./base";
 import { rangeLength } from "./utils";
 
 export function circle({
@@ -11,7 +11,7 @@ export function circle({
     stroke: Color,
     position: Vector,
     radius: number,
-    context: CanvasRenderingContext2D,
+    context: Canvas2DContext,
 }) {
     context.save();
     context.lineWidth = lineWidth;
@@ -28,7 +28,7 @@ export type ColorStop = { offset: number, color: Color };
 export function createLinearGradient({
     context, colorStops, start, end,
 }: {
-    context: CanvasRenderingContext2D,
+    context: Canvas2DContext,
     colorStops: ColorStop[],
     start: [number, number],
     end: [number, number],
@@ -43,7 +43,7 @@ export function strokeDimensions({
 }: {
     color: Color,
     dimensions: Dimensions,
-    context: CanvasRenderingContext2D,
+    context: Canvas2DContext,
 }) {
     context.save();
     context.strokeStyle = color;
@@ -58,7 +58,7 @@ export function colorRect({
     context, width, height, start: [x, y],
     colors: [top, bottom, left, right],
 }: {
-    context: CanvasRenderingContext2D,
+    context: Canvas2DContext,
     start: Vector,
     width: number,
     height: number,

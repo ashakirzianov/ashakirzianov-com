@@ -6,7 +6,7 @@ export type UseSketcherOut = {
     setupFrame?: (canvas: Canvas) => void,
 };
 export function useSketcher({
-    scene: { universe, animator, setupFrame, renderFrame },
+    scene: { universe, animator, layers },
     period,
 }: {
     scene: Scene,
@@ -30,11 +30,15 @@ export function useSketcher({
     }, []);
     return {
         renderFrame(canvas) {
-            renderFrame({ canvas, universe });
+            for (let idx = 1; idx < layers.length; idx++) {
+                let layer = layers[idx];
+                layer.render({ canvas, universe });
+            }
         },
         setupFrame(canvas) {
-            if (setupFrame) {
-                setupFrame({ canvas, universe });
+            let layer = layers[0];
+            if (layer) {
+                layer.render({ canvas, universe });
             }
         },
     };

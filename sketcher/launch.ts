@@ -1,22 +1,46 @@
-import { Scene, Canvas } from "./base";
+import { Scene, Canvas, Layer, Universe } from "./base";
 
+export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps = {
     scene: Scene,
     period: number,
-    getCanvas: (idx: number) => Canvas | undefined,
     skip?: number,
     chunk?: number,
 };
-export function launch({
+export type Launcher = ReturnType<typeof makeLauncher>;
+export function makeLauncher({
     scene: { universe, animator, layers },
-    getCanvas,
     period, skip, chunk,
 }: LaunchProps) {
-    let { schedule, cleanup } = makeTimer();
-    let frame = 0;
+    function launch(getCanvas: CanvasGetter) {
+        let { schedule, cleanup } = makeTimer();
+        let frame = 0;
+        let renderUniverse = makeRenderUniverse({ layers, getCanvas });
+        function loop(current?: number) {
+            universe = animator(universe);
+            if (renderUniverse(universe) && frame < (skip ?? 0)) {
+                frame++;
+                if ((current ?? 0) < (chunk ?? 100)) {
+                    loop((current ?? 0) + 1);
+                } else {
+                    schedule(loop, period);
+                }
+            } else {
+                schedule(loop, period);
+            }
+        }
+        loop();
+        return { cleanup };
+    }
+    return { launch };
+}
+
+function makeRenderUniverse({ layers, getCanvas }: {
+    layers: Layer[],
+    getCanvas: CanvasGetter,
+}) {
     let doneStatic = new Set();
-    function loop(current?: number) {
-        universe = animator(universe);
+    return function renderLayers(universe: Universe) {
         let rendered = false;
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
@@ -36,22 +60,8 @@ export function launch({
             }
             rendered = true;
         }
-        if (rendered) {
-            frame++;
-        }
-        if (frame < (skip ?? 0)) {
-            if ((current ?? 0) < (chunk ?? 100)) {
-                loop((current ?? 0) + 1);
-            } else {
-                schedule(loop, period);
-            }
-        } else {
-            schedule(loop, period);
-        }
         return rendered;
     }
-    loop();
-    return { cleanup };
 }
 
 function makeTimer() {

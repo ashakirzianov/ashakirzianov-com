@@ -45,3 +45,12 @@ export type Scene<State> = {
 export function scene<State>(s: Scene<State>) {
     return s;
 }
+
+export function layer<State>(render: Layer<State>['render']): Layer<State> {
+    return { render };
+}
+
+export function staticLayer<State>(render: Layer<State>['render']): Layer<State> {
+    return { render, static: true };
+}
+

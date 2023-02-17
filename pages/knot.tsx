@@ -4,7 +4,7 @@ import { knot } from "@/sketches/knot";
 
 export default function KnotSketch() {
     let { node } = useSketcher({
-        scene: knot,
+        scene: knot(),
         period: 40,
     });
     return <PosterPage title="Knot" description="Knot sketch">

@@ -1,4 +1,5 @@
 import { Scene, Canvas, Layer, Universe } from "./base";
+import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps = {
@@ -54,7 +55,11 @@ function makeRenderUniverse({ layers, getCanvas }: {
             if (!canvas) {
                 continue;
             }
-            layer.render({ canvas, universe });
+            if (layer.transforms) {
+                combineTransforms(...layer.transforms)(layer.render)({ canvas, universe })
+            } else {
+                layer.render({ canvas, universe });
+            }
             if (layer.static) {
                 doneStatic.add(idx);
             }

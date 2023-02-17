@@ -72,24 +72,22 @@ export default function knot({
         },
       },
       {
-        render: renderFromTransforms(
+        transforms: [
           zoomToFit(),
           centerOnMidpoint(),
-          function () {
-            return function ({ universe, canvas }) {
-              for (let object of universe.objects) {
-                circle({
-                  lineWidth: 0.5,
-                  fill: fromRGBA(main),
-                  stroke: 'black',
-                  position: object.position,
-                  radius: object.radius,
-                  context: canvas.context,
-                });
-              }
-            }
-          },
-        ),
+        ],
+        render({ universe, canvas }) {
+          for (let object of universe.objects) {
+            circle({
+              lineWidth: 0.5,
+              fill: fromRGBA(main),
+              stroke: 'black',
+              position: object.position,
+              radius: object.radius,
+              context: canvas.context,
+            });
+          }
+        },
       },
     ],
   };

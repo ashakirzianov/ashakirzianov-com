@@ -1,3 +1,5 @@
+import { RenderTransform } from "./transform";
+
 export type Vector = number[];
 export type StringColor = string;
 export type RGBAColor = {
@@ -35,6 +37,7 @@ export type RenderProps = {
 export type Render = (props: RenderProps) => void;
 export type Layer = {
     render: Render,
+    transforms?: RenderTransform[],
     static?: boolean,
     hidden?: boolean,
 }

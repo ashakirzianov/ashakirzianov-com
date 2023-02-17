@@ -20,9 +20,7 @@ export function PosterPage({
             <main>
                 <div className="poster-page">
                     <Poster>
-                        <Card>
-                            {children ?? null}
-                        </Card>
+                        {children ?? null}
                     </Poster>
                 </div>
                 <style jsx>{`

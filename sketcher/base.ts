@@ -5,9 +5,9 @@ export type NumRange = { min: number, max: number };
 
 export type StringColor = string;
 export type RGBAColor = {
-    red: number,
-    green: number,
-    blue: number,
+    red?: number,
+    green?: number,
+    blue?: number,
     alpha?: number,
 };
 export type Color = StringColor;

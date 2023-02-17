@@ -68,7 +68,7 @@ export function Canvas({
                 cancelAnimationFrame(frameHandle);
             }
         }
-    }, [canvasRef.current]);
+    });
     return <>
         <canvas
             className="canvas"
@@ -100,7 +100,7 @@ function useCanvasRef() {
         if (canvasRef.current) {
             setupCanvas(canvasRef.current);
         }
-    }, [canvasRef.current]);
+    }, []);
 
     return canvasRef;
 }

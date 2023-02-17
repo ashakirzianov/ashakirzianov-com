@@ -16,6 +16,7 @@ export default function KnotSketch() {
             variant: 'gradient',
         }),
         period: 40,
+        skip: 100000,
     });
     return <PosterPage title="Knot" description="Knot sketch">
         <div>

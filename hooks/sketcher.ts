@@ -4,10 +4,12 @@ import { getCanvasFromRef, useCanvases } from "./canvas";
 
 export function useSketcher({
     scene: { universe, animator, layers },
-    period,
+    period, skip, chunk,
 }: {
     scene: Scene,
     period: number,
+    skip?: number,
+    chunk?: number,
 }) {
     let { node, refs } = useCanvases(layers.length);
     useEffect(() => {
@@ -19,8 +21,10 @@ export function useSketcher({
             }
         }
 
-        function loop() {
+        let frame = 0;
+        function loop(current?: number) {
             universe = animator(universe);
+            let rendered = false;
             for (let idx = 0; idx < layers.length; idx++) {
                 let ref = refs[idx];
                 let canvas = getCanvasFromRef(ref);
@@ -29,9 +33,23 @@ export function useSketcher({
                 }
                 let layer = layers[idx];
                 layer.render({ canvas, universe });
+                rendered = true;
             }
-            cleanup();
-            timeout = setTimeout(loop, period);
+            if (rendered) {
+                frame++;
+            }
+            if (frame < (skip ?? 0)) {
+                if ((current ?? 0) < (chunk ?? 100)) {
+                    loop((current ?? 0) + 1);
+                } else {
+                    cleanup();
+                    timeout = setTimeout(loop, period);
+                }
+            } else {
+                cleanup();
+                timeout = setTimeout(loop, period);
+            }
+            return rendered;
         }
         loop();
         return cleanup;

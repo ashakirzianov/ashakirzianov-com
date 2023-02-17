@@ -22,6 +22,7 @@ export function useCanvases(count: number) {
         children: nodes,
         style: {
             display: 'grid',
+            flexGrow: 1,
             padding: 0,
             margin: 0,
             width: '100%',

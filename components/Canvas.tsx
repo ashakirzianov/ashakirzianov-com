@@ -86,7 +86,6 @@ export function Canvas({
 function useCanvasRef() {
     function setupCanvas(canvas: HTMLCanvasElement) {
         let dpi = window.devicePixelRatio || 1;
-        // dpi *= 2;
         let style = getComputedStyle(canvas);
         let styleWidth = style.getPropertyValue('width');
         let styleHeight = style.getPropertyValue('height');
@@ -94,7 +93,6 @@ function useCanvasRef() {
         let height = parseInt(styleHeight, 10) * dpi;
         canvas.setAttribute('width', width.toString());
         canvas.setAttribute('height', height.toString());
-        // canvas.getContext('2d')?.scale(dpi, dpi);
     }
 
     let canvasRef = useRef<HTMLCanvasElement>(null);

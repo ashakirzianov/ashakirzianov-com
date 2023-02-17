@@ -46,6 +46,7 @@ export default function knot({
     },
     layers: [
       {
+        static: true,
         render({ canvas }) {
           switch (variant) {
             case 'corner':

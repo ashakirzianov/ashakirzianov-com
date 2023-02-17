@@ -22,17 +22,24 @@ export function useSketcher({
         }
 
         let frame = 0;
+        let doneStatic = new Set();
         function loop(current?: number) {
             universe = animator(universe);
             let rendered = false;
             for (let idx = 0; idx < layers.length; idx++) {
+                let layer = layers[idx];
+                if (layer.static && doneStatic.has(idx)) {
+                    continue;
+                }
                 let ref = refs[idx];
                 let canvas = getCanvasFromRef(ref);
                 if (!canvas) {
                     continue;
                 }
-                let layer = layers[idx];
                 layer.render({ canvas, universe });
+                if (layer.static) {
+                    doneStatic.add(idx);
+                }
                 rendered = true;
             }
             if (rendered) {

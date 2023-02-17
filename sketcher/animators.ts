@@ -14,8 +14,6 @@ export function combineAnimators<State>(object: CombineAnimatorsObject<State>): 
             },
             { ...state },
         );
-        console.log('curr', state);
-        console.log('next', next);
         return next;
     };
 }

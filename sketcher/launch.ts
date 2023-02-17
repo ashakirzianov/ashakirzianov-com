@@ -7,8 +7,8 @@ export type LaunchProps = {
     skip?: number,
     chunk?: number,
 };
-export type Launcher = ReturnType<typeof makeLauncher>;
-export function makeLauncher({
+export type Launcher = ReturnType<typeof launcher>;
+export function launcher({
     scene: { universe, animator, layers },
     period, skip, chunk,
 }: LaunchProps) {

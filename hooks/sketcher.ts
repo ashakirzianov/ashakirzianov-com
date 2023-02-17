@@ -1,11 +1,11 @@
-import { Canvas, LaunchProps, makeLauncher, Scene } from "@/sketcher";
+import { Canvas, LaunchProps, launcher, Scene } from "@/sketcher";
 import { useEffect } from "react";
 import { getCanvasFromRef, useCanvases } from "./canvas";
 
 export function useSketcher(props: LaunchProps) {
     let { node, refs } = useCanvases(props.scene.layers.length);
     useEffect(() => {
-        let { launch } = makeLauncher(props);
+        let { launch } = launcher(props);
         let { cleanup } = launch(idx => getCanvasFromRef(refs[idx]));
 
         return cleanup;

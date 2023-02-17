@@ -1,4 +1,4 @@
-import { Canvas2DContext, Color, Dimensions, Vector } from "./base";
+import { Canvas2DContext, Color, NumRange, Vector } from "./base";
 import { rangeLength } from "./utils";
 
 export function circle({
@@ -42,7 +42,10 @@ export function strokeDimensions({
     context, color, dimensions,
 }: {
     color: Color,
-    dimensions: Dimensions,
+    dimensions: {
+        x: NumRange,
+        y: NumRange,
+    },
     context: Canvas2DContext,
 }) {
     context.save();

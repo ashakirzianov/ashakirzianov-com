@@ -1,5 +1,4 @@
-import { Animator, WithMass, WithObjects, WithPosition, WithVelocity } from './base';
-import vector from './vector';
+import { Animator } from './base';
 
 export type CombineAnimatorsObject<State> = {
     [k in keyof State]: Animator<State[k]>;

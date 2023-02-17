@@ -1,11 +1,13 @@
-import { Animator, WithMass, WithObjects, WithPosition, WithVelocity } from './base';
+import {
+    Animator, WithMass, WithPosition, WithVelocity,
+} from './base';
 import vector from './vector';
 
-type LawObject = WithPosition & WithVelocity & WithMass;
-type LawState<ObjectT extends LawObject> = ObjectT[];
-type Law<ObjectT extends LawObject> = Animator<LawState<ObjectT>>;
 
-export function velocityStep<ObjectT extends LawObject>(): Law<ObjectT> {
+type LawState<ObjectT> = ObjectT[];
+type Law<ObjectT> = Animator<LawState<ObjectT>>;
+
+export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Law<ObjectT> {
     return function velocityLaw(objects) {
         let next = objects.map(object => ({
             ...object,
@@ -15,7 +17,7 @@ export function velocityStep<ObjectT extends LawObject>(): Law<ObjectT> {
     }
 }
 
-export function preserveMomentum<ObjectT extends LawObject>(law: Law<ObjectT>): Law<ObjectT> {
+export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: Law<ObjectT>): Law<ObjectT> {
     function calculateMomentum(objects: LawState<ObjectT>) {
         let momentum = objects.reduce(
             (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
@@ -40,8 +42,8 @@ export type GravityProps = {
     gravity: number,
     power: number,
 };
-export function gravity<ObjectT extends LawObject>({ gravity, power }: GravityProps): Law<ObjectT> {
-    function force(o1: LawObject, o2: LawObject) {
+export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): Law<ObjectT> {
+    function force(o1: ObjectT, o2: ObjectT) {
         let dist = vector.distance(o1.position, o2.position);
         let direction = vector.sub(o1.position, o2.position);
         let mass = o1.mass * o2.mass;
@@ -67,7 +69,7 @@ export function gravity<ObjectT extends LawObject>({ gravity, power }: GravityPr
     }
 }
 
-export function combineLaws<ObjectT extends LawObject>(...laws: Law<ObjectT>[]): Law<ObjectT> {
+export function combineLaws<ObjectT>(...laws: Law<ObjectT>[]): Law<ObjectT> {
     return function combined(state) {
         return laws.reduce(
             (s, law) => law(s),

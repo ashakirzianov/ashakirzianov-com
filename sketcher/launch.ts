@@ -3,7 +3,7 @@ import { Scene, Canvas, Layer, Universe } from "./base";
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps = {
     scene: Scene,
-    period: number,
+    period?: number,
     skip?: number,
     chunk?: number,
 };
@@ -23,9 +23,9 @@ export function launcher({
                 if ((current ?? 0) < (chunk ?? 100)) {
                     loop((current ?? 0) + 1);
                 } else {
-                    schedule(loop, period);
+                    schedule(loop, period ?? 0);
                 }
-            } else {
+            } else if (period) {
                 schedule(loop, period);
             }
         }

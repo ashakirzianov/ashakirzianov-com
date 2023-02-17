@@ -2,17 +2,17 @@ import { Scene, Canvas, Layer, StateType } from "./base";
 import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
-export type LaunchProps = {
-    scene: Scene,
+export type LaunchProps<State> = {
+    scene: Scene<State>,
     period?: number,
     skip?: number,
     chunk?: number,
 };
 export type Launcher = ReturnType<typeof launcher>;
-export function launcher({
-    scene: { state: state, animator, layers },
+export function launcher<State>({
+    scene: { state, animator, layers },
     period, skip, chunk,
-}: LaunchProps) {
+}: LaunchProps<State>) {
     function launch(getCanvas: CanvasGetter) {
         let { schedule, cleanup } = makeTimer();
         let frame = 0;
@@ -36,12 +36,12 @@ export function launcher({
     return { launch };
 }
 
-function makeRenderState({ layers, getCanvas }: {
-    layers: Layer[],
+function makeRenderState<State>({ layers, getCanvas }: {
+    layers: Layer<State>[],
     getCanvas: CanvasGetter,
 }) {
     let doneStatic = new Set();
-    return function renderLayers(state: StateType) {
+    return function renderLayers(state: State) {
         let rendered = false;
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
@@ -56,9 +56,9 @@ function makeRenderState({ layers, getCanvas }: {
                 continue;
             }
             if (layer.transforms) {
-                combineTransforms(...layer.transforms)(layer.render)({ canvas, state: state })
+                combineTransforms(...layer.transforms)(layer.render)({ canvas, state })
             } else {
-                layer.render({ canvas, state: state });
+                layer.render({ canvas, state });
             }
             if (layer.static) {
                 doneStatic.add(idx);

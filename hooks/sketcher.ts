@@ -2,7 +2,7 @@ import { Canvas, LaunchProps, launcher, Scene } from "@/sketcher";
 import { useEffect } from "react";
 import { getCanvasFromRef, useCanvases } from "./canvas";
 
-export function useSketcher(props: LaunchProps) {
+export function useSketcher<State>(props: LaunchProps<State>) {
     let { node, refs } = useCanvases(props.scene.layers.length);
     useEffect(() => {
         let { launch } = launcher(props);
@@ -16,11 +16,11 @@ export function useSketcher(props: LaunchProps) {
 export type UseSketcherOut = {
     renderFrame: (canvas: Canvas) => void,
 };
-export function useSingleLayeredSketcher({
-    scene: { state: state, animator, layers },
+export function useSingleLayeredSketcher<State>({
+    scene: { state, animator, layers },
     period,
 }: {
-    scene: Scene,
+    scene: Scene<State>,
     period: number,
 }): UseSketcherOut {
     useEffect(() => {
@@ -43,7 +43,7 @@ export function useSingleLayeredSketcher({
         renderFrame(canvas) {
             for (let idx = 0; idx < layers.length; idx++) {
                 let layer = layers[idx];
-                layer.render({ canvas, state: state });
+                layer.render({ canvas, state });
             }
         },
     };

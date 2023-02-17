@@ -1,28 +1,28 @@
 import {
-    Color, Render, StateObject, Vector,
+    Color, Render, StateObject, StateType, Vector,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
 
-export type RenderTransform = (render: Render) => Render;
+export type RenderTransform<State> = (render: Render<State>) => Render<State>;
 
-export function clearFrame({ color }: {
+export function clearFrame<State>({ color }: {
     color: Color,
-}): RenderTransform {
+}): RenderTransform<State> {
     return function (render) {
-        return function ({ canvas, state: state }) {
+        return function ({ canvas, state }) {
             canvas.context.save();
             canvas.context.fillStyle = color;
             canvas.context.fillRect(0, 0, canvas.width, canvas.height);
-            render({ canvas, state: state });
+            render({ canvas, state });
             canvas.context.restore();
         }
     }
 }
 
-export function zoomToFit(): RenderTransform {
+export function zoomToFit<State extends StateType>(): RenderTransform<State> {
     return function zoomToFitTransform(render) {
-        return function ({ canvas, state: state }) {
+        return function ({ canvas, state }) {
             let uwidth = rangeLength(state.dimensions.x);
             let uheight = rangeLength(state.dimensions.y);
             let xratio = canvas.width / uwidth;
@@ -39,15 +39,15 @@ export function zoomToFit(): RenderTransform {
                 - state.dimensions.x.min,
                 - state.dimensions.y.min,
             );
-            render({ canvas, state: state });
+            render({ canvas, state });
             canvas.context.restore();
         }
     }
 }
 
-export function zoomToFill(): RenderTransform {
+export function zoomToFill<State extends StateType>(): RenderTransform<State> {
     return function zoomToFitTransform(render) {
-        return function ({ canvas, state: state }) {
+        return function ({ canvas, state }) {
             let uwidth = rangeLength(state.dimensions.x);
             let uheight = rangeLength(state.dimensions.y);
             let xratio = canvas.width / uwidth;
@@ -64,42 +64,42 @@ export function zoomToFill(): RenderTransform {
                 - state.dimensions.x.min,
                 - state.dimensions.y.min,
             );
-            render({ canvas, state: state });
+            render({ canvas, state });
             canvas.context.restore();
         }
     }
 }
 
-export function centerOnObject({ index }: {
+export function centerOnObject<State extends StateType>({ index }: {
     index: number,
-}): RenderTransform {
+}): RenderTransform<State> {
     return function transform(render) {
-        return function ({ canvas, state: state }) {
+        return function ({ canvas, state }) {
             if (index < state.objects.length) {
                 canvas.context.save();
                 let [shiftx, shifty] = state.objects[index].position;
                 canvas.context.translate(-shiftx, -shifty);
-                render({ canvas, state: state });
+                render({ canvas, state });
                 canvas.context.restore();
             }
         }
     }
 }
 
-export function centerOnPoint({ point: [shiftx, shifty] }: {
+export function centerOnPoint<State>({ point: [shiftx, shifty] }: {
     point: Vector,
-}): RenderTransform {
+}): RenderTransform<State> {
     return function transform(render) {
-        return function ({ canvas, state: state }) {
+        return function ({ canvas, state }) {
             canvas.context.save();
             canvas.context.translate(-shiftx, -shifty);
-            render({ canvas, state: state });
+            render({ canvas, state });
             canvas.context.restore();
         }
     }
 }
 
-export function centerOnMidpoint(): RenderTransform {
+export function centerOnMidpoint<State extends StateType>(): RenderTransform<State> {
     function calcMidpoint(objects: StateObject[]) {
         let { position, mass } = objects.reduce(
             (res, curr) => ({
@@ -111,17 +111,17 @@ export function centerOnMidpoint(): RenderTransform {
         return vector.mults(position, 1 / mass);
     }
     return function transform(render) {
-        return function ({ canvas, state: state }) {
+        return function ({ canvas, state }) {
             let [shiftx, shifty] = calcMidpoint(state.objects);
             canvas.context.save();
             canvas.context.translate(-shiftx, -shifty);
-            render({ canvas, state: state });
+            render({ canvas, state });
             canvas.context.restore();
         }
     }
 }
 
-export function combineTransforms(...transforms: RenderTransform[]): RenderTransform {
+export function combineTransforms<State>(...transforms: RenderTransform<State>[]): RenderTransform<State> {
     return function transform(render) {
         return transforms.reduceRight(
             (res, curr) => curr(res),
@@ -130,8 +130,8 @@ export function combineTransforms(...transforms: RenderTransform[]): RenderTrans
     }
 }
 
-export const emptyRender: Render = () => { };
+export const emptyRender: Render<unknown> = () => { };
 
-export function renderFromTransforms(...transforms: RenderTransform[]): Render {
+export function renderFromTransforms<State>(...transforms: RenderTransform<State>[]): Render<State> {
     return combineTransforms(...transforms)(emptyRender);
 }

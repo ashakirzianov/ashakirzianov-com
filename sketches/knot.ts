@@ -17,7 +17,7 @@ export default function knot({
     complimentary: RGBAColor,
   },
   variant: 'corner' | 'gradient' | 'pain',
-}): Scene {
+}): Scene<StateType> {
   return {
     state: {
       dimensions: {
@@ -72,7 +72,7 @@ export default function knot({
           zoomToFit(),
           centerOnMidpoint(),
         ],
-        render({ state: state, canvas }) {
+        render({ state, canvas }) {
           for (let object of state.objects) {
             circle({
               lineWidth: 0.5,

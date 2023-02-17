@@ -1,6 +1,8 @@
 import { RenderTransform } from "./transform";
 
 export type Vector = number[];
+export type NumRange = { min: number, max: number };
+
 export type StringColor = string;
 export type RGBAColor = {
     red: number,
@@ -9,18 +11,12 @@ export type RGBAColor = {
     alpha?: number,
 };
 export type Color = StringColor;
-// TODO: remove ?
-export type NumRange = { min: number, max: number };
-// TODO: remove ?
-export type Dimensions = {
-    x: NumRange, y: NumRange, z: NumRange,
-};
+
 export type WithPosition = { position: Vector };
 export type WithVelocity = { velocity: Vector };
 export type WithMass = { mass: number };
 export type WithRadius = { radius: number };
 export type WithObjects<T> = { objects: T[] };
-export type WithDimensions = { dimensions: Dimensions };
 
 export type Animator<State> = (state: State) => State;
 export type Canvas2DContext = CanvasRenderingContext2D;

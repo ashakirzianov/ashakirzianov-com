@@ -1,5 +1,5 @@
 import {
-    Color, Render, Vector, WithDimensions, WithMass, WithObjects, WithPosition,
+    Color, NumRange, Render, Vector, WithMass, WithObjects, WithPosition,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
@@ -20,11 +20,14 @@ export function clearFrame<State>({ color }: {
     }
 }
 
-export function zoomToFit<State extends WithDimensions>(): RenderTransform<State> {
+export function zoomToFit<State>({ widthRange, heightRange }: {
+    widthRange: NumRange,
+    heightRange: NumRange,
+}): RenderTransform<State> {
     return function zoomToFitTransform(render) {
         return function ({ canvas, state }) {
-            let uwidth = rangeLength(state.dimensions.x);
-            let uheight = rangeLength(state.dimensions.y);
+            let uwidth = rangeLength(widthRange);
+            let uheight = rangeLength(heightRange);
             let xratio = canvas.width / uwidth;
             let yratio = canvas.height / uheight;
             let ratio = Math.min(xratio, yratio);
@@ -36,8 +39,8 @@ export function zoomToFit<State extends WithDimensions>(): RenderTransform<State
             );
             canvas.context.scale(ratio, ratio);
             canvas.context.translate(
-                - state.dimensions.x.min,
-                - state.dimensions.y.min,
+                - widthRange.min,
+                - heightRange.min,
             );
             render({ canvas, state });
             canvas.context.restore();
@@ -45,11 +48,14 @@ export function zoomToFit<State extends WithDimensions>(): RenderTransform<State
     }
 }
 
-export function zoomToFill<State extends WithDimensions>(): RenderTransform<State> {
+export function zoomToFill<State>({ widthRange, heightRange }: {
+    widthRange: NumRange,
+    heightRange: NumRange,
+}): RenderTransform<State> {
     return function zoomToFitTransform(render) {
         return function ({ canvas, state }) {
-            let uwidth = rangeLength(state.dimensions.x);
-            let uheight = rangeLength(state.dimensions.y);
+            let uwidth = rangeLength(widthRange);
+            let uheight = rangeLength(heightRange);
             let xratio = canvas.width / uwidth;
             let yratio = canvas.height / uheight;
             let ratio = Math.max(xratio, yratio);
@@ -61,8 +67,8 @@ export function zoomToFill<State extends WithDimensions>(): RenderTransform<Stat
             );
             canvas.context.scale(ratio, ratio);
             canvas.context.translate(
-                - state.dimensions.x.min,
-                - state.dimensions.y.min,
+                - widthRange.min,
+                - heightRange.min,
             );
             render({ canvas, state });
             canvas.context.restore();

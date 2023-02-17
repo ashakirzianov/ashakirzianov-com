@@ -2,11 +2,11 @@ import { fromRGBA, gray, multRGBA, makeStops, unifromStops } from '@/sketcher/co
 import {
   velocityStep, combineLaws, gravity,
   circle,
-  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithDimensions, WithObjects, WithRadius, WithMass, WithVelocity,
+  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity,
 } from '../sketcher';
 
 type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
-type KnotState = WithDimensions & WithObjects<KnotObject>;
+type KnotState = WithObjects<KnotObject>;
 export default function knot({
   count, radiusRange, velocityAmp, variant,
   palette: { main, complimentary },
@@ -22,11 +22,6 @@ export default function knot({
 }): Scene<KnotState> {
   return {
     state: {
-      dimensions: {
-        x: { min: -100, max: 100 },
-        y: { min: -100, max: 100 },
-        z: { min: -100, max: 100 },
-      },
       objects: rangeArray({ min: 0, max: count }).map(() => {
         let radius = randomRange(radiusRange);
         return {
@@ -71,7 +66,10 @@ export default function knot({
       },
       {
         transforms: [
-          zoomToFit(),
+          zoomToFit({
+            widthRange: { min: -100, max: 100 },
+            heightRange: { min: -100, max: 100 },
+          }),
           centerOnMidpoint(),
         ],
         render({ state, canvas }) {

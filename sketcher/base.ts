@@ -36,6 +36,7 @@ export type Render = (props: RenderProps) => void;
 export type Layer = {
     render: Render,
     static?: boolean,
+    hidden?: boolean,
 }
 export type Scene = {
     universe: Universe,

@@ -28,6 +28,9 @@ export function useSketcher({
             let rendered = false;
             for (let idx = 0; idx < layers.length; idx++) {
                 let layer = layers[idx];
+                if (layer.hidden) {
+                    continue;
+                }
                 if (layer.static && doneStatic.has(idx)) {
                     continue;
                 }

@@ -27,11 +27,9 @@ export function PosterPage({
                 .poster-page {
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    align-content: center;
                     height: 100vh;
                     width: 100vw;
-                    padding: 50px;
+                    padding: 10px;
                 }
                 `}</style>
             </main>

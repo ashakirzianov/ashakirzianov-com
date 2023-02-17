@@ -44,9 +44,5 @@ export type Layer = {
 export type Scene = {
     universe: Universe,
     animator: Animator,
-    dimensions: {
-        width: number,
-        height: number,
-    },
     layers: Layer[],
 };

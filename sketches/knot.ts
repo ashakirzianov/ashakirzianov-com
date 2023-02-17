@@ -40,10 +40,6 @@ export default function knot({
       gravity({ gravity: -0.002, power: 5 }),
       velocityStep(),
     )),
-    dimensions: {
-      width: 1200,
-      height: 1600,
-    },
     layers: [
       {
         static: true,

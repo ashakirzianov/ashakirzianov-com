@@ -1,39 +1,35 @@
 import { Animator, WithMass, WithObjects, WithPosition, WithVelocity } from './base';
 import vector from './vector';
 
-// TODO: rethink this file to animators
 type LawObject = WithPosition & WithVelocity & WithMass;
-type LawState = WithObjects<LawObject>;
-type Law<State extends LawState> = Animator<State>;
+type LawState<ObjectT extends LawObject> = ObjectT[];
+type Law<ObjectT extends LawObject> = Animator<LawState<ObjectT>>;
 
-export function velocityStep<State extends LawState>(): Law<State> {
-    return function velocityLaw(state) {
-        let next = {
-            ...state,
-            objects: state.objects.map(object => ({
-                ...object,
-                position: vector.add(object.position, object.velocity),
-            })),
-        };
+export function velocityStep<ObjectT extends LawObject>(): Law<ObjectT> {
+    return function velocityLaw(objects) {
+        let next = objects.map(object => ({
+            ...object,
+            position: vector.add(object.position, object.velocity),
+        }));
         return next;
     }
 }
 
-export function preserveMomentum<State extends LawState>(law: Law<State>): Law<State> {
-    function calculateMomentum(state: LawState) {
-        let momentum = state.objects.reduce(
+export function preserveMomentum<ObjectT extends LawObject>(law: Law<ObjectT>): Law<ObjectT> {
+    function calculateMomentum(objects: LawState<ObjectT>) {
+        let momentum = objects.reduce(
             (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
             0,
         );
         return momentum;
     }
 
-    return function preserveLaw(state) {
-        let momentum = calculateMomentum(state);
-        let next = law(state);
+    return function preserveLaw(objects) {
+        let momentum = calculateMomentum(objects);
+        let next = law(objects);
         let nextmom = calculateMomentum(next);
         let coef = momentum / nextmom;
-        for (let object of state.objects) {
+        for (let object of objects) {
             object.velocity = vector.mults(object.velocity, coef);
         }
         return next;
@@ -44,7 +40,7 @@ export type GravityProps = {
     gravity: number,
     power: number,
 };
-export function gravity<State extends LawState>({ gravity, power }: GravityProps): Law<State> {
+export function gravity<ObjectT extends LawObject>({ gravity, power }: GravityProps): Law<ObjectT> {
     function force(o1: LawObject, o2: LawObject) {
         let dist = vector.distance(o1.position, o2.position);
         let direction = vector.sub(o1.position, o2.position);
@@ -54,8 +50,8 @@ export function gravity<State extends LawState>({ gravity, power }: GravityProps
         return result;
     }
 
-    return function gravityLaw(state) {
-        let objects = state.objects.map(obj => ({ ...obj }));
+    return function gravityLaw(objects) {
+        objects = objects.map(obj => ({ ...obj }));
         for (let left = 0; left < objects.length; left++) {
             for (let right = 0; right < objects.length; right++) {
                 if (left === right) {
@@ -67,15 +63,11 @@ export function gravity<State extends LawState>({ gravity, power }: GravityProps
                 lobj.velocity = vector.add(lobj.velocity, f);
             }
         }
-        let result = {
-            ...state,
-            objects,
-        };
-        return result;
+        return objects;
     }
 }
 
-export function combineLaws<State extends LawState>(...laws: Law<State>[]): Law<State> {
+export function combineLaws<ObjectT extends LawObject>(...laws: Law<ObjectT>[]): Law<ObjectT> {
     return function combined(state) {
         return laws.reduce(
             (s, law) => law(s),

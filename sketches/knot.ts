@@ -2,7 +2,7 @@ import { fromRGBA, gray, multRGBA, makeStops, unifromStops } from '@/sketcher/co
 import {
   velocityStep, combineLaws, gravity,
   circle,
-  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity,
+  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators,
 } from '../sketcher';
 
 type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
@@ -32,11 +32,13 @@ export default function knot({
         };
       }),
     },
-    animator: (combineLaws(
-      gravity({ gravity: 0.2, power: 2 }),
-      gravity({ gravity: -0.002, power: 5 }),
-      velocityStep(),
-    )),
+    animator: combineAnimators({
+      objects: (combineLaws(
+        gravity({ gravity: 0.2, power: 2 }),
+        gravity({ gravity: -0.002, power: 5 }),
+        velocityStep(),
+      )),
+    }),
     layers: [
       {
         static: true,

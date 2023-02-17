@@ -41,3 +41,7 @@ export type Scene<State> = {
     animator: Animator<State>,
     layers: Layer<State>[],
 };
+
+export function scene<State>(s: Scene<State>) {
+    return s;
+}

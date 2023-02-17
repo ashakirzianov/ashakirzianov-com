@@ -1,95 +1,96 @@
-import { fromRGBA, gray, multRGBA, makeStops, unifromStops } from '@/sketcher/color';
+import { fromRGBA, gray, multRGBA, makeStops, unifromStops, toRGBA } from '@/sketcher/color';
 import {
   velocityStep, combineLaws, gravity,
   circle,
-  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators,
+  centerOnMidpoint, zoomToFit, random3d, randomRange, NumRange, Scene, Canvas, rangeArray, ColorStop, RGBAColor, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, scene,
 } from '../sketcher';
 
 type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
 type KnotState = WithObjects<KnotObject>;
-export default function knot({
+
+let {
   count, radiusRange, velocityAmp, variant,
   palette: { main, complimentary },
-}: {
-  count: number,
-  radiusRange: NumRange,
-  velocityAmp: number,
+} = {
+  count: 8,
+  velocityAmp: 0.5,
+  radiusRange: { min: 0.5, max: 5 },
   palette: {
-    main: RGBAColor,
-    complimentary: RGBAColor,
+    main: toRGBA('orange'),
+    complimentary: { red: 230, green: 230, blue: 230 },
   },
-  variant: 'corner' | 'gradient' | 'pain',
-}): Scene<KnotState> {
-  return {
-    state: {
-      objects: rangeArray({ min: 0, max: count }).map(() => {
-        let radius = randomRange(radiusRange);
-        return {
-          position: random3d({ min: -100, max: 100 }),
-          velocity: random3d({ min: -velocityAmp, max: velocityAmp }),
-          mass: radius,
-          radius,
-        };
-      }),
-    },
-    animator: combineAnimators({
-      objects: (combineLaws(
-        gravity({ gravity: 0.2, power: 2 }),
-        gravity({ gravity: -0.002, power: 5 }),
-        velocityStep(),
-      )),
+  variant: 'gradient',
+};
+
+export const knot = scene({
+  state: {
+    objects: rangeArray({ min: 0, max: count }).map(() => {
+      let radius = randomRange(radiusRange);
+      return {
+        position: random3d({ min: -100, max: 100 }),
+        velocity: random3d({ min: -velocityAmp, max: velocityAmp }),
+        mass: radius,
+        radius,
+      };
     }),
-    layers: [
-      {
-        static: true,
-        render({ canvas }) {
-          switch (variant) {
-            case 'corner':
-              corner({
-                canvas,
-                color: complimentary,
-                offset: 0.3, angle: 0.7,
-              });
-              break;
-            case 'gradient':
-              gradient({
-                canvas,
-                stops: makeStops({
-                  0: fromRGBA(complimentary),
-                  0.2: fromRGBA(multRGBA(complimentary, 1.2)),
-                  1: gray(255),
-                }),
-              });
-              break;
-            default:
-              break;
-          }
-        },
-      },
-      {
-        transforms: [
-          zoomToFit({
-            widthRange: { min: -100, max: 100 },
-            heightRange: { min: -100, max: 100 },
-          }),
-          centerOnMidpoint(),
-        ],
-        render({ state, canvas }) {
-          for (let object of state.objects) {
-            circle({
-              lineWidth: 0.5,
-              fill: fromRGBA(main),
-              stroke: 'black',
-              position: object.position,
-              radius: object.radius,
-              context: canvas.context,
+  },
+  animator: combineAnimators({
+    objects: (combineLaws(
+      gravity({ gravity: 0.2, power: 2 }),
+      gravity({ gravity: -0.002, power: 5 }),
+      velocityStep(),
+    )),
+  }),
+  layers: [
+    {
+      static: true,
+      render({ canvas }) {
+        switch (variant) {
+          case 'corner':
+            corner({
+              canvas,
+              color: complimentary,
+              offset: 0.3, angle: 0.7,
             });
-          }
-        },
+            break;
+          case 'gradient':
+            gradient({
+              canvas,
+              stops: makeStops({
+                0: fromRGBA(complimentary),
+                0.2: fromRGBA(multRGBA(complimentary, 1.2)),
+                1: gray(255),
+              }),
+            });
+            break;
+          default:
+            break;
+        }
       },
-    ],
-  };
-}
+    },
+    {
+      transforms: [
+        zoomToFit({
+          widthRange: { min: -100, max: 100 },
+          heightRange: { min: -100, max: 100 },
+        }),
+        centerOnMidpoint(),
+      ],
+      render({ state, canvas }) {
+        for (let object of state.objects) {
+          circle({
+            lineWidth: 0.5,
+            fill: fromRGBA(main),
+            stroke: 'black',
+            position: object.position,
+            radius: object.radius,
+            context: canvas.context,
+          });
+        }
+      },
+    },
+  ],
+});
 
 function gradient({
   canvas: { context, width, height },

@@ -1,3 +1,4 @@
+export * from './animators';
 export * from './base';
 export * from './draw';
 export * from './launch';

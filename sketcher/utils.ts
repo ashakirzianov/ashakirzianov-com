@@ -1,4 +1,4 @@
-import { Dimensions, NumRange, Vector } from "./base";
+import { NumRange, Vector } from "./base";
 
 export function mapRange({ from, to, value }: {
     from: NumRange,
@@ -32,7 +32,9 @@ export function withinRange({
 }
 
 export function withinDimensions({ dimensions, point: [x, y, z] }: {
-    dimensions: Dimensions,
+    dimensions: {
+        x: NumRange, y: NumRange, z: NumRange,
+    },
     point: Vector,
 }) {
     return withinRange({ range: dimensions.x, value: x })

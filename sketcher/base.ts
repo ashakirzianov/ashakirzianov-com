@@ -1,6 +1,8 @@
 import { RenderTransform } from "./transform";
 
 export type Vector = number[];
+export type NumRange = { min: number, max: number };
+
 export type StringColor = string;
 export type RGBAColor = {
     red: number,
@@ -9,40 +11,33 @@ export type RGBAColor = {
     alpha?: number,
 };
 export type Color = StringColor;
-export type NumRange = { min: number, max: number };
-export type Dimensions = {
-    x: NumRange, y: NumRange, z: NumRange,
-};
-export type UniverseObject = {
-    position: Vector,
-    velocity: Vector,
-    mass: number,
-    radius: number,
-};
-export type Universe = {
-    dimensions: Dimensions,
-    objects: UniverseObject[],
-};
-export type Animator = (universe: Universe) => Universe;
+
+export type WithPosition = { position: Vector };
+export type WithVelocity = { velocity: Vector };
+export type WithMass = { mass: number };
+export type WithRadius = { radius: number };
+export type WithObjects<T> = { objects: T[] };
+
+export type Animator<State> = (state: State) => State;
 export type Canvas2DContext = CanvasRenderingContext2D;
 export type Canvas = {
     context: Canvas2DContext,
     width: number,
     height: number,
 };
-export type RenderProps = {
+export type RenderProps<State> = {
     canvas: Canvas,
-    universe: Universe,
+    state: State,
 };
-export type Render = (props: RenderProps) => void;
-export type Layer = {
-    render: Render,
-    transforms?: RenderTransform[],
+export type Render<State> = (props: RenderProps<State>) => void;
+export type Layer<State> = {
+    render: Render<State>,
+    transforms?: RenderTransform<State>[],
     static?: boolean,
     hidden?: boolean,
 }
-export type Scene = {
-    universe: Universe,
-    animator: Animator,
-    layers: Layer[],
+export type Scene<State> = {
+    state: State,
+    animator: Animator<State>,
+    layers: Layer<State>[],
 };

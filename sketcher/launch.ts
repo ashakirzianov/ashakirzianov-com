@@ -1,25 +1,25 @@
-import { Scene, Canvas, Layer, Universe } from "./base";
+import { Scene, Canvas, Layer } from "./base";
 import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
-export type LaunchProps = {
-    scene: Scene,
+export type LaunchProps<State> = {
+    scene: Scene<State>,
     period?: number,
     skip?: number,
     chunk?: number,
 };
 export type Launcher = ReturnType<typeof launcher>;
-export function launcher({
-    scene: { universe, animator, layers },
+export function launcher<State>({
+    scene: { state, animator, layers },
     period, skip, chunk,
-}: LaunchProps) {
+}: LaunchProps<State>) {
     function launch(getCanvas: CanvasGetter) {
         let { schedule, cleanup } = makeTimer();
         let frame = 0;
-        let renderUniverse = makeRenderUniverse({ layers, getCanvas });
+        let renderState = makeRenderState({ layers, getCanvas });
         function loop(current?: number) {
-            universe = animator(universe);
-            if (renderUniverse(universe) && frame < (skip ?? 0)) {
+            state = animator(state);
+            if (renderState(state) && frame < (skip ?? 0)) {
                 frame++;
                 if ((current ?? 0) < (chunk ?? 100)) {
                     loop((current ?? 0) + 1);
@@ -36,12 +36,12 @@ export function launcher({
     return { launch };
 }
 
-function makeRenderUniverse({ layers, getCanvas }: {
-    layers: Layer[],
+function makeRenderState<State>({ layers, getCanvas }: {
+    layers: Layer<State>[],
     getCanvas: CanvasGetter,
 }) {
     let doneStatic = new Set();
-    return function renderLayers(universe: Universe) {
+    return function renderLayers(state: State) {
         let rendered = false;
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
@@ -56,9 +56,9 @@ function makeRenderUniverse({ layers, getCanvas }: {
                 continue;
             }
             if (layer.transforms) {
-                combineTransforms(...layer.transforms)(layer.render)({ canvas, universe })
+                combineTransforms(...layer.transforms)(layer.render)({ canvas, state })
             } else {
-                layer.render({ canvas, universe });
+                layer.render({ canvas, state });
             }
             if (layer.static) {
                 doneStatic.add(idx);

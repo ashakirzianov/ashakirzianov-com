@@ -12,14 +12,7 @@ export function launch({
     getCanvas,
     period, skip, chunk,
 }: LaunchProps) {
-    let timeout: any;
-    function cleanup() {
-        if (timeout) {
-            clearTimeout(timeout);
-            timeout = undefined;
-        }
-    }
-
+    let { schedule, cleanup } = makeTimer();
     let frame = 0;
     let doneStatic = new Set();
     function loop(current?: number) {
@@ -50,15 +43,28 @@ export function launch({
             if ((current ?? 0) < (chunk ?? 100)) {
                 loop((current ?? 0) + 1);
             } else {
-                cleanup();
-                timeout = setTimeout(loop, period);
+                schedule(loop, period);
             }
         } else {
-            cleanup();
-            timeout = setTimeout(loop, period);
+            schedule(loop, period);
         }
         return rendered;
     }
     loop();
     return { cleanup };
+}
+
+function makeTimer() {
+    let timeout: any;
+    function schedule(f: () => void, t: number) {
+        cleanup();
+        timeout = setTimeout(f, t);
+    }
+    function cleanup() {
+        if (timeout) {
+            clearTimeout(timeout);
+            timeout = undefined;
+        }
+    }
+    return { schedule, cleanup };
 }

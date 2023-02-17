@@ -40,11 +40,39 @@ export default function knot({
       gravity({ gravity: -0.002, power: 5 }),
       velocityStep(),
     )),
-    renderFrame: renderFromTransforms(
-      zoomToFit(),
-      centerOnMidpoint(),
-      function () {
-        return function ({ universe, canvas }) {
+    layers: [
+      {
+        static: true,
+        render({ canvas }) {
+          switch (variant) {
+            case 'corner':
+              corner({
+                canvas,
+                color: complimentary,
+                offset: 0.3, angle: 0.7,
+              });
+              break;
+            case 'gradient':
+              gradient({
+                canvas,
+                stops: makeStops({
+                  0: fromRGBA(complimentary),
+                  0.2: fromRGBA(multRGBA(complimentary, 1.2)),
+                  1: gray(255),
+                }),
+              });
+              break;
+            default:
+              break;
+          }
+        },
+      },
+      {
+        transforms: [
+          zoomToFit(),
+          centerOnMidpoint(),
+        ],
+        render({ universe, canvas }) {
           for (let object of universe.objects) {
             circle({
               lineWidth: 0.5,
@@ -55,32 +83,9 @@ export default function knot({
               context: canvas.context,
             });
           }
-        }
+        },
       },
-    ),
-    setupFrame({ canvas }) {
-      switch (variant) {
-        case 'corner':
-          corner({
-            canvas,
-            color: complimentary,
-            offset: 0.3, angle: 0.7,
-          });
-          break;
-        case 'gradient':
-          gradient({
-            canvas,
-            stops: makeStops({
-              0: fromRGBA(complimentary),
-              0.2: fromRGBA(multRGBA(complimentary, 1.2)),
-              1: gray(255),
-            }),
-          });
-          break;
-        default:
-          break;
-      }
-    },
+    ],
   };
 }
 

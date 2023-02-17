@@ -13,17 +13,17 @@ export type NumRange = { min: number, max: number };
 export type Dimensions = {
     x: NumRange, y: NumRange, z: NumRange,
 };
-export type UniverseObject = {
+export type StateObject = {
     position: Vector,
     velocity: Vector,
     mass: number,
     radius: number,
 };
-export type Universe = {
+export type StateType = {
     dimensions: Dimensions,
-    objects: UniverseObject[],
+    objects: StateObject[],
 };
-export type Animator = (universe: Universe) => Universe;
+export type Animator = (state: StateType) => StateType;
 export type Canvas2DContext = CanvasRenderingContext2D;
 export type Canvas = {
     context: Canvas2DContext,
@@ -32,7 +32,7 @@ export type Canvas = {
 };
 export type RenderProps = {
     canvas: Canvas,
-    universe: Universe,
+    state: StateType,
 };
 export type Render = (props: RenderProps) => void;
 export type Layer = {
@@ -42,7 +42,7 @@ export type Layer = {
     hidden?: boolean,
 }
 export type Scene = {
-    universe: Universe,
+    state: StateType,
     animator: Animator,
     layers: Layer[],
 };

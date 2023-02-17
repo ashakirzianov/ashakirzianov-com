@@ -17,7 +17,7 @@ export type UseSketcherOut = {
     renderFrame: (canvas: Canvas) => void,
 };
 export function useSingleLayeredSketcher({
-    scene: { universe, animator, layers },
+    scene: { state: state, animator, layers },
     period,
 }: {
     scene: Scene,
@@ -32,7 +32,7 @@ export function useSingleLayeredSketcher({
             }
         }
         function loop() {
-            universe = animator(universe);
+            state = animator(state);
             cleanup();
             timeout = setTimeout(loop, period);
         }
@@ -43,7 +43,7 @@ export function useSingleLayeredSketcher({
         renderFrame(canvas) {
             for (let idx = 0; idx < layers.length; idx++) {
                 let layer = layers[idx];
-                layer.render({ canvas, universe });
+                layer.render({ canvas, state: state });
             }
         },
     };

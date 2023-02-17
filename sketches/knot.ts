@@ -2,7 +2,7 @@ import { fromRGBA, gray, multRGBA, makeStops, unifromStops } from '@/sketcher/co
 import {
   velocityStep, combineLaws, gravity,
   circle,
-  renderFromTransforms, centerOnMidpoint, zoomToFit, Universe, random3d, randomRange, NumRange, Color, Scene, Canvas, rangeArray, ColorStop, RGBAColor, Vector,
+  renderFromTransforms, centerOnMidpoint, zoomToFit, StateType, random3d, randomRange, NumRange, Color, Scene, Canvas, rangeArray, ColorStop, RGBAColor, Vector,
 } from '../sketcher';
 
 export default function knot({
@@ -19,7 +19,7 @@ export default function knot({
   variant: 'corner' | 'gradient' | 'pain',
 }): Scene {
   return {
-    universe: {
+    state: {
       dimensions: {
         x: { min: -100, max: 100 },
         y: { min: -100, max: 100 },
@@ -72,8 +72,8 @@ export default function knot({
           zoomToFit(),
           centerOnMidpoint(),
         ],
-        render({ universe, canvas }) {
-          for (let object of universe.objects) {
+        render({ state: state, canvas }) {
+          for (let object of state.objects) {
             circle({
               lineWidth: 0.5,
               fill: fromRGBA(main),

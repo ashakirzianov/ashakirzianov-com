@@ -1,4 +1,4 @@
-import { Layer } from "./base";
+import { Canvas, Layer } from "./base";
 import { ColorStop, fillGradient } from "./draw";
 
 export function gradientLayer(stops: ColorStop[]): Layer<any> {
@@ -7,5 +7,14 @@ export function gradientLayer(stops: ColorStop[]): Layer<any> {
             fillGradient({ canvas, stops });
         },
         static: true,
+    };
+}
+
+export function statelessLayer(render: (canvas: Canvas) => void): Layer<any> {
+    return {
+        static: true,
+        render({ canvas }) {
+            render(canvas);
+        },
     };
 }

@@ -1,8 +1,14 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, randomObjects, gradientLayer,
+  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
+  drawText,
 } from '@/sketcher';
+
+// loadFont({
+//   name: 'myfont',
+//   url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap',
+// });
 
 const {
   count, radiusRange, velocityAmp, boxSize,
@@ -52,6 +58,26 @@ export function knot(): Scene<KnotState> {
     },
   };
 
+  let text = statelessLayer(function ({ context, width, height }) {
+    let unit = Math.floor(height / 256);
+    let size = unit * 40;
+    let x = unit * 8;
+    let y = unit * 240;
+    let text = 'Alexander';
+    let family = 'sans-serif';
+    let offset = unit;
+    drawText({
+      context, size, family, text,
+      position: [x + offset, y + offset],
+      // fill: 'white',
+    });
+    drawText({
+      context, size, family, text,
+      position: [x, y],
+      // fill: 'black',
+    });
+  });
+
   let objects = randomObjects(count, {
     position: positionRange,
     velocity: velocityRange,
@@ -70,7 +96,9 @@ export function knot(): Scene<KnotState> {
     state: { objects },
     animator,
     layers: [
-      background, foreground,
+      background,
+      foreground,
+      text,
     ],
   };
 }

@@ -1,4 +1,3 @@
-import { Card } from "@/components/Card";
 import { Poster } from "@/components/Poster";
 import Head from "next/head";
 import { ReactNode } from "react";

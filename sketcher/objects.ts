@@ -1,13 +1,34 @@
 import {
-    Animator, WithMass, WithPosition, WithVelocity,
+    Animator, NumRange, WithMass, WithPosition, WithRadius, WithVelocity,
 } from './base';
+import { randomRange } from './utils';
 import vector from './vector';
 
 
-type LawState<ObjectT> = ObjectT[];
-type Law<ObjectT> = Animator<LawState<ObjectT>>;
+type Objects<ObjectT> = ObjectT[];
+type ObjectAnimator<ObjectT> = Animator<Objects<ObjectT>>;
+type FullObject = WithPosition & WithVelocity & WithMass & WithRadius;
 
-export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Law<ObjectT> {
+export function createObjects({
+    count, position, velocity, radius, mass,
+}: {
+    count: number,
+    position: NumRange,
+    velocity: NumRange,
+    radius: NumRange,
+    mass: NumRange,
+}): FullObject[] {
+    return Array(count).fill(undefined).map(() => {
+        return {
+            position: vector.random3d(position),
+            velocity: vector.random3d(velocity),
+            radius: randomRange(radius),
+            mass: randomRange(mass),
+        };
+    });
+}
+
+export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): ObjectAnimator<ObjectT> {
     return function velocityLaw(objects) {
         let next = objects.map(object => ({
             ...object,
@@ -17,8 +38,8 @@ export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Law
     }
 }
 
-export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: Law<ObjectT>): Law<ObjectT> {
-    function calculateMomentum(objects: LawState<ObjectT>) {
+export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: ObjectAnimator<ObjectT>): ObjectAnimator<ObjectT> {
+    function calculateMomentum(objects: Objects<ObjectT>) {
         let momentum = objects.reduce(
             (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
             0,
@@ -42,7 +63,7 @@ export type GravityProps = {
     gravity: number,
     power: number,
 };
-export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): Law<ObjectT> {
+export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): ObjectAnimator<ObjectT> {
     function force(o1: ObjectT, o2: ObjectT) {
         let dist = vector.distance(o1.position, o2.position);
         let direction = vector.sub(o1.position, o2.position);
@@ -59,21 +80,12 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
                 if (left === right) {
                     continue;
                 }
-                let lobj = objects[left];
-                let robj = objects[right];
+                let lobj = objects[left]!;
+                let robj = objects[right]!;
                 let f = force(robj, lobj);
                 lobj.velocity = vector.add(lobj.velocity, f);
             }
         }
         return objects;
     }
-}
-
-export function combineLaws<ObjectT>(...laws: Law<ObjectT>[]): Law<ObjectT> {
-    return function combined(state) {
-        return laws.reduce(
-            (s, law) => law(s),
-            state,
-        );
-    };
 }

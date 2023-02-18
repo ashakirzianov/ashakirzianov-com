@@ -3,7 +3,7 @@ export * from './base';
 export * from './color';
 export * from './draw';
 export * from './launch';
-export * from './laws';
+export * from './objects';
 export * from './transform';
 export * from './utils';
 export * from './vector';

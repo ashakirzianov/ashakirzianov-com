@@ -1,13 +1,13 @@
 import { RenderTransform } from "./transform";
 
-export type Vector = number[];
+export type Vector = [number, number, ...number[]];
 export type NumRange = { min: number, max: number };
 
 export type StringColor = string;
 export type RGBAColor = {
-    red: number,
-    green: number,
-    blue: number,
+    red?: number,
+    green?: number,
+    blue?: number,
     alpha?: number,
 };
 export type Color = StringColor;
@@ -41,3 +41,16 @@ export type Scene<State> = {
     animator: Animator<State>,
     layers: Layer<State>[],
 };
+
+export function scene<State>(s: Scene<State>) {
+    return s;
+}
+
+export function layer<State>(render: Layer<State>['render']): Layer<State> {
+    return { render };
+}
+
+export function staticLayer<State>(render: Layer<State>['render']): Layer<State> {
+    return { render, static: true };
+}
+

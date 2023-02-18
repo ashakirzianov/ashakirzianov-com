@@ -1,4 +1,7 @@
-import { Canvas2DContext, Color, NumRange, Vector } from "./base";
+import {
+    Canvas, Canvas2DContext, Color, NumRange, RGBAColor, Vector,
+} from "./base";
+import { fromRGBA, multRGBA, unifromStops } from "./color";
 import { rangeLength } from "./utils";
 
 export function circle({
@@ -88,5 +91,91 @@ export function colorRect({
     context.lineTo(x, y);
     context.strokeStyle = top;
     context.stroke();
+    context.restore();
+}
+
+export function fillGradient({
+    canvas: { context, width, height },
+    stops,
+}: {
+    canvas: Canvas,
+    stops: ColorStop[],
+}) {
+    context.save();
+    var gradient = context.createLinearGradient(0, 0, 0, height);
+    stops.forEach(
+        ({ offset, color }) => gradient.addColorStop(offset, color),
+    );
+
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, width, height);
+    context.restore();
+}
+
+export function drawCorner({
+    canvas, offset, angle, border, color,
+}: {
+    canvas: Canvas,
+    offset: number,
+    angle: number,
+    border?: number,
+    color: RGBAColor,
+}) {
+    let { context, width, height } = canvas;
+    context.save();
+
+    function wall({
+        stops, border,
+    }: {
+        stops: ColorStop[],
+        border?: number,
+    }) {
+        context.save();
+        var gradient = context.createLinearGradient(0, 0, 0, height);
+        stops.forEach(
+            ({ offset, color }) => gradient.addColorStop(offset, color),
+        );
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, width, height);
+
+        if (border) {
+            context.lineWidth = 2;
+            context.strokeStyle = 'black';
+            context.beginPath();
+            context.moveTo(0, height);
+            context.lineTo(width, height);
+            context.lineTo(width, 0);
+            context.stroke();
+        }
+        context.restore();
+    }
+
+    let base = fromRGBA(color);
+    let lightest = fromRGBA(multRGBA(color, 1.2));
+    let light = fromRGBA(multRGBA(color, 1.05));
+    let dark = fromRGBA(multRGBA(color, 0.95));
+    context.fillStyle = lightest;
+    context.fillRect(0, 0, width, height);
+    let skew = Math.cos(-Math.PI * angle);
+    context.save();
+    context.translate(-offset * width, 0);
+    context.transform(1, skew, 0, 1, 0, 0);
+    wall({
+        stops: unifromStops([base, light]),
+        border,
+    });
+    context.restore();
+    context.save();
+    context.scale(-1, 1);
+    context.translate(-width, 0);
+    context.translate(-(1 - offset) * width, 0);
+    context.transform(1, skew, 0, 1, 0, 0);
+    wall({
+        stops: unifromStops([dark, base]),
+        border,
+    });
+    context.restore();
+
     context.restore();
 }

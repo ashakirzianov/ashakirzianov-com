@@ -18,17 +18,17 @@ export function gray(value: number): Color {
 
 export function fromRGBA({ red, green, blue, alpha }: RGBAColor) {
     if (alpha) {
-        return `rgba(${red},${green},${blue},${alpha})`;
+        return `rgba(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)},${alpha})`;
     } else {
-        return `rgb(${red},${green},${blue})`;
+        return `rgb(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)})`;
     }
 }
 
 export function multRGBA({ red, green, blue, alpha }: RGBAColor, value: number): RGBAColor {
     return {
-        red: Math.min(255, Math.floor(red * value)),
-        green: Math.min(255, Math.floor(green * value)),
-        blue: Math.min(255, Math.floor(blue * value)),
+        red: Math.min(255, Math.floor((red ?? 0) * value)),
+        green: Math.min(255, Math.floor((green ?? 0) * value)),
+        blue: Math.min(255, Math.floor((blue ?? 0) * value)),
         alpha: alpha,
     };
 }

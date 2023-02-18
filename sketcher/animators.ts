@@ -17,3 +17,12 @@ export function combineAnimators<State>(object: CombineAnimatorsObject<State>): 
         return next;
     };
 }
+
+export function reduceAnimators<State>(...animators: Animator<State>[]): Animator<State> {
+    return function reduced(state) {
+        return animators.reduce(
+            (s, law) => law(s),
+            state,
+        );
+    };
+}

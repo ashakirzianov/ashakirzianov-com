@@ -19,7 +19,7 @@ export function Poster({ children }: PosterProps) {
         .poster {
             display: flex;
             aspect-ratio: 3 / 4;
-            box-shadow: 0 4px 8px 0px rgba(0,0,0,0.2);
+            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.4),0 .3px .9px 0 rgba(0,0,0,.4);
             border-radius: 5px;
             max-width: 100%;
             max-height: 100%;

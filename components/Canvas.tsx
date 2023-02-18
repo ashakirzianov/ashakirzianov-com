@@ -1,7 +1,6 @@
 // @refresh reset
 import {
-    RefObject,
-    useEffect, useRef,
+    RefObject, useEffect, useRef,
 } from "react";
 
 export type RenderFrameProps = {
@@ -16,17 +15,16 @@ export type CanvasProps = {
     animated?: boolean,
 };
 export function Canvas({
-    renderFrame, setup,
-    animated,
+    renderFrame, setup, animated,
 }: CanvasProps) {
     function getRenderFrameProps(ref: RefObject<HTMLCanvasElement>): RenderFrameProps | undefined {
-        if (canvasRef.current) {
-            let context = canvasRef.current.getContext('2d');
+        if (ref.current) {
+            let context = ref.current.getContext('2d');
             if (context) {
                 return {
                     context,
-                    width: canvasRef.current.width,
-                    height: canvasRef.current.height,
+                    width: ref.current.width,
+                    height: ref.current.height,
                 };
             } else {
                 return undefined;

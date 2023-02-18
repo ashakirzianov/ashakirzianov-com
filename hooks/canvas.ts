@@ -7,6 +7,7 @@ export function useCanvases(count: number) {
     let nodes = Array(count).fill(undefined).map(
         (_, idx) => createElement('canvas', {
             ref: refs[idx],
+            key: `layer-${idx}`,
             style: {
                 zIndex: idx,
                 backgroundColor: 'transparent',
@@ -42,8 +43,8 @@ export function useCanvases(count: number) {
     return { node, refs };
 }
 
-export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement>) {
-    if (!canvasRef.current) {
+export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement> | undefined) {
+    if (!canvasRef?.current) {
         return undefined;
     }
     let context = canvasRef.current.getContext('2d');

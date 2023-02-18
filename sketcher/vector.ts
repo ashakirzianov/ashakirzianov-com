@@ -2,11 +2,11 @@ import { Vector, NumRange } from './base';
 import { randomRange } from './utils';
 
 export function add(v1: Vector, v2: Vector): Vector {
-    return v1.map((x, i) => x + v2[i]);
+    return v1.map((x, i) => x + (v2[i] ?? 0)) as Vector;
 }
 
 export function mults(v: Vector, s: number): Vector {
-    return v.map(x => x * s);
+    return v.map(x => x * s) as Vector;
 }
 
 export function sub(v1: Vector, v2: Vector): Vector {
@@ -16,21 +16,17 @@ export function sub(v1: Vector, v2: Vector): Vector {
 export function random3d(range: NumRange): Vector {
     return zero(3).map(
         () => randomRange(range)
-    );
+    ) as Vector;
 }
 
 export function zero(dimensions: number): Vector {
-    let result: number[] = [];
-    for (let i = 0; i < dimensions; i++) {
-        result.push(0);
-    }
-    return result;
+    return Array(Math.max(2, dimensions)).fill(0) as Vector;
 }
 
 export function distance(v1: Vector, v2: Vector) {
     let result = Math.sqrt(
         v1.reduce(
-            (sum, x, i) => sum + (x - v2[i]) ** 2,
+            (sum, x, i) => sum + (x - (v2[i] ?? 0)) ** 2,
             0,
         )
     );

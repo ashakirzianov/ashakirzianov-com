@@ -1,7 +1,7 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpoint, zoomToFit, random3d, randomRange, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, createObjects,
+  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, randomObjects, createObjects,
 } from '@/sketcher';
 
 const {
@@ -60,12 +60,10 @@ export function knot(): Scene<KnotState> {
     },
   };
 
-  let objects = createObjects({
-    count,
+  let objects = randomObjects(count, {
     position: positionRange,
     velocity: velocityRange,
     radius: radiusRange,
-    mass: radiusRange,
   }).map(obj => ({ ...obj, mass: obj.radius }));
 
   let animator = combineAnimators<KnotState>({

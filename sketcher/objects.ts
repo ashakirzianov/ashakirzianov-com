@@ -9,6 +9,31 @@ type Objects<ObjectT> = ObjectT[];
 type ObjectAnimator<ObjectT> = Animator<Objects<ObjectT>>;
 type FullObject = WithPosition & WithVelocity & WithMass & WithRadius;
 
+type ObjectMap<Keys extends keyof FullObject, T> = {
+    [k in Keys]: T;
+};
+export function randomObjects<Keys extends keyof FullObject>(count: number, props: ObjectMap<Keys, NumRange>): Pick<FullObject, Keys>[] {
+    return Array(count).fill(undefined).map(() => {
+        let object: any = {};
+        let {
+            position, velocity, radius, mass,
+        } = props as ObjectMap<keyof FullObject, NumRange | undefined>;
+        if (position) {
+            object.position = vector.random3d(position);
+        }
+        if (velocity) {
+            object.velocity = vector.random3d(velocity);
+        }
+        if (radius) {
+            object.radius = randomRange(radius);
+        }
+        if (mass) {
+            object.mass = randomRange(mass);
+        }
+        return object;
+    });
+}
+
 export function createObjects({
     count, position, velocity, radius, mass,
 }: {

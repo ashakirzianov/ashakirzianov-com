@@ -1,6 +1,6 @@
 import { RenderTransform } from "./transform";
 
-export type Vector = number[];
+export type Vector = [number, number, ...number[]];
 export type NumRange = { min: number, max: number };
 
 export type StringColor = string;

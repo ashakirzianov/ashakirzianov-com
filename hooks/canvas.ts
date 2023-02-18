@@ -42,8 +42,8 @@ export function useCanvases(count: number) {
     return { node, refs };
 }
 
-export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement>) {
-    if (!canvasRef.current) {
+export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement> | undefined) {
+    if (!canvasRef?.current) {
         return undefined;
     }
     let context = canvasRef.current.getContext('2d');

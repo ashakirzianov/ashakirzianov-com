@@ -44,7 +44,7 @@ function makeRenderState<State>({ layers, getCanvas }: {
     return function renderLayers(state: State) {
         let rendered = false;
         for (let idx = 0; idx < layers.length; idx++) {
-            let layer = layers[idx];
+            let layer = layers[idx]!;
             if (layer.hidden) {
                 continue;
             }

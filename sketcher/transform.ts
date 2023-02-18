@@ -83,7 +83,7 @@ export function centerOnObject<State extends WithObjects<WithPosition>>({ index 
         return function ({ canvas, state }) {
             if (index < state.objects.length) {
                 canvas.context.save();
-                let [shiftx, shifty] = state.objects[index].position;
+                let [shiftx, shifty] = state.objects[index]!.position;
                 canvas.context.translate(-shiftx, -shifty);
                 render({ canvas, state });
                 canvas.context.restore();

@@ -4,6 +4,11 @@ import {
   centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
   drawText,
 } from '@/sketcher';
+import { Roboto } from '@next/font/google';
+const roboto = Roboto({
+  weight: ['900'],
+  subsets: ['latin'],
+});
 
 // loadFont({
 //   name: 'myfont',
@@ -62,19 +67,19 @@ export function knot(): Scene<KnotState> {
     let unit = Math.floor(height / 256);
     let size = unit * 40;
     let x = unit * 8;
-    let y = unit * 240;
+    let y = unit * 220;
     let text = 'Alexander';
-    let family = 'sans-serif';
+    let family = roboto.style.fontFamily;
     let offset = unit;
     drawText({
       context, size, family, text,
       position: [x + offset, y + offset],
-      // fill: 'white',
+      fill: 'white',
     });
     drawText({
       context, size, family, text,
       position: [x, y],
-      // fill: 'black',
+      fill: 'black',
     });
   });
 
@@ -91,6 +96,7 @@ export function knot(): Scene<KnotState> {
       velocityStep(),
     )),
   });
+  text.hidden = true;
 
   return {
     state: { objects },

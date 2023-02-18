@@ -1,7 +1,7 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, randomObjects,
+  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, randomObjects, gradientLayer,
 } from '@/sketcher';
 
 const {
@@ -24,19 +24,11 @@ type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
 type KnotState = WithObjects<KnotObject>;
 
 export function knot(): Scene<KnotState> {
-  let background: Layer<KnotState> = {
-    render({ canvas }) {
-      fillGradient({
-        canvas,
-        stops: makeStops({
-          0: fromRGBA(complimentary),
-          0.8: fromRGBA(multRGBA(complimentary, 1.2)),
-          1: gray(50),
-        }),
-      });
-    },
-    static: true,
-  };
+  let background: Layer<KnotState> = gradientLayer(makeStops({
+    0: fromRGBA(complimentary),
+    0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+    1: gray(50),
+  }));
 
   let foreground: Layer<KnotState> = {
     transforms: [

@@ -30,8 +30,8 @@ export function knot(): Scene<KnotState> {
         canvas,
         stops: makeStops({
           0: fromRGBA(complimentary),
-          0.2: fromRGBA(multRGBA(complimentary, 1.2)),
-          1: gray(255),
+          0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+          1: gray(50),
         }),
       });
     },

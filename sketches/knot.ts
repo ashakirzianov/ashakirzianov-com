@@ -1,14 +1,14 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, randomObjects, createObjects,
+  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, fillGradient, reduceAnimators, randomObjects,
 } from '@/sketcher';
 
 const {
   count, radiusRange, velocityAmp, boxSize,
   palette: { main, complimentary },
 } = {
-  count: 8,
+  count: 10,
   velocityAmp: 0.5,
   boxSize: 100,
   radiusRange: { min: 0.5, max: 5 },
@@ -17,13 +17,13 @@ const {
     complimentary: { red: 230, green: 230, blue: 230 },
   },
 };
+let positionRange = { min: -boxSize, max: boxSize };
+let velocityRange = { min: -velocityAmp, max: velocityAmp };
 
 type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
 type KnotState = WithObjects<KnotObject>;
 
 export function knot(): Scene<KnotState> {
-  let positionRange = { min: -boxSize, max: boxSize };
-  let velocityRange = { min: -velocityAmp, max: velocityAmp };
   let background: Layer<KnotState> = {
     render({ canvas }) {
       fillGradient({

@@ -1,3 +1,5 @@
+import { NumRange } from "./range";
+
 export type Animator<State> = (state: State) => State;
 
 export type CombineAnimatorsObject<State> = {
@@ -31,4 +33,10 @@ export function arrayAnimator<State>(animator: Animator<State>): Animator<State[
     return function (state) {
         return state.map(animator);
     }
+}
+
+export function counter(range?: Partial<NumRange>): Animator<number> {
+    let min = range?.min ?? 0;
+    let max = range?.max ?? Number.MAX_SAFE_INTEGER;
+    return c => c < max ? c + 1 : min;
 }

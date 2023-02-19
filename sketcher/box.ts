@@ -1,4 +1,4 @@
-import { addVector, Vector } from "./vector";
+import { addVector, multsVector, Vector } from "./vector";
 
 export type Box = {
     start: Vector,
@@ -41,4 +41,23 @@ export function squareNBox({
     );
     let end = addVector(start, [dw, dh, depth ?? 0]);
     return { start, end };
+}
+
+export function boundingBox(points: Vector[]): Box {
+    let start: Vector = [...points[0]!];
+    let end: Vector = [...points[0]!];
+    for (let point of points) {
+        for (let idx = 0; idx < 3; idx++) {
+            start[idx] = Math.min(start[idx]!, point[idx]!);
+            end[idx] = Math.max(end[idx]!, point[idx]!);
+        }
+    }
+    return { start, end };
+}
+
+export function multBox({ start, end }: Box, value: number) {
+    return {
+        start: multsVector(start, value),
+        end: multsVector(end, value),
+    };
 }

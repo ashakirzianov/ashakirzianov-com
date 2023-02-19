@@ -1,9 +1,6 @@
 import {
     makeStops, velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, gradientLayer,
-    Animator,
-    arrayAnimator,
-    Box,
-    randomSubbox,
+    Animator, arrayAnimator, Box, randomSubbox,
     randomVectorInBox,
     randomRange,
     WithColor,
@@ -12,10 +9,13 @@ import {
     centerOnMidpoint,
     layer,
     rainbow,
-    gray,
     fromRGBA,
-    multRGBA,
     randomVector,
+    counter,
+    boundingBox,
+    clearFrame,
+    multBox,
+    zoomToFill,
 } from '@/sketcher';
 
 const {
@@ -23,7 +23,7 @@ const {
     boxSize, subBoxSize,
     colors, back,
 } = {
-    setCount: 4,
+    setCount: 5,
     count: 10,
     velocityAmp: 1,
     boxSize: 250,
@@ -35,7 +35,7 @@ const {
     ],
 };
 
-type PlaygroundObject = {}
+type PlaygroundObject = { n: number }
     & WithPosition & WithVelocity
     & WithRadius & WithMass
     & WithColor
@@ -54,7 +54,7 @@ export function playground(): Scene<PlaygroundState> {
         state: buildState(),
         animator: combineAnimators<PlaygroundState>({
             sets: arrayAnimator(objectsAnimator()),
-            count: c => (c + 1) % 100000,
+            count: counter(),
         }),
         layers: [
             background(),
@@ -68,21 +68,18 @@ function buildState(): PlaygroundState {
     let sets = randomSets(count, boxes);
     return {
         count: 0,
-        sets //: [sets.flat()],
+        sets,
+        // sets: [sets.flat()],
     };
 }
 
 function squareBoxes(count: number): Box[] {
     let rows = 5, columns = 5;
-    // let ns = Array(rows * columns).fill(0).map(
-    //     (_, idx) => idx,
-    //     );
     let ns = [0, 17, 3, 7, 9, 4];
     return Array(count)
         .fill(undefined)
         .map(
             (_, idx) => squareNBox({
-                // n: randomRange({ min: 0, max: 5 * 5 }),
                 n: ns[idx % ns.length]!,
                 box,
                 depth: subBoxSize,
@@ -112,10 +109,11 @@ function randomSets(count: number, boxes: Box[]) {
                     velocity: randomVector({
                         min: -velocityAmp, max: velocityAmp,
                     }),
-                    // velocity: [50, 10, 10],
                     radius,
                     mass: radius,
                     color,
+                    // n: Math.floor(randomRange({ max: 10000 }))
+                    n: idx * 100,
                 };
             },
         ),
@@ -140,25 +138,31 @@ function background(): Layer<PlaygroundState> {
 }
 
 function foreground(): Layer<PlaygroundState> {
-    let cs = rainbow(108);
+    let cs = rainbow(120);
     return layer(({ canvas, state }) => {
         canvas.context.save();
-        zoomToFit({ canvas, box });
-        centerOnMidpoint({
+        // clearFrame({ canvas, color: 'white' });
+        // zoomToFit({ canvas, box });
+        let ps = state.sets.flat().map(o => o.position);
+        zoomToFill({
             canvas,
-            points: state.sets.flat().map(o => o.position),
+            box: multBox(boundingBox(ps), 1.05),
         });
+        // centerOnMidpoint({
+        //     canvas,
+        //     points: ps,
+        // });
         for (let set of state.sets) {
             for (let object of set) {
                 circle({
                     lineWidth: 0.5,
                     // fill: object.color,
-                    fill: cs[state.count % cs.length]!,
+                    fill: cs[(state.count + object.n) % cs.length]!,
                     stroke: 'black',
                     position: object.position,
                     radius: object.radius,
                     context: canvas.context,
-                })
+                });
             }
         }
         canvas.context.restore();

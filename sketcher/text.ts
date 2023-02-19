@@ -1,4 +1,5 @@
 import { Canvas2DContext, Color, Vector2d } from "./base";
+import { resolveColor } from "./color";
 
 export function drawText({
     context, text, family, size, fill, stroke,
@@ -15,7 +16,7 @@ export function drawText({
     context.save();
     context.font = `${size}px ${family}`;
     if (fill) {
-        context.fillStyle = fill;
+        context.fillStyle = resolveColor(fill);
         context.fillText(text, x, y);
     }
     if (stroke) {

@@ -15,7 +15,9 @@ export type RGBAColor = {
     alpha?: number,
 };
 export type TupleColor = number[];
-export type Color = StringColor;
+export type ResolvedColor = string;
+export type Color = StringColor | RGBAColor | TupleColor;
+export type ColorStop = { offset: number, color: ResolvedColor };
 
 export type WithPosition = { position: Vector };
 export type WithVelocity = { velocity: Vector };

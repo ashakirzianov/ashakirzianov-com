@@ -3,6 +3,7 @@ import {
     WithSets, WithPosition, Canvas, Box,
 } from "./base";
 import { boxRange } from "./box";
+import { resolveColor } from "./color";
 import { rangeLength } from "./utils";
 import vector from "./vector";
 
@@ -23,7 +24,7 @@ export function clearFrame({ color, canvas }: {
     color: Color,
     canvas: Canvas,
 }) {
-    canvas.context.fillStyle = color;
+    canvas.context.fillStyle = resolveColor(color);
     canvas.context.fillRect(0, 0, canvas.width, canvas.height);
 }
 

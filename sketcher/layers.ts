@@ -1,5 +1,5 @@
-import { Canvas, Layer, Render, Scene } from "./base";
-import { ColorStop, fillGradient } from "./draw";
+import { Canvas, ColorStop, Layer, Render, Scene } from "./base";
+import { fillGradient } from "./draw";
 
 export function scene<State>(s: Scene<State>) {
     return s;

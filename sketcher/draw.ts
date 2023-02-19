@@ -1,7 +1,7 @@
 import {
-    Canvas, Canvas2DContext, Color, NumRange, Render, RGBAColor, Vector, WithSets,
+    Canvas, Canvas2DContext, Color, ColorStop, NumRange, Render, RGBAColor, Vector, WithSets,
 } from "./base";
-import { fromRGBA, multRGBA, unifromStops } from "./color";
+import { fromRGBA, multRGBA, resolveColor, unifromStops } from "./color";
 import { rangeLength } from "./utils";
 
 export function circle({
@@ -18,8 +18,8 @@ export function circle({
 }) {
     context.save();
     context.lineWidth = lineWidth;
-    context.fillStyle = fill;
-    context.strokeStyle = stroke;
+    context.fillStyle = resolveColor(fill);
+    context.strokeStyle = resolveColor(stroke);
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
     context.fill();
@@ -27,7 +27,6 @@ export function circle({
     context.restore();
 }
 
-export type ColorStop = { offset: number, color: Color };
 export function createLinearGradient({
     context, colorStops, start, end,
 }: {
@@ -52,7 +51,7 @@ export function strokeDimensions({
     context: Canvas2DContext,
 }) {
     context.save();
-    context.strokeStyle = color;
+    context.strokeStyle = resolveColor(color);
     context.strokeRect(
         dimensions.x.min, dimensions.y.min,
         rangeLength(dimensions.x), rangeLength(dimensions.y),
@@ -74,22 +73,22 @@ export function colorRect({
     context.beginPath();
     context.moveTo(x, y);
     context.lineTo(x, height);
-    context.strokeStyle = left;
+    context.strokeStyle = resolveColor(left);
     context.stroke();
     context.beginPath();
     context.moveTo(x, height);
     context.lineTo(width, height);
-    context.strokeStyle = bottom;
+    context.strokeStyle = resolveColor(bottom);
     context.stroke();
     context.beginPath();
     context.moveTo(width, height);
     context.lineTo(width, y);
-    context.strokeStyle = right;
+    context.strokeStyle = resolveColor(right);
     context.stroke();
     context.beginPath();
     context.moveTo(width, y);
     context.lineTo(x, y);
-    context.strokeStyle = top;
+    context.strokeStyle = resolveColor(top);
     context.stroke();
     context.restore();
 }

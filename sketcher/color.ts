@@ -1,5 +1,16 @@
-import { Color, RGBAColor, TupleColor } from './base';
-import { ColorStop } from './draw';
+import {
+    Color, RGBAColor, TupleColor, ColorStop, ResolvedColor,
+} from './base';
+
+export function resolveColor(color: Color): ResolvedColor {
+    if (Array.isArray(color)) {
+        return fromTupleColor(color);
+    } else if (typeof color === 'object') {
+        return fromRGBA(color);
+    } else {
+        return color;
+    }
+}
 
 const colorMap = {
     orange: { red: 255, green: 165, blue: 0 },
@@ -8,7 +19,7 @@ export function toRGBA(name: keyof typeof colorMap): RGBAColor {
     return colorMap[name];
 }
 
-export function gray(value: number): Color {
+export function gray(value: number): ResolvedColor {
     return fromRGBA({
         red: value,
         green: value,
@@ -16,7 +27,7 @@ export function gray(value: number): Color {
     });
 }
 
-export function fromRGBA({ red, green, blue, alpha }: RGBAColor) {
+export function fromRGBA({ red, green, blue, alpha }: RGBAColor): ResolvedColor {
     if (alpha) {
         return `rgba(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)},${alpha})`;
     } else {
@@ -24,8 +35,8 @@ export function fromRGBA({ red, green, blue, alpha }: RGBAColor) {
     }
 }
 
-export function fromTupleColor([red, green, blue, alpha]: TupleColor) {
-    return `rgba(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)},${alpha})`;
+export function fromTupleColor([red, green, blue, alpha]: TupleColor): ResolvedColor {
+    return fromRGBA({ red, green, blue, alpha });
 }
 
 export function multRGBA({ red, green, blue, alpha }: RGBAColor, value: number): RGBAColor {
@@ -38,7 +49,7 @@ export function multRGBA({ red, green, blue, alpha }: RGBAColor, value: number):
 }
 
 export function mapStops({ colors, func }: {
-    colors: Color[],
+    colors: ResolvedColor[],
     func: (value: number) => number,
 }): ColorStop[] {
     let delta = 1 / colors.length;
@@ -48,7 +59,7 @@ export function mapStops({ colors, func }: {
     }));
 }
 
-export function unifromStops(colors: Color[]): ColorStop[] {
+export function unifromStops(colors: ResolvedColor[]): ColorStop[] {
     return mapStops({
         colors,
         func: x => x,
@@ -56,7 +67,8 @@ export function unifromStops(colors: Color[]): ColorStop[] {
 }
 
 export type ColorStopObject = {
-    [k in number]: Color;
+    // TODO: change to color?
+    [k in number]: ResolvedColor;
 }
 export function makeStops(object: ColorStopObject): ColorStop[] {
     return Object.entries(object).map(

@@ -1,4 +1,4 @@
-import { Color, RGBAColor } from './base';
+import { Color, RGBAColor, TupleColor } from './base';
 import { ColorStop } from './draw';
 
 const colorMap = {
@@ -22,6 +22,10 @@ export function fromRGBA({ red, green, blue, alpha }: RGBAColor) {
     } else {
         return `rgb(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)})`;
     }
+}
+
+export function fromTupleColor([red, green, blue, alpha]: TupleColor) {
+    return `rgba(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)},${alpha})`;
 }
 
 export function multRGBA({ red, green, blue, alpha }: RGBAColor, value: number): RGBAColor {

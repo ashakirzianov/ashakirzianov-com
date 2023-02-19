@@ -16,12 +16,14 @@ export type RGBAColor = {
     blue?: number,
     alpha?: number,
 };
+export type TupleColor = number[];
 export type Color = StringColor;
 
 export type WithPosition = { position: Vector };
 export type WithVelocity = { velocity: Vector };
 export type WithMass = { mass: number };
 export type WithRadius = { radius: number };
+export type WithColor = { color: Color };
 export type WithSets<T> = { sets: T[] };
 
 export type Animator<State> = (state: State) => State;

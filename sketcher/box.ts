@@ -2,25 +2,31 @@ import { Box, Vector } from "./base";
 import { randomRange } from "./utils";
 import vector from "./vector";
 
+export function boxSize({ start, end }: Box) {
+    return {
+        width: end[0] - start[0],
+        height: end[1] - start[1],
+    };
+}
+
 export function squareNBox({
-    n, rows, columns, width, height, offset, depth,
+    n, rows, columns, box, depth,
 }: {
     n: number,
+    box: Box,
     rows: number,
     columns: number,
-    width: number,
-    height: number,
-    offset?: Vector,
     depth?: number,
 }): Box {
+    let { width, height } = boxSize(box);
     let dw = width / columns;
     let dh = height / rows;
     let row = Math.floor(n / columns);
     let column = n % columns;
-    let start: Vector = [column * dw, row * dh, 0];
-    if (offset) {
-        start = vector.add(start, offset);
-    }
+    let start: Vector = vector.add(
+        [column * dw, row * dh, 0],
+        box.start,
+    );
     let end = vector.add(start, [dw, dh, depth ?? 0]);
     return { start, end };
 }

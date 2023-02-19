@@ -10,10 +10,10 @@ export function mapRange({ from, to, value }: {
     return result;
 }
 
-export function randomRange(range: NumRange) {
+export function randomRange(range: Partial<NumRange>) {
     return mapRange({
         from: { min: 0, max: 1 },
-        to: range,
+        to: { min: range.min ?? 0, max: range.max ?? 0 },
         value: Math.random(),
     });
 }

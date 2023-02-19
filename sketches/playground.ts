@@ -15,6 +15,7 @@ import {
     fromRGBA,
     multRGBA,
     gray,
+    layer,
 } from '@/sketcher';
 import vector from '@/sketcher/vector';
 
@@ -145,24 +146,22 @@ function background(): Layer<PlaygroundState> {
 }
 
 function foreground(): Layer<PlaygroundState> {
-    return {
-        render({ canvas, state }) {
-            canvas.context.save();
-            zoomToFit({ canvas, box });
-            centerOnMidpoint({ canvas, objects: state.sets.flat() });
-            for (let set of state.sets) {
-                for (let object of set) {
-                    circle({
-                        lineWidth: 0.5,
-                        fill: object.color,
-                        stroke: 'black',
-                        position: object.position,
-                        radius: object.radius,
-                        context: canvas.context,
-                    })
-                }
+    return layer(({ canvas, state }) => {
+        canvas.context.save();
+        zoomToFit({ canvas, box });
+        centerOnMidpoint({ canvas, objects: state.sets.flat() });
+        for (let set of state.sets) {
+            for (let object of set) {
+                circle({
+                    lineWidth: 0.5,
+                    fill: object.color,
+                    stroke: 'black',
+                    position: object.position,
+                    radius: object.radius,
+                    context: canvas.context,
+                })
             }
-            canvas.context.restore();
         }
-    };
+        canvas.context.restore();
+    });
 }

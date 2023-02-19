@@ -1,5 +1,5 @@
 import {
-    Canvas, Canvas2DContext, Color, NumRange, RGBAColor, Vector,
+    Canvas, Canvas2DContext, Color, NumRange, Render, RGBAColor, Vector, WithSets,
 } from "./base";
 import { fromRGBA, multRGBA, unifromStops } from "./color";
 import { rangeLength } from "./utils";
@@ -178,4 +178,15 @@ export function drawCorner({
     context.restore();
 
     context.restore();
+}
+
+export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
+): Render<WithSets<ObjectT[]>> {
+    return function render({ canvas, state }) {
+        for (let set of state.sets) {
+            for (let object of set) {
+                drawObject({ canvas, object });
+            }
+        }
+    };
 }

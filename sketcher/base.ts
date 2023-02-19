@@ -22,7 +22,7 @@ export type WithPosition = { position: Vector };
 export type WithVelocity = { velocity: Vector };
 export type WithMass = { mass: number };
 export type WithRadius = { radius: number };
-export type WithObjects<T> = { objects: T[] };
+export type WithSets<T> = { sets: T[] };
 
 export type Animator<State> = (state: State) => State;
 export type Canvas2DContext = CanvasRenderingContext2D;

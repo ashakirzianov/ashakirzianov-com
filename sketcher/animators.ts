@@ -26,3 +26,9 @@ export function reduceAnimators<State>(...animators: Animator<State>[]): Animato
         );
     };
 }
+
+export function arrayAnimator<State>(animator: Animator<State>): Animator<State[]> {
+    return function (state) {
+        return state.map(animator);
+    }
+}

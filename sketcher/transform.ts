@@ -1,5 +1,5 @@
 import {
-    Color, NumRange, Render, Vector, WithMass, WithObjects, WithPosition,
+    Color, NumRange, Render, Vector, WithSets, WithPosition,
 } from "./base";
 import { rangeLength } from "./utils";
 import vector from "./vector";
@@ -76,14 +76,14 @@ export function zoomToFill<State>({ widthRange, heightRange }: {
     }
 }
 
-export function centerOnObject<State extends WithObjects<WithPosition>>({ index }: {
+export function centerOnObject<State extends WithSets<WithPosition>>({ index }: {
     index: number,
 }): RenderTransform<State> {
     return function transform(render) {
         return function ({ canvas, state }) {
-            if (index < state.objects.length) {
+            if (index < state.sets.length) {
                 canvas.context.save();
-                let [shiftx, shifty] = state.objects[index]!.position;
+                let [shiftx, shifty] = state.sets[index]!.position;
                 canvas.context.translate(-shiftx, -shifty);
                 render({ canvas, state });
                 canvas.context.restore();
@@ -105,20 +105,22 @@ export function centerOnPoint<State>({ point: [shiftx, shifty] }: {
     }
 }
 
-export function centerOnMidpoint<State extends WithObjects<WithPosition & WithMass>>(): RenderTransform<State> {
-    function calcMidpoint(objects: State['objects']) {
+export function centerOnMidpoint<State>(
+    getObjects: (state: State) => WithPosition[],
+): RenderTransform<State> {
+    function calcMidpoint(objects: WithPosition[]) {
         let { position, mass } = objects.reduce(
             (res, curr) => ({
-                position: vector.add(res.position, vector.mults(curr.position, curr.mass)),
-                mass: res.mass + curr.mass,
+                position: vector.add(res.position, curr.position),
+                mass: 1 + (res as any).mass,
             }),
-            { position: vector.zero(3), mass: 0 },
+            { position: vector.zero(3), mass: 1 },
         );
         return vector.mults(position, 1 / mass);
     }
     return function transform(render) {
         return function ({ canvas, state }) {
-            let [shiftx, shifty] = calcMidpoint(state.objects);
+            let [shiftx, shifty] = calcMidpoint(getObjects(state));
             canvas.context.save();
             canvas.context.translate(-shiftx, -shifty);
             render({ canvas, state });

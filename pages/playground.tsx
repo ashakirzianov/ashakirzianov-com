@@ -1,13 +1,15 @@
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { knot } from "@/sketches/knot";
+import { playground } from "@/sketches/playground";
 
-export default function KnotSketch() {
+// @refresh reset
+
+export default function Playground() {
     let { node } = useSketcher({
-        scene: knot(),
+        scene: playground(),
         period: 40,
     });
-    return <PosterPage title="Knot" description="Knot sketch">
+    return <PosterPage title="Playground" description="Sketching playground">
         <div>
             {node}
         </div>

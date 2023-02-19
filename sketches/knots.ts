@@ -16,7 +16,22 @@ type KnotsState = WithSets<KnotsObject[]> & {
     count: number,
 };
 
-export function knots({
+export function current() {
+    return knots({
+        setCount: 5,
+        count: 20,
+        velocityAmp: 1,
+        boxSize: 250,
+        subBoxSize: 10,
+        radiusRange: { min: 0.5, max: 17 },
+        colors: [
+            '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+        ],
+        complimentary: [230, 230, 230],
+    });
+}
+
+function knots({
     setCount, count, radiusRange, velocityAmp,
     boxSize, subBoxSize,
     colors, complimentary,

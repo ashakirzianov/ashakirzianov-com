@@ -1,19 +1,17 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithObjects, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
+  Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
   drawText,
+  Animator,
+  arrayAnimator,
+  objectSetsRender,
+  Box,
+  zoomToFit,
+  transform,
+  centerOnPoint,
+  midpoint,
 } from '@/sketcher';
-import { Roboto } from '@next/font/google';
-const roboto = Roboto({
-  weight: ['900'],
-  subsets: ['latin'],
-});
-
-// loadFont({
-//   name: 'myfont',
-//   url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap',
-// });
 
 const {
   count, radiusRange, velocityAmp, boxSize,
@@ -31,8 +29,13 @@ const {
 let positionRange = { min: -boxSize, max: boxSize };
 let velocityRange = { min: -velocityAmp, max: velocityAmp };
 
+let box: Box = {
+  start: [-boxSize, - boxSize, -boxSize],
+  end: [boxSize, boxSize, boxSize],
+};
+
 type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
-type KnotState = WithObjects<KnotObject>;
+type KnotState = WithSets<KnotObject[]>;
 
 export function knot(): Scene<KnotState> {
   let background: Layer<KnotState> = gradientLayer(makeStops({
@@ -43,24 +46,20 @@ export function knot(): Scene<KnotState> {
 
   let foreground: Layer<KnotState> = {
     transforms: [
-      zoomToFit({
-        widthRange: positionRange,
-        heightRange: positionRange,
-      }),
-      centerOnMidpoint(),
+      transform(canvas => zoomToFit({ canvas, box })),
+      transform((canvas, state) => centerOnPoint({
+        canvas,
+        point: midpoint(state.sets.flat().map(o => o.position)),
+      })),
     ],
-    render({ state, canvas }) {
-      for (let object of state.objects) {
-        circle({
-          lineWidth: 0.5,
-          fill: fromRGBA(main),
-          stroke: 'black',
-          position: object.position,
-          radius: object.radius,
-          context: canvas.context,
-        });
-      }
-    },
+    render: objectSetsRender(({ canvas, object }) => circle({
+      lineWidth: 0.5,
+      fill: fromRGBA(main),
+      stroke: 'black',
+      position: object.position,
+      radius: object.radius,
+      context: canvas.context,
+    }))
   };
 
   let text = statelessLayer(function ({ context, width, height }) {
@@ -69,7 +68,7 @@ export function knot(): Scene<KnotState> {
     let x = unit * 8;
     let y = unit * 220;
     let text = 'Alexander';
-    let family = roboto.style.fontFamily;
+    let family = 'serif';
     let offset = unit;
     drawText({
       context, size, family, text,
@@ -89,17 +88,19 @@ export function knot(): Scene<KnotState> {
     radius: radiusRange,
   }).map(obj => ({ ...obj, mass: obj.radius }));
 
+  let objectsAnimator: Animator<KnotObject[]> = reduceAnimators(
+    gravity({ gravity: 0.2, power: 2 }),
+    gravity({ gravity: -0.002, power: 5 }),
+    velocityStep(),
+  );
+
   let animator = combineAnimators<KnotState>({
-    objects: (reduceAnimators(
-      gravity({ gravity: 0.2, power: 2 }),
-      gravity({ gravity: -0.002, power: 5 }),
-      velocityStep(),
-    )),
+    sets: arrayAnimator(objectsAnimator),
   });
   text.hidden = true;
 
   return {
-    state: { objects },
+    state: { sets: [objects] },
     animator,
     layers: [
       background,

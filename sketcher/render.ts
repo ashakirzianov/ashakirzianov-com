@@ -1,8 +1,31 @@
-import {
-    Canvas, Canvas2DContext, Color, NumRange, RGBAColor, Vector,
-} from "./base";
-import { fromRGBA, multRGBA, unifromStops } from "./color";
-import { rangeLength } from "./utils";
+import { Box, boxRange } from "./box";
+import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops } from "./color";
+import { NumRange, rangeLength } from "./range";
+import { addVector, multsVector, Vector } from "./vector";
+
+export type Canvas2DContext = CanvasRenderingContext2D;
+export type Canvas = {
+    context: Canvas2DContext,
+    width: number,
+    height: number,
+};
+export type RenderProps<State> = {
+    canvas: Canvas,
+    state: State,
+};
+export type Render<State> = (props: RenderProps<State>) => void;
+
+export type WithSets<T> = { sets: T[] };
+export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
+): Render<WithSets<ObjectT[]>> {
+    return function render({ canvas, state }) {
+        for (let set of state.sets) {
+            for (let object of set) {
+                drawObject({ canvas, object });
+            }
+        }
+    };
+}
 
 export function circle({
     lineWidth, fill, stroke,
@@ -18,27 +41,13 @@ export function circle({
 }) {
     context.save();
     context.lineWidth = lineWidth;
-    context.fillStyle = fill;
-    context.strokeStyle = stroke;
+    context.fillStyle = resolveColor(fill, context);
+    context.strokeStyle = resolveColor(stroke, context);
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
     context.fill();
     context.stroke();
     context.restore();
-}
-
-export type ColorStop = { offset: number, color: Color };
-export function createLinearGradient({
-    context, colorStops, start, end,
-}: {
-    context: Canvas2DContext,
-    colorStops: ColorStop[],
-    start: [number, number],
-    end: [number, number],
-}) {
-    let gradient = context.createLinearGradient(start[0], start[1], end[0], end[1]);
-    colorStops.forEach(({ offset, color }) => gradient.addColorStop(offset, color));
-    return gradient;
 }
 
 export function strokeDimensions({
@@ -52,7 +61,7 @@ export function strokeDimensions({
     context: Canvas2DContext,
 }) {
     context.save();
-    context.strokeStyle = color;
+    context.strokeStyle = resolveColor(color, context);
     context.strokeRect(
         dimensions.x.min, dimensions.y.min,
         rangeLength(dimensions.x), rangeLength(dimensions.y),
@@ -74,41 +83,23 @@ export function colorRect({
     context.beginPath();
     context.moveTo(x, y);
     context.lineTo(x, height);
-    context.strokeStyle = left;
+    context.strokeStyle = resolveColor(left, context);
     context.stroke();
     context.beginPath();
     context.moveTo(x, height);
     context.lineTo(width, height);
-    context.strokeStyle = bottom;
+    context.strokeStyle = resolveColor(bottom, context);
     context.stroke();
     context.beginPath();
     context.moveTo(width, height);
     context.lineTo(width, y);
-    context.strokeStyle = right;
+    context.strokeStyle = resolveColor(right, context);
     context.stroke();
     context.beginPath();
     context.moveTo(width, y);
     context.lineTo(x, y);
-    context.strokeStyle = top;
+    context.strokeStyle = resolveColor(top, context);
     context.stroke();
-    context.restore();
-}
-
-export function fillGradient({
-    canvas: { context, width, height },
-    stops,
-}: {
-    canvas: Canvas,
-    stops: ColorStop[],
-}) {
-    context.save();
-    var gradient = context.createLinearGradient(0, 0, 0, height);
-    stops.forEach(
-        ({ offset, color }) => gradient.addColorStop(offset, color),
-    );
-
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, width, height);
     context.restore();
 }
 
@@ -133,7 +124,7 @@ export function drawCorner({
         context.save();
         var gradient = context.createLinearGradient(0, 0, 0, height);
         stops.forEach(
-            ({ offset, color }) => gradient.addColorStop(offset, color),
+            ({ offset, color }) => gradient.addColorStop(offset, resolvePrimitiveColor(color)),
         );
 
         context.fillStyle = gradient;
@@ -178,4 +169,64 @@ export function drawCorner({
     context.restore();
 
     context.restore();
+}
+
+export function clearFrame({ color, canvas }: {
+    color: Color,
+    canvas: Canvas,
+}) {
+    canvas.context.fillStyle = resolveColor(color, canvas.context);
+    canvas.context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+export function zoomToFit({ canvas, box }: {
+    canvas: Canvas,
+    box: Box,
+}) {
+    let { widthRange, heightRange } = boxRange(box);
+    let uwidth = rangeLength(widthRange);
+    let uheight = rangeLength(heightRange);
+    let xratio = canvas.width / uwidth;
+    let yratio = canvas.height / uheight;
+    let ratio = Math.min(xratio, yratio);
+    let shiftx = (canvas.width - uwidth * ratio) / 2;
+    let shifty = (canvas.height - uheight * ratio) / 2;
+    canvas.context.translate(
+        shiftx, shifty,
+    );
+    canvas.context.scale(ratio, ratio);
+    canvas.context.translate(
+        - widthRange.min,
+        - heightRange.min,
+    );
+}
+
+export function zoomToFill({ canvas, box }: {
+    canvas: Canvas,
+    box: Box,
+}) {
+    let { widthRange, heightRange } = boxRange(box);
+    let uwidth = rangeLength(widthRange);
+    let uheight = rangeLength(heightRange);
+    let xratio = canvas.width / uwidth;
+    let yratio = canvas.height / uheight;
+    let ratio = Math.max(xratio, yratio);
+    let shiftx = (canvas.width - uwidth * ratio) / 2;
+    let shifty = (canvas.height - uheight * ratio) / 2;
+    canvas.context.translate(
+        shiftx, shifty,
+    );
+    canvas.context.scale(ratio, ratio);
+    canvas.context.translate(
+        - widthRange.min,
+        - heightRange.min,
+    );
+}
+
+export function centerOnPoint({ canvas, point }: {
+    point: Vector,
+    canvas: Canvas,
+}) {
+    let [shiftx, shifty] = point;
+    canvas.context.translate(-shiftx, -shifty);
 }

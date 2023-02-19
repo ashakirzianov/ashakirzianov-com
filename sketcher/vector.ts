@@ -1,25 +1,19 @@
-import { Vector, NumRange } from './base';
-import { randomRange } from './utils';
+export type Vector2d = [number, number];
+export type Vector = [number, number, number];
 
-export function add(v1: Vector, v2: Vector): Vector {
+export function addVector(v1: Vector, v2: Vector): Vector {
     return v1.map((x, i) => x + (v2[i] ?? 0)) as Vector;
 }
 
-export function mults(v: Vector, s: number): Vector {
+export function multsVector(v: Vector, s: number): Vector {
     return v.map(x => x * s) as Vector;
 }
 
-export function sub(v1: Vector, v2: Vector): Vector {
-    return add(v1, mults(v2, -1));
+export function subVector(v1: Vector, v2: Vector): Vector {
+    return addVector(v1, multsVector(v2, -1));
 }
 
-export function random3d(range: NumRange): Vector {
-    return zero(3).map(
-        () => randomRange(range)
-    ) as Vector;
-}
-
-export function zero(dimensions: number): Vector {
+export function zeroVector(dimensions: number): Vector {
     return Array(Math.max(2, dimensions)).fill(0) as Vector;
 }
 
@@ -33,11 +27,13 @@ export function distance(v1: Vector, v2: Vector) {
     return result;
 }
 
-export function length(v: Vector) {
-    return distance(v, zero(v.length));
+export function lengthVector(v: Vector) {
+    return distance(v, zeroVector(v.length));
 }
 
-export default {
-    add, sub, mults, random3d, zero, distance,
-    length,
-};
+export function midpoint(points: Vector[]) {
+    let mid = points.reduce(
+        (res, curr) => addVector(res, curr)
+    );
+    return multsVector(mid, 1 / points.length);
+}

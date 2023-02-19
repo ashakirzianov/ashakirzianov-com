@@ -1,4 +1,6 @@
-import { Layer, NumRange, Vector } from "./base";
+import { Vector } from "./vector";
+
+export type NumRange = { min: number, max: number };
 
 export function mapRange({ from, to, value }: {
     from: NumRange,
@@ -8,14 +10,6 @@ export function mapRange({ from, to, value }: {
     let perc = (value - from.min) / (from.max - from.min);
     let result = to.min + perc * (to.max - to.min)
     return result;
-}
-
-export function randomRange(range: NumRange) {
-    return mapRange({
-        from: { min: 0, max: 1 },
-        to: range,
-        value: Math.random(),
-    });
 }
 
 export function rangeLength({ min, max }: NumRange) {

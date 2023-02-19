@@ -1,8 +1,16 @@
+import { Animator } from './animator';
+import { Color } from './color';
+import { randomRange, randomVector } from './random';
+import { NumRange } from './range';
 import {
-    Animator, NumRange, WithMass, WithPosition, WithRadius, WithVelocity,
-} from './base';
-import { randomRange } from './utils';
-import vector from './vector';
+    addVector, distance, lengthVector, multsVector, subVector, Vector,
+} from './vector';
+
+export type WithPosition = { position: Vector };
+export type WithVelocity = { velocity: Vector };
+export type WithMass = { mass: number };
+export type WithRadius = { radius: number };
+export type WithColor = { color: Color };
 
 
 type Objects<ObjectT> = ObjectT[];
@@ -19,10 +27,10 @@ export function randomObjects<Keys extends keyof FullObject>(count: number, prop
             position, velocity, radius, mass,
         } = props as ObjectMap<keyof FullObject, NumRange | undefined>;
         if (position) {
-            object.position = vector.random3d(position);
+            object.position = randomVector(position);
         }
         if (velocity) {
-            object.velocity = vector.random3d(velocity);
+            object.velocity = randomVector(velocity);
         }
         if (radius) {
             object.radius = randomRange(radius);
@@ -45,8 +53,8 @@ export function createObjects({
 }): FullObject[] {
     return Array(count).fill(undefined).map(() => {
         return {
-            position: vector.random3d(position),
-            velocity: vector.random3d(velocity),
+            position: randomVector(position),
+            velocity: randomVector(velocity),
             radius: randomRange(radius),
             mass: randomRange(mass),
         };
@@ -57,7 +65,7 @@ export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Obj
     return function velocityLaw(objects) {
         let next = objects.map(object => ({
             ...object,
-            position: vector.add(object.position, object.velocity),
+            position: addVector(object.position, object.velocity),
         }));
         return next;
     }
@@ -66,7 +74,7 @@ export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Obj
 export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: ObjectAnimator<ObjectT>): ObjectAnimator<ObjectT> {
     function calculateMomentum(objects: Objects<ObjectT>) {
         let momentum = objects.reduce(
-            (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
+            (sum, obj) => sum + lengthVector(obj.velocity) * obj.mass,
             0,
         );
         return momentum;
@@ -78,7 +86,7 @@ export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: O
         let nextmom = calculateMomentum(next);
         let coef = momentum / nextmom;
         for (let object of objects) {
-            object.velocity = vector.mults(object.velocity, coef);
+            object.velocity = multsVector(object.velocity, coef);
         }
         return next;
     };
@@ -90,11 +98,11 @@ export type GravityProps = {
 };
 export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): ObjectAnimator<ObjectT> {
     function force(o1: ObjectT, o2: ObjectT) {
-        let dist = vector.distance(o1.position, o2.position);
-        let direction = vector.sub(o1.position, o2.position);
+        let dist = distance(o1.position, o2.position);
+        let direction = subVector(o1.position, o2.position);
         let mass = o1.mass * o2.mass;
         let multiplier = (mass * gravity) / (dist ** power);
-        let result = vector.mults(direction, multiplier);
+        let result = multsVector(direction, multiplier);
         return result;
     }
 
@@ -108,7 +116,7 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
                 let lobj = objects[left]!;
                 let robj = objects[right]!;
                 let f = force(robj, lobj);
-                lobj.velocity = vector.add(lobj.velocity, f);
+                lobj.velocity = addVector(lobj.velocity, f);
             }
         }
         return objects;

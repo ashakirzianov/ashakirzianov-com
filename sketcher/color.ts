@@ -66,3 +66,10 @@ export function makeStops(object: ColorStopObject): ColorStop[] {
         }),
     );
 }
+
+export function rainbow(count: number): Color[] {
+    let delta = 360 / count;
+    return Array(count).fill(undefined).map(
+        (_, idx) => `hsl(${Math.floor(delta * idx)},80%,50%)`,
+    );
+}

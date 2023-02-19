@@ -1,6 +1,6 @@
-import { Box, NumRange, Vector } from "./base";
-import { mapRange } from "./range";
-import { addVector, zeroVector } from "./vector";
+import { Box } from "./box";
+import { mapRange, NumRange } from "./range";
+import { addVector, Vector, zeroVector } from "./vector";
 
 export function randomVector(range: NumRange): Vector {
     return zeroVector(3).map(

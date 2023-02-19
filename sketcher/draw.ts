@@ -1,8 +1,13 @@
-import {
-    Canvas, Canvas2DContext, Color, ColorStop, NumRange, Render, RGBAColor, Vector, WithSets,
-} from "./base";
-import { fromRGBA, multRGBA, resolveColor, unifromStops } from "./color";
-import { rangeLength } from "./range";
+import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, RGBAColor, unifromStops } from "./color";
+import { NumRange, rangeLength } from "./range";
+import { Vector } from "./vector";
+
+export type Canvas2DContext = CanvasRenderingContext2D;
+export type Canvas = {
+    context: Canvas2DContext,
+    width: number,
+    height: number,
+};
 
 export function circle({
     lineWidth, fill, stroke,
@@ -177,15 +182,4 @@ export function drawCorner({
     context.restore();
 
     context.restore();
-}
-
-export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
-): Render<WithSets<ObjectT[]>> {
-    return function render({ canvas, state }) {
-        for (let set of state.sets) {
-            for (let object of set) {
-                drawObject({ canvas, object });
-            }
-        }
-    };
 }

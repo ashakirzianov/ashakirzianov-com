@@ -1,10 +1,16 @@
-import {
-    Animator, NumRange, WithMass, WithPosition, WithRadius, WithVelocity,
-} from './base';
+import { Animator } from './animator';
+import { Color } from './color';
 import { randomRange, randomVector } from './random';
+import { NumRange } from './range';
 import {
-    addVector, distance, lengthVector, multsVector, subVector,
+    addVector, distance, lengthVector, multsVector, subVector, Vector,
 } from './vector';
+
+export type WithPosition = { position: Vector };
+export type WithVelocity = { velocity: Vector };
+export type WithMass = { mass: number };
+export type WithRadius = { radius: number };
+export type WithColor = { color: Color };
 
 
 type Objects<ObjectT> = ObjectT[];

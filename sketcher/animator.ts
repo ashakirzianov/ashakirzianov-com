@@ -1,4 +1,4 @@
-import { Animator } from './base';
+export type Animator<State> = (state: State) => State;
 
 export type CombineAnimatorsObject<State> = {
     [k in keyof State]: Animator<State[k]>;

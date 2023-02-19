@@ -1,4 +1,5 @@
-import { Scene, Canvas, Layer } from "./base";
+import { Canvas } from "./draw";
+import { Layer, Scene } from "./scene";
 import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;

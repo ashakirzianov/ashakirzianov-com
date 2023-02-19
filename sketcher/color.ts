@@ -1,6 +1,14 @@
-import {
-    Color, RGBAColor, TupleColor, ColorStop, ResolvedColor,
-} from './base';
+export type StringColor = string;
+export type RGBAColor = {
+    red?: number,
+    green?: number,
+    blue?: number,
+    alpha?: number,
+};
+export type TupleColor = number[];
+export type ResolvedColor = string;
+export type Color = StringColor | RGBAColor | TupleColor;
+export type ColorStop = { offset: number, color: ResolvedColor };
 
 export function resolveColor(color: Color): ResolvedColor {
     if (Array.isArray(color)) {

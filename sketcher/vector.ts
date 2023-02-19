@@ -1,4 +1,5 @@
-import { Vector } from './base';
+export type Vector2d = [number, number];
+export type Vector = [number, number, number];
 
 export function addVector(v1: Vector, v2: Vector): Vector {
     return v1.map((x, i) => x + (v2[i] ?? 0)) as Vector;

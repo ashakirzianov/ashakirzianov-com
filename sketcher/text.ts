@@ -1,5 +1,6 @@
-import { Canvas2DContext, Color, Vector2d } from "./base";
-import { resolveColor } from "./color";
+import { Color, resolveColor } from "./color";
+import { Canvas2DContext } from "./draw";
+import { Vector2d } from "./vector";
 
 export function drawText({
     context, text, family, size, fill, stroke,

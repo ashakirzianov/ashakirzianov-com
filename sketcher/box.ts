@@ -1,6 +1,9 @@
-import { Box, Vector } from "./base";
-import { randomRange } from "./random";
-import { addVector } from "./vector";
+import { addVector, Vector } from "./vector";
+
+export type Box = {
+    start: Vector,
+    end: Vector,
+};
 
 export function boxSize({ start, end }: Box) {
     return {

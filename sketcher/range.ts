@@ -1,4 +1,6 @@
-import { NumRange, Vector } from "./base";
+import { Vector } from "./vector";
+
+export type NumRange = { min: number, max: number };
 
 export function mapRange({ from, to, value }: {
     from: NumRange,

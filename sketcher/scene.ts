@@ -1,5 +1,18 @@
-import { Canvas, ColorStop, Layer, Render, Scene } from "./base";
-import { fillGradient } from "./draw";
+import { Animator } from "./animator";
+import { ColorStop } from "./color";
+import { Canvas, fillGradient } from "./draw";
+import { Render, RenderTransform } from "./transform";
+export type Layer<State> = {
+    render: Render<State>,
+    transforms?: RenderTransform<State>[],
+    static?: boolean,
+    hidden?: boolean,
+}
+export type Scene<State> = {
+    state: State,
+    animator: Animator<State>,
+    layers: Layer<State>[],
+};
 
 export function scene<State>(s: Scene<State>) {
     return s;

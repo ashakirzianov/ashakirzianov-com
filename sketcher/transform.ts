@@ -1,11 +1,28 @@
-import {
-    Color, Render, Vector, RenderTransform,
-    WithSets, WithPosition, Canvas, Box,
-} from "./base";
-import { boxRange } from "./box";
-import { resolveColor } from "./color";
+import { Box, boxRange } from "./box";
+import { Color, resolveColor } from "./color";
+import { Canvas } from "./draw";
+import { WithPosition } from "./object";
 import { rangeLength } from "./range";
-import { addVector, multsVector, zeroVector } from "./vector";
+import { addVector, multsVector, Vector, zeroVector } from "./vector";
+
+export type RenderProps<State> = {
+    canvas: Canvas,
+    state: State,
+};
+export type Render<State> = (props: RenderProps<State>) => void;
+export type RenderTransform<State> = (render: Render<State>) => Render<State>;
+export type WithSets<T> = { sets: T[] };
+
+export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
+): Render<WithSets<ObjectT[]>> {
+    return function render({ canvas, state }) {
+        for (let set of state.sets) {
+            for (let object of set) {
+                drawObject({ canvas, object });
+            }
+        }
+    };
+}
 
 export function clearFrameTransform<State>({ color }: {
     color: Color,

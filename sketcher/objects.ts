@@ -1,8 +1,10 @@
 import {
     Animator, NumRange, WithMass, WithPosition, WithRadius, WithVelocity,
 } from './base';
-import { randomRange } from './utils';
-import { addVector, distance, lengthVector, multsVector, randomVector, subVector } from './vector';
+import { randomRange, randomVector } from './random';
+import {
+    addVector, distance, lengthVector, multsVector, subVector,
+} from './vector';
 
 
 type Objects<ObjectT> = ObjectT[];

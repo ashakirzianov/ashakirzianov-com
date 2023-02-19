@@ -6,6 +6,7 @@ export * from './draw';
 export * from './launch';
 export * from './layers';
 export * from './objects';
+export * from './random';
 export * from './text';
 export * from './transforms';
 export * from './utils';

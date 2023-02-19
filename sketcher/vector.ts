@@ -1,5 +1,4 @@
-import { Vector, NumRange } from './base';
-import { randomRange } from './utils';
+import { Vector } from './base';
 
 export function addVector(v1: Vector, v2: Vector): Vector {
     return v1.map((x, i) => x + (v2[i] ?? 0)) as Vector;
@@ -11,12 +10,6 @@ export function multsVector(v: Vector, s: number): Vector {
 
 export function subVector(v1: Vector, v2: Vector): Vector {
     return addVector(v1, multsVector(v2, -1));
-}
-
-export function randomVector(range: NumRange): Vector {
-    return zeroVector(3).map(
-        () => randomRange(range)
-    ) as Vector;
 }
 
 export function zeroVector(dimensions: number): Vector {

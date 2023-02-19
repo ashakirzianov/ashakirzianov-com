@@ -146,7 +146,7 @@ function objectsAnimator(): Animator<PlaygroundObject[]> {
     );
 }
 
-function background(): Layer<PlaygroundState> {
+function background() {
     return colorLayer(back);
     // return colorLayer({
     //     kind: 'gradient',

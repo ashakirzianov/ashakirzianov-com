@@ -26,7 +26,7 @@ export function staticLayer<State>(render: Render<State>): Layer<State> {
     };
 }
 
-export function statelessLayer(render: (canvas: Canvas) => void): Layer<any> {
+export function statelessLayer(render: (canvas: Canvas) => void): Layer<unknown> {
     return {
         prepare({ canvas }) {
             render(canvas);
@@ -34,7 +34,7 @@ export function statelessLayer(render: (canvas: Canvas) => void): Layer<any> {
     };
 }
 
-export function colorLayer(color: Color): Layer<any> {
+export function colorLayer(color: Color): Layer<unknown> {
     return {
         prepare({ canvas: { context, width, height } }) {
             context.save();
@@ -46,7 +46,7 @@ export function colorLayer(color: Color): Layer<any> {
     };
 }
 
-export function gradientLayer(stops: ColorStop[]): Layer<any> {
+export function gradientLayer(stops: ColorStop[]) {
     return colorLayer({
         kind: 'gradient',
         start: [0, 0],

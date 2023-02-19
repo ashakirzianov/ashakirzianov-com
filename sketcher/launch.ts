@@ -41,32 +41,35 @@ function makeRenderState<State>({ layers, getCanvas }: {
     layers: Layer<State>[],
     getCanvas: CanvasGetter,
 }) {
-    let doneStatic = new Set();
+    let prepared = false;
     return function renderLayers(state: State) {
-        let rendered = false;
+        let canvases: Canvas[] = [];
+        for (let idx = 0; idx < layers.length; idx++) {
+            let canvas = getCanvas(idx);
+            if (canvas === undefined) {
+                return false;
+            }
+            canvases.push(canvas);
+        }
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx]!;
             if (layer.hidden) {
                 continue;
             }
-            if (layer.static && doneStatic.has(idx)) {
-                continue;
+            let canvas = canvases[idx]!;
+            if (!prepared && layer.prepare) {
+                layer.prepare({ canvas, state });
             }
-            let canvas = getCanvas(idx);
-            if (!canvas) {
-                continue;
+            if (layer.render) {
+                if (layer.transforms) {
+                    combineTransforms(...layer.transforms)(layer.render)({ canvas, state })
+                } else {
+                    layer.render({ canvas, state });
+                }
             }
-            if (layer.transforms) {
-                combineTransforms(...layer.transforms)(layer.render)({ canvas, state })
-            } else {
-                layer.render({ canvas, state });
-            }
-            if (layer.static) {
-                doneStatic.add(idx);
-            }
-            rendered = true;
         }
-        return rendered;
+        prepared = true;
+        return true;
     }
 }
 

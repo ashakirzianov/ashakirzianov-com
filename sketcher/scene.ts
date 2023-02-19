@@ -3,9 +3,9 @@ import { Color, ColorStop, resolveColor } from "./color";
 import { Canvas, Render } from "./render";
 import { RenderTransform } from "./transform";
 export type Layer<State> = {
-    render: Render<State>,
+    render?: Render<State>,
+    prepare?: Render<State>,
     transforms?: RenderTransform<State>[],
-    static?: boolean,
     hidden?: boolean,
 }
 export type Scene<State> = {
@@ -24,14 +24,13 @@ export function layer<State>(render: Render<State>): Layer<State> {
 
 export function staticLayer<State>(render: Render<State>): Layer<State> {
     return {
-        static: true, render,
+        prepare: render,
     };
 }
 
 export function statelessLayer(render: (canvas: Canvas) => void): Layer<any> {
     return {
-        static: true,
-        render({ canvas }) {
+        prepare({ canvas }) {
             render(canvas);
         },
     };
@@ -39,8 +38,7 @@ export function statelessLayer(render: (canvas: Canvas) => void): Layer<any> {
 
 export function colorLayer(color: Color): Layer<any> {
     return {
-        static: true,
-        render({ canvas: { context, width, height } }) {
+        prepare({ canvas: { context, width, height } }) {
             context.save();
             context.fillStyle = resolveColor(color, context);
             context.fillRect(0, 0, width, height);
@@ -51,8 +49,7 @@ export function colorLayer(color: Color): Layer<any> {
 
 export function gradientLayer(stops: ColorStop[]): Layer<any> {
     return {
-        static: true,
-        render({ canvas: { context, width, height } }) {
+        prepare({ canvas: { context, width, height } }) {
             context.save();
             let color = resolveColor({
                 kind: 'gradient',

@@ -25,18 +25,21 @@ const {
     colors, back,
 } = {
     setCount: 5,
-    count: 10,
+    count: 20,
     velocityAmp: 1,
     boxSize: 250,
     subBoxSize: 10,
-    radiusRange: { min: 0.5, max: 7 },
+    radiusRange: { min: 0.5, max: 17 },
     back: { red: 230, green: 230, blue: 230 },
     colors: [
         '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
     ],
 };
 
-type PlaygroundObject = { n: number }
+type PlaygroundObject = {
+    group: number,
+    rand: number,
+}
     & WithPosition & WithVelocity
     & WithRadius & WithMass
     & WithColor
@@ -111,10 +114,10 @@ function randomSets(count: number, boxes: Box[]) {
                         min: -velocityAmp, max: velocityAmp,
                     }),
                     radius,
-                    mass: radius,
+                    mass: radius / 4,
                     color,
-                    // n: Math.floor(randomRange({ max: 10000 }))
-                    n: idx * 100,
+                    rand: Math.floor(randomRange({ max: 10000 })),
+                    group: idx,
                 };
             },
         ),
@@ -143,22 +146,22 @@ function foreground(): Layer<PlaygroundState> {
     return layer(({ canvas, state }) => {
         canvas.context.save();
         // clearFrame({ canvas, color: 'white' });
-        zoomToFit({ canvas, box });
+        zoomToFit({ canvas, box: multBox(box, 1) });
         let ps = state.sets.flat().map(o => o.position);
-        // zoomToFill({
+        // zoomToFit({
         //     canvas,
         //     box: multBox(boundingBox(ps), 1.05),
         // });
-        centerOnPoint({
-            canvas,
-            point: midpoint(ps),
-        });
+        // centerOnPoint({
+        //     canvas,
+        //     point: midpoint(ps),
+        // });
         for (let set of state.sets) {
             for (let object of set) {
                 circle({
                     lineWidth: 0.5,
-                    // fill: object.color,
-                    fill: cs[(state.count + object.n) % cs.length]!,
+                    fill: object.color,
+                    // fill: cs[(state.count + object.n) % cs.length]!,
                     stroke: 'black',
                     position: object.position,
                     radius: object.radius,

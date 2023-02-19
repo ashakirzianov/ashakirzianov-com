@@ -145,20 +145,19 @@ function foreground(): Layer<PlaygroundState> {
     let cs = rainbow(120);
     return {
         prepare({ canvas, state }) {
-            zoomToFit({ canvas, box: multBox(box, 1) });
+            let ps = state.sets.flat().map(o => o.position);
+            zoomToFit({
+                canvas,
+                box: multBox(boundingBox(ps), 1.1),
+            });
         },
         render({ canvas, state }) {
             canvas.context.save();
             // clearFrame({ canvas, color: 'white' });
-            // zoomToFit({ canvas, box: multBox(box, 1) });
-            let ps = state.sets.flat().map(o => o.position);
+            // let ps = state.sets.flat().map(o => o.position);
             // zoomToFit({
             //     canvas,
             //     box: multBox(boundingBox(ps), 1.05),
-            // });
-            // centerOnPoint({
-            //     canvas,
-            //     point: midpoint(ps),
             // });
             for (let set of state.sets) {
                 for (let object of set) {

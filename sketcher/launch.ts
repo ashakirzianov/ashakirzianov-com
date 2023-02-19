@@ -59,6 +59,7 @@ function makeRenderState<State>({ layers, getCanvas }: {
             if (ld.width !== canvas.width || ld.height !== canvas.height) {
                 ld.width = canvas.width;
                 ld.height = canvas.height;
+                ld.prepared = false;
             }
         }
         for (let idx = 0; idx < layerData.length; idx++) {
@@ -69,10 +70,8 @@ function makeRenderState<State>({ layers, getCanvas }: {
             let canvas = canvases[idx]!;
             if (!prepared && layer.prepare) {
                 canvas.context.resetTransform();
-                // TODO: do we need to clear?
-                canvas.context.fillStyle = 'transparent';
-                canvas.context.fillRect(0, 0, canvas.width, canvas.height);
                 layer.prepare({ canvas, state });
+                layerData[idx]!.prepared = true;
             }
             if (layer.render) {
                 if (layer.transforms) {

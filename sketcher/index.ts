@@ -4,7 +4,7 @@ export * from './box';
 export * from './color';
 export * from './draw';
 export * from './launch';
-export * from './layers';
+export * from './scene';
 export * from './object';
 export * from './random';
 export * from './text';

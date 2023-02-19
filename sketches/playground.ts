@@ -1,44 +1,75 @@
 import {
     fromRGBA, gray, multRGBA, makeStops, toRGBA,
     velocityStep, gravity, circle,
-    centerOnMidpoint, zoomToFit, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
-    drawText,
+    centerOnMidpoint, zoomToFit, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer,
     Animator,
     arrayAnimator,
     objectSetsRender,
+    Box,
+    randomSubbox,
+    randomVectorInBox,
+    randomRange,
 } from '@/sketcher';
+import vector from '@/sketcher/vector';
 
 const {
-    count, radiusRange, velocityAmp, boxSize,
-    palette: { main, complimentary },
+    setCount, count, radiusRange, velocityAmp,
+    boxSize, subBoxSize,
+    main, back,
 } = {
+    setCount: 10,
     count: 10,
     velocityAmp: 0.5,
-    boxSize: 100,
+    boxSize: 200,
+    subBoxSize: 50,
     radiusRange: { min: 0.5, max: 5 },
-    palette: {
-        main: toRGBA('orange'),
-        complimentary: { red: 230, green: 230, blue: 230 },
-    },
+    back: { red: 230, green: 230, blue: 230 },
+    main: toRGBA('orange'),
 };
-let positionRange = { min: -boxSize, max: boxSize };
-let velocityRange = { min: -velocityAmp, max: velocityAmp };
 
 type PlaygroundObject = WithPosition & WithRadius & WithMass & WithVelocity;
 type PlaygroundState = WithSets<PlaygroundObject[]>;
 
 export function playground(): Scene<PlaygroundState> {
+    let box: Box = {
+        start: [-boxSize, - boxSize, -boxSize],
+        end: [boxSize, boxSize, boxSize],
+    };
+    let boxes = Array(setCount)
+        .fill(undefined)
+        .map(
+            () => randomSubbox({
+                box, width: subBoxSize, height: subBoxSize, depth: subBoxSize,
+            }),
+        );
+    let sets = boxes.map(
+        box => Array(count).fill(undefined).map<PlaygroundObject>(
+            () => {
+                let radius = randomRange(radiusRange);
+                return {
+                    position: randomVectorInBox(box),
+                    velocity: vector.random3d({
+                        min: -velocityAmp, max: velocityAmp,
+                    }),
+                    radius,
+                    mass: radius,
+                };
+            },
+        ),
+    );
+
+    let state: PlaygroundState = { sets };
     let background: Layer<PlaygroundState> = gradientLayer(makeStops({
-        0: fromRGBA(complimentary),
-        0.8: fromRGBA(multRGBA(complimentary, 1.2)),
-        1: gray(50),
+        0: fromRGBA(back),
+        0.8: fromRGBA(multRGBA(back, 1.2)),
+        1: gray(100),
     }));
 
     let foreground: Layer<PlaygroundState> = {
         transforms: [
             zoomToFit({
-                widthRange: positionRange,
-                heightRange: positionRange,
+                widthRange: { min: box.start[0], max: box.end[0] },
+                heightRange: { min: box.start[1], max: box.end[1] },
             }),
             centerOnMidpoint(state => state.sets.flat()),
         ],
@@ -52,12 +83,6 @@ export function playground(): Scene<PlaygroundState> {
         }))
     };
 
-    let objects = randomObjects(count, {
-        position: positionRange,
-        velocity: velocityRange,
-        radius: radiusRange,
-    }).map(obj => ({ ...obj, mass: obj.radius }));
-
     let objectsAnimator: Animator<PlaygroundObject[]> = reduceAnimators(
         gravity({ gravity: 0.2, power: 2 }),
         gravity({ gravity: -0.002, power: 5 }),
@@ -69,7 +94,7 @@ export function playground(): Scene<PlaygroundState> {
     });
 
     return {
-        state: { sets: [objects] },
+        state,
         animator,
         layers: [
             background,

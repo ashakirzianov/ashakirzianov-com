@@ -1,5 +1,6 @@
 export * from './animators';
 export * from './base';
+export * from './box';
 export * from './color';
 export * from './draw';
 export * from './launch';

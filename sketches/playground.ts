@@ -15,8 +15,8 @@ import {
     gray,
     fromRGBA,
     multRGBA,
+    randomVector,
 } from '@/sketcher';
-import vector from '@/sketcher/vector';
 
 const {
     setCount, count, radiusRange, velocityAmp,
@@ -109,7 +109,7 @@ function randomSets(count: number, boxes: Box[]) {
                 let color = colors[idx % colors.length]!;
                 return {
                     position: randomVectorInBox(currBox),
-                    velocity: vector.random3d({
+                    velocity: randomVector({
                         min: -velocityAmp, max: velocityAmp,
                     }),
                     // velocity: [50, 10, 10],

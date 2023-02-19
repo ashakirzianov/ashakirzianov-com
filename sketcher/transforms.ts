@@ -1,11 +1,11 @@
 import {
-    Color, NumRange, Render, Vector, RenderTransform,
+    Color, Render, Vector, RenderTransform,
     WithSets, WithPosition, Canvas, Box,
 } from "./base";
 import { boxRange } from "./box";
 import { resolveColor } from "./color";
 import { rangeLength } from "./utils";
-import vector from "./vector";
+import { addVector, multsVector, zeroVector } from "./vector";
 
 export function clearFrameTransform<State>({ color }: {
     color: Color,
@@ -143,12 +143,12 @@ export function centerOnMidpoint({ canvas, objects }: {
     function calcMidpoint(objects: WithPosition[]) {
         let { position, mass } = objects.reduce(
             (res, curr) => ({
-                position: vector.add(res.position, curr.position),
+                position: addVector(res.position, curr.position),
                 mass: 1 + (res as any).mass,
             }),
-            { position: vector.zero(3), mass: 1 },
+            { position: zeroVector(3), mass: 1 },
         );
-        return vector.mults(position, 1 / mass);
+        return multsVector(position, 1 / mass);
     }
     let [shiftx, shifty] = calcMidpoint(objects);
     canvas.context.translate(-shiftx, -shifty);

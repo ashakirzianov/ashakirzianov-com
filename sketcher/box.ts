@@ -1,6 +1,6 @@
 import { Box, Vector } from "./base";
 import { randomRange } from "./utils";
-import vector from "./vector";
+import { addVector } from "./vector";
 
 export function boxSize({ start, end }: Box) {
     return {
@@ -32,11 +32,11 @@ export function squareNBox({
     let dh = height / rows;
     let row = Math.floor(n / columns);
     let column = n % columns;
-    let start: Vector = vector.add(
+    let start: Vector = addVector(
         [column * dw, row * dh, 0],
         box.start,
     );
-    let end = vector.add(start, [dw, dh, depth ?? 0]);
+    let end = addVector(start, [dw, dh, depth ?? 0]);
     return { start, end };
 }
 
@@ -53,7 +53,7 @@ export function randomSubbox({
         randomRange({ min: start[1], max: end[1] - height }),
         randomRange({ min: start[2] ?? 0, max: (end[2] ?? 0) - (depth ?? 0) }),
     ];
-    let rend = vector.add(rstart, [width, height, (depth ?? 0)]);
+    let rend = addVector(rstart, [width, height, (depth ?? 0)]);
     return {
         start: rstart,
         end: rend,

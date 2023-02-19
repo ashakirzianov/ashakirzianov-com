@@ -1,12 +1,15 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpointTransform, zoomToFitTransform, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
+  Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
   drawText,
   Animator,
   arrayAnimator,
   objectSetsRender,
   Box,
+  zoomToFit,
+  transform,
+  centerOnMidpoint,
 } from '@/sketcher';
 
 const {
@@ -42,8 +45,11 @@ export function knot(): Scene<KnotState> {
 
   let foreground: Layer<KnotState> = {
     transforms: [
-      zoomToFitTransform(box),
-      centerOnMidpointTransform(state => state.sets.flat()),
+      transform(canvas => zoomToFit({ canvas, box })),
+      transform((canvas, state) => centerOnMidpoint({
+        canvas,
+        points: state.sets.flat().map(o => o.position),
+      })),
     ],
     render: objectSetsRender(({ canvas, object }) => circle({
       lineWidth: 0.5,

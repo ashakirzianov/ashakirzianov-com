@@ -144,7 +144,10 @@ function foreground(): Layer<PlaygroundState> {
     return layer(({ canvas, state }) => {
         canvas.context.save();
         zoomToFit({ canvas, box });
-        centerOnMidpoint({ canvas, objects: state.sets.flat() });
+        centerOnMidpoint({
+            canvas,
+            points: state.sets.flat().map(o => o.position),
+        });
         for (let set of state.sets) {
             for (let object of set) {
                 circle({

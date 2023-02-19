@@ -23,35 +23,13 @@ export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, 
     };
 }
 
-export function clearFrameTransform<State>({ color }: {
-    color: Color,
-}): RenderTransform<State> {
+export function transform<State>(
+    draw: (canvas: Canvas, state: State) => void,
+): RenderTransform<State> {
     return function (render) {
         return function ({ canvas, state }) {
             canvas.context.save();
-            clearFrame({ color, canvas });
-            render({ canvas, state });
-            canvas.context.restore();
-        }
-    }
-}
-
-export function zoomToFitTransform<State>(box: Box): RenderTransform<State> {
-    return function zoomToFitTransform(render) {
-        return function ({ canvas, state }) {
-            canvas.context.save();
-            zoomToFit({ canvas, box });
-            render({ canvas, state });
-            canvas.context.restore();
-        }
-    }
-}
-
-export function zoomToFillTransform<State>(box: Box): RenderTransform<State> {
-    return function zoomToFitTransform(render) {
-        return function ({ canvas, state }) {
-            canvas.context.save();
-            zoomToFill({ box, canvas });
+            draw(canvas, state);
             render({ canvas, state });
             canvas.context.restore();
         }
@@ -85,39 +63,6 @@ export function centerOnPointTransform<State>({ point: [shiftx, shifty] }: {
             canvas.context.restore();
         }
     }
-}
-
-export function centerOnMidpointTransform<State>(
-    getObjects: (state: State) => WithPosition[],
-): RenderTransform<State> {
-    return function transform(render) {
-        return function ({ canvas, state }) {
-            canvas.context.save();
-            centerOnMidpoint({
-                canvas, objects: getObjects(state),
-            })
-            render({ canvas, state });
-            canvas.context.restore();
-        }
-    }
-}
-
-export function centerOnMidpoint({ canvas, objects }: {
-    objects: { position: Vector }[],
-    canvas: Canvas,
-}) {
-    function calcMidpoint(objects: WithPosition[]) {
-        let { position, mass } = objects.reduce(
-            (res, curr) => ({
-                position: addVector(res.position, curr.position),
-                mass: 1 + (res as any).mass,
-            }),
-            { position: zeroVector(3), mass: 1 },
-        );
-        return multsVector(position, 1 / mass);
-    }
-    let [shiftx, shifty] = calcMidpoint(objects);
-    canvas.context.translate(-shiftx, -shifty);
 }
 
 export function combineTransforms<State>(...transforms: RenderTransform<State>[]): RenderTransform<State> {

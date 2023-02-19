@@ -1,7 +1,7 @@
 import { Box, boxRange } from "./box";
 import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, RGBAColor, unifromStops } from "./color";
 import { NumRange, rangeLength } from "./range";
-import { Vector } from "./vector";
+import { addVector, multsVector, Vector } from "./vector";
 
 export type Canvas2DContext = CanvasRenderingContext2D;
 export type Canvas = {
@@ -235,4 +235,18 @@ export function zoomToFill({ canvas, box }: {
         - widthRange.min,
         - heightRange.min,
     );
+}
+
+export function centerOnMidpoint({ canvas, points }: {
+    points: Vector[],
+    canvas: Canvas,
+}) {
+    function calcMidpoint(points: Vector[]) {
+        let mid = points.reduce(
+            (res, curr) => addVector(res, curr)
+        );
+        return multsVector(mid, 1 / points.length);
+    }
+    let [shiftx, shifty] = calcMidpoint(points);
+    canvas.context.translate(-shiftx, -shifty);
 }

@@ -1,8 +1,7 @@
-import { Box, boxRange } from "./box";
-import { Color, resolveColor } from "./color";
-import { Canvas } from "./draw";
+import { Box } from "./box";
+import { Color } from "./color";
+import { Canvas, clearFrame, zoomToFill, zoomToFit } from "./draw";
 import { WithPosition } from "./object";
-import { rangeLength } from "./range";
 import { addVector, multsVector, Vector, zeroVector } from "./vector";
 
 export type RenderProps<State> = {
@@ -37,14 +36,6 @@ export function clearFrameTransform<State>({ color }: {
     }
 }
 
-export function clearFrame({ color, canvas }: {
-    color: Color,
-    canvas: Canvas,
-}) {
-    canvas.context.fillStyle = resolveColor(color);
-    canvas.context.fillRect(0, 0, canvas.width, canvas.height);
-}
-
 export function zoomToFitTransform<State>(box: Box): RenderTransform<State> {
     return function zoomToFitTransform(render) {
         return function ({ canvas, state }) {
@@ -56,28 +47,6 @@ export function zoomToFitTransform<State>(box: Box): RenderTransform<State> {
     }
 }
 
-export function zoomToFit({ canvas, box }: {
-    canvas: Canvas,
-    box: Box,
-}) {
-    let { widthRange, heightRange } = boxRange(box);
-    let uwidth = rangeLength(widthRange);
-    let uheight = rangeLength(heightRange);
-    let xratio = canvas.width / uwidth;
-    let yratio = canvas.height / uheight;
-    let ratio = Math.min(xratio, yratio);
-    let shiftx = (canvas.width - uwidth * ratio) / 2;
-    let shifty = (canvas.height - uheight * ratio) / 2;
-    canvas.context.translate(
-        shiftx, shifty,
-    );
-    canvas.context.scale(ratio, ratio);
-    canvas.context.translate(
-        - widthRange.min,
-        - heightRange.min,
-    );
-}
-
 export function zoomToFillTransform<State>(box: Box): RenderTransform<State> {
     return function zoomToFitTransform(render) {
         return function ({ canvas, state }) {
@@ -87,28 +56,6 @@ export function zoomToFillTransform<State>(box: Box): RenderTransform<State> {
             canvas.context.restore();
         }
     }
-}
-
-export function zoomToFill({ canvas, box }: {
-    canvas: Canvas,
-    box: Box,
-}) {
-    let { widthRange, heightRange } = boxRange(box);
-    let uwidth = rangeLength(widthRange);
-    let uheight = rangeLength(heightRange);
-    let xratio = canvas.width / uwidth;
-    let yratio = canvas.height / uheight;
-    let ratio = Math.max(xratio, yratio);
-    let shiftx = (canvas.width - uwidth * ratio) / 2;
-    let shifty = (canvas.height - uheight * ratio) / 2;
-    canvas.context.translate(
-        shiftx, shifty,
-    );
-    canvas.context.scale(ratio, ratio);
-    canvas.context.translate(
-        - widthRange.min,
-        - heightRange.min,
-    );
 }
 
 export function centerOnObjectTransform<State extends WithSets<WithPosition>>({ index }: {
@@ -146,7 +93,9 @@ export function centerOnMidpointTransform<State>(
     return function transform(render) {
         return function ({ canvas, state }) {
             canvas.context.save();
-            centerOnMidpoint({ canvas, objects: getObjects(state) });
+            centerOnMidpoint({
+                canvas, objects: getObjects(state),
+            })
             render({ canvas, state });
             canvas.context.restore();
         }
@@ -154,8 +103,8 @@ export function centerOnMidpointTransform<State>(
 }
 
 export function centerOnMidpoint({ canvas, objects }: {
+    objects: { position: Vector }[],
     canvas: Canvas,
-    objects: WithPosition[],
 }) {
     function calcMidpoint(objects: WithPosition[]) {
         let { position, mass } = objects.reduce(

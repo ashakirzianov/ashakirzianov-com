@@ -1,3 +1,4 @@
+import { Box, boxRange } from "./box";
 import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, RGBAColor, unifromStops } from "./color";
 import { NumRange, rangeLength } from "./range";
 import { Vector } from "./vector";
@@ -182,4 +183,56 @@ export function drawCorner({
     context.restore();
 
     context.restore();
+}
+
+export function clearFrame({ color, canvas }: {
+    color: Color,
+    canvas: Canvas,
+}) {
+    canvas.context.fillStyle = resolveColor(color);
+    canvas.context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+export function zoomToFit({ canvas, box }: {
+    canvas: Canvas,
+    box: Box,
+}) {
+    let { widthRange, heightRange } = boxRange(box);
+    let uwidth = rangeLength(widthRange);
+    let uheight = rangeLength(heightRange);
+    let xratio = canvas.width / uwidth;
+    let yratio = canvas.height / uheight;
+    let ratio = Math.min(xratio, yratio);
+    let shiftx = (canvas.width - uwidth * ratio) / 2;
+    let shifty = (canvas.height - uheight * ratio) / 2;
+    canvas.context.translate(
+        shiftx, shifty,
+    );
+    canvas.context.scale(ratio, ratio);
+    canvas.context.translate(
+        - widthRange.min,
+        - heightRange.min,
+    );
+}
+
+export function zoomToFill({ canvas, box }: {
+    canvas: Canvas,
+    box: Box,
+}) {
+    let { widthRange, heightRange } = boxRange(box);
+    let uwidth = rangeLength(widthRange);
+    let uheight = rangeLength(heightRange);
+    let xratio = canvas.width / uwidth;
+    let yratio = canvas.height / uheight;
+    let ratio = Math.max(xratio, yratio);
+    let shiftx = (canvas.width - uwidth * ratio) / 2;
+    let shifty = (canvas.height - uheight * ratio) / 2;
+    canvas.context.translate(
+        shiftx, shifty,
+    );
+    canvas.context.scale(ratio, ratio);
+    canvas.context.translate(
+        - widthRange.min,
+        - heightRange.min,
+    );
 }

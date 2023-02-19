@@ -61,3 +61,10 @@ export function multBox({ start, end }: Box, value: number) {
         end: multsVector(end, value),
     };
 }
+
+export function cubicBox(size: number): Box {
+    return {
+        start: [-size, -size, -size],
+        end: [size, size, size],
+    };
+}

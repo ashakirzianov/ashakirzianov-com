@@ -22,6 +22,7 @@ import {
     colorLayer,
     Color,
     RGBAColor,
+    cubicBox,
 } from '@/sketcher';
 
 const {
@@ -62,10 +63,7 @@ type PlaygroundState = WithSets<PlaygroundObject[]> & {
     count: number,
 };
 
-let box: Box = {
-    start: [-boxSize, - boxSize, -boxSize],
-    end: [boxSize, boxSize, boxSize],
-};
+let box: Box = cubicBox(boxSize);
 
 export function playground(): Scene<PlaygroundState> {
     return {

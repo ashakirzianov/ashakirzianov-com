@@ -1,5 +1,5 @@
 import { Scene, Canvas, Layer } from "./base";
-import { combineTransforms } from "./transforms";
+import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps<State> = {

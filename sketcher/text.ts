@@ -17,7 +17,7 @@ export function drawText({
     context.save();
     context.font = `${size}px ${family}`;
     if (fill) {
-        context.fillStyle = resolveColor(fill);
+        context.fillStyle = resolveColor(fill, context);
         context.fillText(text, x, y);
     }
     if (stroke) {

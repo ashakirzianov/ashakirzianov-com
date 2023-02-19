@@ -1,5 +1,5 @@
 import { Box, boxRange } from "./box";
-import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, RGBAColor, unifromStops } from "./color";
+import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops } from "./color";
 import { NumRange, rangeLength } from "./range";
 import { addVector, multsVector, Vector } from "./vector";
 
@@ -41,26 +41,13 @@ export function circle({
 }) {
     context.save();
     context.lineWidth = lineWidth;
-    context.fillStyle = resolveColor(fill);
-    context.strokeStyle = resolveColor(stroke);
+    context.fillStyle = resolveColor(fill, context);
+    context.strokeStyle = resolveColor(stroke, context);
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
     context.fill();
     context.stroke();
     context.restore();
-}
-
-export function createLinearGradient({
-    context, colorStops, start, end,
-}: {
-    context: Canvas2DContext,
-    colorStops: ColorStop[],
-    start: [number, number],
-    end: [number, number],
-}) {
-    let gradient = context.createLinearGradient(start[0], start[1], end[0], end[1]);
-    colorStops.forEach(({ offset, color }) => gradient.addColorStop(offset, color));
-    return gradient;
 }
 
 export function strokeDimensions({
@@ -74,7 +61,7 @@ export function strokeDimensions({
     context: Canvas2DContext,
 }) {
     context.save();
-    context.strokeStyle = resolveColor(color);
+    context.strokeStyle = resolveColor(color, context);
     context.strokeRect(
         dimensions.x.min, dimensions.y.min,
         rangeLength(dimensions.x), rangeLength(dimensions.y),
@@ -96,41 +83,23 @@ export function colorRect({
     context.beginPath();
     context.moveTo(x, y);
     context.lineTo(x, height);
-    context.strokeStyle = resolveColor(left);
+    context.strokeStyle = resolveColor(left, context);
     context.stroke();
     context.beginPath();
     context.moveTo(x, height);
     context.lineTo(width, height);
-    context.strokeStyle = resolveColor(bottom);
+    context.strokeStyle = resolveColor(bottom, context);
     context.stroke();
     context.beginPath();
     context.moveTo(width, height);
     context.lineTo(width, y);
-    context.strokeStyle = resolveColor(right);
+    context.strokeStyle = resolveColor(right, context);
     context.stroke();
     context.beginPath();
     context.moveTo(width, y);
     context.lineTo(x, y);
-    context.strokeStyle = resolveColor(top);
+    context.strokeStyle = resolveColor(top, context);
     context.stroke();
-    context.restore();
-}
-
-export function fillGradient({
-    canvas: { context, width, height },
-    stops,
-}: {
-    canvas: Canvas,
-    stops: ColorStop[],
-}) {
-    context.save();
-    var gradient = context.createLinearGradient(0, 0, 0, height);
-    stops.forEach(
-        ({ offset, color }) => gradient.addColorStop(offset, color),
-    );
-
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, width, height);
     context.restore();
 }
 
@@ -155,7 +124,7 @@ export function drawCorner({
         context.save();
         var gradient = context.createLinearGradient(0, 0, 0, height);
         stops.forEach(
-            ({ offset, color }) => gradient.addColorStop(offset, color),
+            ({ offset, color }) => gradient.addColorStop(offset, resolvePrimitiveColor(color)),
         );
 
         context.fillStyle = gradient;
@@ -206,7 +175,7 @@ export function clearFrame({ color, canvas }: {
     color: Color,
     canvas: Canvas,
 }) {
-    canvas.context.fillStyle = resolveColor(color);
+    canvas.context.fillStyle = resolveColor(color, canvas.context);
     canvas.context.fillRect(0, 0, canvas.width, canvas.height);
 }
 

@@ -1,6 +1,6 @@
 import { Animator } from "./animator";
-import { ColorStop } from "./color";
-import { Canvas, fillGradient, Render } from "./render";
+import { Color, ColorStop, resolveColor } from "./color";
+import { Canvas, Render } from "./render";
 import { RenderTransform } from "./transform";
 export type Layer<State> = {
     render: Render<State>,
@@ -37,11 +37,32 @@ export function statelessLayer(render: (canvas: Canvas) => void): Layer<any> {
     };
 }
 
+export function colorLayer(color: Color): Layer<any> {
+    return {
+        static: true,
+        render({ canvas: { context, width, height } }) {
+            context.save();
+            context.fillStyle = resolveColor(color, context);
+            context.fillRect(0, 0, width, height);
+            context.restore();
+        }
+    };
+}
+
 export function gradientLayer(stops: ColorStop[]): Layer<any> {
     return {
-        render({ canvas }) {
-            fillGradient({ canvas, stops });
-        },
         static: true,
+        render({ canvas: { context, width, height } }) {
+            context.save();
+            let color = resolveColor({
+                kind: 'gradient',
+                start: [0, 0],
+                end: [0, height],
+                stops,
+            }, context);
+            context.fillStyle = color;
+            context.fillRect(0, 0, width, height);
+            context.restore();
+        }
     };
 }

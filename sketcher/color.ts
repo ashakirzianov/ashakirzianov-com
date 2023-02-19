@@ -1,22 +1,51 @@
+import type { Canvas2DContext } from "./render";
+import { Vector, Vector2d } from "./vector";
+
 export type StringColor = string;
 export type RGBAColor = {
+    kind?: undefined,
     red?: number,
     green?: number,
     blue?: number,
     alpha?: number,
 };
 export type TupleColor = number[];
-export type ResolvedColor = string;
-export type Color = StringColor | RGBAColor | TupleColor;
-export type ColorStop = { offset: number, color: ResolvedColor };
+export type GradientColor = {
+    kind: 'gradient',
+    start: Vector2d,
+    end: Vector2d,
+    stops: ColorStop[],
+};
+export type PrimitiveColor = StringColor | RGBAColor | TupleColor;
+export type Color = PrimitiveColor | GradientColor;
+export type ColorStop = { offset: number, color: PrimitiveColor };
+export type ResolvedColor = StringColor | CanvasGradient;
 
-export function resolveColor(color: Color): ResolvedColor {
+export function resolvePrimitiveColor(color: PrimitiveColor): StringColor {
     if (Array.isArray(color)) {
         return fromTupleColor(color);
     } else if (typeof color === 'object') {
         return fromRGBA(color);
     } else {
         return color;
+    }
+}
+
+export function isPrimitiveColor(color: Color): color is PrimitiveColor {
+    return !((color as any)['kind'] === 'gradient');
+}
+
+export function resolveColor(color: Color, context: Canvas2DContext): ResolvedColor {
+    if (isPrimitiveColor(color)) {
+        return resolvePrimitiveColor(color);
+    } else {
+        let gradient = context.createLinearGradient(
+            color.start[0], color.start[1], color.end[0], color.end[1],
+        );
+        color.stops.forEach(
+            ({ offset, color }) => gradient.addColorStop(offset, resolvePrimitiveColor(color)),
+        );
+        return gradient;
     }
 }
 
@@ -27,15 +56,15 @@ export function toRGBA(name: keyof typeof colorMap): RGBAColor {
     return colorMap[name];
 }
 
-export function gray(value: number): ResolvedColor {
-    return fromRGBA({
+export function gray(value: number): PrimitiveColor {
+    return {
         red: value,
         green: value,
         blue: value,
-    });
+    };
 }
 
-export function fromRGBA({ red, green, blue, alpha }: RGBAColor): ResolvedColor {
+export function fromRGBA({ red, green, blue, alpha }: RGBAColor): StringColor {
     if (alpha) {
         return `rgba(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)},${alpha})`;
     } else {
@@ -43,7 +72,7 @@ export function fromRGBA({ red, green, blue, alpha }: RGBAColor): ResolvedColor 
     }
 }
 
-export function fromTupleColor([red, green, blue, alpha]: TupleColor): ResolvedColor {
+export function fromTupleColor([red, green, blue, alpha]: TupleColor): StringColor {
     return fromRGBA({ red, green, blue, alpha });
 }
 
@@ -57,7 +86,7 @@ export function multRGBA({ red, green, blue, alpha }: RGBAColor, value: number):
 }
 
 export function mapStops({ colors, func }: {
-    colors: ResolvedColor[],
+    colors: PrimitiveColor[],
     func: (value: number) => number,
 }): ColorStop[] {
     let delta = 1 / colors.length;
@@ -67,7 +96,7 @@ export function mapStops({ colors, func }: {
     }));
 }
 
-export function unifromStops(colors: ResolvedColor[]): ColorStop[] {
+export function unifromStops(colors: PrimitiveColor[]): ColorStop[] {
     return mapStops({
         colors,
         func: x => x,
@@ -75,8 +104,7 @@ export function unifromStops(colors: ResolvedColor[]): ColorStop[] {
 }
 
 export type ColorStopObject = {
-    // TODO: change to color?
-    [k in number]: ResolvedColor;
+    [k in number]: PrimitiveColor;
 }
 export function makeStops(object: ColorStopObject): ColorStop[] {
     return Object.entries(object).map(

@@ -11,6 +11,7 @@ import {
   transform,
   centerOnPoint,
   midpoint,
+  combineTransforms,
 } from '@/sketcher';
 
 const {
@@ -45,21 +46,19 @@ export function knot(): Scene<KnotState> {
   }));
 
   let foreground: Layer<KnotState> = {
-    transforms: [
-      transform(canvas => zoomToFit({ canvas, box })),
+    render: combineTransforms<KnotState>(transform(canvas => zoomToFit({ canvas, box })),
       transform((canvas, state) => centerOnPoint({
         canvas,
         point: midpoint(state.sets.flat().map(o => o.position)),
-      })),
-    ],
-    render: objectSetsRender(({ canvas, object }) => circle({
-      lineWidth: 0.5,
-      fill: fromRGBA(main),
-      stroke: 'black',
-      position: object.position,
-      radius: object.radius,
-      context: canvas.context,
-    }))
+      })))(objectSetsRender(({ canvas, object }) =>
+        circle({
+          lineWidth: 0.5,
+          fill: fromRGBA(main),
+          stroke: 'black',
+          position: object.position,
+          radius: object.radius,
+          context: canvas.context,
+        }))),
   };
 
   let text = statelessLayer(function ({ context, width, height }) {

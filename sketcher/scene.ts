@@ -1,11 +1,9 @@
 import { Animator } from "./animator";
 import { Color, ColorStop, resolveColor } from "./color";
 import { Canvas, Render } from "./render";
-import { RenderTransform } from "./transform";
 export type Layer<State> = {
     render?: Render<State>,
     prepare?: Render<State>,
-    transforms?: RenderTransform<State>[],
     hidden?: boolean,
 }
 export type Scene<State> = {

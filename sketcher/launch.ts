@@ -1,6 +1,6 @@
-import { Canvas } from "./draw";
+import { Canvas } from "./render";
 import { Layer, Scene } from "./scene";
-import { combineTransforms } from "./render";
+import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps<State> = {

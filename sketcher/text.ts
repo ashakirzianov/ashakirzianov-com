@@ -1,5 +1,5 @@
 import { Color, resolveColor } from "./color";
-import { Canvas2DContext } from "./draw";
+import { Canvas2DContext } from "./render";
 import { Vector2d } from "./vector";
 
 export function drawText({

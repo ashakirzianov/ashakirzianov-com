@@ -4,8 +4,8 @@ export type Vector = [number, number, ...number[]];
 export type NumRange = { min: number, max: number };
 
 export type Box = {
-    x: number, y: number,
-    width: number, height: number,
+    start: Vector,
+    end: Vector,
 };
 
 export type StringColor = string;

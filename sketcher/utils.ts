@@ -1,4 +1,4 @@
-import { Layer, NumRange, Vector } from "./base";
+import { NumRange, Vector } from "./base";
 
 export function mapRange({ from, to, value }: {
     from: NumRange,

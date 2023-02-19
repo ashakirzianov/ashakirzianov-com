@@ -143,32 +143,37 @@ function background(): Layer<PlaygroundState> {
 
 function foreground(): Layer<PlaygroundState> {
     let cs = rainbow(120);
-    return layer(({ canvas, state }) => {
-        canvas.context.save();
-        // clearFrame({ canvas, color: 'white' });
-        zoomToFit({ canvas, box: multBox(box, 1) });
-        let ps = state.sets.flat().map(o => o.position);
-        // zoomToFit({
-        //     canvas,
-        //     box: multBox(boundingBox(ps), 1.05),
-        // });
-        // centerOnPoint({
-        //     canvas,
-        //     point: midpoint(ps),
-        // });
-        for (let set of state.sets) {
-            for (let object of set) {
-                circle({
-                    lineWidth: 0.5,
-                    fill: object.color,
-                    // fill: cs[(state.count + object.n) % cs.length]!,
-                    stroke: 'black',
-                    position: object.position,
-                    radius: object.radius,
-                    context: canvas.context,
-                });
+    return {
+        prepare({ canvas, state }) {
+            zoomToFit({ canvas, box: multBox(box, 1) });
+        },
+        render({ canvas, state }) {
+            canvas.context.save();
+            // clearFrame({ canvas, color: 'white' });
+            // zoomToFit({ canvas, box: multBox(box, 1) });
+            let ps = state.sets.flat().map(o => o.position);
+            // zoomToFit({
+            //     canvas,
+            //     box: multBox(boundingBox(ps), 1.05),
+            // });
+            // centerOnPoint({
+            //     canvas,
+            //     point: midpoint(ps),
+            // });
+            for (let set of state.sets) {
+                for (let object of set) {
+                    circle({
+                        lineWidth: 0.5,
+                        fill: object.color,
+                        // fill: cs[(state.count + object.n) % cs.length]!,
+                        stroke: 'black',
+                        position: object.position,
+                        radius: object.radius,
+                        context: canvas.context,
+                    });
+                }
             }
-        }
-        canvas.context.restore();
-    });
+            canvas.context.restore();
+        },
+    };
 }

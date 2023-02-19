@@ -41,23 +41,37 @@ function makeRenderState<State>({ layers, getCanvas }: {
     layers: Layer<State>[],
     getCanvas: CanvasGetter,
 }) {
-    let prepared = false;
+    let layerData = layers.map(layer => ({
+        layer,
+        prepared: false,
+        width: 0,
+        height: 0,
+    }));
     return function renderLayers(state: State) {
         let canvases: Canvas[] = [];
-        for (let idx = 0; idx < layers.length; idx++) {
+        for (let idx = 0; idx < layerData.length; idx++) {
             let canvas = getCanvas(idx);
             if (canvas === undefined) {
                 return false;
             }
             canvases.push(canvas);
+            let ld = layerData[idx]!;
+            if (ld.width !== canvas.width || ld.height !== canvas.height) {
+                ld.width = canvas.width;
+                ld.height = canvas.height;
+            }
         }
-        for (let idx = 0; idx < layers.length; idx++) {
-            let layer = layers[idx]!;
+        for (let idx = 0; idx < layerData.length; idx++) {
+            let { layer, prepared } = layerData[idx]!;
             if (layer.hidden) {
                 continue;
             }
             let canvas = canvases[idx]!;
             if (!prepared && layer.prepare) {
+                canvas.context.resetTransform();
+                // TODO: do we need to clear?
+                canvas.context.fillStyle = 'transparent';
+                canvas.context.fillRect(0, 0, canvas.width, canvas.height);
                 layer.prepare({ canvas, state });
             }
             if (layer.render) {
@@ -68,7 +82,6 @@ function makeRenderState<State>({ layers, getCanvas }: {
                 }
             }
         }
-        prepared = true;
         return true;
     }
 }

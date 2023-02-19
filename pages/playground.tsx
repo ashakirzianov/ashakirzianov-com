@@ -7,6 +7,7 @@ import { playground } from "@/sketches/playground";
 export default function Playground() {
     let { node } = useSketcher({
         scene: playground(),
+        // period: 3000,
         period: 40,
         // skip: 10000,
         chunk: 500,

@@ -1,11 +1,11 @@
-import { Canvas2DContext, Color, Vector } from "./base";
+import { Canvas2DContext, Color, Vector2d } from "./base";
 
 export function drawText({
     context, text, family, size, fill, stroke,
     position: [x, y],
 }: {
     context: Canvas2DContext,
-    position: Vector,
+    position: Vector2d,
     text: string,
     family: string,
     size: number,

@@ -1,6 +1,7 @@
 import { RenderTransform } from "./transform";
 
-export type Vector = [number, number, ...number[]];
+export type Vector2d = [number, number];
+export type Vector = [number, number, number];
 export type NumRange = { min: number, max: number };
 
 export type Box = {

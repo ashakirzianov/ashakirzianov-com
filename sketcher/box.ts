@@ -46,7 +46,7 @@ export function randomSubbox({
 }
 
 export function randomVectorInBox({ start, end }: Box) {
-    let result: Vector = [0, 0];
+    let result: Vector = [0, 0, 0];
     for (let idx = 0; idx < Math.min(start.length, end.length); idx++) {
         let min = start[idx]!;
         let max = end[idx]!;

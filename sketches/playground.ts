@@ -17,12 +17,17 @@ import {
     multBox,
     zoomToFill,
     midpoint,
+    gray,
+    multRGBA,
+    colorLayer,
+    Color,
+    RGBAColor,
 } from '@/sketcher';
 
 const {
     setCount, count, radiusRange, velocityAmp,
     boxSize, subBoxSize,
-    colors, back,
+    colors, complimentary,
 } = {
     setCount: 5,
     count: 20,
@@ -30,11 +35,20 @@ const {
     boxSize: 250,
     subBoxSize: 10,
     radiusRange: { min: 0.5, max: 17 },
-    back: { red: 230, green: 230, blue: 230 },
     colors: [
         '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
     ],
+    complimentary: [230, 230, 230] as RGBAColor,
 };
+let back: Color = {
+    kind: 'gradient',
+    start: [0, 0], end: [0, 1],
+    stops: makeStops({
+        0: complimentary,
+        // 0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+        // 1: gray(100),
+    }),
+}
 
 type PlaygroundObject = {
     group: number,
@@ -133,12 +147,17 @@ function objectsAnimator(): Animator<PlaygroundObject[]> {
 }
 
 function background(): Layer<PlaygroundState> {
-    return gradientLayer(makeStops({
-        // 0: '#A1EE35',
-        0: fromRGBA(back),
-        // 0.8: fromRGBA(multRGBA(back, 1.2)),
-        // 1: gray(100),
-    }));
+    return colorLayer(back);
+    // return colorLayer({
+    //     kind: 'gradient',
+    //     start: [0, 0], end: [0, 1],
+    //     stops: makeStops({
+    //         0: '#AAAAAA',
+    //         1: fromRGBA(complimentary),
+    //         // 0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+    //         // 1: gray(100),
+    //     }),
+    // });
 }
 
 function foreground(): Layer<PlaygroundState> {

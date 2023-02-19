@@ -40,26 +40,19 @@ export function colorLayer(color: Color): Layer<any> {
     return {
         prepare({ canvas: { context, width, height } }) {
             context.save();
+            context.scale(width, height);
             context.fillStyle = resolveColor(color, context);
-            context.fillRect(0, 0, width, height);
+            context.fillRect(0, 0, 1, 1);
             context.restore();
         }
     };
 }
 
 export function gradientLayer(stops: ColorStop[]): Layer<any> {
-    return {
-        prepare({ canvas: { context, width, height } }) {
-            context.save();
-            let color = resolveColor({
-                kind: 'gradient',
-                start: [0, 0],
-                end: [0, height],
-                stops,
-            }, context);
-            context.fillStyle = color;
-            context.fillRect(0, 0, width, height);
-            context.restore();
-        }
-    };
+    return colorLayer({
+        kind: 'gradient',
+        start: [0, 0],
+        end: [0, 1],
+        stops,
+    });
 }

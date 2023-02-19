@@ -1,5 +1,5 @@
 import type { Canvas2DContext } from "./render";
-import { Vector, Vector2d } from "./vector";
+import { Vector2d } from "./vector";
 
 export type StringColor = string;
 export type RGBAColor = {

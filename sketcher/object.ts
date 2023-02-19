@@ -11,6 +11,7 @@ export type WithVelocity = { velocity: Vector };
 export type WithMass = { mass: number };
 export type WithRadius = { radius: number };
 export type WithColor = { color: Color };
+export type WithCounter = { counter: number };
 
 
 type Objects<ObjectT> = ObjectT[];
@@ -120,5 +121,21 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
             }
         }
         return objects;
+    }
+}
+
+export function counter<State extends WithCounter>(max?: number): ObjectAnimator<State> {
+    if (max === undefined) {
+        return objects => objects.map(
+            o => ({ ...o, counter: o.counter + 1 })
+        );
+    } else {
+        return objects => objects.map(
+            o => ({
+                ...o,
+                counter: o.counter < max ?
+                    o.counter + 1 : 0,
+            })
+        );
     }
 }

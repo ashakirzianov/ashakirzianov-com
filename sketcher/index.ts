@@ -7,6 +7,6 @@ export * from './launch';
 export * from './layers';
 export * from './objects';
 export * from './text';
-export * from './transform';
+export * from './transforms';
 export * from './utils';
 export * from './vector';

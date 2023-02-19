@@ -1,11 +1,12 @@
 import {
   fromRGBA, gray, multRGBA, makeStops, toRGBA,
   velocityStep, gravity, circle,
-  centerOnMidpoint, zoomToFit, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
+  centerOnMidpointTransform, zoomToFitTransform, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, randomObjects, gradientLayer, statelessLayer,
   drawText,
   Animator,
   arrayAnimator,
   objectSetsRender,
+  Box,
 } from '@/sketcher';
 
 const {
@@ -24,6 +25,11 @@ const {
 let positionRange = { min: -boxSize, max: boxSize };
 let velocityRange = { min: -velocityAmp, max: velocityAmp };
 
+let box: Box = {
+  start: [-boxSize, - boxSize, -boxSize],
+  end: [boxSize, boxSize, boxSize],
+};
+
 type KnotObject = WithPosition & WithRadius & WithMass & WithVelocity;
 type KnotState = WithSets<KnotObject[]>;
 
@@ -36,11 +42,8 @@ export function knot(): Scene<KnotState> {
 
   let foreground: Layer<KnotState> = {
     transforms: [
-      zoomToFit({
-        widthRange: positionRange,
-        heightRange: positionRange,
-      }),
-      centerOnMidpoint(state => state.sets.flat()),
+      zoomToFitTransform(box),
+      centerOnMidpointTransform(state => state.sets.flat()),
     ],
     render: objectSetsRender(({ canvas, object }) => circle({
       lineWidth: 0.5,

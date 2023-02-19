@@ -1,5 +1,3 @@
-import { RenderTransform } from "./transform";
-
 export type Vector2d = [number, number];
 export type Vector = [number, number, number];
 export type NumRange = { min: number, max: number };
@@ -38,6 +36,7 @@ export type RenderProps<State> = {
     state: State,
 };
 export type Render<State> = (props: RenderProps<State>) => void;
+export type RenderTransform<State> = (render: Render<State>) => Render<State>;
 export type Layer<State> = {
     render: Render<State>,
     transforms?: RenderTransform<State>[],

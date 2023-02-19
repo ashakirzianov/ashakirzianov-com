@@ -6,6 +6,15 @@ export function boxSize({ start, end }: Box) {
     return {
         width: end[0] - start[0],
         height: end[1] - start[1],
+        depth: end[2] - start[2],
+    };
+}
+
+export function boxRange({ start, end }: Box) {
+    return {
+        widthRange: { min: start[0], max: end[0] },
+        heightRange: { min: start[1], max: end[1] },
+        depthRange: { min: start[2], max: end[2] },
     };
 }
 

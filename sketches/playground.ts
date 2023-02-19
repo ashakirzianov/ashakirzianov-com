@@ -1,7 +1,6 @@
 import {
-    fromRGBA, gray, multRGBA, makeStops, toRGBA,
-    velocityStep, gravity, circle,
-    centerOnMidpoint, zoomToFit, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, gradientLayer,
+    makeStops, velocityStep, gravity, circle,
+    centerOnMidpointTransform, zoomToFitTransform, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, gradientLayer,
     Animator,
     arrayAnimator,
     objectSetsRender,
@@ -11,6 +10,11 @@ import {
     randomRange,
     WithColor,
     squareNBox,
+    zoomToFit,
+    centerOnMidpoint,
+    fromRGBA,
+    multRGBA,
+    gray,
 } from '@/sketcher';
 import vector from '@/sketcher/vector';
 
@@ -132,33 +136,33 @@ function objectsAnimator(): Animator<PlaygroundObject[]> {
 }
 
 function background(): Layer<PlaygroundState> {
-    // return gradientLayer(makeStops({
-    //     0: fromRGBA(back),
-    //     0.8: fromRGBA(multRGBA(back, 1.2)),
-    //     1: gray(100),
-    // }));
     return gradientLayer(makeStops({
-        0: '#A1C935',
+        0: '#A1EE35',
+        // 0: fromRGBA(back),
+        // 0.8: fromRGBA(multRGBA(back, 1.2)),
+        // 1: gray(100),
     }));
 }
 
 function foreground(): Layer<PlaygroundState> {
     return {
-        // static: true,
-        transforms: [
-            zoomToFit({
-                widthRange: { min: box.start[0], max: box.end[0] },
-                heightRange: { min: box.start[1], max: box.end[1] },
-            }),
-            centerOnMidpoint(state => state.sets.flat()),
-        ],
-        render: objectSetsRender(({ canvas, object }) => circle({
-            lineWidth: 0.5,
-            fill: object.color,
-            stroke: 'black',
-            position: object.position,
-            radius: object.radius,
-            context: canvas.context,
-        }))
+        render({ canvas, state }) {
+            canvas.context.save();
+            zoomToFit({ canvas, box });
+            centerOnMidpoint({ canvas, objects: state.sets.flat() });
+            for (let set of state.sets) {
+                for (let object of set) {
+                    circle({
+                        lineWidth: 0.5,
+                        fill: object.color,
+                        stroke: 'black',
+                        position: object.position,
+                        radius: object.radius,
+                        context: canvas.context,
+                    })
+                }
+            }
+            canvas.context.restore();
+        }
     };
 }

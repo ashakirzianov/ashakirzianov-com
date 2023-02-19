@@ -1,6 +1,5 @@
 import { Canvas } from "./render";
 import { Layer, Scene } from "./scene";
-import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps<State> = {
@@ -74,11 +73,7 @@ function makeRenderState<State>({ layers, getCanvas }: {
                 layerData[idx]!.prepared = true;
             }
             if (layer.render) {
-                if (layer.transforms) {
-                    combineTransforms(...layer.transforms)(layer.render)({ canvas, state })
-                } else {
-                    layer.render({ canvas, state });
-                }
+                layer.render({ canvas, state });
             }
         }
         return true;

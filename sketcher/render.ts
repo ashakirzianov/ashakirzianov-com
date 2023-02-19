@@ -223,16 +223,10 @@ export function zoomToFill({ canvas, box }: {
     );
 }
 
-export function centerOnMidpoint({ canvas, points }: {
-    points: Vector[],
+export function centerOnPoint({ canvas, point }: {
+    point: Vector,
     canvas: Canvas,
 }) {
-    function calcMidpoint(points: Vector[]) {
-        let mid = points.reduce(
-            (res, curr) => addVector(res, curr)
-        );
-        return multsVector(mid, 1 / points.length);
-    }
-    let [shiftx, shifty] = calcMidpoint(points);
+    let [shiftx, shifty] = point;
     canvas.context.translate(-shiftx, -shifty);
 }

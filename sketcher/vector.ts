@@ -30,3 +30,10 @@ export function distance(v1: Vector, v2: Vector) {
 export function lengthVector(v: Vector) {
     return distance(v, zeroVector(v.length));
 }
+
+export function midpoint(points: Vector[]) {
+    let mid = points.reduce(
+        (res, curr) => addVector(res, curr)
+    );
+    return multsVector(mid, 1 / points.length);
+}

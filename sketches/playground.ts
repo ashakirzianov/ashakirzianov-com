@@ -6,7 +6,7 @@ import {
     WithColor,
     squareNBox,
     zoomToFit,
-    centerOnMidpoint,
+    centerOnPoint,
     layer,
     rainbow,
     fromRGBA,
@@ -16,6 +16,7 @@ import {
     clearFrame,
     multBox,
     zoomToFill,
+    midpoint,
 } from '@/sketcher';
 
 const {
@@ -142,16 +143,16 @@ function foreground(): Layer<PlaygroundState> {
     return layer(({ canvas, state }) => {
         canvas.context.save();
         // clearFrame({ canvas, color: 'white' });
-        // zoomToFit({ canvas, box });
+        zoomToFit({ canvas, box });
         let ps = state.sets.flat().map(o => o.position);
-        zoomToFill({
-            canvas,
-            box: multBox(boundingBox(ps), 1.05),
-        });
-        // centerOnMidpoint({
+        // zoomToFill({
         //     canvas,
-        //     points: ps,
+        //     box: multBox(boundingBox(ps), 1.05),
         // });
+        centerOnPoint({
+            canvas,
+            point: midpoint(ps),
+        });
         for (let set of state.sets) {
             for (let object of set) {
                 circle({

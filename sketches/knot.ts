@@ -9,7 +9,8 @@ import {
   Box,
   zoomToFit,
   transform,
-  centerOnMidpoint,
+  centerOnPoint,
+  midpoint,
 } from '@/sketcher';
 
 const {
@@ -46,9 +47,9 @@ export function knot(): Scene<KnotState> {
   let foreground: Layer<KnotState> = {
     transforms: [
       transform(canvas => zoomToFit({ canvas, box })),
-      transform((canvas, state) => centerOnMidpoint({
+      transform((canvas, state) => centerOnPoint({
         canvas,
-        points: state.sets.flat().map(o => o.position),
+        point: midpoint(state.sets.flat().map(o => o.position)),
       })),
     ],
     render: objectSetsRender(({ canvas, object }) => circle({

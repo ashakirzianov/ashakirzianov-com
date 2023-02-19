@@ -2,7 +2,7 @@ import {
     Canvas, Canvas2DContext, Color, ColorStop, NumRange, Render, RGBAColor, Vector, WithSets,
 } from "./base";
 import { fromRGBA, multRGBA, resolveColor, unifromStops } from "./color";
-import { rangeLength } from "./utils";
+import { rangeLength } from "./range";
 
 export function circle({
     lineWidth, fill, stroke,

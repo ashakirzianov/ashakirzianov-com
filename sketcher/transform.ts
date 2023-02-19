@@ -4,7 +4,7 @@ import {
 } from "./base";
 import { boxRange } from "./box";
 import { resolveColor } from "./color";
-import { rangeLength } from "./utils";
+import { rangeLength } from "./range";
 import { addVector, multsVector, zeroVector } from "./vector";
 
 export function clearFrameTransform<State>({ color }: {

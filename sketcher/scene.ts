@@ -1,7 +1,7 @@
 import { Animator } from "./animator";
 import { ColorStop } from "./color";
-import { Canvas, fillGradient } from "./draw";
-import { Render, RenderTransform } from "./render";
+import { Canvas, fillGradient, Render } from "./draw";
+import { RenderTransform } from "./render";
 export type Layer<State> = {
     render: Render<State>,
     transforms?: RenderTransform<State>[],

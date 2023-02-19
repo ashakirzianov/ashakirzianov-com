@@ -1,28 +1,8 @@
-import { Box } from "./box";
-import { Color } from "./color";
-import { Canvas, clearFrame, zoomToFill, zoomToFit } from "./draw";
+import { Canvas, Render, WithSets } from "./draw";
 import { WithPosition } from "./object";
-import { addVector, multsVector, Vector, zeroVector } from "./vector";
+import { Vector } from "./vector";
 
-export type RenderProps<State> = {
-    canvas: Canvas,
-    state: State,
-};
-export type Render<State> = (props: RenderProps<State>) => void;
 export type RenderTransform<State> = (render: Render<State>) => Render<State>;
-export type WithSets<T> = { sets: T[] };
-
-export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
-): Render<WithSets<ObjectT[]>> {
-    return function render({ canvas, state }) {
-        for (let set of state.sets) {
-            for (let object of set) {
-                drawObject({ canvas, object });
-            }
-        }
-    };
-}
-
 export function transform<State>(
     draw: (canvas: Canvas, state: State) => void,
 ): RenderTransform<State> {

@@ -9,6 +9,23 @@ export type Canvas = {
     width: number,
     height: number,
 };
+export type RenderProps<State> = {
+    canvas: Canvas,
+    state: State,
+};
+export type Render<State> = (props: RenderProps<State>) => void;
+
+export type WithSets<T> = { sets: T[] };
+export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
+): Render<WithSets<ObjectT[]>> {
+    return function render({ canvas, state }) {
+        for (let set of state.sets) {
+            for (let object of set) {
+                drawObject({ canvas, object });
+            }
+        }
+    };
+}
 
 export function circle({
     lineWidth, fill, stroke,

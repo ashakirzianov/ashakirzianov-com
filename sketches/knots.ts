@@ -86,6 +86,10 @@ function knots({
             });
         },
         background: () => complimentary,
+        zoomToBox(state) {
+            let ps = state.sets.flat().map(o => o.position);
+            return multBox(boundingBox(ps), 1.1);
+        },
     });
 }
 
@@ -103,6 +107,7 @@ function makeKnots<ObjectT extends KnotsObject>({
     boxes, flatten,
     createObjects, animator, drawObject,
     background,
+    zoomToBox, zoomOnRender, clearColor,
 }: {
     boxes: Box[],
     createObjects: (box: Box, idx: number) => ObjectT[],
@@ -111,6 +116,7 @@ function makeKnots<ObjectT extends KnotsObject>({
     background?: (state: KnotsState<ObjectT>) => Color,
     zoomToBox?: (state: KnotsState<ObjectT>) => Box,
     zoomOnRender?: (state: KnotsState<ObjectT>) => Box,
+    clearColor?: (state: KnotsState<ObjectT>) => Color,
     flatten?: boolean,
 }): Scene<KnotsState<ObjectT>> {
     let sets = boxes.map(createObjects);
@@ -132,7 +138,9 @@ function makeKnots<ObjectT extends KnotsObject>({
             background
                 ? backgroundLayer(background(state))
                 : backgroundLayer('transparent'),
-            foregroundLayer({ drawObject }),
+            foregroundLayer({
+                drawObject, zoomToBox, zoomOnRender, clearColor,
+            }),
         ],
     };
 }
@@ -171,27 +179,32 @@ function backgroundLayer(color: Color) {
 }
 
 function foregroundLayer<ObjectT extends KnotsObject>({
-    drawObject
+    drawObject, zoomToBox, zoomOnRender, clearColor,
 }: {
     drawObject: (props: DrawObjectProps<ObjectT>) => void,
+    zoomToBox?: (state: KnotsState<ObjectT>) => Box,
+    zoomOnRender?: (state: KnotsState<ObjectT>) => Box,
+    clearColor?: (state: KnotsState<ObjectT>) => Color,
 }): Layer<KnotsState<ObjectT>> {
     let cs = rainbow(120);
     return {
         prepare({ canvas, state }) {
-            let ps = state.sets.flat().map(o => o.position);
-            zoomToFit({
-                canvas,
-                box: multBox(boundingBox(ps), 1.1),
-            });
+            if (zoomToBox) {
+                let box = zoomToBox(state);
+                zoomToFit({ canvas, box });
+            }
         },
         render({ canvas, state }) {
             canvas.context.save();
-            // clearFrame({ canvas, color: 'white' });
-            // let ps = state.sets.flat().map(o => o.position);
-            // zoomToFit({
-            //     canvas,
-            //     box: multBox(boundingBox(ps), 1.05),
-            // });
+            if (clearColor) {
+                clearFrame({
+                    canvas, color: clearColor(state),
+                });
+            }
+            if (zoomOnRender) {
+                let box = zoomOnRender(state);
+                zoomToFit({ canvas, box });
+            }
             for (let seti = 0; seti < state.sets.length; seti++) {
                 let set = state.sets[seti]!;
                 for (let obji = 0; obji < set.length; obji++) {

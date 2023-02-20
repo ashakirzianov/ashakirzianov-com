@@ -5,133 +5,94 @@ import {
     rainbow, fromRGBA, randomVector, counter,
     boundingBox, clearFrame, multBox, zoomToFill,
     midpoint, gray, multRGBA, colorLayer,
-    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize,
+    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt,
 } from '@/sketcher';
 
-type KnotsObjectT = WithPosition & WithVelocity & WithRadius & WithMass & WithColor & {
-    group: number,
-    rand: number,
-};
-type KnotsStateT = WithSets<KnotsObjectT[]> & {
-    count: number,
-};
-
 export function current() {
-    return knots({
-        setCount: 5,
-        count: 20,
-        velocityAmp: 1,
-        boxSize: 250,
-        subBoxSize: 10,
-        radiusRange: { min: 0.5, max: 17 },
-        colors: [
-            '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
-        ],
-        complimentary: [230, 230, 230],
-    });
+    return randomBatchesVariation();
 }
 
-function knots({
-    setCount, count, radiusRange, velocityAmp,
-    boxSize, subBoxSize,
-    colors, complimentary,
-}: {
-    setCount: number,
-    count: number,
-    velocityAmp: number,
-    boxSize: number,
-    subBoxSize: number,
-    radiusRange: NumRange,
-    colors: Color[],
-    complimentary: Color,
-}): Scene<KnotsStateT> {
-    let box: Box = cubicBox(boxSize);
-    let ns = [0, 17, 3, 7, 9, 4];
-    let boxes = squareBoxes({
-        box, count: setCount,
-        rows: 5, columns: 5,
-        getSquareN: idx => ns[idx % ns.length]!,
-    });
-
-    return makeKnots<KnotsObjectT>({
-        boxes,
-        createObjects(currBox, idx) {
-            return Array(count).fill(undefined).map<KnotsObjectT>(
-                () => {
-                    let radius = randomRange(radiusRange);
-                    let cl = colors[idx % colors.length]!;
-                    return {
-                        position: randomVectorInBox(currBox),
-                        velocity: randomVector({
-                            min: -velocityAmp, max: velocityAmp,
-                        }),
-                        radius,
-                        mass: radius / 4,
-                        color: cl,
-                        rand: Math.floor(randomRange({ max: 10000 })),
-                        group: idx,
-                    };
-                },
+function randomBatchesVariation() {
+    let colors = [
+        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+    ];
+    let batchRange = { min: 5, max: 20 };
+    let batches = 7;
+    let maxVelocity = 5; // Math.random() * 5;
+    let massRange = { min: 0.1, max: 4 };
+    return makeKnots({
+        boxes: randomBoxes({
+            box: cubicBox(500),
+            size: 250,
+            count: batches,
+        }),
+        background: () => gray(230),
+        createObjects(box) {
+            let batch = Math.floor(randomRange(batchRange));
+            return Array(batch).fill(undefined).map(
+                () => randomObject({
+                    massRange, maxVelocity, box, rToM: 4,
+                }),
             );
         },
-        animator: objectsAnimator(),
-        drawObject({ canvas, object }) {
-            circle({
-                lineWidth: 0.5,
-                fill: object.color,
-                stroke: 'black',
-                position: object.position,
-                radius: object.radius,
-                context: canvas.context,
-            });
-        },
-        background: () => complimentary,
-        zoomToBox(state) {
-            let ps = state.sets.flat().map(o => o.position);
-            return multBox(boundingBox(ps), 1.1);
-        },
+        drawObject: circleObjectForColor(
+            obj => modItem(colors, obj.batch),
+        ),
+        zoomToBox: stateBoundingBox,
     });
 }
 
-type KnotsObject = WithPosition & WithVelocity & WithMass;
-type KnotsState<ObjectT extends KnotsObject> = WithSets<ObjectT[]> & {
-    count: number,
-};
-type DrawObjectProps<ObjectT> = {
-    canvas: Canvas,
-    object: ObjectT,
+type Particle = WithPosition & WithVelocity & WithMass & WithRadius;
+type Data = {
     batch: number,
     index: number,
+    rand: number,
 }
-function makeKnots<ObjectT extends KnotsObject>({
+type Object = Particle & Data;
+type State = WithSets<Object[]> & {
+    count: number,
+};
+type DrawObjectProps = {
+    canvas: Canvas,
+    object: Object,
+    count: number,
+}
+type DrawObject = (props: DrawObjectProps) => void;
+function makeKnots({
     boxes, flatten,
-    createObjects, animator, drawObject,
+    createObjects, drawObject, animator,
     background,
     zoomToBox, zoomOnRender, clearColor,
 }: {
     boxes: Box[],
-    createObjects: (box: Box, idx: number) => ObjectT[],
-    animator: Animator<ObjectT[]>,
-    drawObject: (props: DrawObjectProps<ObjectT>) => void,
-    background?: (state: KnotsState<ObjectT>) => Color,
-    zoomToBox?: (state: KnotsState<ObjectT>) => Box,
-    zoomOnRender?: (state: KnotsState<ObjectT>) => Box,
-    clearColor?: (state: KnotsState<ObjectT>) => Color,
+    createObjects: (box: Box, idx: number) => Particle[],
+    drawObject: DrawObject,
+    background?: (state: State) => Color,
+    zoomToBox?: (state: State) => Box,
+    zoomOnRender?: (state: State) => Box,
+    clearColor?: (state: State) => Color,
     flatten?: boolean,
-}): Scene<KnotsState<ObjectT>> {
-    let sets = boxes.map(createObjects);
+    animator?: Animator<Object[]>,
+}): Scene<State> {
+    let sets = boxes.map(
+        (box, batch) => createObjects(box, batch).map(
+            (object, index) => ({
+                ...object, batch, index, rand: Math.random(),
+            }),
+        ),
+    );
     if (flatten) {
         sets = [sets.flat()];
     }
-    let state: KnotsState<ObjectT> = {
+    let state: State = {
         count: 0,
         sets,
     };
 
     return {
         state,
-        animator: combineAnimators<KnotsState<ObjectT>>({
-            sets: arrayAnimator(animator),
+        animator: combineAnimators<State>({
+            sets: arrayAnimator(animator ?? objectsAnimator()),
             count: counter(),
         }),
         layers: [
@@ -166,7 +127,64 @@ function squareBoxes({
         );
 }
 
-function objectsAnimator(): Animator<KnotsObjectT[]> {
+function stateBoundingBox(state: State) {
+    let ps = state.sets.flat().map(o => o.position);
+    return multBox(boundingBox(ps), 1.2);
+}
+
+function randomObject({
+    massRange, maxVelocity, box, rToM,
+}: {
+    box: Box,
+    massRange: NumRange,
+    maxVelocity: number,
+    rToM: number,
+}) {
+    let mass = randomRange(massRange);
+    let velocityRange = {
+        min: -maxVelocity, max: maxVelocity,
+    };
+    return {
+        position: randomVectorInBox(box),
+        velocity: randomVector(velocityRange),
+        mass,
+        radius: mass * (rToM ?? 4),
+    };
+}
+
+type GetColor = (object: Object, count: number) => Color;
+function circleObjectForColor(getColor: GetColor): DrawObject {
+    return function drawObject({ canvas, object, count }) {
+        let fill = getColor(object, count);
+        circle({
+            lineWidth: 0.5,
+            fill,
+            stroke: 'black',
+            position: object.position,
+            radius: object.radius,
+            context: canvas.context,
+        });
+    };
+}
+
+function randomBoxes({ count, size, box }: {
+    count: number,
+    size: number,
+    box: Box,
+}): Box[] {
+    return Array(count)
+        .fill(undefined)
+        .map(
+            () => randomSubbox({
+                box,
+                width: size,
+                height: size,
+                depth: size,
+            }),
+        );
+}
+
+function objectsAnimator(): Animator<Object[]> {
     return reduceAnimators(
         gravity({ gravity: 0.2, power: 2 }),
         gravity({ gravity: -0.002, power: 5 }),
@@ -178,14 +196,14 @@ function backgroundLayer(color: Color) {
     return colorLayer(color);
 }
 
-function foregroundLayer<ObjectT extends KnotsObject>({
+function foregroundLayer({
     drawObject, zoomToBox, zoomOnRender, clearColor,
 }: {
-    drawObject: (props: DrawObjectProps<ObjectT>) => void,
-    zoomToBox?: (state: KnotsState<ObjectT>) => Box,
-    zoomOnRender?: (state: KnotsState<ObjectT>) => Box,
-    clearColor?: (state: KnotsState<ObjectT>) => Color,
-}): Layer<KnotsState<ObjectT>> {
+    drawObject: DrawObject,
+    zoomToBox?: (state: State) => Box,
+    zoomOnRender?: (state: State) => Box,
+    clearColor?: (state: State) => Color,
+}): Layer<State> {
     let cs = rainbow(120);
     return {
         prepare({ canvas, state }) {
@@ -211,8 +229,7 @@ function foregroundLayer<ObjectT extends KnotsObject>({
                     let object = set[obji]!;
                     drawObject({
                         canvas, object,
-                        batch: seti,
-                        index: obji,
+                        count: state.count,
                     });
                 }
             }

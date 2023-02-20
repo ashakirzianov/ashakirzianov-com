@@ -7,3 +7,7 @@ export function removeUndefined<T>(array: Array<T | undefined>): T[] {
     }
     return result;
 }
+
+export function modItem<T>(arr: T[], idx: number): T {
+    return arr[idx % arr.length]!;
+}

@@ -1,24 +1,61 @@
 import {
-    makeStops, velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators, gradientLayer,
+    velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators,
     Animator, arrayAnimator, Box, randomSubbox,
-    randomVectorInBox, randomRange, WithColor, squareNBox, zoomToFit, centerOnPoint, layer,
-    rainbow, fromRGBA, randomVector, counter,
-    boundingBox, clearFrame, multBox, zoomToFill,
+    randomVectorInBox, randomRange, squareNBox, zoomToFit,
+    rainbow, randomVector, counter,
+    boundingBox, clearFrame, multBox,
     midpoint, gray, multRGBA, colorLayer,
-    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt,
+    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter,
 } from '@/sketcher';
 
 export function current() {
-    return randomBatchesVariation();
+    return raveVariation();
 }
 
-function randomBatchesVariation() {
-    let colors = [
-        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+export function raveVariation() {
+    let batchRange = { min: 20, max: 20 };
+    let maxVelocity = 3;
+    let massRange = { min: 0.1, max: 4 };
+    let veld = 1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
     ];
+    let size = 1;
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        background: counterColor(pulsating(hueRange({
+            from: 0, to: 360, count: 200,
+            s: 50, l: 90,
+        }))),
+        // background: gray(250),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject: circleObjectForColor(
+            colorGetter(
+                (_, count) => count,
+                paletteColor(rainbow({ count: 120 })),
+            ),
+        ),
+        zoomToBox: stateBoundingBox(1.5),
+    });
+}
+
+export function randomBatchesVariation() {
     let batchRange = { min: 5, max: 20 };
     let batches = 7;
-    let maxVelocity = 5; // Math.random() * 5;
+    let maxVelocity = 5;
     let massRange = { min: 0.1, max: 4 };
     return makeKnots({
         boxes: randomBoxes({
@@ -27,6 +64,7 @@ function randomBatchesVariation() {
             count: batches,
         }),
         background: () => gray(230),
+        // background: pulsatingRainbow(),
         createObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
             return Array(batch).fill(undefined).map(
@@ -36,9 +74,9 @@ function randomBatchesVariation() {
             );
         },
         drawObject: circleObjectForColor(
-            obj => modItem(colors, obj.batch),
+            ({ object }) => modItem(calmPalette, object.batch),
         ),
-        zoomToBox: stateBoundingBox,
+        zoomToBox: stateBoundingBox(1.2),
     });
 }
 
@@ -67,7 +105,7 @@ function makeKnots({
     boxes: Box[],
     createObjects: (box: Box, idx: number) => Particle[],
     drawObject: DrawObject,
-    background?: (state: State) => Color,
+    background?: ColorOrGetter<State>,
     zoomToBox?: (state: State) => Box,
     zoomOnRender?: (state: State) => Box,
     clearColor?: (state: State) => Color,
@@ -89,6 +127,10 @@ function makeKnots({
         sets,
     };
 
+    let backgroundLayer = typeof background === 'function' ? dynamicColorLayer(background)
+        : background === undefined ? colorLayer('transparent')
+            : colorLayer(background);
+
     return {
         state,
         animator: combineAnimators<State>({
@@ -96,9 +138,7 @@ function makeKnots({
             count: counter(),
         }),
         layers: [
-            background
-                ? backgroundLayer(background(state))
-                : backgroundLayer('transparent'),
+            backgroundLayer,
             foregroundLayer({
                 drawObject, zoomToBox, zoomOnRender, clearColor,
             }),
@@ -106,12 +146,28 @@ function makeKnots({
     };
 }
 
+function cornerBoxes({ rows, cols }: {
+    rows: number,
+    cols: number,
+}): Box[] {
+    let aspect = rows / cols;
+    let ns = [
+        0, cols - 1,
+        cols * (rows - 1), cols * rows - 1,
+    ];
+    return squareBoxes({
+        box: rectBox(500 * aspect, 500),
+        count: 4, rows, cols,
+        getSquareN: n => ns[n]!,
+    });
+}
+
 function squareBoxes({
-    count, rows, columns, getSquareN, box,
+    count, rows, cols, getSquareN, box,
 }: {
     count: number,
     rows: number,
-    columns: number,
+    cols: number,
     getSquareN: (idx: number) => number,
     box: Box,
 }): Box[] {
@@ -121,15 +177,17 @@ function squareBoxes({
             (_, idx) => squareNBox({
                 n: getSquareN(idx),
                 box,
-                depth: boxSize(box).width / columns,
-                rows, columns,
+                depth: boxSize(box).width / cols,
+                rows, cols,
             }),
         );
 }
 
-function stateBoundingBox(state: State) {
-    let ps = state.sets.flat().map(o => o.position);
-    return multBox(boundingBox(ps), 1.2);
+function stateBoundingBox(padding: number) {
+    return function (state: State) {
+        let ps = state.sets.flat().map(o => o.position);
+        return multBox(boundingBox(ps), padding);
+    }
 }
 
 function randomObject({
@@ -152,10 +210,10 @@ function randomObject({
     };
 }
 
-type GetColor = (object: Object, count: number) => Color;
+type GetColor = ColorGetter<{ object: Object, count: number }>;
 function circleObjectForColor(getColor: GetColor): DrawObject {
     return function drawObject({ canvas, object, count }) {
-        let fill = getColor(object, count);
+        let fill = getColor({ object, count });
         circle({
             lineWidth: 0.5,
             fill,
@@ -192,10 +250,6 @@ function objectsAnimator(): Animator<Object[]> {
     );
 }
 
-function backgroundLayer(color: Color) {
-    return colorLayer(color);
-}
-
 function foregroundLayer({
     drawObject, zoomToBox, zoomOnRender, clearColor,
 }: {
@@ -204,7 +258,6 @@ function foregroundLayer({
     zoomOnRender?: (state: State) => Box,
     clearColor?: (state: State) => Color,
 }): Layer<State> {
-    let cs = rainbow(120);
     return {
         prepare({ canvas, state }) {
             if (zoomToBox) {
@@ -236,4 +289,32 @@ function foregroundLayer({
             canvas.context.restore();
         },
     };
+}
+
+let calmPalette: Color[] = [
+    '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+];
+
+type NToColor = (n: number) => Color;
+function paletteColor(palette: Color[]): NToColor {
+    return (n: number) => modItem(palette, n);
+}
+
+function colorGetter<T>(
+    objToX: (obj: Object, count: number) => T,
+    xToColor: (x: T) => Color,
+): GetColor {
+    return ({ object, count }) => xToColor(objToX(object, count));
+}
+
+function counterColor(palette: Color[]): ColorGetter<State> {
+    return state => modItem(palette, state.count);
+}
+
+function pulsatingRainbow(): ColorGetter<State> {
+    let palette = pulsating(hueRange({
+        from: 0, to: 360, count: 20,
+        s: 70, l: 90,
+    }));
+    return state => modItem(palette, state.count);
 }

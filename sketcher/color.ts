@@ -20,6 +20,14 @@ export type PrimitiveColor = StringColor | RGBAColor | TupleColor;
 export type Color = PrimitiveColor | GradientColor;
 export type ColorStop = { offset: number, color: PrimitiveColor };
 export type ResolvedColor = StringColor | CanvasGradient;
+export type ColorGetter<T> = (x: T) => Color;
+export type ColorOrGetter<T> = Color | ColorGetter<T>;
+
+export function getColor<T>(colorOrGetter: ColorOrGetter<T>, x: T) {
+    return typeof colorOrGetter === 'function'
+        ? colorOrGetter(x)
+        : colorOrGetter;
+}
 
 export function resolvePrimitiveColor(color: PrimitiveColor): StringColor {
     if (Array.isArray(color)) {
@@ -115,9 +123,33 @@ export function makeStops(object: ColorStopObject): ColorStop[] {
     );
 }
 
-export function rainbow(count: number): Color[] {
-    let delta = 360 / count;
+export function rainbow({
+    count, s, l,
+}: {
+    count: number,
+    s?: number,
+    l?: number,
+}): Color[] {
+    return hueRange({
+        count,
+        from: 0, to: 360,
+        s: s ?? 80, l: l ?? 50,
+    });
+}
+
+export function hueRange({
+    from, to, count, s, l,
+}: {
+    from: number, to: number, count: number,
+    s: number, l: number,
+}) {
+    let delta = (to - from) / count;
     return Array(count).fill(undefined).map(
-        (_, idx) => `hsl(${Math.floor(delta * idx)},80%,50%)`,
+        (_, idx) => `hsl(${from + Math.floor(delta * idx)},${s}%,${l}%)`,
     );
+}
+
+export function pulsating(palette: Color[]): Color[] {
+    let back = [...palette].reverse();
+    return [...palette, ...back];
 }

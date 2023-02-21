@@ -11,3 +11,7 @@ export function removeUndefined<T>(array: Array<T | undefined>): T[] {
 export function modItem<T>(arr: T[], idx: number): T {
     return arr[idx % arr.length]!;
 }
+
+export function vals<T>(count: number, val?: T): T[] {
+    return Array(count).fill(val);
+}

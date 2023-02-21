@@ -46,6 +46,22 @@ export function colorLayer(color: Color): Layer<unknown> {
     };
 }
 
+export function dynamicColorLayer<State>(
+    colorF: (state: State) => Color,
+): Layer<State> {
+    return {
+        render({ canvas: { context, width, height }, state }) {
+            context.save();
+            context.scale(width, height);
+            context.fillStyle = resolveColor(
+                colorF(state), context,
+            );
+            context.fillRect(0, 0, 1, 1);
+            context.restore();
+        }
+    };
+}
+
 export function gradientLayer(stops: ColorStop[]) {
     return colorLayer({
         kind: 'gradient',

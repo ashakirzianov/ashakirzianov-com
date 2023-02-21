@@ -90,7 +90,7 @@ function buildState(): PlaygroundState {
 }
 
 function squareBoxes(count: number): Box[] {
-    let rows = 5, columns = 5;
+    let rows = 5, cols = 5;
     let ns = [0, 17, 3, 7, 9, 4];
     return Array(count)
         .fill(undefined)
@@ -99,7 +99,7 @@ function squareBoxes(count: number): Box[] {
                 n: ns[idx % ns.length]!,
                 box,
                 depth: subBoxSize,
-                rows, columns,
+                rows, cols,
             }),
         );
 }
@@ -159,7 +159,7 @@ function background() {
 }
 
 function foreground(): Layer<PlaygroundState> {
-    let cs = rainbow(120);
+    let cs = rainbow({ count: 120 });
     return {
         prepare({ canvas, state }) {
             let ps = state.sets.flat().map(o => o.position);

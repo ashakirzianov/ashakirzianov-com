@@ -22,19 +22,19 @@ export function boxRange({ start, end }: Box) {
 }
 
 export function squareNBox({
-    n, rows, columns, box, depth,
+    n, rows, cols, box, depth,
 }: {
     n: number,
     box: Box,
     rows: number,
-    columns: number,
+    cols: number,
     depth?: number,
 }): Box {
     let { width, height } = boxSize(box);
-    let dw = width / columns;
+    let dw = width / cols;
     let dh = height / rows;
-    let row = Math.floor(n / columns);
-    let column = n % columns;
+    let row = Math.floor(n / cols);
+    let column = n % cols;
     let start: Vector = addVector(
         [column * dw, row * dh, 0],
         box.start,
@@ -63,8 +63,12 @@ export function multBox({ start, end }: Box, value: number) {
 }
 
 export function cubicBox(size: number): Box {
+    return rectBox(size, size);
+}
+
+export function rectBox(width: number, height: number, depth?: number): Box {
     return {
-        start: [-size, -size, -size],
-        end: [size, size, size],
+        start: [-width / 2, -height / 2, -(depth ?? 100) / 2],
+        end: [width / 2, height / 2, (depth ?? 100) / 2],
     };
 }

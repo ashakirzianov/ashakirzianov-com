@@ -282,14 +282,14 @@ export function strokedRainbows() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
-    let veld = 1;
-    let vels: Vector[] = [
-        [veld, veld, 0],
-        [-veld, veld, 0],
-        [veld, -veld, 0],
-        [-veld, -veld, 0],
-    ];
     let size = 1;
+    let velocity = 1;
+    let vels: Vector[] = [
+        [velocity, velocity, 0],
+        [-velocity, velocity, 0],
+        [velocity, -velocity, 0],
+        [-velocity, -velocity, 0],
+    ];
     let palette = rainbow({ count: 120 });
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
@@ -332,53 +332,78 @@ export function strokedRainbows() {
     });
 }
 
+function enchanceWithSetI<T>(sets: T[][]) {
+    return sets.map(
+        (set, seti) => set.map(obj => ({ ...obj, seti }))
+    );
+}
+
+function xSets<O extends WithVelocity>({
+    size, velocity, creareObjects,
+}: {
+    size: number,
+    velocity: number,
+    creareObjects: (box: Box) => O[],
+}) {
+    let vels: Vector[] = [
+        [velocity, velocity, 0],
+        [-velocity, velocity, 0],
+        [velocity, -velocity, 0],
+        [-velocity, -velocity, 0],
+    ];
+    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
+    return boxes.map((box, bi) => {
+        let objects = creareObjects(box);
+        return objects.map(object => ({
+            ...object,
+            velocity: addVector(object.velocity, vels[bi]!),
+        }));
+    });
+}
+
 export function pasteleRainbows() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
-    let veld = 1;
-    let vels: Vector[] = [
-        [veld, veld, 0],
-        [-veld, veld, 0],
-        [veld, -veld, 0],
-        [-veld, -veld, 0],
-    ];
-    let size = 1;
     let palette = rainbow({ count: 120, s: 80, l: 70 });
+    let colorGetter = paletteColor(palette);
     let back = rainbow({ count: 120, s: 40, l: 70 });
-    return makeKnots({
-        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: counterColor(back),
-        // background: gray(250),
-        createObjects(box, bi) {
+    //     let batch = Math.floor(randomRange(batchRange));
+    //     return vals(batch).map(function () {
+    //         let obj = randomObject({
+    //             massRange, maxVelocity, box,
+    //             rToM: 2,
+    //         });
+    //         obj.velocity = addVector(obj.velocity, vels[bi]!);
+    //         return obj;
+    //     });
+    // }));
+    let sets = enchanceWithSetI(xSets({
+        size: 1, velocity: 1,
+        creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 2,
-                });
-                obj.velocity = addVector(obj.velocity, vels[bi]!);
-                return obj;
-            });
-        },
-        drawObject({ canvas, object, count }) {
-            let getter = colorGetter(
-                (obj, count) => obj.batch * 100 + count,
-                paletteColor(palette),
-            );
+            return vals(batch).map(() => randomObject({
+                massRange, maxVelocity, box,
+                rToM: 2,
+            }));
+        }
+    }));
+    return setsScene({
+        sets: [sets.flat()],
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object, frame }) {
             let n = 5;
-            let d = 1 / n;
             for (let i = 0; i < n; i++) {
-                let fill = getColor(getter, {
-                    object, count: count + i * 20,
-                });
-                let next = getColor(getter, {
-                    object, count: count + i * 20 + 10,
-                });
+                let offset = frame + object.seti * 100 + i * 20;
+                let fill = colorGetter(offset);
+                let next = colorGetter(offset + 10);
                 circle({
                     lineWidth: 5,
                     fill: fill,
-                    // stroke: 'black',
                     stroke: next,
                     position: object.position,
                     radius: object.radius * i,
@@ -386,13 +411,18 @@ export function pasteleRainbows() {
                 });
             }
         },
-        zoomToBox: stateBoundingBox(1.5),
-        animator: reduceAnimators(
-            gravity({ gravity: 0.02, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        ),
-        flatten: true,
+        prepare({ canvas, state }) {
+            let box = stateBoundingBox(1.5)({ sets: state });
+            zoomToFit({ canvas, box });
+        },
+        background: {
+            render({ canvas, frame }) {
+                clearFrame({
+                    canvas,
+                    color: paletteColor(back)(frame),
+                });
+            }
+        }
     });
 }
 
@@ -679,7 +709,7 @@ function squareBoxes({
 }
 
 function stateBoundingBox(padding: number) {
-    return function (state: State) {
+    return function (state: { sets: WithPosition[][] }) {
         let ps = state.sets.flat().map(o => o.position);
         return multBox(boundingBox(ps), padding);
     }
@@ -735,55 +765,6 @@ function randomBoxes({ count, size, box }: {
                 depth: size,
             }),
         );
-}
-
-function objectsAnimator(): Animator<Object[]> {
-    return reduceAnimators(
-        gravity({ gravity: 0.2, power: 2 }),
-        gravity({ gravity: -0.002, power: 5 }),
-        velocityStep(),
-    );
-}
-
-function foregroundLayer({
-    drawObject, zoomToBox, zoomOnRender, clearColor,
-}: {
-    drawObject: DrawObject,
-    zoomToBox?: (state: State) => Box,
-    zoomOnRender?: (state: State) => Box,
-    clearColor?: (state: State) => Color,
-}): Layer<State> {
-    return {
-        prepare({ canvas, state }) {
-            if (zoomToBox) {
-                let box = zoomToBox(state);
-                zoomToFit({ canvas, box });
-            }
-        },
-        render({ canvas, state, frame }) {
-            if (clearColor) {
-                clearFrame({
-                    canvas, color: clearColor(state),
-                });
-            }
-            canvas.context.save();
-            if (zoomOnRender) {
-                let box = zoomOnRender(state);
-                zoomToFit({ canvas, box });
-            }
-            for (let seti = 0; seti < state.sets.length; seti++) {
-                let set = state.sets[seti]!;
-                for (let obji = 0; obji < set.length; obji++) {
-                    let object = set[obji]!;
-                    drawObject({
-                        canvas, object,
-                        count: frame,
-                    });
-                }
-            }
-            canvas.context.restore();
-        },
-    };
 }
 
 let calmPalette: Color[] = [

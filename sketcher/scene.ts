@@ -48,14 +48,14 @@ export function colorLayer(color: Color): Layer<unknown> {
 }
 
 export function dynamicColorLayer<State>(
-    colorF: (state: State) => Color,
+    colorF: (state: State, frame: number) => Color,
 ): Layer<State> {
     return {
-        render({ canvas: { context, width, height }, state }) {
+        render({ canvas: { context, width, height }, state, frame }) {
             context.save();
             context.scale(width, height);
             context.fillStyle = resolveColor(
-                colorF(state), context,
+                colorF(state, frame), context,
             );
             context.fillRect(0, 0, 1, 1);
             context.restore();
@@ -94,23 +94,22 @@ export function setsScene<O>({
         state: sets,
         animator,
         layers: [{
-            prepare({ canvas, state }) {
+            prepare({ canvas, state, frame }) {
                 if (prepare) {
-                    prepare({ canvas, state });
+                    prepare({ canvas, state, frame });
                 }
             },
-            render({ canvas, state }) {
+            render({ canvas, state, frame }) {
                 canvas.context.save();
                 if (prerender) {
-                    prerender({ canvas, state });
+                    prerender({ canvas, state, frame });
                 }
                 for (let seti = 0; seti < state.length; seti++) {
                     let set = state[seti]!;
                     for (let index = 0; index < set.length; index++) {
                         let object = set[index]!;
                         drawObject({
-                            canvas, object, seti, index,
-                            frame: 0,
+                            canvas, frame, object, seti, index,
                         });
                     }
                 }

@@ -11,6 +11,7 @@ export type Canvas = {
 };
 export type RenderProps<State> = {
     canvas: Canvas,
+    frame: number,
     state: State,
 };
 export type Render<State> = (props: RenderProps<State>) => void;

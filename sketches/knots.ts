@@ -39,8 +39,7 @@ function playground() {
     let back = rainbow({ count: 120, s: 40, l: 70 });
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        // background: counterColor(back),
-        background: gray(0),
+        background: () => gray(0),
         createObjects(box, bi) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -105,7 +104,7 @@ export function bubbles() {
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
         // background: counterColor(back),
-        background: gray(0),
+        background: () => gray(0),
         createObjects(box, bi) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -169,8 +168,7 @@ export function bubblesFlat() {
     let back = rainbow({ count: 120, s: 40, l: 70 });
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        // background: counterColor(back),
-        background: gray(0),
+        background: () => gray(0),
         createObjects(box, bi) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -233,7 +231,7 @@ export function fittedRainbow() {
     let palette = rainbow({ count: 120, s: 100, l: 70 });
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: gray(0),
+        background: () => gray(0),
         createObjects(box, bi) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -295,8 +293,7 @@ export function strokedRainbows() {
     let palette = rainbow({ count: 120 });
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        // background: counterColor(back),
-        background: gray(250),
+        background: () => gray(250),
         createObjects(box, bi) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -407,7 +404,7 @@ export function original() {
     let complimentary = { red: 230, green: 230, blue: 230 };
     return makeKnots({
         boxes: [box],
-        background: {
+        background: () => ({
             kind: 'gradient',
             start: [0, 0], end: [0, 1],
             stops: makeStops({
@@ -415,7 +412,7 @@ export function original() {
                 0.7: fromRGBA(multRGBA(complimentary, 1.2)),
                 1: gray(50),
             }),
-        },
+        }),
         createObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -506,13 +503,13 @@ export function raveVariation() {
         [-veld, -veld, 0],
     ];
     let size = 1;
+    let backPalette = pulsating(hueRange({
+        from: 0, to: 360, count: 200,
+        s: 50, l: 90,
+    }));
     return makeKnots({
         boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: counterColor(pulsating(hueRange({
-            from: 0, to: 360, count: 200,
-            s: 50, l: 90,
-        }))),
-        // background: gray(250),
+        background: (_, frame) => modItem(backPalette, frame),
         createObjects(box, bi) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
@@ -575,9 +572,7 @@ type Data = {
     rand: number,
 }
 type Object = Particle & Data;
-type State = WithSets<Object[]> & {
-    count: number,
-};
+type State = WithSets<Object[]>;
 type DrawObjectProps = {
     canvas: Canvas,
     object: Object,
@@ -593,7 +588,7 @@ function makeKnots({
     boxes: Box[],
     createObjects: (box: Box, idx: number) => Particle[],
     drawObject: DrawObject,
-    background?: ColorOrGetter<State>,
+    background?: (s: State, frame: number) => Color,
     zoomToBox?: (state: State) => Box,
     zoomOnRender?: (state: State) => Box,
     clearColor?: (state: State) => Color,
@@ -611,7 +606,6 @@ function makeKnots({
         sets = [sets.flat()];
     }
     let state: State = {
-        count: 0,
         sets,
     };
 
@@ -623,7 +617,6 @@ function makeKnots({
         state,
         animator: combineAnimators<State>({
             sets: arrayAnimator(animator ?? objectsAnimator()),
-            count: counter(),
         }),
         layers: [
             backgroundLayer,
@@ -753,7 +746,7 @@ function foregroundLayer({
                 zoomToFit({ canvas, box });
             }
         },
-        render({ canvas, state }) {
+        render({ canvas, state, frame }) {
             if (clearColor) {
                 clearFrame({
                     canvas, color: clearColor(state),
@@ -770,7 +763,7 @@ function foregroundLayer({
                     let object = set[obji]!;
                     drawObject({
                         canvas, object,
-                        count: state.count,
+                        count: frame,
                     });
                 }
             }
@@ -795,14 +788,8 @@ function colorGetter<T>(
     return ({ object, count }) => xToColor(objToX(object, count));
 }
 
-function counterColor(palette: Color[]): ColorGetter<State> {
-    return state => modItem(palette, state.count);
-}
-
-function pulsatingRainbow(): ColorGetter<State> {
-    let palette = pulsating(hueRange({
-        from: 0, to: 360, count: 20,
-        s: 70, l: 90,
-    }));
-    return state => modItem(palette, state.count);
+function counterColor(palette: Color[]) {
+    return function (state: State, frame: number) {
+        return modItem(palette, frame);
+    };
 }

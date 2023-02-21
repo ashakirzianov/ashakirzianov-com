@@ -82,18 +82,22 @@ export type DrawObjectProps<O> = {
 export type DrawObject<O> = (props: DrawObjectProps<O>) => void;
 type State<O> = O[][];
 export function setsScene<O>({
-    sets, animator, drawObject, prepare, prerender,
+    sets, animator, drawObject, prepare, prerender, background,
 }: {
     sets: O[][],
     animator: Animator<O[][]>,
     drawObject: DrawObject<O>,
     prepare?: Render<O[][]>,
     prerender?: Render<O[][]>,
+    background?: {
+        prepare?: Render<O[][]>,
+        render?: Render<O[][]>,
+    },
 }): Scene<State<O>> {
     return {
         state: sets,
         animator,
-        layers: [{
+        layers: [background ?? {}, {
             prepare({ canvas, state, frame }) {
                 if (prepare) {
                     prepare({ canvas, state, frame });

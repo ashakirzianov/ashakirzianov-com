@@ -5,7 +5,7 @@ import {
     rainbow, randomVector, counter,
     boundingBox, clearFrame, multBox,
     midpoint, gray, multRGBA, colorLayer,
-    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor,
+    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene,
 } from '@/sketcher';
 
 export const variations = [
@@ -549,7 +549,6 @@ export function randomBatchesVariation() {
             count: batches,
         }),
         background: () => gray(230),
-        // background: pulsatingRainbow(),
         createObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
             return Array(batch).fill(undefined).map(
@@ -594,7 +593,7 @@ function makeKnots({
     clearColor?: (state: State) => Color,
     flatten?: boolean,
     animator?: Animator<Object[]>,
-}): Scene<State> {
+}): Scene<Object[][]> {
     let sets = boxes.map(
         (box, batch) => createObjects(box, batch).map(
             (object, index) => ({
@@ -605,26 +604,41 @@ function makeKnots({
     if (flatten) {
         sets = [sets.flat()];
     }
-    let state: State = {
+    return setsScene({
         sets,
-    };
-
-    let backgroundLayer = typeof background === 'function' ? dynamicColorLayer(background)
-        : background === undefined ? colorLayer('transparent')
-            : colorLayer(background);
-
-    return {
-        state,
-        animator: combineAnimators<State>({
-            sets: arrayAnimator(animator ?? objectsAnimator()),
-        }),
-        layers: [
-            backgroundLayer,
-            foregroundLayer({
-                drawObject, zoomToBox, zoomOnRender, clearColor,
-            }),
-        ],
-    };
+        animator: arrayAnimator(animator ?? reduceAnimators(
+            gravity({ gravity: 0.2, power: 2 }),
+            gravity({ gravity: -0.002, power: 5 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, frame, object, seti, index }) {
+            drawObject({ canvas, object, count: frame });
+        },
+        prerender({ canvas, frame, state }) {
+            if (clearColor) {
+                let color = clearColor({ sets: state });
+                clearFrame({ canvas, color });
+            }
+            if (zoomOnRender) {
+                let box = zoomOnRender({ sets: state });
+                zoomToFit({ canvas, box });
+            }
+        },
+        prepare({ canvas, state }) {
+            if (zoomToBox) {
+                let box = zoomToBox({ sets: state });
+                zoomToFit({ canvas, box });
+            }
+        },
+        background: {
+            render({ canvas, state, frame }) {
+                if (background) {
+                    let color = background({ sets: state }, frame);
+                    clearFrame({ canvas, color });
+                }
+            }
+        },
+    });
 }
 
 function cornerBoxes({ rows, cols }: {

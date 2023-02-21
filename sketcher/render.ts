@@ -179,8 +179,11 @@ export function clearFrame({ color, canvas }: {
     color: Color,
     canvas: Canvas,
 }) {
+    canvas.context.save();
+    canvas.context.resetTransform();
     canvas.context.fillStyle = resolveColor(color, canvas.context);
     canvas.context.fillRect(0, 0, canvas.width, canvas.height);
+    canvas.context.restore();
 }
 
 export function zoomToFit({ canvas, box }: {

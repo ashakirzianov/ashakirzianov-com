@@ -45,3 +45,12 @@ export function randomVectorInBox({ start, end }: Box) {
     }
     return result;
 }
+
+export function randomItem<T>(arr: T[]): T {
+    let idx = randomInt(arr.length);
+    return arr[idx]!;
+}
+
+export function randomInt(max: number) {
+    return Math.floor(Math.random() * max);
+}

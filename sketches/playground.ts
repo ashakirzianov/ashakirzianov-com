@@ -17,12 +17,18 @@ import {
     multBox,
     zoomToFill,
     midpoint,
+    gray,
+    multRGBA,
+    colorLayer,
+    Color,
+    RGBAColor,
+    cubicBox,
 } from '@/sketcher';
 
 const {
     setCount, count, radiusRange, velocityAmp,
     boxSize, subBoxSize,
-    colors, back,
+    colors, complimentary,
 } = {
     setCount: 5,
     count: 20,
@@ -30,11 +36,20 @@ const {
     boxSize: 250,
     subBoxSize: 10,
     radiusRange: { min: 0.5, max: 17 },
-    back: { red: 230, green: 230, blue: 230 },
     colors: [
         '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
     ],
+    complimentary: [230, 230, 230] as RGBAColor,
 };
+let back: Color = {
+    kind: 'gradient',
+    start: [0, 0], end: [0, 1],
+    stops: makeStops({
+        0: complimentary,
+        // 0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+        // 1: gray(100),
+    }),
+}
 
 type PlaygroundObject = {
     group: number,
@@ -48,10 +63,7 @@ type PlaygroundState = WithSets<PlaygroundObject[]> & {
     count: number,
 };
 
-let box: Box = {
-    start: [-boxSize, - boxSize, -boxSize],
-    end: [boxSize, boxSize, boxSize],
-};
+let box: Box = cubicBox(boxSize);
 
 export function playground(): Scene<PlaygroundState> {
     return {
@@ -78,7 +90,7 @@ function buildState(): PlaygroundState {
 }
 
 function squareBoxes(count: number): Box[] {
-    let rows = 5, columns = 5;
+    let rows = 5, cols = 5;
     let ns = [0, 17, 3, 7, 9, 4];
     return Array(count)
         .fill(undefined)
@@ -87,7 +99,7 @@ function squareBoxes(count: number): Box[] {
                 n: ns[idx % ns.length]!,
                 box,
                 depth: subBoxSize,
-                rows, columns,
+                rows, cols,
             }),
         );
 }
@@ -132,43 +144,52 @@ function objectsAnimator(): Animator<PlaygroundObject[]> {
     );
 }
 
-function background(): Layer<PlaygroundState> {
-    return gradientLayer(makeStops({
-        // 0: '#A1EE35',
-        0: fromRGBA(back),
-        // 0.8: fromRGBA(multRGBA(back, 1.2)),
-        // 1: gray(100),
-    }));
+function background() {
+    return colorLayer(back);
+    // return colorLayer({
+    //     kind: 'gradient',
+    //     start: [0, 0], end: [0, 1],
+    //     stops: makeStops({
+    //         0: '#AAAAAA',
+    //         1: fromRGBA(complimentary),
+    //         // 0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+    //         // 1: gray(100),
+    //     }),
+    // });
 }
 
 function foreground(): Layer<PlaygroundState> {
-    let cs = rainbow(120);
-    return layer(({ canvas, state }) => {
-        canvas.context.save();
-        // clearFrame({ canvas, color: 'white' });
-        zoomToFit({ canvas, box: multBox(box, 1) });
-        let ps = state.sets.flat().map(o => o.position);
-        // zoomToFit({
-        //     canvas,
-        //     box: multBox(boundingBox(ps), 1.05),
-        // });
-        // centerOnPoint({
-        //     canvas,
-        //     point: midpoint(ps),
-        // });
-        for (let set of state.sets) {
-            for (let object of set) {
-                circle({
-                    lineWidth: 0.5,
-                    fill: object.color,
-                    // fill: cs[(state.count + object.n) % cs.length]!,
-                    stroke: 'black',
-                    position: object.position,
-                    radius: object.radius,
-                    context: canvas.context,
-                });
+    let cs = rainbow({ count: 120 });
+    return {
+        prepare({ canvas, state }) {
+            let ps = state.sets.flat().map(o => o.position);
+            zoomToFit({
+                canvas,
+                box: multBox(boundingBox(ps), 1.1),
+            });
+        },
+        render({ canvas, state }) {
+            canvas.context.save();
+            // clearFrame({ canvas, color: 'white' });
+            // let ps = state.sets.flat().map(o => o.position);
+            // zoomToFit({
+            //     canvas,
+            //     box: multBox(boundingBox(ps), 1.05),
+            // });
+            for (let set of state.sets) {
+                for (let object of set) {
+                    circle({
+                        lineWidth: 0.5,
+                        fill: object.color,
+                        // fill: cs[(state.count + object.n) % cs.length]!,
+                        stroke: 'black',
+                        position: object.position,
+                        radius: object.radius,
+                        context: canvas.context,
+                    });
+                }
             }
-        }
-        canvas.context.restore();
-    });
+            canvas.context.restore();
+        },
+    };
 }

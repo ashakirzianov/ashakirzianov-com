@@ -1,6 +1,5 @@
 import { Canvas } from "./render";
 import { Layer, Scene } from "./scene";
-import { combineTransforms } from "./transform";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps<State> = {
@@ -41,32 +40,43 @@ function makeRenderState<State>({ layers, getCanvas }: {
     layers: Layer<State>[],
     getCanvas: CanvasGetter,
 }) {
-    let doneStatic = new Set();
+    let layerData = layers.map(layer => ({
+        layer,
+        prepared: false,
+        width: 0,
+        height: 0,
+    }));
     return function renderLayers(state: State) {
-        let rendered = false;
-        for (let idx = 0; idx < layers.length; idx++) {
-            let layer = layers[idx]!;
+        let canvases: Canvas[] = [];
+        for (let idx = 0; idx < layerData.length; idx++) {
+            let canvas = getCanvas(idx);
+            if (canvas === undefined) {
+                return false;
+            }
+            canvases.push(canvas);
+            let ld = layerData[idx]!;
+            if (ld.width !== canvas.width || ld.height !== canvas.height) {
+                ld.width = canvas.width;
+                ld.height = canvas.height;
+                ld.prepared = false;
+            }
+        }
+        for (let idx = 0; idx < layerData.length; idx++) {
+            let { layer, prepared } = layerData[idx]!;
             if (layer.hidden) {
                 continue;
             }
-            if (layer.static && doneStatic.has(idx)) {
-                continue;
+            let canvas = canvases[idx]!;
+            if (!prepared && layer.prepare) {
+                canvas.context.resetTransform();
+                layer.prepare({ canvas, state });
+                layerData[idx]!.prepared = true;
             }
-            let canvas = getCanvas(idx);
-            if (!canvas) {
-                continue;
-            }
-            if (layer.transforms) {
-                combineTransforms(...layer.transforms)(layer.render)({ canvas, state })
-            } else {
+            if (layer.render) {
                 layer.render({ canvas, state });
             }
-            if (layer.static) {
-                doneStatic.add(idx);
-            }
-            rendered = true;
         }
-        return rendered;
+        return true;
     }
 }
 

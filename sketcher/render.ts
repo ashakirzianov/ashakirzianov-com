@@ -33,20 +33,24 @@ export function circle({
     context,
 }: {
     lineWidth: number,
-    fill: Color,
-    stroke: Color,
+    fill?: Color,
+    stroke?: Color,
     position: Vector,
     radius: number,
     context: Canvas2DContext,
 }) {
     context.save();
     context.lineWidth = lineWidth;
-    context.fillStyle = resolveColor(fill, context);
-    context.strokeStyle = resolveColor(stroke, context);
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
-    context.fill();
-    context.stroke();
+    if (fill) {
+        context.fillStyle = resolveColor(fill, context);
+        context.fill();
+    }
+    if (stroke) {
+        context.strokeStyle = resolveColor(stroke, context);
+        context.stroke();
+    }
     context.restore();
 }
 

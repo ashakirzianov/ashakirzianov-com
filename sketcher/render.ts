@@ -176,15 +176,16 @@ export function drawCorner({
     context.restore();
 }
 
-export function clearFrame({ color, canvas }: {
+export function clearFrame({ color, canvas: { context, width, height } }: {
     color: Color,
     canvas: Canvas,
 }) {
-    canvas.context.save();
-    canvas.context.resetTransform();
-    canvas.context.fillStyle = resolveColor(color, canvas.context);
-    canvas.context.fillRect(0, 0, canvas.width, canvas.height);
-    canvas.context.restore();
+    context.save();
+    context.resetTransform();
+    context.scale(width, height);
+    context.fillStyle = resolveColor(color, context);
+    context.fillRect(0, 0, 1, 1);
+    context.restore();
 }
 
 export function zoomToFit({ canvas, box }: {

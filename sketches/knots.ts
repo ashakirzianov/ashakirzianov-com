@@ -5,21 +5,54 @@ import {
     rainbow, randomVector, counter,
     boundingBox, clearFrame, multBox,
     midpoint, gray, multRGBA, colorLayer,
-    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter,
+    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor,
 } from '@/sketcher';
 
 export const variations = [
     raveVariation(),
     randomBatchesVariation(),
+    original(),
 ];
 
 export function current() {
     return raveVariation();
 }
 
-export function raveVariation() {
+export function original() {
+    let box = cubicBox(200);
     let batchRange = { min: 20, max: 20 };
-    let maxVelocity = 3;
+    let maxVelocity = 0.5;
+    let massRange = { min: 0.5, max: 5 };
+    let complimentary = { red: 230, green: 230, blue: 230 };
+    return makeKnots({
+        boxes: [box],
+        background: {
+            kind: 'gradient',
+            start: [0, 0], end: [0, 1],
+            stops: makeStops({
+                0: fromRGBA(complimentary),
+                0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+                1: gray(50),
+            }),
+        },
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 1,
+                });
+                return obj;
+            });
+        },
+        drawObject: circleObjectForColor('orange'),
+        zoomToBox: stateBoundingBox(1),
+    });
+}
+
+export function raveVariation() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 1;
     let massRange = { min: 0.1, max: 4 };
     let veld = 1;
     let vels: Vector[] = [
@@ -49,11 +82,17 @@ export function raveVariation() {
         },
         drawObject: circleObjectForColor(
             colorGetter(
-                (_, count) => count,
+                (obj, count) => obj.batch * 100 + count,
                 paletteColor(rainbow({ count: 120 })),
             ),
         ),
         zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        flatten: true,
     });
 }
 
@@ -215,10 +254,10 @@ function randomObject({
     };
 }
 
-type GetColor = ColorGetter<{ object: Object, count: number }>;
-function circleObjectForColor(getColor: GetColor): DrawObject {
+type GetColor = ColorOrGetter<{ object: Object, count: number }>;
+function circleObjectForColor(getter: GetColor): DrawObject {
     return function drawObject({ canvas, object, count }) {
-        let fill = getColor({ object, count });
+        let fill = getColor(getter, ({ object, count }));
         circle({
             lineWidth: 0.5,
             fill,

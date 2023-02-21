@@ -1,8 +1,9 @@
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { Scene } from "@/sketcher";
 import { variations } from "@/sketches/knots";
 import { GetStaticPaths, GetStaticProps } from "next";
+
+// @refresh reset
 
 export const getStaticPaths: GetStaticPaths = async function () {
     let paths = variations.map(

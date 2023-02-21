@@ -12,6 +12,7 @@ export type Scene<State> = {
     layers: Layer<State>[],
 };
 
+// TODO: remove this utils?
 export function scene<State>(s: Scene<State>) {
     return s;
 }
@@ -69,4 +70,52 @@ export function gradientLayer(stops: ColorStop[]) {
         end: [0, 1],
         stops,
     });
+}
+
+export type DrawObjectProps<O> = {
+    canvas: Canvas,
+    frame: number,
+    object: O,
+    seti: number,
+    index: number,
+};
+export type DrawObject<O> = (props: DrawObjectProps<O>) => void;
+type State<O> = O[][];
+export function setsScene<O>({
+    sets, animator, drawObject, prepare, prerender,
+}: {
+    sets: O[][],
+    animator: Animator<O[][]>,
+    drawObject: DrawObject<O>,
+    prepare?: Render<O[][]>,
+    prerender?: Render<O[][]>,
+}): Scene<State<O>> {
+    return {
+        state: sets,
+        animator,
+        layers: [{
+            prepare({ canvas, state }) {
+                if (prepare) {
+                    prepare({ canvas, state });
+                }
+            },
+            render({ canvas, state }) {
+                canvas.context.save();
+                if (prerender) {
+                    prerender({ canvas, state });
+                }
+                for (let seti = 0; seti < state.length; seti++) {
+                    let set = state[seti]!;
+                    for (let index = 0; index < set.length; index++) {
+                        let object = set[index]!;
+                        drawObject({
+                            canvas, object, seti, index,
+                            frame: 0,
+                        });
+                    }
+                }
+                canvas.context.restore();
+            }
+        }],
+    };
 }

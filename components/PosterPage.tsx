@@ -25,11 +25,14 @@ export function PosterPage({
                 <style jsx>{`
                 .poster-page {
                     display: flex;
-                    align-items: center;
+                    align-items: start;
                     justify-content: center;
                     height: 100vh;
                     width: 100vw;
-                    padding: 10px;
+                    padding: 10vh 10px;
+                }
+                main {
+                    background-color: #222222;
                 }
                 `}</style>
             </main>

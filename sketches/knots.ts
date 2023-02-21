@@ -8,6 +8,11 @@ import {
     Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter,
 } from '@/sketcher';
 
+export const variations = [
+    raveVariation(),
+    randomBatchesVariation(),
+];
+
 export function current() {
     return raveVariation();
 }

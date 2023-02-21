@@ -1,12 +1,13 @@
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { current } from "@/sketches/knots";
+import { randomItem } from "@/sketcher";
+import { current, variations } from "@/sketches/knots";
 
 // @refresh reset
 
 export default function Knots() {
     let { node } = useSketcher({
-        scene: current(),
+        scene: randomItem(variations),
         period: 40,
         chunk: 500,
         // skip: 500,

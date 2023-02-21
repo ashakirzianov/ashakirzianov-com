@@ -9,14 +9,394 @@ import {
 } from '@/sketcher';
 
 export const variations = [
+    pasteleRainbows(),
     rainbowSpring(),
+    fittedRainbow(),
+    bubbles(),
+    bubblesFlat(),
     raveVariation(),
     randomBatchesVariation(),
     original(),
 ];
 
 export function current() {
-    return rainbowSpring();
+    return playground();
+}
+
+function playground() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 0.1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 0.1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 10;
+    let palette = rainbow({ count: 100, s: 100, l: 70 });
+    let back = rainbow({ count: 120, s: 40, l: 70 });
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        // background: counterColor(back),
+        background: gray(0),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 30 + count,
+                paletteColor(palette),
+            );
+            let n = 5;
+            for (let i = 0; i < n; i++) {
+                let fill = getColor(getter, {
+                    object, count: count - i * 3,
+                });
+                let stroke = getColor(getter, {
+                    object, count: count,
+                });
+                circle({
+                    lineWidth: 0.2,
+                    fill,
+                    // stroke: i === 0 ? 'black' : undefined,
+                    // stroke,
+                    position: object.position,
+                    radius: object.radius * (n - i + 1) / n,
+                    context: canvas.context,
+                });
+            }
+        },
+        zoomOnRender: stateBoundingBox(1.5),
+        // zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            // gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        clearColor: () => 'black',
+        flatten: true,
+    });
+}
+
+export function bubbles() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 0.1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 0.1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 10;
+    let palette = rainbow({ count: 100, s: 100, l: 70 });
+    let back = rainbow({ count: 120, s: 40, l: 70 });
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        // background: counterColor(back),
+        background: gray(0),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 30 + count,
+                paletteColor(palette),
+            );
+            let n = 5;
+            for (let i = 0; i < n; i++) {
+                let fill = getColor(getter, {
+                    object, count: count - i * 3,
+                });
+                let stroke = getColor(getter, {
+                    object, count: count,
+                });
+                circle({
+                    lineWidth: 0.2,
+                    fill,
+                    // stroke: i === 0 ? 'black' : undefined,
+                    // stroke,
+                    position: object.position,
+                    radius: object.radius * (n - i + 1) / n,
+                    context: canvas.context,
+                });
+            }
+        },
+        zoomOnRender: stateBoundingBox(1.5),
+        // zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            // gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        clearColor: () => 'black',
+        // flatten: true,
+    });
+}
+
+export function bubblesFlat() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 0.1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 0.1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 10;
+    let palette = rainbow({ count: 100, s: 100, l: 70 });
+    let back = rainbow({ count: 120, s: 40, l: 70 });
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        // background: counterColor(back),
+        background: gray(0),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 30 + count,
+                paletteColor(palette),
+            );
+            let n = 5;
+            for (let i = 0; i < n; i++) {
+                let fill = getColor(getter, {
+                    object, count: count - i * 3,
+                });
+                let stroke = getColor(getter, {
+                    object, count: count,
+                });
+                circle({
+                    lineWidth: 0.2,
+                    fill,
+                    // stroke: i === 0 ? 'black' : undefined,
+                    // stroke,
+                    position: object.position,
+                    radius: object.radius * (n - i + 1) / n,
+                    context: canvas.context,
+                });
+            }
+        },
+        zoomOnRender: stateBoundingBox(1.5),
+        // zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            // gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        clearColor: () => 'black',
+        flatten: true,
+    });
+}
+
+export function fittedRainbow() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 1;
+    let palette = rainbow({ count: 120, s: 100, l: 70 });
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        background: gray(0),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 30 + count,
+                paletteColor(palette),
+            );
+            let n = 5;
+            for (let i = 0; i < n; i++) {
+                let fill = getColor(getter, {
+                    object, count: count - i * 3,
+                });
+                let stroke = getColor(getter, {
+                    object, count: count,
+                });
+                circle({
+                    lineWidth: 0.2,
+                    fill,
+                    // stroke: i === 0 ? 'black' : undefined,
+                    // stroke,
+                    position: object.position,
+                    radius: object.radius * (n - i + 1) / n,
+                    context: canvas.context,
+                });
+            }
+        },
+        zoomOnRender: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.2, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        // clearColor: () => 'white',
+        // flatten: true,
+    });
+}
+
+export function strokedRainbows() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 1;
+    let palette = rainbow({ count: 120 });
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        // background: counterColor(back),
+        background: gray(250),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 100 + count,
+                paletteColor(palette),
+            );
+            let fill = getColor(getter, {
+                object, count: count + 20,
+            });
+            circle({
+                lineWidth: 0.2,
+                fill: fill,
+                stroke: 'black',
+                position: object.position,
+                radius: object.radius * 3,
+                context: canvas.context,
+            });
+        },
+        zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        flatten: true,
+    });
+}
+
+export function pasteleRainbows() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 1;
+    let palette = rainbow({ count: 120, s: 80, l: 70 });
+    let back = rainbow({ count: 120, s: 40, l: 70 });
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        background: counterColor(back),
+        // background: gray(250),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 100 + count,
+                paletteColor(palette),
+            );
+            let n = 5;
+            let d = 1 / n;
+            for (let i = 0; i < n; i++) {
+                let fill = getColor(getter, {
+                    object, count: count + i * 20,
+                });
+                let next = getColor(getter, {
+                    object, count: count + i * 20 + 10,
+                });
+                circle({
+                    lineWidth: 5,
+                    fill: fill,
+                    // stroke: 'black',
+                    stroke: next,
+                    position: object.position,
+                    radius: object.radius * i,
+                    context: canvas.context,
+                });
+            }
+        },
+        zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        flatten: true,
+    });
 }
 
 export function original() {
@@ -369,12 +749,12 @@ function foregroundLayer({
             }
         },
         render({ canvas, state }) {
-            canvas.context.save();
             if (clearColor) {
                 clearFrame({
                     canvas, color: clearColor(state),
                 });
             }
+            canvas.context.save();
             if (zoomOnRender) {
                 let box = zoomOnRender(state);
                 zoomToFit({ canvas, box });

@@ -402,7 +402,7 @@ export function pasteleRainbows() {
 export function original() {
     let box = cubicBox(200);
     let batchRange = { min: 20, max: 20 };
-    let maxVelocity = 0.5;
+    let maxVelocity = 0.4;
     let massRange = { min: 0.5, max: 5 };
     let complimentary = { red: 230, green: 230, blue: 230 };
     return makeKnots({
@@ -412,11 +412,11 @@ export function original() {
             start: [0, 0], end: [0, 1],
             stops: makeStops({
                 0: fromRGBA(complimentary),
-                0.8: fromRGBA(multRGBA(complimentary, 1.2)),
+                0.7: fromRGBA(multRGBA(complimentary, 1.2)),
                 1: gray(50),
             }),
         },
-        createObjects(box, bi) {
+        createObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(function () {
                 let obj = randomObject({
@@ -427,7 +427,12 @@ export function original() {
             });
         },
         drawObject: circleObjectForColor('orange'),
-        zoomToBox: stateBoundingBox(1),
+        zoomToBox: stateBoundingBox(1.2),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.06, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
     });
 }
 

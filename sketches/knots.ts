@@ -9,13 +9,14 @@ import {
 } from '@/sketcher';
 
 export const variations = [
+    rainbowSpring(),
     raveVariation(),
     randomBatchesVariation(),
     original(),
 ];
 
 export function current() {
-    return raveVariation();
+    return rainbowSpring();
 }
 
 export function original() {
@@ -47,6 +48,64 @@ export function original() {
         },
         drawObject: circleObjectForColor('orange'),
         zoomToBox: stateBoundingBox(1),
+    });
+}
+
+export function rainbowSpring() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 1;
+    let massRange = { min: 1, max: 20 };
+    let veld = 1;
+    let vels: Vector[] = [
+        [veld, veld, 0],
+        [-veld, veld, 0],
+        [veld, -veld, 0],
+        [-veld, -veld, 0],
+    ];
+    let size = 1;
+    return makeKnots({
+        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
+        background: counterColor(pulsating(hueRange({
+            from: 0, to: 360, count: 200,
+            s: 50, l: 90,
+        }))),
+        // background: gray(250),
+        createObjects(box, bi) {
+            let batch = Math.floor(randomRange(batchRange));
+            return vals(batch).map(function () {
+                let obj = randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                });
+                obj.velocity = addVector(obj.velocity, vels[bi]!);
+                return obj;
+            });
+        },
+        drawObject({ canvas, object, count }) {
+            let getter = colorGetter(
+                (obj, count) => obj.batch * 100 + count,
+                paletteColor(rainbow({ count: 120 })),
+            );
+            let fill = getColor(getter, ({ object, count }));
+            let nextFill = getColor(getter, {
+                object, count: count + 4,
+            })
+            circle({
+                lineWidth: 1,
+                fill: fill,
+                stroke: nextFill,
+                position: object.position,
+                radius: object.radius,
+                context: canvas.context,
+            });
+        },
+        zoomToBox: stateBoundingBox(1.5),
+        animator: reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        ),
+        flatten: true,
     });
 }
 

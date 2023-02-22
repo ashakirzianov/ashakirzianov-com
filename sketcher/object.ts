@@ -3,7 +3,7 @@ import { Color } from './color';
 import { randomRange, randomVector } from './random';
 import { NumRange } from './range';
 import {
-    addVector, distance, lengthVector, multsVector, subVector, Vector,
+    addVector, distance, lengthVector, multsVector, subVector, Vector, vectorLength,
 } from './vector';
 
 export type WithPosition = { position: Vector };
@@ -96,27 +96,34 @@ export type GravityProps = {
     gravity: number,
     power: number,
 };
-export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): ObjectAnimator<ObjectT> {
-    function force(o1: ObjectT, o2: ObjectT) {
-        let dist = distance(o1.position, o2.position);
-        let direction = subVector(o1.position, o2.position);
-        let mass = o1.mass * o2.mass;
-        let multiplier = (mass * gravity) / (dist ** power);
-        let result = multsVector(direction, multiplier);
-        return result;
+export type GravityObject = WithPosition & WithMass;
+export function getGravity({ gravity, power, from, to }: {
+    gravity: number,
+    power: number,
+    from: GravityObject,
+    to: GravityObject,
+}): Vector {
+    let direction = subVector(to.position, from.position);
+    let dist = vectorLength(direction);
+    if (dist === 0) {
+        return [0, 0, 0];
     }
-
+    let multiplier = (from.mass * to.mass * gravity) / (dist ** power);
+    let result = multsVector(direction, multiplier);
+    return result;
+}
+export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): ObjectAnimator<ObjectT> {
     return function gravityLaw(objects) {
         objects = objects.map(obj => ({ ...obj }));
-        for (let left = 0; left < objects.length; left++) {
-            for (let right = 0; right < objects.length; right++) {
-                if (left === right) {
-                    continue;
-                }
-                let lobj = objects[left]!;
-                let robj = objects[right]!;
-                let f = force(robj, lobj);
-                lobj.velocity = addVector(lobj.velocity, f);
+        for (let fromi = 0; fromi < objects.length; fromi++) {
+            for (let toi = fromi + 1; toi < objects.length; toi++) {
+                let from = objects[fromi]!;
+                let to = objects[toi]!;
+                let force = getGravity({
+                    gravity, power, from, to,
+                });
+                from.velocity = subVector(from.velocity, force);
+                to.velocity = addVector(to.velocity, force);
             }
         }
         return objects;

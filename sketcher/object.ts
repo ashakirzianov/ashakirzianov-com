@@ -129,3 +129,14 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
         return objects;
     }
 }
+
+export function resultingBody(objects: GravityObject[]): GravityObject {
+    let result = objects.reduce(
+        (sum, curr) => ({
+            position: addVector(sum.position, multsVector(curr.position, curr.mass)),
+            mass: sum.mass + curr.mass,
+        }),
+        { position: [0, 0, 0], mass: 0 },
+    );
+    return result;
+}

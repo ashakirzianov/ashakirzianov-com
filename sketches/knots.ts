@@ -19,7 +19,7 @@ export const variations = [
     pastelRainbows(),
     rainbowSpring(),
     rainbowStrings(),
-    randomBatchesVariation(),
+    randomBatches(),
     original(),
 ];
 
@@ -484,30 +484,45 @@ export function rainbowStrings() {
     });
 }
 
-export function randomBatchesVariation() {
+export function randomBatches() {
     let batchRange = { min: 5, max: 20 };
     let batches = 7;
     let maxVelocity = 5;
     let massRange = { min: 0.1, max: 4 };
-    return makeKnots({
-        boxes: randomBoxes({
-            box: cubicBox(500),
-            size: 250,
-            count: batches,
-        }),
-        background: () => gray(230),
-        createObjects(box) {
-            let batch = Math.floor(randomRange(batchRange));
-            return Array(batch).fill(undefined).map(
-                () => randomObject({
-                    massRange, maxVelocity, box, rToM: 4,
-                }),
-            );
+    let boxes = randomBoxes({
+        box: cubicBox(500),
+        size: 250,
+        count: batches,
+    });
+    let sets = boxes.map(box => {
+        let batch = Math.floor(randomRange(batchRange));
+        return Array(batch).fill(undefined).map(
+            () => randomObject({
+                massRange, maxVelocity, box, rToM: 4,
+            }),
+        );
+    });
+    return setsScene({
+        sets,
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.2, power: 2 }),
+            gravity({ gravity: -0.002, power: 5 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object, seti }) {
+            circle({
+                lineWidth: 0.5,
+                fill: modItem(calmPalette, seti),
+                stroke: 'black',
+                position: object.position,
+                radius: object.radius,
+                context: canvas.context,
+            });
         },
-        drawObject: circleObjectForColor(
-            ({ object }) => modItem(calmPalette, object.batch),
-        ),
-        zoomToBox: stateBoundingBox(1.2),
+        prepare({ canvas, state }) {
+            clearFrame({ canvas, color: gray(230) });
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+        },
     });
 }
 

@@ -112,6 +112,7 @@ export function getGravity({ gravity, power, from, to }: {
     let result = multsVector(direction, multiplier);
     return result;
 }
+
 export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>({ gravity, power }: GravityProps): ObjectAnimator<ObjectT> {
     return function gravityLaw(objects) {
         objects = objects.map(obj => ({ ...obj }));
@@ -122,8 +123,8 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
                 let force = getGravity({
                     gravity, power, from, to,
                 });
-                from.velocity = subVector(from.velocity, force);
-                to.velocity = addVector(to.velocity, force);
+                from.velocity = addVector(from.velocity, force);
+                to.velocity = subVector(to.velocity, force);
             }
         }
         return objects;

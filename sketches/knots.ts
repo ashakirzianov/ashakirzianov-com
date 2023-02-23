@@ -18,7 +18,7 @@ export const variations = [
     strokedRainbows(),
     pastelRainbows(),
     rainbowSpring(),
-    raveVariation(),
+    rainbowStrings(),
     randomBatchesVariation(),
     original(),
 ];
@@ -436,49 +436,51 @@ export function rainbowSpring() {
     });
 }
 
-export function raveVariation() {
+export function rainbowStrings() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 0.1, max: 4 };
-    let veld = 1;
-    let vels: Vector[] = [
-        [veld, veld, 0],
-        [-veld, veld, 0],
-        [veld, -veld, 0],
-        [-veld, -veld, 0],
-    ];
-    let size = 1;
     let backPalette = pulsating(hueRange({
         from: 0, to: 360, count: 200,
         s: 50, l: 90,
     }));
-    return makeKnots({
-        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: (_, frame) => modItem(backPalette, frame),
-        createObjects(box, bi) {
+    let sets = enchanceWithSetI(xSets({
+        size: 1, velocity: 1,
+        creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 2,
-                });
-                obj.velocity = addVector(obj.velocity, vels[bi]!);
-                return obj;
-            });
-        },
-        drawObject: circleObjectForColor(
-            colorGetter(
-                (obj, count) => obj.batch * 100 + count,
-                paletteColor(rainbow({ count: 120 })),
-            ),
-        ),
-        zoomToBox: stateBoundingBox(1.5),
-        animator: reduceAnimators(
+            return vals(batch).map(() => randomObject({
+                massRange, maxVelocity, box,
+                rToM: 2,
+            }));
+        }
+    }));
+    let palette = rainbow({ count: 120 });
+    return setsScene({
+        sets: [sets.flat()],
+        animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
-        ),
-        flatten: true,
+        )),
+        drawObject({ canvas, frame, object }) {
+            let fill = modItem(palette, object.seti * 100 + frame);
+            circle({
+                lineWidth: 0.5,
+                fill,
+                stroke: 'black',
+                position: object.position,
+                radius: object.radius,
+                context: canvas.context,
+            });
+        },
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+        },
+        background: {
+            render({ canvas, frame }) {
+                clearFrame({ canvas, color: modItem(backPalette, frame) });
+            },
+        },
     });
 }
 

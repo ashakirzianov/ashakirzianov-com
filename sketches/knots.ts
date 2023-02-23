@@ -3,16 +3,16 @@ import {
     Animator, arrayAnimator, Box, randomSubbox,
     randomVectorInBox, randomRange, squareNBox, zoomToFit,
     rainbow, randomVector, boundingBox, clearFrame, multBox, gray, multRGBA,
-    Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles, resultingBody, getGravity, subVector,
+    Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles, resultingBody, getGravity, subVector, Render, Canvas2DContext,
 } from '@/sketcher';
 
 export const variations = [
     molecules(),
-    pasteleRainbows(),
-    rainbowSpring(),
-    fittedRainbow(),
     bubbles(),
     bubblesFlat(),
+    fittedRainbow(),
+    pasteleRainbows(),
+    rainbowSpring(),
     raveVariation(),
     randomBatchesVariation(),
     original(),
@@ -77,8 +77,7 @@ export function playground() {
         },
         prerender({ canvas, state }) {
             clearFrame({ canvas, color: 'black' });
-            let box = setsBoundingBox(state, 1);
-            zoomToFit({ canvas, box: multBox(box, 1.2) });
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
             // canvas.context.strokeStyle = 'red';
             // canvas.context.lineWidth = 10;
             // canvas.context.strokeRect(
@@ -151,14 +150,9 @@ export function molecules() {
                 fills,
             });
         },
-        // prepare({ canvas, state }) {
-        //     let box = setsBoundingBox(state, 1);
-        //     zoomToFit({ canvas, box: multBox(box, 1.2) });
-        // },
         prerender({ canvas, state }) {
             clearFrame({ canvas, color: 'black' });
-            let box = setsBoundingBox(state, 1);
-            zoomToFit({ canvas, box: multBox(box, 1.2) });
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
         },
     });
 }
@@ -197,8 +191,7 @@ export function bubbles() {
         },
         prerender({ canvas, state }) {
             clearFrame({ canvas, color: 'black' });
-            let box = setsBoundingBox(state, 1.5);
-            zoomToFit({ canvas, box });
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
         },
     });
 }
@@ -237,8 +230,7 @@ export function bubblesFlat() {
         },
         prerender({ canvas, state }) {
             clearFrame({ canvas, color: 'black' });
-            let box = setsBoundingBox(state, 1.5);
-            zoomToFit({ canvas, box });
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
         },
     });
 }
@@ -247,61 +239,42 @@ export function fittedRainbow() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
-    let veld = 1;
-    let vels: Vector[] = [
-        [veld, veld, 0],
-        [-veld, veld, 0],
-        [veld, -veld, 0],
-        [-veld, -veld, 0],
-    ];
-    let size = 1;
     let palette = rainbow({ count: 120, s: 100, l: 70 });
-    return makeKnots({
-        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: () => gray(0),
-        createObjects(box, bi) {
+    let sets = xSets({
+        size: 1, velocity: 1,
+        creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 2,
-                });
-                obj.velocity = addVector(obj.velocity, vels[bi]!);
-                return obj;
-            });
+            return vals(batch).map(() => randomObject({
+                massRange, maxVelocity, box,
+                rToM: 2,
+            }));
         },
-        drawObject({ canvas, object, count }) {
-            let getter = colorGetter(
-                (obj, count) => obj.batch * 30 + count,
-                paletteColor(palette),
-            );
+    });
+    return setsScene({
+        sets,
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.2, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, frame, object, seti }) {
+            let getter = paletteColor(palette);
             let n = 5;
+            let offset = seti * 30 + frame;
             for (let i = 0; i < n; i++) {
-                let fill = getColor(getter, {
-                    object, count: count - i * 3,
-                });
-                let stroke = getColor(getter, {
-                    object, count: count,
-                });
+                let fill = getter(offset - 3 * i);
                 circle({
-                    lineWidth: 0.2,
                     fill,
-                    // stroke: i === 0 ? 'black' : undefined,
-                    // stroke,
                     position: object.position,
                     radius: object.radius * (n - i + 1) / n,
                     context: canvas.context,
                 });
             }
         },
-        zoomOnRender: stateBoundingBox(1.5),
-        animator: reduceAnimators(
-            gravity({ gravity: 0.2, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        ),
-        // clearColor: () => 'white',
-        // flatten: true,
+        prerender({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+        },
+        background: staticBackground('black'),
     });
 }
 
@@ -743,11 +716,6 @@ function stateBoundingBox(padding: number) {
     }
 }
 
-function setsBoundingBox(sets: WithPosition[][], padding: number) {
-    let ps = sets.flat().map(o => o.position);
-    return multBox(boundingBox(ps), padding);
-}
-
 function randomObject({
     massRange, maxVelocity, box, rToM,
 }: {
@@ -798,6 +766,23 @@ function randomBoxes({ count, size, box }: {
                 depth: size,
             }),
         );
+}
+
+function zoomToBoundingBox({ sets, scale, canvas }: {
+    canvas: Canvas,
+    sets: WithPosition[][],
+    scale: number,
+}) {
+    let points = sets.flat().map(o => o.position);
+    let box = multBox(boundingBox(points), scale);
+    zoomToFit({ box, canvas });
+}
+
+function staticBackground(color: Color) {
+    let prepare: Render<unknown> = ({ canvas }) => {
+        clearFrame({ canvas, color });
+    };
+    return { prepare };
 }
 
 let calmPalette: Color[] = [

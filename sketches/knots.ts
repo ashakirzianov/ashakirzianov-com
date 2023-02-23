@@ -1,11 +1,9 @@
 import {
-    velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, combineAnimators, Layer, reduceAnimators,
+    velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, reduceAnimators,
     Animator, arrayAnimator, Box, randomSubbox,
     randomVectorInBox, randomRange, squareNBox, zoomToFit,
-    rainbow, randomVector, counter,
-    boundingBox, clearFrame, multBox,
-    midpoint, gray, multRGBA, colorLayer,
-    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles, resultingBody, getGravity, subVector,
+    rainbow, randomVector, boundingBox, clearFrame, multBox, gray, multRGBA,
+    Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles, resultingBody, getGravity, subVector,
 } from '@/sketcher';
 
 export const variations = [
@@ -209,63 +207,39 @@ export function bubblesFlat() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 0.1;
     let massRange = { min: 1, max: 20 };
-    let veld = 0.1;
-    let vels: Vector[] = [
-        [veld, veld, 0],
-        [-veld, veld, 0],
-        [veld, -veld, 0],
-        [-veld, -veld, 0],
-    ];
-    let size = 10;
     let palette = rainbow({ count: 100, s: 100, l: 70 });
-    let back = rainbow({ count: 120, s: 40, l: 70 });
-    return makeKnots({
-        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: () => gray(0),
-        createObjects(box, bi) {
+    let sets = enchanceWithSetI(xSets({
+        size: 10, velocity: 0.1,
+        creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 2,
-                });
-                obj.velocity = addVector(obj.velocity, vels[bi]!);
-                return obj;
+            return vals(batch).map(() => randomObject({
+                massRange, maxVelocity, box,
+                rToM: 2,
+            }));
+        },
+    }));
+    return setsScene({
+        sets: [sets.flat()],
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object, frame }) {
+            let getter = paletteColor(palette);
+            let offset = object.seti * 30 + frame;
+            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            concentringCircles({
+                context: canvas.context,
+                position: object.position,
+                radius: object.radius,
+                fills,
             });
         },
-        drawObject({ canvas, object, count }) {
-            let getter = colorGetter(
-                (obj, count) => obj.batch * 30 + count,
-                paletteColor(palette),
-            );
-            let n = 5;
-            for (let i = 0; i < n; i++) {
-                let fill = getColor(getter, {
-                    object, count: count - i * 3,
-                });
-                let stroke = getColor(getter, {
-                    object, count: count,
-                });
-                circle({
-                    lineWidth: 0.2,
-                    fill,
-                    // stroke: i === 0 ? 'black' : undefined,
-                    // stroke,
-                    position: object.position,
-                    radius: object.radius * (n - i + 1) / n,
-                    context: canvas.context,
-                });
-            }
+        prerender({ canvas, state }) {
+            clearFrame({ canvas, color: 'black' });
+            let box = setsBoundingBox(state, 1.5);
+            zoomToFit({ canvas, box });
         },
-        zoomOnRender: stateBoundingBox(1.5),
-        // zoomToBox: stateBoundingBox(1.5),
-        animator: reduceAnimators(
-            gravity({ gravity: 0.02, power: 2 }),
-            // gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        ),
-        clearColor: () => 'black',
-        flatten: true,
     });
 }
 

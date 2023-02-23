@@ -13,6 +13,14 @@ export function subVector(v1: Vector, v2: Vector): Vector {
     return addVector(v1, multsVector(v2, -1));
 }
 
+export function vectorLength(v: Vector): number {
+    let result = Math.sqrt(v.reduce(
+        (sum, x) => sum + x ** 2,
+        0,
+    ));
+    return result;
+}
+
 export function zeroVector(dimensions: number): Vector {
     return Array(Math.max(2, dimensions)).fill(0) as Vector;
 }

@@ -11,6 +11,7 @@ export type Canvas = {
 };
 export type RenderProps<State> = {
     canvas: Canvas,
+    frame: number,
     state: State,
 };
 export type Render<State> = (props: RenderProps<State>) => void;
@@ -32,7 +33,7 @@ export function circle({
     position: [x, y], radius,
     context,
 }: {
-    lineWidth: number,
+    lineWidth?: number,
     fill?: Color,
     stroke?: Color,
     position: Vector,
@@ -40,7 +41,9 @@ export function circle({
     context: Canvas2DContext,
 }) {
     context.save();
-    context.lineWidth = lineWidth;
+    if (lineWidth) {
+        context.lineWidth = lineWidth;
+    }
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
     if (fill) {
@@ -52,6 +55,24 @@ export function circle({
         context.stroke();
     }
     context.restore();
+}
+
+export function concentringCircles({
+    context, position, radius, fills,
+}: {
+    context: Canvas2DContext,
+    position: Vector,
+    radius: number,
+    fills: Color[],
+}) {
+    let n = fills.length;
+    for (let i = 0; i < n; i++) {
+        let fill = fills[i]!;
+        circle({
+            context, fill, position,
+            radius: radius * (n - i + 1) / n,
+        });
+    }
 }
 
 export function strokeDimensions({
@@ -175,15 +196,16 @@ export function drawCorner({
     context.restore();
 }
 
-export function clearFrame({ color, canvas }: {
+export function clearFrame({ color, canvas: { context, width, height } }: {
     color: Color,
     canvas: Canvas,
 }) {
-    canvas.context.save();
-    canvas.context.resetTransform();
-    canvas.context.fillStyle = resolveColor(color, canvas.context);
-    canvas.context.fillRect(0, 0, canvas.width, canvas.height);
-    canvas.context.restore();
+    context.save();
+    context.resetTransform();
+    context.scale(width, height);
+    context.fillStyle = resolveColor(color, context);
+    context.fillRect(0, 0, 1, 1);
+    context.restore();
 }
 
 export function zoomToFit({ canvas, box }: {

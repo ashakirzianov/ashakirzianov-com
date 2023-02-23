@@ -69,9 +69,10 @@ export function playground() {
             },
         ),
         drawObject({ canvas, object, frame }) {
-            let getter = paletteColor(palette);
             let offset = object.seti * 30 + frame;
-            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            let fills = vals(5).map(
+                (_, i) => modItem(palette, offset - 3 * i)
+            );
             concentringCircles({
                 context: canvas.context,
                 position: object.position,
@@ -144,9 +145,10 @@ export function molecules() {
             },
         ),
         drawObject({ canvas, object, frame }) {
-            let getter = paletteColor(palette);
             let offset = object.seti * 30 + frame;
-            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            let fills = vals(5).map(
+                (_, i) => modItem(palette, offset - 3 * i)
+            );
             concentringCircles({
                 context: canvas.context,
                 position: object.position,
@@ -183,9 +185,10 @@ export function bubbles() {
             velocityStep(),
         )),
         drawObject({ canvas, object, frame }) {
-            let getter = paletteColor(palette);
             let offset = object.seti * 30 + frame;
-            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            let fills = vals(5).map(
+                (_, i) => modItem(palette, offset - 3 * i)
+            );
             concentringCircles({
                 context: canvas.context,
                 position: object.position,
@@ -222,9 +225,10 @@ export function bubblesFlat() {
             velocityStep(),
         )),
         drawObject({ canvas, object, frame }) {
-            let getter = paletteColor(palette);
             let offset = object.seti * 30 + frame;
-            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            let fills = vals(5).map(
+                (_, i) => modItem(palette, offset - 3 * i)
+            );
             concentringCircles({
                 context: canvas.context,
                 position: object.position,
@@ -262,9 +266,10 @@ export function fittedRainbow() {
             velocityStep(),
         )),
         drawObject({ canvas, frame, object, seti }) {
-            let getter = paletteColor(palette);
             let offset = seti * 30 + frame;
-            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            let fills = vals(5).map(
+                (_, i) => modItem(palette, offset - 3 * i)
+            );
             concentringCircles({
                 context: canvas.context,
                 position: object.position,
@@ -302,7 +307,7 @@ export function strokedRainbows() {
             velocityStep(),
         )),
         drawObject({ canvas, frame, object }) {
-            let fill = paletteColor(palette)(100 * object.seti + frame + 20);
+            let fill = modItem(palette, 100 * object.seti + frame + 20);
             circle({
                 lineWidth: 0.2,
                 fill: fill,
@@ -324,7 +329,6 @@ export function pastelRainbows() {
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
     let palette = rainbow({ count: 120, s: 80, l: 70 });
-    let colorGetter = paletteColor(palette);
     let back = rainbow({ count: 120, s: 40, l: 70 });
     //     let batch = Math.floor(randomRange(batchRange));
     //     return vals(batch).map(function () {
@@ -357,8 +361,8 @@ export function pastelRainbows() {
             let n = 5;
             for (let i = 0; i < n; i++) {
                 let offset = frame + object.seti * 100 + i * 20;
-                let fill = colorGetter(offset);
-                let next = colorGetter(offset + 10);
+                let fill = modItem(palette, offset);
+                let next = modItem(palette, offset + 10);
                 circle({
                     lineWidth: 5,
                     fill: fill,
@@ -376,7 +380,7 @@ export function pastelRainbows() {
             render({ canvas, frame }) {
                 clearFrame({
                     canvas,
-                    color: paletteColor(back)(frame),
+                    color: modItem(back, frame),
                 });
             }
         }
@@ -410,14 +414,13 @@ export function rainbowSpring() {
             velocityStep(),
         )),
         drawObject({ canvas, frame, object }) {
-            let getter = paletteColor(palette);
             let offset = object.seti * 100 + frame;
-            let fill = getter(offset);
-            let nextFill = getter(offset + 4);
+            let fill = modItem(palette, offset);
+            let stroke = modItem(palette, offset + 4);
             circle({
                 lineWidth: 1,
-                fill: fill,
-                stroke: nextFill,
+                fill,
+                stroke,
                 position: object.position,
                 radius: object.radius,
                 context: canvas.context,
@@ -688,10 +691,4 @@ function xSets<O extends WithVelocity>({
             velocity: addVector(object.velocity, vels[bi]!),
         }));
     });
-}
-
-// TODO: remove or refactor
-type NToColor = (n: number) => Color;
-function paletteColor(palette: Color[]): NToColor {
-    return (n: number) => modItem(palette, n);
 }

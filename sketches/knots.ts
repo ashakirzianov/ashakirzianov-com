@@ -5,11 +5,14 @@ import {
     rainbow, randomVector, boundingBox, clearFrame, multBox, gray,
     multRGBA, Color, cubicBox, NumRange, Canvas,
     boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals,
-    addVector, makeStops, fromRGBA, setsScene,
-    concentringCircles, resultingBody, getGravity, subVector, Render,
+    subVector, addVector, makeStops, fromRGBA, setsScene, Render,
+    resultingBody,
+    concentringCircles,
+    getGravity,
 } from '@/sketcher';
 
-export const variations = [
+// TODO: fix typing
+export const variations: any[] = [
     molecules(),
     bubbles(),
     bubblesFlat(),

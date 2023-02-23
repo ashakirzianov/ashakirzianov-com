@@ -11,6 +11,7 @@ export const variations = [
     bubbles(),
     bubblesFlat(),
     fittedRainbow(),
+    strokedRainbows(),
     pasteleRainbows(),
     rainbowSpring(),
     raveVariation(),
@@ -259,17 +260,14 @@ export function fittedRainbow() {
         )),
         drawObject({ canvas, frame, object, seti }) {
             let getter = paletteColor(palette);
-            let n = 5;
             let offset = seti * 30 + frame;
-            for (let i = 0; i < n; i++) {
-                let fill = getter(offset - 3 * i);
-                circle({
-                    fill,
-                    position: object.position,
-                    radius: object.radius * (n - i + 1) / n,
-                    context: canvas.context,
-                });
-            }
+            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            concentringCircles({
+                context: canvas.context,
+                position: object.position,
+                radius: object.radius,
+                fills,
+            });
         },
         prerender({ canvas, state }) {
             zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
@@ -282,37 +280,26 @@ export function strokedRainbows() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
-    let size = 1;
-    let velocity = 1;
-    let vels: Vector[] = [
-        [velocity, velocity, 0],
-        [-velocity, velocity, 0],
-        [velocity, -velocity, 0],
-        [-velocity, -velocity, 0],
-    ];
     let palette = rainbow({ count: 120 });
-    return makeKnots({
-        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: () => gray(250),
-        createObjects(box, bi) {
+    let sets = enchanceWithSetI(xSets({
+        size: 1, velocity: 1,
+        creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 2,
-                });
-                obj.velocity = addVector(obj.velocity, vels[bi]!);
-                return obj;
-            });
+            return vals(batch).map(() => randomObject({
+                massRange, maxVelocity, box,
+                rToM: 2,
+            }));
         },
-        drawObject({ canvas, object, count }) {
-            let getter = colorGetter(
-                (obj, count) => obj.batch * 100 + count,
-                paletteColor(palette),
-            );
-            let fill = getColor(getter, {
-                object, count: count + 20,
-            });
+    }));
+    return setsScene({
+        sets: [sets.flat()],
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, frame, object }) {
+            let fill = paletteColor(palette)(100 * object.seti + frame + 20);
             circle({
                 lineWidth: 0.2,
                 fill: fill,
@@ -322,13 +309,10 @@ export function strokedRainbows() {
                 context: canvas.context,
             });
         },
-        zoomToBox: stateBoundingBox(1.5),
-        animator: reduceAnimators(
-            gravity({ gravity: 0.02, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        ),
-        flatten: true,
+        background: staticBackground('black'),
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+        },
     });
 }
 
@@ -785,15 +769,18 @@ function staticBackground(color: Color) {
     return { prepare };
 }
 
+// TODO: move to where it's used?
 let calmPalette: Color[] = [
     '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
 ];
 
+// TODO: remove or refactor
 type NToColor = (n: number) => Color;
 function paletteColor(palette: Color[]): NToColor {
     return (n: number) => modItem(palette, n);
 }
 
+// TODO: remove below
 function colorGetter<T>(
     objToX: (obj: Object, count: number) => T,
     xToColor: (x: T) => Color,

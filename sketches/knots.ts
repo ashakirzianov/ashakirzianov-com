@@ -17,10 +17,10 @@ export const variations = [
     fittedRainbow(),
     strokedRainbows(),
     pastelRainbows(),
-    original(),
     rainbowSpring(),
     raveVariation(),
     randomBatchesVariation(),
+    original(),
 ];
 
 export function current() {
@@ -385,125 +385,37 @@ export function pastelRainbows() {
     });
 }
 
-export function original() {
-    let box = cubicBox(200);
-    let batchRange = { min: 20, max: 20 };
-    let maxVelocity = 0.4;
-    let massRange = { min: 0.5, max: 5 };
-    let complimentary = { red: 230, green: 230, blue: 230 };
-    let batch = Math.floor(randomRange(batchRange));
-    let set = vals(batch).map(() => randomObject({
-        massRange, maxVelocity, box,
-        rToM: 1,
-    }));
-    return setsScene({
-        sets: [set],
-        animator: arrayAnimator(reduceAnimators(
-            gravity({ gravity: 0.06, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        )),
-        drawObject({ canvas, object }) {
-            circle({
-                lineWidth: 0.5,
-                fill: 'orange',
-                stroke: 'black',
-                position: object.position,
-                radius: object.radius,
-                context: canvas.context,
-            });
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
-        },
-        background: staticBackground({
-            kind: 'gradient',
-            start: [0, 0], end: [0, 1],
-            stops: makeStops({
-                0: fromRGBA(complimentary),
-                0.7: fromRGBA(multRGBA(complimentary, 1.2)),
-                1: gray(50),
-            }),
-        }),
-    });
-}
-
-export function original2() {
-    let box = cubicBox(200);
-    let batchRange = { min: 20, max: 20 };
-    let maxVelocity = 0.4;
-    let massRange = { min: 0.5, max: 5 };
-    let complimentary = { red: 230, green: 230, blue: 230 };
-    return makeKnots({
-        boxes: [box],
-        background: () => ({
-            kind: 'gradient',
-            start: [0, 0], end: [0, 1],
-            stops: makeStops({
-                0: fromRGBA(complimentary),
-                0.7: fromRGBA(multRGBA(complimentary, 1.2)),
-                1: gray(50),
-            }),
-        }),
-        createObjects(box) {
-            let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 1,
-                });
-                return obj;
-            });
-        },
-        drawObject: circleObjectForColor('orange'),
-        zoomToBox: stateBoundingBox(1.2),
-        animator: reduceAnimators(
-            gravity({ gravity: 0.06, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        ),
-    });
-}
-
 export function rainbowSpring() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
-    let veld = 1;
-    let vels: Vector[] = [
-        [veld, veld, 0],
-        [-veld, veld, 0],
-        [veld, -veld, 0],
-        [-veld, -veld, 0],
-    ];
-    let size = 1;
-    return makeKnots({
-        boxes: cornerBoxes({ rows: 3 * size, cols: 4 * size }),
-        background: counterColor(pulsating(hueRange({
-            from: 0, to: 360, count: 200,
-            s: 50, l: 90,
-        }))),
-        // background: gray(250),
-        createObjects(box, bi) {
+    let sets = enchanceWithSetI(xSets({
+        size: 1, velocity: 1,
+        creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
-            return vals(batch).map(function () {
-                let obj = randomObject({
-                    massRange, maxVelocity, box,
-                    rToM: 2,
-                });
-                obj.velocity = addVector(obj.velocity, vels[bi]!);
-                return obj;
-            });
-        },
-        drawObject({ canvas, object, count }) {
-            let getter = colorGetter(
-                (obj, count) => obj.batch * 100 + count,
-                paletteColor(rainbow({ count: 120 })),
-            );
-            let fill = getColor(getter, ({ object, count }));
-            let nextFill = getColor(getter, {
-                object, count: count + 4,
-            })
+            return vals(batch).map(() => randomObject({
+                massRange, maxVelocity, box,
+                rToM: 2,
+            }));
+        }
+    }));
+    let back = pulsating(hueRange({
+        from: 0, to: 360, count: 200,
+        s: 50, l: 90,
+    }));
+    let palette = rainbow({ count: 120 });
+    return setsScene({
+        sets: [sets.flat()],
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, frame, object }) {
+            let getter = paletteColor(palette);
+            let offset = object.seti * 100 + frame;
+            let fill = getter(offset);
+            let nextFill = getter(offset + 4);
             circle({
                 lineWidth: 1,
                 fill: fill,
@@ -513,13 +425,14 @@ export function rainbowSpring() {
                 context: canvas.context,
             });
         },
-        zoomToBox: stateBoundingBox(1.5),
-        animator: reduceAnimators(
-            gravity({ gravity: 0.02, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
-            velocityStep(),
-        ),
-        flatten: true,
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+        },
+        background: {
+            render({ canvas, frame }) {
+                clearFrame({ canvas, color: modItem(back, frame) });
+            },
+        },
     });
 }
 
@@ -593,6 +506,49 @@ export function randomBatchesVariation() {
             ({ object }) => modItem(calmPalette, object.batch),
         ),
         zoomToBox: stateBoundingBox(1.2),
+    });
+}
+
+export function original() {
+    let box = cubicBox(200);
+    let batchRange = { min: 20, max: 20 };
+    let maxVelocity = 0.4;
+    let massRange = { min: 0.5, max: 5 };
+    let complimentary = { red: 230, green: 230, blue: 230 };
+    let batch = Math.floor(randomRange(batchRange));
+    let set = vals(batch).map(() => randomObject({
+        massRange, maxVelocity, box,
+        rToM: 1,
+    }));
+    return setsScene({
+        sets: [set],
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.06, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object }) {
+            circle({
+                lineWidth: 0.5,
+                fill: 'orange',
+                stroke: 'black',
+                position: object.position,
+                radius: object.radius,
+                context: canvas.context,
+            });
+        },
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+        },
+        background: staticBackground({
+            kind: 'gradient',
+            start: [0, 0], end: [0, 1],
+            stops: makeStops({
+                0: fromRGBA(complimentary),
+                0.7: fromRGBA(multRGBA(complimentary, 1.2)),
+                1: gray(50),
+            }),
+        }),
     });
 }
 

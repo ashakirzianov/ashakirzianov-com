@@ -17,10 +17,10 @@ export const variations = [
     fittedRainbow(),
     strokedRainbows(),
     pastelRainbows(),
+    original(),
     rainbowSpring(),
     raveVariation(),
     randomBatchesVariation(),
-    original(),
 ];
 
 export function current() {
@@ -391,6 +391,49 @@ export function original() {
     let maxVelocity = 0.4;
     let massRange = { min: 0.5, max: 5 };
     let complimentary = { red: 230, green: 230, blue: 230 };
+    let batch = Math.floor(randomRange(batchRange));
+    let set = vals(batch).map(() => randomObject({
+        massRange, maxVelocity, box,
+        rToM: 1,
+    }));
+    return setsScene({
+        sets: [set],
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.06, power: 2 }),
+            gravity({ gravity: -0.002, power: 4 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object }) {
+            circle({
+                lineWidth: 0.5,
+                fill: 'orange',
+                stroke: 'black',
+                position: object.position,
+                radius: object.radius,
+                context: canvas.context,
+            });
+        },
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+        },
+        background: staticBackground({
+            kind: 'gradient',
+            start: [0, 0], end: [0, 1],
+            stops: makeStops({
+                0: fromRGBA(complimentary),
+                0.7: fromRGBA(multRGBA(complimentary, 1.2)),
+                1: gray(50),
+            }),
+        }),
+    });
+}
+
+export function original2() {
+    let box = cubicBox(200);
+    let batchRange = { min: 20, max: 20 };
+    let maxVelocity = 0.4;
+    let massRange = { min: 0.5, max: 5 };
+    let complimentary = { red: 230, green: 230, blue: 230 };
     return makeKnots({
         boxes: [box],
         background: () => ({
@@ -695,6 +738,7 @@ function randomObject({
     };
 }
 
+// TODO: remove
 type GetColor = ColorOrGetter<{ object: Object, count: number }>;
 function circleObjectForColor(getter: GetColor): DrawObject {
     return function drawObject({ canvas, object, count }) {

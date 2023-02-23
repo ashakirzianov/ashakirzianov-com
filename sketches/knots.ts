@@ -1,13 +1,12 @@
 import {
-    velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, reduceAnimators,
-    Animator, arrayAnimator, Box, randomSubbox,
+    velocityStep, gravity, circle, WithPosition, WithVelocity,
+    reduceAnimators, arrayAnimator, Box, randomSubbox,
     randomVectorInBox, randomRange, squareNBox, zoomToFit,
     rainbow, randomVector, boundingBox, clearFrame, multBox, gray,
-    multRGBA, centerOnPoint, Color, cubicBox, NumRange, Canvas,
+    multRGBA, Color, cubicBox, NumRange, Canvas,
     boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals,
-    addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene,
+    addVector, makeStops, fromRGBA, setsScene,
     concentringCircles, resultingBody, getGravity, subVector, Render,
-    midpoint,
 } from '@/sketcher';
 
 export const variations = [
@@ -371,8 +370,7 @@ export function pastelRainbows() {
             }
         },
         prepare({ canvas, state }) {
-            let box = stateBoundingBox(1.5)({ sets: state });
-            zoomToFit({ canvas, box });
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
         },
         background: {
             render({ canvas, frame }) {
@@ -502,6 +500,9 @@ export function randomBatches() {
             }),
         );
     });
+    let palette: Color[] = [
+        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+    ];
     return setsScene({
         sets,
         animator: arrayAnimator(reduceAnimators(
@@ -512,7 +513,7 @@ export function randomBatches() {
         drawObject({ canvas, object, seti }) {
             circle({
                 lineWidth: 0.5,
-                fill: modItem(calmPalette, seti),
+                fill: modItem(palette, seti),
                 stroke: 'black',
                 position: object.position,
                 radius: object.radius,
@@ -569,83 +570,6 @@ export function original() {
     });
 }
 
-type Particle = WithPosition & WithVelocity & WithMass & WithRadius;
-type Data = {
-    batch: number,
-    index: number,
-    rand: number,
-}
-type Object = Particle & Data;
-type State = WithSets<Object[]>;
-type DrawObjectProps = {
-    canvas: Canvas,
-    object: Object,
-    count: number,
-}
-type DrawObject = (props: DrawObjectProps) => void;
-function makeKnots({
-    boxes, flatten,
-    createObjects, drawObject, animator,
-    background,
-    zoomToBox, zoomOnRender, clearColor,
-}: {
-    boxes: Box[],
-    createObjects: (box: Box, idx: number) => Particle[],
-    drawObject: DrawObject,
-    background?: (s: State, frame: number) => Color,
-    zoomToBox?: (state: State) => Box,
-    zoomOnRender?: (state: State) => Box,
-    clearColor?: (state: State) => Color,
-    flatten?: boolean,
-    animator?: Animator<Object[]>,
-}): Scene<Object[][]> {
-    let sets = boxes.map(
-        (box, batch) => createObjects(box, batch).map(
-            (object, index) => ({
-                ...object, batch, index, rand: Math.random(),
-            }),
-        ),
-    );
-    if (flatten) {
-        sets = [sets.flat()];
-    }
-    return setsScene({
-        sets,
-        animator: arrayAnimator(animator ?? reduceAnimators(
-            gravity({ gravity: 0.2, power: 2 }),
-            gravity({ gravity: -0.002, power: 5 }),
-            velocityStep(),
-        )),
-        drawObject({ canvas, frame, object, seti, index }) {
-            drawObject({ canvas, object, count: frame });
-        },
-        prerender({ canvas, frame, state }) {
-            if (clearColor) {
-                let color = clearColor({ sets: state });
-                clearFrame({ canvas, color });
-            }
-            if (zoomOnRender) {
-                let box = zoomOnRender({ sets: state });
-                zoomToFit({ canvas, box });
-            }
-        },
-        prepare({ canvas, state }) {
-            if (zoomToBox) {
-                let box = zoomToBox({ sets: state });
-                zoomToFit({ canvas, box });
-            }
-        },
-        background: {
-            render({ canvas, state, frame }) {
-                if (background) {
-                    let color = background({ sets: state }, frame);
-                    clearFrame({ canvas, color });
-                }
-            }
-        },
-    });
-}
-
 function cornerBoxes({ rows, cols }: {
     rows: number,
     cols: number,
@@ -683,14 +607,6 @@ function squareBoxes({
         );
 }
 
-// TODO: remove
-function stateBoundingBox(padding: number) {
-    return function (state: { sets: WithPosition[][] }) {
-        let ps = state.sets.flat().map(o => o.position);
-        return multBox(boundingBox(ps), padding);
-    }
-}
-
 function randomObject({
     massRange, maxVelocity, box, rToM,
 }: {
@@ -708,22 +624,6 @@ function randomObject({
         velocity: randomVector(velocityRange),
         mass,
         radius: mass * (rToM ?? 4),
-    };
-}
-
-// TODO: remove
-type GetColor = ColorOrGetter<{ object: Object, count: number }>;
-function circleObjectForColor(getter: GetColor): DrawObject {
-    return function drawObject({ canvas, object, count }) {
-        let fill = getColor(getter, ({ object, count }));
-        circle({
-            lineWidth: 0.5,
-            fill,
-            stroke: 'black',
-            position: object.position,
-            radius: object.radius,
-            context: canvas.context,
-        });
     };
 }
 
@@ -790,27 +690,8 @@ function xSets<O extends WithVelocity>({
     });
 }
 
-// TODO: move to where it's used?
-let calmPalette: Color[] = [
-    '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
-];
-
 // TODO: remove or refactor
 type NToColor = (n: number) => Color;
 function paletteColor(palette: Color[]): NToColor {
     return (n: number) => modItem(palette, n);
-}
-
-// TODO: remove below
-function colorGetter<T>(
-    objToX: (obj: Object, count: number) => T,
-    xToColor: (x: T) => Color,
-): GetColor {
-    return ({ object, count }) => xToColor(objToX(object, count));
-}
-
-function counterColor(palette: Color[]) {
-    return function (state: State, frame: number) {
-        return modItem(palette, frame);
-    };
 }

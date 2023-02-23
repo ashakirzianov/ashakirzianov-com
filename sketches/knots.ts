@@ -2,8 +2,12 @@ import {
     velocityStep, gravity, circle, Scene, WithPosition, WithSets, WithRadius, WithMass, WithVelocity, reduceAnimators,
     Animator, arrayAnimator, Box, randomSubbox,
     randomVectorInBox, randomRange, squareNBox, zoomToFit,
-    rainbow, randomVector, boundingBox, clearFrame, multBox, gray, multRGBA,
-    Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles, resultingBody, getGravity, subVector, Render, Canvas2DContext,
+    rainbow, randomVector, boundingBox, clearFrame, multBox, gray,
+    multRGBA, centerOnPoint, Color, cubicBox, NumRange, Canvas,
+    boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals,
+    addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene,
+    concentringCircles, resultingBody, getGravity, subVector, Render,
+    midpoint,
 } from '@/sketcher';
 
 export const variations = [
@@ -12,7 +16,7 @@ export const variations = [
     bubblesFlat(),
     fittedRainbow(),
     strokedRainbows(),
-    pasteleRainbows(),
+    pastelRainbows(),
     rainbowSpring(),
     raveVariation(),
     randomBatchesVariation(),
@@ -316,36 +320,7 @@ export function strokedRainbows() {
     });
 }
 
-function enchanceWithSetI<T>(sets: T[][]) {
-    return sets.map(
-        (set, seti) => set.map(obj => ({ ...obj, seti }))
-    );
-}
-
-function xSets<O extends WithVelocity>({
-    size, velocity, creareObjects,
-}: {
-    size: number,
-    velocity: number,
-    creareObjects: (box: Box) => O[],
-}) {
-    let vels: Vector[] = [
-        [velocity, velocity, 0],
-        [-velocity, velocity, 0],
-        [velocity, -velocity, 0],
-        [-velocity, -velocity, 0],
-    ];
-    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
-    return boxes.map((box, bi) => {
-        let objects = creareObjects(box);
-        return objects.map(object => ({
-            ...object,
-            velocity: addVector(object.velocity, vels[bi]!),
-        }));
-    });
-}
-
-export function pasteleRainbows() {
+export function pastelRainbows() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
@@ -767,6 +742,35 @@ function staticBackground(color: Color) {
         clearFrame({ canvas, color });
     };
     return { prepare };
+}
+
+function enchanceWithSetI<T>(sets: T[][]) {
+    return sets.map(
+        (set, seti) => set.map(obj => ({ ...obj, seti }))
+    );
+}
+
+function xSets<O extends WithVelocity>({
+    size, velocity, creareObjects,
+}: {
+    size: number,
+    velocity: number,
+    creareObjects: (box: Box) => O[],
+}) {
+    let vels: Vector[] = [
+        [velocity, velocity, 0],
+        [-velocity, velocity, 0],
+        [velocity, -velocity, 0],
+        [-velocity, -velocity, 0],
+    ];
+    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
+    return boxes.map((box, bi) => {
+        let objects = creareObjects(box);
+        return objects.map(object => ({
+            ...object,
+            velocity: addVector(object.velocity, vels[bi]!),
+        }));
+    });
 }
 
 // TODO: move to where it's used?

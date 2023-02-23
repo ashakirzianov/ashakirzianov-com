@@ -5,10 +5,11 @@ import {
     rainbow, randomVector, counter,
     boundingBox, clearFrame, multBox,
     midpoint, gray, multRGBA, colorLayer,
-    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles,
+    Color, RGBAColor, cubicBox, NumRange, removeUndefined, Canvas, boxSize, Render, modItem, randomInt, rectBox, dynamicColorLayer, hueRange, pulsating, ColorGetter, Vector, vals, addVector, ColorOrGetter, makeStops, fromRGBA, getColor, setsScene, concentringCircles, resultingBody, getGravity, subVector,
 } from '@/sketcher';
 
 export const variations = [
+    molecules(),
     pasteleRainbows(),
     rainbowSpring(),
     fittedRainbow(),
@@ -20,17 +21,17 @@ export const variations = [
 ];
 
 export function current() {
-    return playground();
+    return molecules();
 }
 
 export function playground() {
     let batchRange = { min: 10, max: 10 };
-    let maxVelocity = 0.1;
+    let maxVelocity = 10;
     let massRange = { min: 1, max: 20 };
     let palette = rainbow({ count: 100, s: 100, l: 70 });
     return setsScene({
         sets: enchanceWithSetI(xSets({
-            size: 10, velocity: 0.1,
+            size: 10, velocity: 0,
             creareObjects(box) {
                 let batch = Math.floor(randomRange(batchRange));
                 return vals(batch).map(() => randomObject({
@@ -39,10 +40,32 @@ export function playground() {
                 }));
             },
         })),
-        animator: arrayAnimator(reduceAnimators(
-            gravity({ gravity: 0.02, power: 2 }),
-            velocityStep(),
-        )),
+        animator: reduceAnimators(
+            arrayAnimator(reduceAnimators(
+                gravity({ gravity: -0.0008, power: 1 }),
+                velocityStep(),
+            )),
+            function (state) {
+                let bodies = state.map(resultingBody);
+                for (let fromi = 0; fromi < state.length; fromi++) {
+                    for (let toi = fromi + 1; toi < state.length; toi++) {
+                        let from = bodies[fromi]!;
+                        let to = bodies[toi]!;
+                        let force = getGravity({
+                            gravity: 0.00002, power: 1,
+                            from, to,
+                        });
+                        for (let object of state[fromi]!) {
+                            object.velocity = addVector(object.velocity, force);
+                        }
+                        for (let object of state[toi]!) {
+                            object.velocity = subVector(object.velocity, force);
+                        }
+                    }
+                }
+                return state;
+            },
+        ),
         drawObject({ canvas, object, frame }) {
             let getter = paletteColor(palette);
             let offset = object.seti * 30 + frame;
@@ -56,8 +79,88 @@ export function playground() {
         },
         prerender({ canvas, state }) {
             clearFrame({ canvas, color: 'black' });
-            let box = setsBoundingBox(state, 1.5);
-            zoomToFit({ canvas, box });
+            let box = setsBoundingBox(state, 1);
+            zoomToFit({ canvas, box: multBox(box, 1.2) });
+            // canvas.context.strokeStyle = 'red';
+            // canvas.context.lineWidth = 10;
+            // canvas.context.strokeRect(
+            //     box.start[0], box.start[1],
+            //     box.end[0] - box.start[0], box.end[1] - box.start[1],
+            // );
+            // canvas.context.strokeStyle = 'green';
+            // for (let set of state) {
+            //     let bb = boundingBox(set.map((o: any) => o.position));
+
+            //     canvas.context.strokeRect(
+            //         bb.start[0], bb.start[1],
+            //         bb.end[0] - bb.start[0], bb.end[1] - bb.start[1],
+            //     );
+            // }
+        },
+    });
+}
+
+export function molecules() {
+    let batchRange = { min: 10, max: 10 };
+    let maxVelocity = 10;
+    let massRange = { min: 1, max: 20 };
+    let palette = rainbow({ count: 100, s: 100, l: 70 });
+    return setsScene({
+        sets: enchanceWithSetI(xSets({
+            size: 10, velocity: 0,
+            creareObjects(box) {
+                let batch = Math.floor(randomRange(batchRange));
+                return vals(batch).map(() => randomObject({
+                    massRange, maxVelocity, box,
+                    rToM: 2,
+                }));
+            },
+        })),
+        animator: reduceAnimators(
+            arrayAnimator(reduceAnimators(
+                gravity({ gravity: 0.0015, power: 1 }),
+                velocityStep(),
+            )),
+            function (state) {
+                let bodies = state.map(resultingBody);
+                for (let fromi = 0; fromi < state.length; fromi++) {
+                    for (let toi = fromi + 1; toi < state.length; toi++) {
+                        let from = bodies[fromi]!;
+                        let to = bodies[toi]!;
+                        let force = getGravity({
+                            gravity: 0.00002, power: 1,
+                            from, to,
+                        });
+                        for (let object of state[fromi]!) {
+                            object.velocity = addVector(object.velocity, force);
+                        }
+                        for (let object of state[toi]!) {
+                            object.velocity = subVector(object.velocity, force);
+                        }
+                    }
+                }
+                return state;
+            },
+        ),
+        drawObject({ canvas, object, frame }) {
+            let getter = paletteColor(palette);
+            let offset = object.seti * 30 + frame;
+            let fills = vals(5).map((_, i) => getter(offset - 3 * i));
+            concentringCircles({
+                context: canvas.context,
+                position: object.position,
+                radius: object.radius,
+                fills,
+            });
+        },
+        // prepare({ canvas, state }) {
+        //     let box = setsBoundingBox(state, 1);
+        //     zoomToFit({ canvas, box: multBox(box, 1.2) });
+        // },
+        prerender({ canvas, state }) {
+            clearFrame({ canvas, color: 'black' });
+            let box = setsBoundingBox(state, 1);
+            zoomToFit({ canvas, box: multBox(box, 1.2) });
         },
     });
 }

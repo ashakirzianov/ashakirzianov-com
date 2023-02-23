@@ -573,6 +573,35 @@ export function original() {
     });
 }
 
+function enchanceWithSetI<T>(sets: T[][]) {
+    return sets.map(
+        (set, seti) => set.map(obj => ({ ...obj, seti }))
+    );
+}
+
+function xSets<O extends WithVelocity>({
+    size, velocity, creareObjects,
+}: {
+    size: number,
+    velocity: number,
+    creareObjects: (box: Box) => O[],
+}) {
+    let vels: Vector[] = [
+        [velocity, velocity, 0],
+        [-velocity, velocity, 0],
+        [velocity, -velocity, 0],
+        [-velocity, -velocity, 0],
+    ];
+    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
+    return boxes.map((box, bi) => {
+        let objects = creareObjects(box);
+        return objects.map(object => ({
+            ...object,
+            velocity: addVector(object.velocity, vels[bi]!),
+        }));
+    });
+}
+
 function cornerBoxes({ rows, cols }: {
     rows: number,
     cols: number,
@@ -610,6 +639,23 @@ function squareBoxes({
         );
 }
 
+function randomBoxes({ count, size, box }: {
+    count: number,
+    size: number,
+    box: Box,
+}): Box[] {
+    return Array(count)
+        .fill(undefined)
+        .map(
+            () => randomSubbox({
+                box,
+                width: size,
+                height: size,
+                depth: size,
+            }),
+        );
+}
+
 function randomObject({
     massRange, maxVelocity, box, rToM,
 }: {
@@ -630,23 +676,6 @@ function randomObject({
     };
 }
 
-function randomBoxes({ count, size, box }: {
-    count: number,
-    size: number,
-    box: Box,
-}): Box[] {
-    return Array(count)
-        .fill(undefined)
-        .map(
-            () => randomSubbox({
-                box,
-                width: size,
-                height: size,
-                depth: size,
-            }),
-        );
-}
-
 function zoomToBoundingBox({ sets, scale, canvas }: {
     canvas: Canvas,
     sets: WithPosition[][],
@@ -662,33 +691,4 @@ function staticBackground(color: Color) {
         clearFrame({ canvas, color });
     };
     return { prepare };
-}
-
-function enchanceWithSetI<T>(sets: T[][]) {
-    return sets.map(
-        (set, seti) => set.map(obj => ({ ...obj, seti }))
-    );
-}
-
-function xSets<O extends WithVelocity>({
-    size, velocity, creareObjects,
-}: {
-    size: number,
-    velocity: number,
-    creareObjects: (box: Box) => O[],
-}) {
-    let vels: Vector[] = [
-        [velocity, velocity, 0],
-        [-velocity, velocity, 0],
-        [velocity, -velocity, 0],
-        [-velocity, -velocity, 0],
-    ];
-    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
-    return boxes.map((box, bi) => {
-        let objects = creareObjects(box);
-        return objects.map(object => ({
-            ...object,
-            velocity: addVector(object.velocity, vels[bi]!),
-        }));
-    });
 }

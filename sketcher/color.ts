@@ -16,7 +16,7 @@ export type HSLAColor = {
     l?: number,
     a?: number,
 }
-export type TupleColor = number[];
+export type TupleColor = [r: number, g: number, b: number, a?: number];
 export type GradientColor = {
     kind: 'gradient',
     start: Vector2d,

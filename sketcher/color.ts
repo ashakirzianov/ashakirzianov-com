@@ -4,10 +4,10 @@ import { Vector2d } from "./vector";
 export type StringColor = string;
 export type RGBAColor = {
     kind?: undefined,
-    red?: number,
-    green?: number,
-    blue?: number,
-    alpha?: number,
+    r?: number,
+    g?: number,
+    b?: number,
+    a?: number,
 };
 export type TupleColor = number[];
 export type GradientColor = {
@@ -58,7 +58,7 @@ export function resolveColor(color: Color, context: Canvas2DContext): ResolvedCo
 }
 
 const colorMap = {
-    orange: { red: 255, green: 165, blue: 0 },
+    orange: { r: 255, g: 165, b: 0 },
 };
 export function toRGBA(name: keyof typeof colorMap): RGBAColor {
     return colorMap[name];
@@ -66,30 +66,30 @@ export function toRGBA(name: keyof typeof colorMap): RGBAColor {
 
 export function gray(value: number): PrimitiveColor {
     return {
-        red: value,
-        green: value,
-        blue: value,
+        r: value,
+        g: value,
+        b: value,
     };
 }
 
-export function fromRGBA({ red, green, blue, alpha }: RGBAColor): StringColor {
-    if (alpha) {
-        return `rgba(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)},${alpha})`;
+export function fromRGBA({ r, g, b, a }: RGBAColor): StringColor {
+    if (a) {
+        return `rgba(${(r ?? 0)},${(g ?? 0)},${(b ?? 0)},${a})`;
     } else {
-        return `rgb(${(red ?? 0)},${(green ?? 0)},${(blue ?? 0)})`;
+        return `rgb(${(r ?? 0)},${(g ?? 0)},${(b ?? 0)})`;
     }
 }
 
-export function fromTupleColor([red, green, blue, alpha]: TupleColor): StringColor {
-    return fromRGBA({ red, green, blue, alpha });
+export function fromTupleColor([r, g, b, a]: TupleColor): StringColor {
+    return fromRGBA({ r, g, b, a });
 }
 
-export function multRGBA({ red, green, blue, alpha }: RGBAColor, value: number): RGBAColor {
+export function multRGBA({ r, g, b, a }: RGBAColor, value: number): RGBAColor {
     return {
-        red: Math.min(255, Math.floor((red ?? 0) * value)),
-        green: Math.min(255, Math.floor((green ?? 0) * value)),
-        blue: Math.min(255, Math.floor((blue ?? 0) * value)),
-        alpha: alpha,
+        r: Math.min(255, Math.floor((r ?? 0) * value)),
+        g: Math.min(255, Math.floor((g ?? 0) * value)),
+        b: Math.min(255, Math.floor((b ?? 0) * value)),
+        a,
     };
 }
 

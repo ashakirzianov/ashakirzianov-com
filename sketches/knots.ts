@@ -538,7 +538,7 @@ export function original() {
     let batchRange = { min: 20, max: 20 };
     let maxVelocity = 0.4;
     let massRange = { min: 0.5, max: 5 };
-    let complimentary = { red: 230, green: 230, blue: 230 };
+    let complimentary = { r: 230, g: 230, b: 230 };
     let batch = Math.floor(randomRange(batchRange));
     let set = vals(batch).map(() => randomObject({
         massRange, maxVelocity, box,

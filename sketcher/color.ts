@@ -9,6 +9,13 @@ export type RGBAColor = {
     b?: number,
     a?: number,
 };
+export type HSLAColor = {
+    kind?: undefined,
+    h?: number,
+    s?: number,
+    l?: number,
+    a?: number,
+}
 export type TupleColor = number[];
 export type GradientColor = {
     kind: 'gradient',
@@ -16,7 +23,7 @@ export type GradientColor = {
     end: Vector2d,
     stops: ColorStop[],
 };
-export type PrimitiveColor = StringColor | RGBAColor | TupleColor;
+export type PrimitiveColor = StringColor | RGBAColor | HSLAColor | TupleColor;
 export type Color = PrimitiveColor | GradientColor;
 export type ColorStop = { offset: number, color: PrimitiveColor };
 export type ResolvedColor = StringColor | CanvasGradient;
@@ -33,7 +40,11 @@ export function resolvePrimitiveColor(color: PrimitiveColor): StringColor {
     if (Array.isArray(color)) {
         return fromTupleColor(color);
     } else if (typeof color === 'object') {
-        return fromRGBA(color);
+        if ('r' in color) {
+            return fromRGBA(color);
+        } else {
+            return fromHSLA(color);
+        }
     } else {
         return color;
     }
@@ -78,6 +89,10 @@ export function fromRGBA({ r, g, b, a }: RGBAColor): StringColor {
     } else {
         return `rgb(${(r ?? 0)},${(g ?? 0)},${(b ?? 0)})`;
     }
+}
+
+export function fromHSLA({ h, s, l, a }: HSLAColor): StringColor {
+    return `hsla(${h ?? 0},${s ?? 0},${l ?? 0},${a ?? 1})`;
 }
 
 export function fromTupleColor([r, g, b, a]: TupleColor): StringColor {

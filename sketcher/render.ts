@@ -1,5 +1,6 @@
 import { Box, boxRange } from "./box";
 import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops } from "./color";
+import { layoutElement, LayoutElement } from "./layout";
 import { NumRange, rangeLength } from "./range";
 import { addVector, multsVector, Vector } from "./vector";
 
@@ -258,4 +259,66 @@ export function centerOnPoint({ canvas, point }: {
 }) {
     let [shiftx, shifty] = point;
     canvas.context.translate(-shiftx, -shifty);
+}
+
+export type TextFont = string;
+export type TextStyle = {
+    font?: TextFont,
+    color?: Color,
+};
+export type TextLayout = LayoutElement<TextStyle & {
+    text?: string,
+}>;
+
+export function layoutText({ canvas, root }: {
+    canvas: Canvas,
+    root: TextLayout,
+}) {
+    return layoutElement(root, {
+        dimensions: {
+            width: canvas.width,
+            height: canvas.height,
+        },
+        resolveDimensions(element) {
+            if (element.text === undefined) {
+                return undefined;
+            }
+            let mesures = canvas.context.measureText(element.text);
+            return {
+                width: mesures.width,
+                height: mesures.actualBoundingBoxDescent - mesures.actualBoundingBoxAscent,
+            };
+        },
+    })
+}
+
+export function renderTextLayout({ canvas, root, style }: {
+    canvas: Canvas,
+    root: TextLayout,
+    style?: TextStyle,
+}) {
+    canvas.context.save();
+    canvas.context.textBaseline = 'top';
+    if (style) {
+        applyTextStyle(canvas, style);
+    }
+    let layout = layoutText({ canvas, root });
+    for (let { element, position } of layout) {
+        canvas.context.save();
+        applyTextStyle(canvas, element);
+        if (element.text) {
+            canvas.context.fillText(element.text, position.left, position.top);
+        }
+        canvas.context.restore();
+    }
+    canvas.context.restore();
+}
+
+function applyTextStyle(canvas: Canvas, style: TextStyle) {
+    if (style.font) {
+        canvas.context.font = style.font;
+    }
+    if (style.color) {
+        canvas.context.fillStyle = resolveColor(style.color, canvas.context);
+    }
 }

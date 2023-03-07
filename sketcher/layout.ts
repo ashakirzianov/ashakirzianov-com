@@ -36,72 +36,61 @@ export function layoutElement<T>(
     // Add self
     result.push({
         element: root,
-        dimensions: resolveDimensions(root) ?? dimensions,
+        // dimensions: resolveDimensions(root) ?? dimensions,
+        dimensions,
         position: { top: 0, left: 0 },
     });
 
     // Set defaults
     let content = root.content ?? [];
-    let direction = root.direction ?? 'row';
     let justify = root.justify ?? 'center';
+    let crossJustify = root.crossJustify ?? 'center';
+    let dir = root.direction ?? 'row';
 
     // Calculate growth
-    let flexLength = direction === 'row'
-        ? dimensions.width : dimensions.height;
-    let dims = content.map(el => getDimensions(el, resolveDimensions));
-    let contentLength = direction === 'row'
-        ? dims.reduce((r, d) => r + d.width, 0)
-        : dims.reduce((r, d) => r + d.height, 0);
+    // let main = direction === 'row'
+    //     ? dimensions.width : dimensions.height;
+    // let cross = direction === 'row'
+    //     ? dimensions.height : dimensions.width;
+    let { main, cross } = toRelative(dimensions, dir);
+    let dims = content.map(el => toRelative(getDimensions(el, resolveDimensions), dir));
+    let contentMain = dims.reduce((r, d) => r + d.main, 0);
     let totalGrow = content.reduce((r, e) => r + (e.grow ?? 0), 0);
-    let extraLength = Math.max(0, flexLength - contentLength);
+    let extraLength = Math.max(0, main - contentMain);
     let growUnit = totalGrow === 0 ? 0 : extraLength / totalGrow;
 
     // Grow content dimensions
     for (let idx = 0; idx < content.length; idx++) {
         let child = content[idx]!;
         let growLength = (child.grow ?? 0) * growUnit;
+        dims[idx]!.main += growLength;
         // TODO: respect cross-justification
-        if (direction === 'row') {
-            dims[idx]!.width += growLength;
-            dims[idx]!.height = dimensions.height;
-        } else {
-            dims[idx]!.width = dimensions.width;
-            dims[idx]!.height += growLength;
-        }
+        dims[idx]!.cross = cross;
     }
 
-    let adjustedLength = direction === 'row'
-        ? dims.reduce((r, d) => r + d.width, 0)
-        : dims.reduce((r, d) => r + d.height, 0);
-    let offsetLen = justify === 'start' ? 0
-        : justify === 'end' ? flexLength - adjustedLength
-            : (flexLength - adjustedLength) / 2; // 'center'
-    let offset: Position = direction === 'row'
-        ? { top: 0, left: offsetLen }
-        : { top: offsetLen, left: 0 };
+    let adjustedMain = dims.reduce((r, d) => r + d.main, 0);
+    let offsetMain = justify === 'start' ? 0
+        : justify === 'end' ? main - adjustedMain
+            : (main - adjustedMain) / 2; // 'center'
     for (let idx = 0; idx < content.length; idx++) {
         let child = content[idx]!;
         let dim = dims[idx]!;
 
         let childLayout = layoutElement(child, {
-            dimensions: dim, resolveDimensions,
+            dimensions: toAbsolute(dim, dir), resolveDimensions,
         });
         for (let positioned of childLayout) {
             result.push({
                 ...positioned,
-                position: {
-                    top: positioned.position.top + offset.top,
-                    left: positioned.position.left + offset.left,
-                },
-            });
+                position: addToPosition(positioned.position, {
+                    main: offsetMain,
+                    cross: 0,
+                }, dir),
+            })
         }
 
         // Increment offset
-        if (direction === 'row') {
-            offset.left += dim.width;
-        } else {
-            offset.top += dim.height;
-        }
+        offsetMain += dim.main;
     }
 
     return result;
@@ -135,4 +124,24 @@ function getDimensions<T>(element: LayoutElement<T>, resolveDimensions: LayoutCo
             { width: 0, height: 0 },
         );
     }
+}
+
+type RelativeDimensions = {
+    main: number,
+    cross: number,
+};
+function toRelative(dimensions: Dimensions, direction: LayoutDirection): RelativeDimensions {
+    return direction === 'row'
+        ? { main: dimensions.width, cross: dimensions.height }
+        : { main: dimensions.height, cross: dimensions.width };
+}
+function toAbsolute(relative: RelativeDimensions, direction: LayoutDirection): Dimensions {
+    return direction === 'row'
+        ? { width: relative.main, height: relative.cross }
+        : { width: relative.cross, height: relative.main };
+}
+function addToPosition(position: Position, relative: RelativeDimensions, direction: LayoutDirection): Position {
+    return direction === 'row'
+        ? { left: position.left + relative.main, top: position.top + relative.cross }
+        : { left: position.left + relative.cross, top: position.top + relative.main }
 }

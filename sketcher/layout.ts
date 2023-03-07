@@ -6,57 +6,38 @@ export type Position = {
     top: number,
     left: number,
 };
-export type LayoutElement = LayoutFlex | LayoutText;
 export type Justification = 'start' | 'center' | 'end';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutFlex = {
-    kind?: 'flex',
+export type LayoutElement<T> = T & {
     id?: string,
-    content?: LayoutElement[],
+    content?: LayoutElement<T>[],
     grow?: number,
     direction?: LayoutDirection,
     justify?: Justification,
     crossJustify?: Justification,
 };
-export type LayoutText = {
-    kind: 'text',
-    id?: string,
-    text: string,
-};
-export type PositionedElement = Position & Dimensions & {
-    element: LayoutElement,
-};
-export type Layout = PositionedElement[];
-export type LayoutContext = {
+export type PositionedElement<T> = {
+    element: LayoutElement<T>,
+    position: Position,
     dimensions: Dimensions,
-    getTextDimensions: (text: LayoutText) => Dimensions,
+};
+export type PositionedLayout<T> = PositionedElement<T>[];
+export type LayoutContext<T> = {
+    dimensions: Dimensions,
+    resolveDimensions: (element: T) => Dimensions | undefined,
 };
 
-export function layoutElement(element: LayoutElement, context: LayoutContext): Layout {
-    if (element.kind === 'text') {
-        return [{
-            element,
-            top: 0, left: 0,
-            ...context.getTextDimensions(element),
-        }];
-    } else {
-        return layoutFlex(element, context);
-    }
-}
-
-function layoutFlex(
-    flex: LayoutFlex,
-    { dimensions, getTextDimensions }: LayoutContext,
-): Layout {
-    let result: Layout = [];
+export function layoutElement<T>(
+    flex: LayoutElement<T>,
+    { dimensions, resolveDimensions }: LayoutContext<T>,
+): PositionedLayout<T> {
+    let result: PositionedLayout<T> = [];
 
     // Add self
     result.push({
         element: flex,
-        top: 0,
-        left: 0,
-        width: dimensions.width,
-        height: dimensions.height,
+        dimensions: { ...dimensions },
+        position: { top: 0, left: 0 },
     });
 
     // Set defaults
@@ -67,18 +48,18 @@ function layoutFlex(
     // Calculate growth
     let flexLength = direction === 'row'
         ? dimensions.width : dimensions.height;
-    let dims = content.map(el => getDimensions(el, getTextDimensions));
+    let dims = content.map(el => getDimensions(el, resolveDimensions));
     let contentLength = direction === 'row'
         ? dims.reduce((r, d) => r + d.width, 0)
         : dims.reduce((r, d) => r + d.height, 0);
-    let totalGrow = content.reduce((r, e) => r + getGrow(e), 0);
+    let totalGrow = content.reduce((r, e) => r + (e.grow ?? 0), 0);
     let extraLength = Math.max(0, flexLength - contentLength);
     let growUnit = totalGrow === 0 ? 0 : extraLength / totalGrow;
 
     // Grow content dimensions
     for (let idx = 0; idx < content.length; idx++) {
         let child = content[idx]!;
-        let growLength = getGrow(child) * growUnit;
+        let growLength = (child.grow ?? 0) * growUnit;
         // TODO: respect cross-justification
         if (direction === 'row') {
             dims[idx]!.width += growLength;
@@ -103,13 +84,15 @@ function layoutFlex(
         let dim = dims[idx]!;
 
         let childLayout = layoutElement(child, {
-            dimensions: dim, getTextDimensions,
+            dimensions: dim, resolveDimensions,
         });
         for (let positioned of childLayout) {
             result.push({
                 ...positioned,
-                top: positioned.top + offset.top,
-                left: positioned.left + offset.left,
+                position: {
+                    top: positioned.position.top + offset.top,
+                    left: positioned.position.left + offset.left,
+                },
             });
         }
 
@@ -124,40 +107,32 @@ function layoutFlex(
     return result;
 }
 
-function getDimensions(element: LayoutElement, getTextDimensions: LayoutContext['getTextDimensions']): Dimensions {
-    if (element.kind === 'text') {
-        return getTextDimensions(element);
-    } else {
-        if (element.direction === 'column') {
-            return (element.content ?? []).reduce(
-                (res, el) => {
-                    let dims = getDimensions(el, getTextDimensions);
-                    return {
-                        width: Math.max(res.width, dims.width),
-                        height: res.height + dims.height,
-                    };
-                },
-                { width: 0, height: 0 },
-            );
-        } else {
-            return (element.content ?? []).reduce(
-                (res, el) => {
-                    let dims = getDimensions(el, getTextDimensions);
-                    return {
-                        width: res.width + dims.width,
-                        height: Math.max(res.height, dims.height),
-                    };
-                },
-                { width: 0, height: 0 },
-            );
-        }
+function getDimensions<T>(element: LayoutElement<T>, resolveDimensions: LayoutContext<T>['resolveDimensions']): Dimensions {
+    let resolved = resolveDimensions(element);
+    if (resolved) {
+        return resolved;
     }
-}
-
-function getGrow(element: LayoutElement): number {
-    if (element.kind === 'text') {
-        return 0;
+    if (element.direction === 'column') {
+        return (element.content ?? []).reduce(
+            (res, el) => {
+                let dims = getDimensions(el, resolveDimensions);
+                return {
+                    width: Math.max(res.width, dims.width),
+                    height: res.height + dims.height,
+                };
+            },
+            { width: 0, height: 0 },
+        );
     } else {
-        return element.grow ?? 0;
+        return (element.content ?? []).reduce(
+            (res, el) => {
+                let dims = getDimensions(el, resolveDimensions);
+                return {
+                    width: res.width + dims.width,
+                    height: Math.max(res.height, dims.height),
+                };
+            },
+            { width: 0, height: 0 },
+        );
     }
 }

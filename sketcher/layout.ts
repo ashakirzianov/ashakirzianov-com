@@ -50,6 +50,15 @@ function layoutFlex(
 ): Layout {
     let result: Layout = [];
 
+    // Add self
+    result.push({
+        element: flex,
+        top: 0,
+        left: 0,
+        width: dimensions.width,
+        height: dimensions.height,
+    });
+
     // Set defaults
     let content = flex.content ?? [];
     let direction = flex.direction ?? 'row';
@@ -70,9 +79,12 @@ function layoutFlex(
     for (let idx = 0; idx < content.length; idx++) {
         let child = content[idx]!;
         let growLength = getGrow(child) * growUnit;
+        // TODO: respect cross-justification
         if (direction === 'row') {
             dims[idx]!.width += growLength;
+            dims[idx]!.height = dimensions.height;
         } else {
+            dims[idx]!.width = dimensions.width;
             dims[idx]!.height += growLength;
         }
     }
@@ -80,9 +92,12 @@ function layoutFlex(
     let adjustedLength = direction === 'row'
         ? dims.reduce((r, d) => r + d.width, 0)
         : dims.reduce((r, d) => r + d.height, 0);
-    let offset = justify === 'start' ? 0
+    let offsetLen = justify === 'start' ? 0
         : justify === 'end' ? flexLength - adjustedLength
             : (flexLength - adjustedLength) / 2; // 'center'
+    let offset: Position = direction === 'row'
+        ? { top: 0, left: offsetLen }
+        : { top: offsetLen, left: 0 };
     for (let idx = 0; idx < content.length; idx++) {
         let child = content[idx]!;
         let dim = dims[idx]!;
@@ -91,14 +106,19 @@ function layoutFlex(
             dimensions: dim, getTextDimensions,
         });
         for (let positioned of childLayout) {
-            let adjusted = direction === 'row'
-                ? { ...positioned, left: positioned.left + offset }
-                : { ...positioned, top: positioned.top + offset };
-            result.push(adjusted);
+            result.push({
+                ...positioned,
+                top: positioned.top + offset.top,
+                left: positioned.left + offset.left,
+            });
         }
 
-        let delta = direction === 'row' ? dim.width : dim.height;
-        offset += delta;
+        // Increment offset
+        if (direction === 'row') {
+            offset.left += dim.width;
+        } else {
+            offset.top += dim.height;
+        }
     }
 
     return result;
@@ -108,7 +128,29 @@ function getDimensions(element: LayoutElement, getTextDimensions: LayoutContext[
     if (element.kind === 'text') {
         return getTextDimensions(element);
     } else {
-        return { width: 0, height: 0 };
+        if (element.direction === 'column') {
+            return (element.content ?? []).reduce(
+                (res, el) => {
+                    let dims = getDimensions(el, getTextDimensions);
+                    return {
+                        width: Math.max(res.width, dims.width),
+                        height: res.height + dims.height,
+                    };
+                },
+                { width: 0, height: 0 },
+            );
+        } else {
+            return (element.content ?? []).reduce(
+                (res, el) => {
+                    let dims = getDimensions(el, getTextDimensions);
+                    return {
+                        width: res.width + dims.width,
+                        height: Math.max(res.height, dims.height),
+                    };
+                },
+                { width: 0, height: 0 },
+            );
+        }
     }
 }
 

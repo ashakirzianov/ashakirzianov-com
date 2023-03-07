@@ -45,15 +45,11 @@ export function layoutElement<T>(
     let content = root.content ?? [];
     let justify = root.justify ?? 'center';
     let crossJustify = root.crossJustify ?? 'center';
-    let dir = root.direction ?? 'row';
+    let direction = root.direction ?? 'row';
 
     // Calculate growth
-    // let main = direction === 'row'
-    //     ? dimensions.width : dimensions.height;
-    // let cross = direction === 'row'
-    //     ? dimensions.height : dimensions.width;
-    let { main, cross } = toRelative(dimensions, dir);
-    let dims = content.map(el => toRelative(getDimensions(el, resolveDimensions), dir));
+    let { main, cross } = toRelative(dimensions, direction);
+    let dims = content.map(el => toRelative(getDimensions(el, resolveDimensions), direction));
     let contentMain = dims.reduce((r, d) => r + d.main, 0);
     let totalGrow = content.reduce((r, e) => r + (e.grow ?? 0), 0);
     let extraLength = Math.max(0, main - contentMain);
@@ -64,8 +60,8 @@ export function layoutElement<T>(
         let child = content[idx]!;
         let growLength = (child.grow ?? 0) * growUnit;
         dims[idx]!.main += growLength;
-        // TODO: respect cross-justification
-        dims[idx]!.cross = cross;
+        // TODO: respect cross-justification stretch
+        // dims[idx]!.cross = cross;
     }
 
     let adjustedMain = dims.reduce((r, d) => r + d.main, 0);
@@ -77,15 +73,19 @@ export function layoutElement<T>(
         let dim = dims[idx]!;
 
         let childLayout = layoutElement(child, {
-            dimensions: toAbsolute(dim, dir), resolveDimensions,
+            dimensions: toAbsolute(dim, direction), resolveDimensions,
         });
         for (let positioned of childLayout) {
+            let relative = toRelative(positioned.dimensions, direction);
+            let offset = {
+                main: offsetMain,
+                cross: crossJustify === 'start' ? 0
+                    : crossJustify === 'end' ? cross - relative.cross
+                        : (cross - relative.cross) / 2,
+            };
             result.push({
                 ...positioned,
-                position: addToPosition(positioned.position, {
-                    main: offsetMain,
-                    cross: 0,
-                }, dir),
+                position: addToPosition(positioned.position, offset, direction),
             })
         }
 

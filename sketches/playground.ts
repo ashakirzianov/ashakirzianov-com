@@ -7,7 +7,13 @@ export function playground(): Scene<PlaygroundState> {
     let root: TextLayout = {
         border: 'white',
         content: [
-            { text: 'hello', border: 'orange', },
+            {
+                grow: 1, direction: 'column', border: 'orange',
+                justify: 'start',
+                crossJustify: 'start',
+                content: [{ text: 'hello', border: 'magenta' }],
+            },
+            // { text: 'hello', border: 'orange', grow: 1 },
             {
                 grow: 1,
                 border: 'blue',

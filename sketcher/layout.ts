@@ -9,6 +9,8 @@ export type Position = {
 export type Justification = 'start' | 'center' | 'end';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
+export type LayoutSize = number;
+export type LayoutPadding = LayoutSize;
 export type LayoutElement<T> = T & {
     id?: string,
     content?: LayoutElement<T>[],
@@ -16,6 +18,7 @@ export type LayoutElement<T> = T & {
     direction?: LayoutDirection,
     justify?: Justification,
     crossJustify?: CrossJustification,
+    padding?: LayoutPadding,
 };
 export type PositionedElement<T> = {
     element: LayoutElement<T>,
@@ -46,9 +49,18 @@ export function layoutElement<T>(
     let justify = root.justify ?? 'center';
     let crossJustify = root.crossJustify ?? 'stretch';
     let direction = root.direction ?? 'row';
+    let padding = root.padding ?? 0;
+
+    let paddingOffset = toRelative({
+        width: dimensions.width * padding,
+        height: dimensions.height * padding,
+    }, direction);
+    let { main, cross } = toRelative(dimensions, direction);
+    // Apply padding
+    main -= 2 * paddingOffset.main;
+    cross -= 2 * paddingOffset.cross;
 
     // Calculate growth
-    let { main, cross } = toRelative(dimensions, direction);
     let dims = content.map(el => toRelative(getDimensions(el, resolveDimensions), direction));
     let contentMain = dims.reduce((r, d) => r + d.main, 0);
     let totalGrow = content.reduce((r, e) => r + (e.grow ?? 0), 0);
@@ -85,6 +97,8 @@ export function layoutElement<T>(
                         : crossJustify === 'center' ? (cross - relative.cross) / 2
                             : 0,
             };
+            offset.main += paddingOffset.main;
+            offset.cross += paddingOffset.cross;
             result.push({
                 ...positioned,
                 position: addToPosition(positioned.position, offset, direction),

@@ -8,10 +8,14 @@ export function playground(): Scene<PlaygroundState> {
         border: 'white',
         content: [
             {
+                padding: .1,
                 grow: 1, direction: 'column', border: 'orange',
                 justify: 'start',
-                crossJustify: 'center',
-                content: [{ text: 'hello', border: 'magenta' }],
+                crossJustify: 'end',
+                content: [
+                    { text: 'hello', border: 'magenta' },
+                    { text: 'world', border: 'red' },
+                ],
             },
             // { text: 'hello', border: 'orange', grow: 1 },
             {

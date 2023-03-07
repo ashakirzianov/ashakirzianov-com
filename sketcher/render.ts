@@ -268,6 +268,7 @@ export type TextStyle = {
 };
 export type TextLayout = LayoutElement<TextStyle & {
     text?: string,
+    border?: Color,
 }>;
 
 export function layoutText({ canvas, root }: {
@@ -303,11 +304,15 @@ export function renderTextLayout({ canvas, root, style }: {
         applyTextStyle(canvas, style);
     }
     let layout = layoutText({ canvas, root });
-    for (let { element, position } of layout) {
+    for (let { element, position, dimensions } of layout) {
         canvas.context.save();
         applyTextStyle(canvas, element);
         if (element.text) {
             canvas.context.fillText(element.text, position.left, position.top);
+        }
+        if (element.border) {
+            canvas.context.strokeStyle = resolveColor(element.border, canvas.context);
+            canvas.context.strokeRect(position.left, position.top, dimensions.width, dimensions.height);
         }
         canvas.context.restore();
     }

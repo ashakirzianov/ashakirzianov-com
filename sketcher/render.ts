@@ -1,8 +1,10 @@
 import { Box, boxRange } from "./box";
-import { Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops } from "./color";
+import {
+    Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops,
+} from "./color";
 import { layoutElement, LayoutElement } from "./layout";
 import { NumRange, rangeLength } from "./range";
-import { addVector, multsVector, Vector } from "./vector";
+import { Vector } from "./vector";
 
 export type Canvas2DContext = CanvasRenderingContext2D;
 export type Canvas = {

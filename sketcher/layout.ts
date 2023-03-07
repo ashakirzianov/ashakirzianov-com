@@ -3,8 +3,8 @@ export type Dimensions = {
     height: number,
 };
 export type Position = {
-    top: number,
     left: number,
+    top: number,
 };
 export type Justification = 'start' | 'center' | 'end';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
@@ -38,7 +38,7 @@ export function layoutElement<T>(
     result.push({
         element: root,
         dimensions,
-        position: { top: 0, left: 0 },
+        position: { left: 0, top: 0 },
     });
 
     // Set defaults

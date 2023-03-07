@@ -18,7 +18,9 @@ export function launcher<State>({
         let frame = 0;
         let renderState = makeRenderState({ layers, getCanvas });
         function loop(current?: number) {
-            state = animator(state);
+            if (animator) {
+                state = animator(state);
+            }
             if (renderState(state, frame)) {
                 if (period) { // If animated
                     if (frame < (skip ?? 0) // Still skiping

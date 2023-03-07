@@ -7,6 +7,7 @@ export type Position = {
     left: number,
 };
 export type Justification = 'start' | 'center' | 'end';
+export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
 export type LayoutElement<T> = T & {
     id?: string,
@@ -14,7 +15,7 @@ export type LayoutElement<T> = T & {
     grow?: number,
     direction?: LayoutDirection,
     justify?: Justification,
-    crossJustify?: Justification,
+    crossJustify?: CrossJustification,
 };
 export type PositionedElement<T> = {
     element: LayoutElement<T>,
@@ -36,7 +37,6 @@ export function layoutElement<T>(
     // Add self
     result.push({
         element: root,
-        // dimensions: resolveDimensions(root) ?? dimensions,
         dimensions,
         position: { top: 0, left: 0 },
     });
@@ -44,7 +44,7 @@ export function layoutElement<T>(
     // Set defaults
     let content = root.content ?? [];
     let justify = root.justify ?? 'center';
-    let crossJustify = root.crossJustify ?? 'center';
+    let crossJustify = root.crossJustify ?? 'stretch';
     let direction = root.direction ?? 'row';
 
     // Calculate growth
@@ -60,8 +60,9 @@ export function layoutElement<T>(
         let child = content[idx]!;
         let growLength = (child.grow ?? 0) * growUnit;
         dims[idx]!.main += growLength;
-        // TODO: respect cross-justification stretch
-        // dims[idx]!.cross = cross;
+        if (crossJustify === 'stretch') {
+            dims[idx]!.cross = cross;
+        }
     }
 
     let adjustedMain = dims.reduce((r, d) => r + d.main, 0);
@@ -81,7 +82,8 @@ export function layoutElement<T>(
                 main: offsetMain,
                 cross: crossJustify === 'start' ? 0
                     : crossJustify === 'end' ? cross - relative.cross
-                        : (cross - relative.cross) / 2,
+                        : crossJustify === 'center' ? (cross - relative.cross) / 2
+                            : 0,
             };
             result.push({
                 ...positioned,

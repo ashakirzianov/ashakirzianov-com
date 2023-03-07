@@ -10,7 +10,7 @@ export function playground(): Scene<PlaygroundState> {
             {
                 grow: 1, direction: 'column', border: 'orange',
                 justify: 'start',
-                crossJustify: 'start',
+                crossJustify: 'center',
                 content: [{ text: 'hello', border: 'magenta' }],
             },
             // { text: 'hello', border: 'orange', grow: 1 },

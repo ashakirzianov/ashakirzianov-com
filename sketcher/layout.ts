@@ -28,22 +28,22 @@ export type LayoutContext<T> = {
 };
 
 export function layoutElement<T>(
-    flex: LayoutElement<T>,
+    root: LayoutElement<T>,
     { dimensions, resolveDimensions }: LayoutContext<T>,
 ): PositionedLayout<T> {
     let result: PositionedLayout<T> = [];
 
     // Add self
     result.push({
-        element: flex,
-        dimensions: { ...dimensions },
+        element: root,
+        dimensions: resolveDimensions(root) ?? dimensions,
         position: { top: 0, left: 0 },
     });
 
     // Set defaults
-    let content = flex.content ?? [];
-    let direction = flex.direction ?? 'row';
-    let justify = flex.justify ?? 'center';
+    let content = root.content ?? [];
+    let direction = root.direction ?? 'row';
+    let justify = root.justify ?? 'center';
 
     // Calculate growth
     let flexLength = direction === 'row'

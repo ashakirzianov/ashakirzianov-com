@@ -19,6 +19,8 @@ export type LayoutElement<T> = T & {
     justify?: Justification,
     crossJustify?: CrossJustification,
     padding?: LayoutPadding,
+    offset?: LayoutSize,
+    crossOffset?: LayoutSize,
 };
 export type PositionedElement<T> = {
     element: LayoutElement<T>,
@@ -37,13 +39,6 @@ export function layoutElement<T>(
 ): PositionedLayout<T> {
     let result: PositionedLayout<T> = [];
 
-    // Add self
-    result.push({
-        element: root,
-        dimensions,
-        position: { left: 0, top: 0 },
-    });
-
     // Set defaults
     let content = root.content ?? [];
     let justify = root.justify ?? 'center';
@@ -51,12 +46,27 @@ export function layoutElement<T>(
     let direction = root.direction ?? 'row';
     let padding = root.padding ?? 0;
 
-    let paddingOffset = toRelative({
-        width: dimensions.width * padding,
-        height: dimensions.height * padding,
-    }, direction);
+    // Conver to dimensions relative to direction
     let { main, cross } = toRelative(dimensions, direction);
+
+    // Offset from props:
+    let extraOffset = {
+        main: calcSize(root.offset ?? 0, main),
+        cross: calcSize(root.crossOffset ?? 0, cross),
+    };
+
+    // Add self
+    result.push({
+        element: root,
+        dimensions,
+        position: addToPosition({ left: 0, top: 0 }, extraOffset, direction),
+    });
+
     // Apply padding
+    let paddingOffset = toRelative({
+        width: calcSize(padding, dimensions.width),
+        height: calcSize(padding, dimensions.height),
+    }, direction);
     main -= 2 * paddingOffset.main;
     cross -= 2 * paddingOffset.cross;
 
@@ -160,4 +170,15 @@ function addToPosition(position: Position, relative: RelativeDimensions, directi
     return direction === 'row'
         ? { left: position.left + relative.main, top: position.top + relative.cross }
         : { left: position.left + relative.cross, top: position.top + relative.main }
+}
+
+function sumRelative(left: RelativeDimensions, right: RelativeDimensions): RelativeDimensions {
+    return {
+        main: left.main + right.main,
+        cross: left.cross + right.cross,
+    };
+}
+
+function calcSize(size: LayoutSize, axis: number) {
+    return size * axis;
 }

@@ -8,7 +8,7 @@ export type Layer<State> = {
 }
 export type Scene<State> = {
     state: State,
-    animator: Animator<State>,
+    animator?: Animator<State>,
     layers: Layer<State>[],
 };
 

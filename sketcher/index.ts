@@ -3,6 +3,7 @@ export * from './box';
 export * from './color';
 export * from './render';
 export * from './launch';
+export * from './layout';
 export * from './misc';
 export * from './object';
 export * from './random';

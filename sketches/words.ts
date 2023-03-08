@@ -1,28 +1,31 @@
 import {
-    clearFrame,
-    renderTextLayout, Scene, TextLayout,
+    clearFrame, renderTextLayout, Scene, TextLayout,
 } from '@/sketcher';
 
+export function current() {
+    return helloWorld();
+}
+
 type PlaygroundState = {};
-export function playground(): Scene<PlaygroundState> {
+function helloWorld(): Scene<PlaygroundState> {
     return {
         state: {},
         layers: [{}, {
             render({ canvas, frame }) {
-                clearFrame({ canvas, color: 'black' })
+                clearFrame({ canvas, color: 'black' });
                 let root: TextLayout = {
-                    border: 'white',
                     content: [
                         {
                             padding: .1,
-                            grow: 1, direction: 'column', border: 'orange',
+                            grow: 1,
+                            direction: 'column',
+                            border: 'orange',
                             justify: 'start',
                             crossJustify: 'end',
                             content: [
                                 {
                                     text: 'hello',
                                     color: 'yellow',
-                                    // border: 'magenta', 
                                     rotation: -frame * 0.2,
                                 },
                                 {
@@ -31,7 +34,6 @@ export function playground(): Scene<PlaygroundState> {
                                 },
                             ],
                         },
-                        // { text: 'hello', border: 'orange', grow: 1 },
                         {
                             grow: 0,
                             border: 'blue',
@@ -42,7 +44,11 @@ export function playground(): Scene<PlaygroundState> {
                                     grow: 3,
                                     border: 'magenta',
                                 },
-                                { text: 'Here we go', border: 'green', rotation: frame * 0.1 },
+                                {
+                                    text: 'Here we go',
+                                    border: 'green',
+                                    rotation: frame * 0.1,
+                                },
                                 {
                                     grow: 1,
                                     // border: 'yellow',

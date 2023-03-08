@@ -291,14 +291,9 @@ export function layoutText({ canvas, root }: {
             canvas.context.textBaseline = 'alphabetic';
             applyTextStyle(canvas, element);
             let mesures = canvas.context.measureText(element.text);
-            // TODO: investigate
-            // let dims = transformDimensions({
-            //     width: mesures.width,
-            //     height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
-            // }, canvas.context);
             let dims = transformDimensions({
                 width: mesures.width,
-                height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
+                height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
             }, canvas.context);
             canvas.context.restore();
             return dims;

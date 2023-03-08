@@ -1,8 +1,8 @@
-import { Box, boxRange } from "./box";
+import { boundingBox, Box, boxRange } from "./box";
 import {
     Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops,
 } from "./color";
-import { layoutElement, LayoutElement } from "./layout";
+import { Dimensions, layoutElement, LayoutElement } from "./layout";
 import { NumRange, rangeLength } from "./range";
 import { Vector } from "./vector";
 
@@ -267,6 +267,7 @@ export type TextFont = string;
 export type TextStyle = {
     font?: TextFont,
     color?: Color,
+    rotation?: number,
 };
 export type TextLayout = LayoutElement<TextStyle & {
     text?: string,
@@ -286,11 +287,21 @@ export function layoutText({ canvas, root }: {
             if (element.text === undefined) {
                 return undefined;
             }
+            canvas.context.save();
+            canvas.context.textBaseline = 'alphabetic';
+            applyTextStyle(canvas, element);
             let mesures = canvas.context.measureText(element.text);
-            return {
+            // TODO: investigate
+            // let dims = transformDimensions({
+            //     width: mesures.width,
+            //     height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
+            // }, canvas.context);
+            let dims = transformDimensions({
                 width: mesures.width,
-                height: mesures.actualBoundingBoxDescent - mesures.actualBoundingBoxAscent,
-            };
+                height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
+            }, canvas.context);
+            canvas.context.restore();
+            return dims;
         },
     })
 }
@@ -301,22 +312,29 @@ export function renderTextLayout({ canvas, root, style }: {
     style?: TextStyle,
 }) {
     canvas.context.save();
-    canvas.context.textBaseline = 'top';
+    // TODO: try to use default baseline
+    canvas.context.textBaseline = 'middle';
+    canvas.context.textAlign = 'center';
     if (style) {
         applyTextStyle(canvas, style);
     }
     let layout = layoutText({ canvas, root });
     for (let { element, position, dimensions } of layout) {
         canvas.context.save();
+        canvas.context.translate(position.left, position.top);
+        canvas.context.translate(dimensions.width / 2, dimensions.height / 2);
         applyTextStyle(canvas, element);
+
         if (element.text) {
-            canvas.context.fillText(element.text, position.left, position.top);
-        }
-        if (element.border) {
-            canvas.context.strokeStyle = resolveColor(element.border, canvas.context);
-            canvas.context.strokeRect(position.left, position.top, dimensions.width, dimensions.height);
+            canvas.context.fillText(element.text, 0, 0);
         }
         canvas.context.restore();
+        if (element.border) {
+            canvas.context.save();
+            canvas.context.strokeStyle = resolveColor(element.border, canvas.context);
+            canvas.context.strokeRect(position.left, position.top, dimensions.width, dimensions.height);
+            canvas.context.restore();
+        }
     }
     canvas.context.restore();
 }
@@ -328,4 +346,24 @@ function applyTextStyle(canvas: Canvas, style: TextStyle) {
     if (style.color) {
         canvas.context.fillStyle = resolveColor(style.color, canvas.context);
     }
+    if (style.rotation) {
+        canvas.context.rotate(style.rotation);
+    }
+}
+
+function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): Dimensions {
+    let transform = context.getTransform();
+    let w = dimensions.width / 2;
+    let h = dimensions.height / 2;
+    let a = transform.transformPoint(new DOMPoint(-w, -h));
+    let b = transform.transformPoint(new DOMPoint(w, -h));
+    let c = transform.transformPoint(new DOMPoint(w, h));
+    let d = transform.transformPoint(new DOMPoint(-w, h));
+    let box = boundingBox(
+        [a, b, c, d].map(p => ([p.x, p.y, 0]))
+    );
+    return {
+        width: box.end[0] - box.start[0],
+        height: box.end[1] - box.start[1],
+    };
 }

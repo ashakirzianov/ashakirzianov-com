@@ -6,7 +6,7 @@ export type Layer<State> = {
     prepare?: Render<State>,
     hidden?: boolean,
 }
-export type Scene<State> = {
+export type Scene<State = undefined> = {
     state: State,
     animator?: Animator<State>,
     layers: Layer<State>[],

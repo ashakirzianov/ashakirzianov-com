@@ -1,17 +1,19 @@
 import {
-    clearFrame, layoutText, renderPositionedElement, Scene, TextLayout,
+    clearFrame, Dimensions, layoutText, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
 
-export function playground(): Scene {
-    let root = posterLayout();
+// Reference: https://www.stedelijk.nl/en/collection/31791-josje-pollmann-wim-crouwel-zeven-grafici-uit-joegoslavie
+
+export function sm(): Scene {
     return {
         state: undefined,
         layers: [{
             prepare({ canvas }) {
-                clearFrame({ canvas, color: 'pink' });
+                clearFrame({ canvas, color: [220, 63, 66] });
             }
         }, {
             prepare({ canvas }) {
+                let root = posterLayout({ width: canvas.width, height: canvas.height });
                 let layout = layoutText({ canvas, root });
 
                 // Calculate box
@@ -26,14 +28,8 @@ export function playground(): Scene {
                 let x = leftX;
                 let y = bottomY - side;
 
-                // clearFrame({ canvas, color: [228, 101, 79] });
-                canvas.context.lineWidth = 5;
-
-                // canvas.context.fillStyle = resolveColor([220, 63, 66], canvas.context);
-                canvas.context.fillStyle = 'red';
-                canvas.context.fillRect(x, y, side, side);
-                canvas.context.fillStyle = 'rgba(0,0,0,0.2)';
-                canvas.context.fillRect(x + 10, y + 10, side, side);
+                clearFrame({ canvas, color: [228, 101, 79] });
+                canvas.context.clearRect(x, y, side, side);
 
                 for (let positioned of layout) {
                     renderPositionedElement({ context: canvas.context, positioned });
@@ -43,9 +39,10 @@ export function playground(): Scene {
     };
 }
 
-function posterLayout(): TextLayout {
+function posterLayout({ height }: Dimensions): TextLayout {
+    let unit = height / 100;
     let font = {
-        font: 'bold 70vh sans-serif',
+        font: `bold ${34.5 * unit}pt sans-serif`,
         color: 'white',
     };
     return {
@@ -77,7 +74,7 @@ function posterLayout(): TextLayout {
                         id: 'left-letter',
                         text: 'S',
                         ...font,
-                        offset: .15,
+                        offset: .13,
                     },
                     {
                         id: 'right-letter',

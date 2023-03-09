@@ -2,7 +2,9 @@ import { boundingBox, Box, boxRange } from "./box";
 import {
     Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops,
 } from "./color";
-import { Dimensions, layoutElement, LayoutElement } from "./layout";
+import {
+    Dimensions, layoutElement, LayoutElement, PositionedElement,
+} from "./layout";
 import { NumRange, rangeLength } from "./range";
 import { Vector } from "./vector";
 
@@ -269,10 +271,11 @@ export type TextStyle = {
     color?: Color,
     rotation?: number,
 };
-export type TextLayout = LayoutElement<TextStyle & {
+export type TextLayoutProps = TextStyle & {
     text?: string,
     border?: Color,
-}>;
+}
+export type TextLayout = LayoutElement<TextLayoutProps>;
 
 export function layoutText({ canvas, root }: {
     canvas: Canvas,
@@ -289,7 +292,7 @@ export function layoutText({ canvas, root }: {
             }
             canvas.context.save();
             canvas.context.textBaseline = 'alphabetic';
-            applyTextStyle(canvas, element);
+            applyTextStyle(canvas.context, element);
             let mesures = canvas.context.measureText(element.text);
             let dims = transformDimensions({
                 width: mesures.width,
@@ -301,48 +304,59 @@ export function layoutText({ canvas, root }: {
     })
 }
 
-export function renderTextLayout({ canvas, root, style }: {
+export function layoutAndRender({ canvas, root, style }: {
     canvas: Canvas,
     root: TextLayout,
     style?: TextStyle,
 }) {
     canvas.context.save();
-    // TODO: try to use default baseline
-    canvas.context.textBaseline = 'middle';
-    canvas.context.textAlign = 'center';
     if (style) {
-        applyTextStyle(canvas, style);
+        applyTextStyle(canvas.context, style);
     }
     let layout = layoutText({ canvas, root });
-    for (let { element, position, dimensions } of layout) {
-        canvas.context.save();
-        canvas.context.translate(position.left, position.top);
-        canvas.context.translate(dimensions.width / 2, dimensions.height / 2);
-        applyTextStyle(canvas, element);
-
-        if (element.text) {
-            canvas.context.fillText(element.text, 0, 0);
-        }
-        canvas.context.restore();
-        if (element.border) {
-            canvas.context.save();
-            canvas.context.strokeStyle = resolveColor(element.border, canvas.context);
-            canvas.context.strokeRect(position.left, position.top, dimensions.width, dimensions.height);
-            canvas.context.restore();
-        }
+    for (let positioned of layout) {
+        renderPositionedElement({
+            positioned, context: canvas.context,
+        });
     }
     canvas.context.restore();
 }
 
-function applyTextStyle(canvas: Canvas, style: TextStyle) {
+export function renderPositionedElement({
+    context, positioned: { element, position, dimensions },
+}: {
+    context: Canvas2DContext,
+    positioned: PositionedElement<TextLayoutProps>,
+}) {
+    context.save();
+    // TODO: try to use default baseline
+    context.textBaseline = 'middle';
+    context.textAlign = 'center';
+    context.translate(position.left, position.top);
+    context.translate(dimensions.width / 2, dimensions.height / 2);
+    applyTextStyle(context, element);
+
+    if (element.text) {
+        context.fillText(element.text, 0, 0);
+    }
+    context.restore();
+    if (element.border) {
+        context.save();
+        context.strokeStyle = resolveColor(element.border, context);
+        context.strokeRect(position.left, position.top, dimensions.width, dimensions.height);
+        context.restore();
+    }
+}
+
+export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {
     if (style.font) {
-        canvas.context.font = style.font;
+        context.font = style.font;
     }
     if (style.color) {
-        canvas.context.fillStyle = resolveColor(style.color, canvas.context);
+        context.fillStyle = resolveColor(style.color, context);
     }
     if (style.rotation) {
-        canvas.context.rotate(style.rotation);
+        context.rotate(style.rotation);
     }
 }
 

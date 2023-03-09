@@ -1,5 +1,5 @@
 import {
-    clearFrame, renderTextLayout, Scene, TextLayout,
+    clearFrame, layoutAndRender, Scene, TextLayout,
 } from '@/sketcher';
 
 export function current() {
@@ -58,7 +58,7 @@ function helloWorld(): Scene<PlaygroundState> {
                     ],
                 };
                 canvas.context.lineWidth = 5;
-                renderTextLayout({
+                layoutAndRender({
                     canvas, root, style: {
                         font: '10vh serif',
                         color: 'red',

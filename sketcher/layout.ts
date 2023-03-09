@@ -10,7 +10,12 @@ export type Justification = 'start' | 'center' | 'end';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
 export type LayoutSize = number;
-export type LayoutPadding = LayoutSize;
+export type LayoutPadding = LayoutSize | {
+    left?: LayoutSize,
+    right?: LayoutSize,
+    top?: LayoutSize,
+    bottom?: LayoutSize,
+};
 export type LayoutElement<T> = T & {
     id?: string,
     content?: LayoutElement<T>[],
@@ -19,6 +24,7 @@ export type LayoutElement<T> = T & {
     justify?: Justification,
     crossJustify?: CrossJustification,
     padding?: LayoutPadding,
+    margin?: LayoutPadding,
     offset?: LayoutSize,
     crossOffset?: LayoutSize,
 };
@@ -44,10 +50,11 @@ export function layoutElement<T>(
     let justify = root.justify ?? 'center';
     let crossJustify = root.crossJustify ?? 'stretch';
     let direction = root.direction ?? 'row';
-    let padding = root.padding ?? 0;
+    let padding = resolvePadding(root.padding ?? 0);
 
+    let withPadding = subPadding(dimensions, padding);
     // Conver to dimensions relative to direction
-    let { main, cross } = toRelative(dimensions, direction);
+    let { main, cross } = toRelative(withPadding, direction);
 
     // Offset from props:
     let extraOffset = {
@@ -64,11 +71,9 @@ export function layoutElement<T>(
 
     // Apply padding
     let paddingOffset = toRelative({
-        width: calcSize(padding, dimensions.width),
-        height: calcSize(padding, dimensions.height),
+        width: calcSize(padding.left, dimensions.width),
+        height: calcSize(padding.top, dimensions.height),
     }, direction);
-    main -= 2 * paddingOffset.main;
-    cross -= 2 * paddingOffset.cross;
 
     // Calculate growth
     let dims = content.map(el => toRelative(getDimensions(el, resolveDimensions), direction));
@@ -123,33 +128,42 @@ export function layoutElement<T>(
 }
 
 function getDimensions<T>(element: LayoutElement<T>, resolveDimensions: LayoutContext<T>['resolveDimensions']): Dimensions {
+    let direction = element.direction ?? 'row';
+    let padding = resolvePadding(element.padding ?? 0);
     let resolved = resolveDimensions(element);
     if (resolved) {
-        return resolved;
+        return addPadding(resolved, padding);
     }
-    if (element.direction === 'column') {
-        return (element.content ?? []).reduce(
-            (res, el) => {
-                let dims = getDimensions(el, resolveDimensions);
-                return {
-                    width: Math.max(res.width, dims.width),
-                    height: res.height + dims.height,
-                };
-            },
-            { width: 0, height: 0 },
-        );
-    } else {
-        return (element.content ?? []).reduce(
-            (res, el) => {
-                let dims = getDimensions(el, resolveDimensions);
-                return {
-                    width: res.width + dims.width,
-                    height: Math.max(res.height, dims.height),
-                };
-            },
-            { width: 0, height: 0 },
-        );
-    }
+    let relative = (element.content ?? []).reduce(
+        (res, el) => {
+            let dims = getDimensions(el, resolveDimensions);
+            let rel = toRelative(dims, direction);
+            return {
+                main: res.main + rel.main,
+                cross: Math.max(res.cross, rel.cross),
+            };
+        },
+        { main: 0, cross: 0 },
+    );
+    let absolute = toAbsolute(relative, direction);
+    let withPadding = addPadding(absolute, padding);
+
+    return withPadding;
+}
+
+function addPadding(dimensions: Dimensions, padding: LayoutPadding) {
+    let resolved = resolvePadding(padding);
+    return {
+        width: dimensions.width / (1 - resolved.left - resolved.right),
+        height: dimensions.height / (1 - resolved.top - resolved.bottom),
+    };
+}
+function subPadding(dimensions: Dimensions, padding: LayoutPadding) {
+    let resolved = resolvePadding(padding);
+    return {
+        width: dimensions.width - calcSize(resolved.left, dimensions.width) - calcSize(resolved.right, dimensions.width),
+        height: dimensions.height - calcSize(resolved.top, dimensions.height) - calcSize(resolved.bottom, dimensions.height),
+    };
 }
 
 type RelativeDimensions = {
@@ -169,7 +183,7 @@ function toAbsolute(relative: RelativeDimensions, direction: LayoutDirection): D
 function addToPosition(position: Position, relative: RelativeDimensions, direction: LayoutDirection): Position {
     return direction === 'row'
         ? { left: position.left + relative.main, top: position.top + relative.cross }
-        : { left: position.left + relative.cross, top: position.top + relative.main }
+        : { left: position.left + relative.cross, top: position.top + relative.main };
 }
 
 function sumRelative(left: RelativeDimensions, right: RelativeDimensions): RelativeDimensions {
@@ -181,4 +195,20 @@ function sumRelative(left: RelativeDimensions, right: RelativeDimensions): Relat
 
 function calcSize(size: LayoutSize, axis: number) {
     return size * axis;
+}
+
+function resolvePadding(padding: LayoutPadding) {
+    if (typeof padding === 'number') {
+        return {
+            left: padding, right: padding,
+            top: padding, bottom: padding,
+        };
+    } else {
+        return {
+            left: padding.left ?? padding.right ?? 0,
+            right: padding.right ?? padding.left ?? 0,
+            top: padding.top ?? padding.bottom ?? 0,
+            bottom: padding.bottom ?? padding.top ?? 0,
+        };
+    }
 }

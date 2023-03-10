@@ -6,7 +6,7 @@ export type Layer<State> = {
     prepare?: Render<State>,
     hidden?: boolean,
 }
-export type Scene<State = undefined> = {
+export type Scene<State = unknown> = {
     state: State,
     animator?: Animator<State>,
     layers: Layer<State>[],
@@ -63,8 +63,8 @@ export function setsScene<O>({
     };
 }
 
-export function combineScenes(...scenes: Scene<any>[]): Scene<unknown[]> {
-    return {
+export function combineScenes(...scenes: Scene<any>[]): Scene {
+    let result: Scene<unknown[]> = {
         state: scenes.map(s => s.state),
         animator(states: any[]) {
             return states.map((state, idx) => {
@@ -96,9 +96,10 @@ export function combineScenes(...scenes: Scene<any>[]): Scene<unknown[]> {
             });
         }).flat(),
     };
+    return result as Scene;
 }
 
-export function fromLayers(...layers: Layer<undefined>[]): Scene {
+export function fromLayers(...layers: Layer<unknown>[]): Scene<unknown> {
     return {
         state: undefined,
         layers,

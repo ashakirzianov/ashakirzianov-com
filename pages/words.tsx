@@ -1,12 +1,12 @@
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { current } from "@/sketches/words";
+import { words } from "@/sketches/posters";
 
 // @refresh reset
 
 export default function Playground() {
     let { node } = useSketcher({
-        scene: current(),
+        scene: words(),
         period: 40,
     });
     return <PosterPage title="Words" description="Silly rotation">

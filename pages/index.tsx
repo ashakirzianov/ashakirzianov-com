@@ -6,7 +6,7 @@ import { variations } from "@/sketches/posters";
 
 export default function Knots() {
   let { node } = useSketcher({
-    scene: variations[1]!,
+    scene: variations[2]!,
     period: 40,
     chunk: 500,
   });

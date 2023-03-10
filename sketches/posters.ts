@@ -1,11 +1,12 @@
 import {
-    clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
+    clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutAndRender, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
 import { pastelRainbows } from './organisms';
 
 export const variations: any[] = [
     pink(),
     sm(),
+    words(),
 ];
 
 export function pink() {
@@ -82,7 +83,7 @@ export function pink() {
     );
 }
 
-export function sm(): Scene {
+export function sm() {
     // Reference: https://www.stedelijk.nl/en/collection/31791-josje-pollmann-wim-crouwel-zeven-grafici-uit-joegoslavie
     return fromLayers(
         colorLayer([220, 63, 66]),
@@ -164,4 +165,62 @@ export function sm(): Scene {
             },
         },
     );
+}
+
+export function words() {
+    return fromLayers({/* TODO: why do we need this emply layer? */ }, {
+        render({ canvas, frame }) {
+            clearFrame({ canvas, color: 'black' });
+            let root: TextLayout = {
+                content: [
+                    {
+                        padding: .1,
+                        grow: 1,
+                        direction: 'column',
+                        border: 'orange',
+                        justify: 'start',
+                        crossJustify: 'end',
+                        content: [
+                            {
+                                text: 'hello',
+                                color: 'yellow',
+                                rotation: -frame * 0.2,
+                            },
+                            {
+                                text: 'world',
+                                border: 'red',
+                            },
+                        ],
+                    },
+                    {
+                        grow: 0,
+                        border: 'blue',
+                        direction: 'column',
+                        crossJustify: 'center',
+                        content: [
+                            {
+                                grow: 3,
+                                border: 'magenta',
+                            },
+                            {
+                                text: 'Here we go',
+                                border: 'green',
+                                rotation: frame * 0.1,
+                            },
+                            {
+                                grow: 1,
+                            },
+                        ],
+                    }
+                ],
+            };
+            canvas.context.lineWidth = 5;
+            layoutAndRender({
+                canvas, root, style: {
+                    font: '10vh serif',
+                    color: 'red',
+                }
+            });
+        },
+    });
 }

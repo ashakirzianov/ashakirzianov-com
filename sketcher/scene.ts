@@ -122,3 +122,38 @@ export function setsScene<O>({
         }],
     };
 }
+
+export function combineScenes(...scenes: Scene<any>[]): Scene<unknown[]> {
+    return {
+        state: scenes.map(s => s.state),
+        animator(states: any[]) {
+            return states.map((state, idx) => {
+                let animator = scenes[idx]?.animator;
+                return animator ? animator(state) : state;
+            });
+        },
+        layers: scenes.map((scene, idx) => {
+            return scene.layers.map((layer): Layer<unknown[]> => {
+                return {
+                    hidden: layer.hidden,
+                    prepare({ canvas, frame, state }) {
+                        if (layer.prepare) {
+                            layer.prepare({
+                                canvas, frame,
+                                state: state[idx]!,
+                            });
+                        }
+                    },
+                    render({ canvas, frame, state }) {
+                        if (layer.render) {
+                            layer.render({
+                                canvas, frame,
+                                state: state[idx]!,
+                            });
+                        }
+                    },
+                };
+            });
+        }).flat(),
+    };
+}

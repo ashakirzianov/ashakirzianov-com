@@ -1,11 +1,12 @@
 import {
-    clearFrame, combineScenes, Dimensions, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
+    clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
-import { variations } from './knots';
+import { pastelRainbows } from './organisms';
 
 export function playground() {
     return combineScenes(
-        variations[5]!,
+        fromLayers(colorLayer('white')),
+        pastelRainbows(),
         poster(),
     );
 }

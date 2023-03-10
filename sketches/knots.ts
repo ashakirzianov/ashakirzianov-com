@@ -1,6 +1,6 @@
 import {
     rainbow, clearFrame, gray, multRGBA, Color, modItem, hueRange,
-    pulsating, makeStops, fromRGBA, Scene, combineScenes, fromLayers,
+    pulsating, makeStops, fromRGBA, Scene, combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 import {
     bubbles, bubblesFlat, fittedRainbow, molecules, original,
@@ -8,13 +8,27 @@ import {
     randomBatches, strokedRainbows,
 } from './organisms';
 
-// TODO: fix typing
-export const variations: any[] = [
-    withBackground(molecules(), 'black'),
-    withBackground(bubbles(), 'black'),
-    withBackground(bubblesFlat(), 'black'),
-    withBackground(fittedRainbow(), 'black'),
-    withBackground(strokedRainbows(), 'black'),
+export const variations = [
+    combineScenes(
+        fromLayers(colorLayer('black')),
+        molecules(),
+    ),
+    combineScenes(
+        fromLayers(colorLayer('black')),
+        bubbles(),
+    ),
+    combineScenes(
+        fromLayers(colorLayer('black')),
+        bubblesFlat(),
+    ),
+    combineScenes(
+        fromLayers(colorLayer('black')),
+        fittedRainbow(),
+    ),
+    combineScenes(
+        fromLayers(colorLayer('black')),
+        strokedRainbows(),
+    ),
     function () {
         let back = rainbow({ count: 120, s: 40, l: 70 });
         return combineScenes(
@@ -63,29 +77,27 @@ export const variations: any[] = [
             rainbowStrings(),
         )
     }(),
-    withBackground(randomBatches(), gray(230)),
-    withBackground(original(), {
-        kind: 'gradient',
-        start: [0, 0], end: [0, 1],
-        stops: makeStops({
-            0: fromRGBA({ r: 230, g: 230, b: 230 }),
-            0.7: fromRGBA(multRGBA({ r: 230, g: 230, b: 230 }, 1.2)),
-            1: gray(50),
-        }),
-    }),
+    combineScenes(
+        fromLayers(colorLayer(gray(230))),
+        randomBatches(),
+    ),
+    combineScenes(
+        fromLayers(colorLayer({
+            kind: 'gradient',
+            start: [0, 0], end: [0, 1],
+            stops: makeStops({
+                0: fromRGBA({ r: 230, g: 230, b: 230 }),
+                0.7: fromRGBA(multRGBA({ r: 230, g: 230, b: 230 }, 1.2)),
+                1: gray(50),
+            }),
+        })),
+        original(),
+    ),
 ];
 
 export function current() {
-    return withBackground(molecules(), 'black');
-}
-
-function withBackground(scene: Scene<any>, color: Color) {
     return combineScenes(
-        fromLayers({
-            prepare({ canvas }) {
-                clearFrame({ canvas, color });
-            }
-        }),
-        scene,
+        fromLayers(colorLayer('black')),
+        molecules(),
     );
 }

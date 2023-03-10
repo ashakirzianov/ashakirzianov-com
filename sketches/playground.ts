@@ -5,7 +5,7 @@ import { variations } from './knots';
 
 export function playground() {
     return combineScenes(
-        variations[5],
+        variations[5]!,
         poster(),
     );
 }

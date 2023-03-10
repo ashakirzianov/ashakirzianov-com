@@ -10,7 +10,6 @@ export default function Knots() {
         scene: randomItem(variations),
         period: 40,
         chunk: 500,
-        // skip: 500,
     });
     return <PosterPage title="Knots" description="Knots series">
         <div>

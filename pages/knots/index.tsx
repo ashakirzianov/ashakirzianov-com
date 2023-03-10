@@ -9,7 +9,6 @@ export default function Knots() {
         scene: current(),
         period: 40,
         chunk: 500,
-        // skip: 500,
     });
     return <PosterPage title="Knots" description="Knots series">
         <div>

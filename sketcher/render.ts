@@ -292,8 +292,9 @@ export function layoutText({ canvas, root }: {
             }
             canvas.context.save();
             canvas.context.textBaseline = 'alphabetic';
-            canvas.context.textAlign = 'center';
+            canvas.context.textAlign = 'left';
             applyTextStyle(canvas.context, element);
+            applyElementTransform(canvas.context, element);
             let mesures = canvas.context.measureText(element.text);
             let dims = transformDimensions({
                 width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
@@ -303,6 +304,23 @@ export function layoutText({ canvas, root }: {
             return dims;
         },
     })
+}
+
+function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): Dimensions {
+    let transform = context.getTransform();
+    let w = dimensions.width / 2;
+    let h = dimensions.height / 2;
+    let a = transform.transformPoint(new DOMPoint(-w, -h));
+    let b = transform.transformPoint(new DOMPoint(w, -h));
+    let c = transform.transformPoint(new DOMPoint(w, h));
+    let d = transform.transformPoint(new DOMPoint(-w, h));
+    let box = boundingBox(
+        [a, b, c, d].map(p => ([p.x, p.y, 0]))
+    );
+    return {
+        width: box.end[0] - box.start[0],
+        height: box.end[1] - box.start[1],
+    };
 }
 
 export function layoutAndRender({ canvas, root, style }: {
@@ -329,23 +347,23 @@ export function renderPositionedElement({
     context: Canvas2DContext,
     positioned: PositionedElement<TextLayoutProps>,
 }) {
-    context.save();
-    context.translate(position.left, position.top);
-    if (element.rotation) {
-        context.textBaseline = 'middle';
-        context.textAlign = 'center';
-        context.translate(dimensions.width / 2, dimensions.height / 2);
-    } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
-        context.textBaseline = 'alphabetic';
-        context.textAlign = 'center';
-        context.translate(dimensions.width / 2, dimensions.height);
-    }
-    applyTextStyle(context, element);
-
     if (element.text) {
+        context.save();
+        context.textAlign = 'center';
+        applyTextStyle(context, element);
+        context.translate(position.left, position.top);
+        if (element.rotation) {
+            context.textBaseline = 'middle';
+            context.translate(dimensions.width / 2, dimensions.height / 2);
+        } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
+            context.textBaseline = 'alphabetic';
+            let mesures = context.measureText(element.text);
+            context.translate(mesures.actualBoundingBoxLeft, dimensions.height);
+        }
+        applyElementTransform(context, element);
         context.fillText(element.text, 0, 0);
+        context.restore();
     }
-    context.restore();
     if (element.border) {
         context.save();
         context.strokeStyle = resolveColor(element.border, context);
@@ -361,24 +379,10 @@ export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {
     if (style.color) {
         context.fillStyle = resolveColor(style.color, context);
     }
-    if (style.rotation) {
-        context.rotate(style.rotation);
-    }
 }
 
-function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): Dimensions {
-    let transform = context.getTransform();
-    let w = dimensions.width / 2;
-    let h = dimensions.height / 2;
-    let a = transform.transformPoint(new DOMPoint(-w, -h));
-    let b = transform.transformPoint(new DOMPoint(w, -h));
-    let c = transform.transformPoint(new DOMPoint(w, h));
-    let d = transform.transformPoint(new DOMPoint(-w, h));
-    let box = boundingBox(
-        [a, b, c, d].map(p => ([p.x, p.y, 0]))
-    );
-    return {
-        width: box.end[0] - box.start[0],
-        height: box.end[1] - box.start[1],
-    };
+export function applyElementTransform(context: Canvas2DContext, element: TextLayout) {
+    if (element.rotation) {
+        context.rotate(element.rotation);
+    }
 }

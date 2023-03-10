@@ -25,7 +25,7 @@ export function poster(): Scene {
                 // Calculate box
                 let small = layout.find(p => p.element.id === 'small-text')!;
                 let large = layout.find(p => p.element.id === 'large-text')!;
-                let delta = .04;
+                let delta = .0;
                 let rightX = large.position.left + large.dimensions.width * (1 - delta);
                 let leftX = large.position.left + large.dimensions.width * delta;
                 let side = rightX - leftX;
@@ -47,7 +47,7 @@ export function poster(): Scene {
 function posterLayout({ height }: Dimensions): TextLayout {
     let unit = height / 100;
     let font = {
-        font: `small-caps bold ${unit * 20}pt sans-serif`,
+        font: `bold ${unit * 20}pt sans-serif`,
         color: 'white',
     };
     return {
@@ -55,7 +55,7 @@ function posterLayout({ height }: Dimensions): TextLayout {
         direction: 'column',
         justify: 'end',
         crossJustify: 'stretch',
-        padding: .05,
+        padding: .02,
         content: [
             {
 
@@ -84,8 +84,7 @@ function posterLayout({ height }: Dimensions): TextLayout {
                 content: [{
                     content: [{
                         id: 'large-text',
-                        text: 'P',
-                        border: 'red',
+                        text: 'Pink',
                         ...font,
                     }]
                 }],

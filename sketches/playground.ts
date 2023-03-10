@@ -1,39 +1,40 @@
 import {
-    clearFrame, layoutText, renderPositionedElement, Scene, TextLayout,
+    clearFrame, combineScenes, Dimensions, layoutText, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
+import { molecules, variations } from './knots';
 
-export function playground(): Scene {
-    let root = posterLayout();
+export function playground() {
+    return combineScenes(
+        variations[5],
+        poster(),
+    );
+}
+
+export function poster(): Scene {
     return {
         state: undefined,
         layers: [{
             prepare({ canvas }) {
-                clearFrame({ canvas, color: 'pink' });
-            }
-        }, {
-            prepare({ canvas }) {
+                canvas.context.fontKerning = 'none';
+                canvas.context.lineWidth = 0;
+                // canvas.context.letterSpacing = '100px';
+
+                let root = posterLayout({ ...canvas });
                 let layout = layoutText({ canvas, root });
 
                 // Calculate box
                 let small = layout.find(p => p.element.id === 'small-text')!;
-                let left = layout.find(p => p.element.id === 'left-letter')!;
-                let right = layout.find(p => p.element.id === 'right-letter')!;
-                let delta = .07;
-                let rightX = right.position.left + right.dimensions.width * (1 - delta);
-                let leftX = left.position.left + left.dimensions.width * delta;
+                let large = layout.find(p => p.element.id === 'large-text')!;
+                let delta = .04;
+                let rightX = large.position.left + large.dimensions.width * (1 - delta);
+                let leftX = large.position.left + large.dimensions.width * delta;
                 let side = rightX - leftX;
                 let bottomY = small.position.top + small.dimensions.height;
                 let x = leftX;
                 let y = bottomY - side;
 
-                // clearFrame({ canvas, color: [228, 101, 79] });
-                canvas.context.lineWidth = 5;
-
-                // canvas.context.fillStyle = resolveColor([220, 63, 66], canvas.context);
-                canvas.context.fillStyle = 'red';
-                canvas.context.fillRect(x, y, side, side);
-                canvas.context.fillStyle = 'rgba(0,0,0,0.2)';
-                canvas.context.fillRect(x + 10, y + 10, side, side);
+                clearFrame({ canvas, color: 'pink' });
+                canvas.context.clearRect(x, y, side, side);
 
                 for (let positioned of layout) {
                     renderPositionedElement({ context: canvas.context, positioned });
@@ -43,9 +44,10 @@ export function playground(): Scene {
     };
 }
 
-function posterLayout(): TextLayout {
+function posterLayout({ height }: Dimensions): TextLayout {
+    let unit = height / 100;
     let font = {
-        font: 'bold 70vh sans-serif',
+        font: `small-caps bold ${unit * 20}pt sans-serif`,
         color: 'white',
     };
     return {
@@ -53,35 +55,37 @@ function posterLayout(): TextLayout {
         direction: 'column',
         justify: 'end',
         crossJustify: 'stretch',
+        padding: .05,
         content: [
             {
+
                 justify: 'start',
                 padding: {
                     top: 0,
                     bottom: 0.2,
-                    left: 0.02,
+                    // left: 0.02,
                 },
                 content: [{
                     id: 'small-text',
-                    text: 'Zeven grafici uit Joegosiavië',
-                    font: '2vh sans serif',
+                    text: 'Gentlest of all colors',
+                    font: `${unit * 1}pt sans-serif`,
                     color: 'black',
                     rotation: -Math.PI / 2
                 }],
             },
             {
-                justify: 'end',
+                justify: 'center',
                 crossJustify: 'end',
+                // grow: 1,
+                padding: {
+                    bottom: 0.2,
+                    top: 0,
+                },
                 content: [{
                     content: [{
-                        id: 'left-letter',
-                        text: 'S',
-                        ...font,
-                        offset: .15,
-                    },
-                    {
-                        id: 'right-letter',
-                        text: 'M',
+                        id: 'large-text',
+                        text: 'P',
+                        border: 'red',
                         ...font,
                     }]
                 }],

@@ -292,10 +292,11 @@ export function layoutText({ canvas, root }: {
             }
             canvas.context.save();
             canvas.context.textBaseline = 'alphabetic';
+            canvas.context.textAlign = 'center';
             applyTextStyle(canvas.context, element);
             let mesures = canvas.context.measureText(element.text);
             let dims = transformDimensions({
-                width: mesures.width,
+                width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
                 height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
             }, canvas.context);
             canvas.context.restore();
@@ -329,11 +330,16 @@ export function renderPositionedElement({
     positioned: PositionedElement<TextLayoutProps>,
 }) {
     context.save();
-    // TODO: try to use default baseline
-    context.textBaseline = 'middle';
-    context.textAlign = 'center';
     context.translate(position.left, position.top);
-    context.translate(dimensions.width / 2, dimensions.height / 2);
+    if (element.rotation) {
+        context.textBaseline = 'middle';
+        context.textAlign = 'center';
+        context.translate(dimensions.width / 2, dimensions.height / 2);
+    } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
+        context.textBaseline = 'alphabetic';
+        context.textAlign = 'center';
+        context.translate(dimensions.width / 2, dimensions.height);
+    }
     applyTextStyle(context, element);
 
     if (element.text) {

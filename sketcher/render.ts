@@ -364,8 +364,9 @@ export function renderPositionedElement({
             context.translate(dimensions.width / 2, dimensions.height / 2);
         } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
             context.textBaseline = 'alphabetic';
+            context.textAlign = 'start';
             let mesures = context.measureText(element.text);
-            context.translate(mesures.actualBoundingBoxLeft, dimensions.height);
+            context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
         }
         applyElementTransform(context, element);
         context.fillText(element.text, 0, 0);

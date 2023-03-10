@@ -157,3 +157,10 @@ export function combineScenes(...scenes: Scene<any>[]): Scene<unknown[]> {
         }).flat(),
     };
 }
+
+export function fromLayers(...layers: Layer<undefined>[]): Scene {
+    return {
+        state: undefined,
+        layers,
+    };
+}

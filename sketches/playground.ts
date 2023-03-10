@@ -1,7 +1,7 @@
 import {
-    clearFrame, combineScenes, Dimensions, layoutText, renderPositionedElement, Scene, TextLayout,
+    clearFrame, combineScenes, Dimensions, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
-import { molecules, variations } from './knots';
+import { variations } from './knots';
 
 export function playground() {
     return combineScenes(
@@ -15,10 +15,6 @@ export function poster(): Scene {
         state: undefined,
         layers: [{
             prepare({ canvas }) {
-                canvas.context.fontKerning = 'none';
-                canvas.context.lineWidth = 0;
-                // canvas.context.letterSpacing = '100px';
-
                 let root = posterLayout({ ...canvas });
                 let layout = layoutText({ canvas, root });
 
@@ -33,8 +29,11 @@ export function poster(): Scene {
                 let x = leftX;
                 let y = bottomY - side;
 
+
                 clearFrame({ canvas, color: 'pink' });
-                canvas.context.clearRect(x, y, side, side);
+                renderMask(canvas.context, context => {
+                    context.fillRect(x, y, side, side);
+                });
 
                 for (let positioned of layout) {
                     renderPositionedElement({ context: canvas.context, positioned });

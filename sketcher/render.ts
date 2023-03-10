@@ -386,3 +386,14 @@ export function applyElementTransform(context: Canvas2DContext, element: TextLay
         context.rotate(element.rotation);
     }
 }
+
+export function renderMask(
+    context: Canvas2DContext,
+    render: (context: Canvas2DContext) => void,
+) {
+    context.save();
+    context.globalCompositeOperation = 'destination-out';
+    context.fillStyle = 'black';
+    render(context);
+    context.restore();
+}

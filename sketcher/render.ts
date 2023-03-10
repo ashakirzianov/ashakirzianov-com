@@ -201,6 +201,13 @@ export function drawCorner({
     context.restore();
 }
 
+export function clearCanvas(canvas: Canvas) {
+    canvas.context.save();
+    canvas.context.resetTransform();
+    canvas.context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.context.restore();
+}
+
 export function clearFrame({ color, canvas: { context, width, height } }: {
     color: Color,
     canvas: Canvas,

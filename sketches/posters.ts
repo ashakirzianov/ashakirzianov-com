@@ -271,8 +271,11 @@ export function styleIsTheAnswer() {
                 let layout = layoutText(canvas, {
                     grow: 1,
                     direction: 'column',
-                    justify: 'center',
+                    justify: 'space-between',
                     crossJustify: 'center',
+                    padding: {
+                        top: 0.3,
+                    },
                     content: [{
                         text: 'Style',
                         ...font,

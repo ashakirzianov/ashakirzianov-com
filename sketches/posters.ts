@@ -1,7 +1,7 @@
 import {
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
-    renderPositionedLayout, sidesTextLayout, TextLayout, vals,
+    renderPositionedLayout, sidesTextLayout, staticLayer, TextLayout, vals,
 } from '@/sketcher';
 import {
     fittedRainbow, molecules, pastelSlinky, slinky,
@@ -343,40 +343,38 @@ export function beautifulWorld() {
 }
 
 export function current() {
-    return combineScenes(
-        fromLayers(colorLayer('black')),
-        fromLayers({
-            prepare({ canvas }) {
-                let layout = sidesTextLayout({
-                    texts: {
-                        left: { text: 'Left', justify: 'center' },
-                        top: {
-                            text: 'Top',
-                            color: 'red',
-                            border: 'blue',
-                        },
-                        right: 'Right',
-                        bottom: {
-                            text: 'Bottom',
-                            hidden: true,
-                        },
+    return fromLayers(
+        colorLayer('black'),
+        staticLayer(({ canvas }) => {
+            let layout = sidesTextLayout({
+                texts: {
+                    left: { text: 'Left', justify: 'center' },
+                    top: {
+                        text: 'Top',
+                        color: 'red',
+                        border: 'blue',
                     },
-                    style: {
-                        font: '10vh sans-serif',
-                        color: 'white',
+                    right: 'Right',
+                    bottom: {
+                        text: 'Bottom',
+                        hidden: true,
                     },
-                    padding: 0.01,
-                    inside: {
-                        border: 'red',
-                        grow: 1,
-                    },
-                    canvas,
-                });
-                renderPositionedLayout({
-                    context: canvas.context,
-                    layout,
-                });
-            },
+                },
+                style: {
+                    font: '10vh sans-serif',
+                    color: 'white',
+                },
+                padding: 0.01,
+                inside: {
+                    border: 'red',
+                    grow: 1,
+                },
+                canvas,
+            });
+            renderPositionedLayout({
+                context: canvas.context,
+                layout,
+            });
         }),
     );
 }

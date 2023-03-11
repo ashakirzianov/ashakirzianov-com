@@ -1,5 +1,6 @@
 import {
-    clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutAndRender, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
+    clearFrame, colorLayer, combineScenes, fromLayers, layoutAndRender,
+    layoutText, renderMask, renderPositionedElement, TextLayout,
 } from '@/sketcher';
 import { pastelRainbows } from './organisms';
 

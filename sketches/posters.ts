@@ -1,9 +1,9 @@
 import {
-    clearFrame, colorLayer, combineScenes, fromLayers, layoutAndRender,
+    clearFrame, colorLayer, combineScenes, fromLayers, gray, layoutAndRender,
     layoutText, renderMask, renderPositionedElement, TextLayout, vals,
 } from '@/sketcher';
 import {
-    molecules, pastelSlinky, slinky,
+    fittedRainbow, molecules, pastelSlinky, slinky,
 } from './organisms';
 
 export const variations: any[] = [
@@ -12,6 +12,7 @@ export const variations: any[] = [
     helloWorld(),
     alina(),
     styleIsTheAnswer(),
+    beautifulWorld(),
 ];
 
 export function pink() {
@@ -226,23 +227,22 @@ export function helloWorld() {
 
 export function alina() {
     return combineScenes(
-        fromLayers(colorLayer('black')),
+        fromLayers(colorLayer(gray(30))),
         slinky(),
         fromLayers({
             prepare({ canvas }) {
-                let text = 'Alina';
                 let unit = canvas.height / 100;
-                let font = {
-                    font: `small-caps bold ${unit * 20}pt sans-serif`,
-                    color: 'white',
-                };
+                let delta = .1;
                 let layout = layoutText(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'space-evenly',
                     crossJustify: 'center',
-                    content: vals(4).map(() => ({
-                        text, ...font,
+                    content: vals(4, 'Alina').map((text, n) => ({
+                        text,
+                        font: `small-caps italic bold ${unit * 16}pt sans-serif`,
+                        color: 'white',
+                        offset: -3 / 2 * delta + n * delta,
                     })),
                 });
 
@@ -286,6 +286,43 @@ export function styleIsTheAnswer() {
                         text: 'answer',
                         ...font,
                     }],
+                });
+
+                clearFrame({ canvas, color: 'black' });
+                renderMask(canvas.context, context => {
+                    for (let positioned of layout) {
+                        renderPositionedElement({ context, positioned });
+                    }
+                });
+            },
+        }),
+    );
+}
+
+export function beautifulWorld() {
+    return combineScenes(
+        fromLayers(colorLayer('white')),
+        fittedRainbow(),
+        fromLayers({
+            prepare({ canvas }) {
+                let unit = canvas.height / 100;
+                let layout = layoutText(canvas, {
+                    grow: 1,
+                    direction: 'column',
+                    justify: 'center',
+                    crossJustify: 'end',
+                    padding: {
+                        top: .05,
+                        right: .1,
+                    },
+
+                    content: ['Beautiful', 'world', 'where', 'are', 'you?']
+                        .map((text, n) => ({
+                            text,
+                            font: `bold ${unit * 10}pt sans-serif`,
+                            color: 'white',
+                            crossOffset: - 0.05 * n,
+                        })),
                 });
 
                 clearFrame({ canvas, color: 'black' });

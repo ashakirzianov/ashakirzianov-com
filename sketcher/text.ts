@@ -20,6 +20,7 @@ export type TextLayout = LayoutElement<TextLayoutProps>;
 
 export function layoutText(canvas: Canvas, root: TextLayout) {
     return layoutElement(root, {
+        position: { top: 0, left: 0 },
         dimensions: {
             width: canvas.width,
             height: canvas.height,

@@ -36,13 +36,14 @@ export type PositionedElement<T> = {
 };
 export type PositionedLayout<T> = PositionedElement<T>[];
 export type LayoutContext<T> = {
+    position: Position,
     dimensions: Dimensions,
     resolveDimensions: (element: T) => Dimensions | undefined,
 };
 
 export function layoutElement<T>(
     root: LayoutElement<T>,
-    { dimensions, resolveDimensions }: LayoutContext<T>,
+    { position, dimensions, resolveDimensions }: LayoutContext<T>,
 ): PositionedLayout<T> {
     let result: PositionedLayout<T> = [];
 
@@ -67,7 +68,7 @@ export function layoutElement<T>(
     result.push({
         element: root,
         dimensions,
-        position: addToPosition({ left: 0, top: 0 }, extraOffset, direction),
+        position: addToPosition(position, extraOffset, direction),
     });
 
     // Apply padding
@@ -125,25 +126,22 @@ export function layoutElement<T>(
         let child = content[idx]!;
         let dim = dims[idx]!;
 
+        let offset = {
+            main: offsetMain,
+            cross: crossJustify === 'start' ? 0
+                : crossJustify === 'end' ? cross - dim.cross
+                    : crossJustify === 'center' ? (cross - dim.cross) / 2
+                        : 0,
+        };
+        offset.main += paddingOffset.main;
+        offset.cross += paddingOffset.cross;
+
         let childLayout = layoutElement(child, {
-            dimensions: toAbsolute(dim, direction), resolveDimensions,
+            position: addToPosition(position, offset, direction),
+            dimensions: toAbsolute(dim, direction),
+            resolveDimensions,
         });
-        for (let positioned of childLayout) {
-            let relative = toRelative(positioned.dimensions, direction);
-            let offset = {
-                main: offsetMain,
-                cross: crossJustify === 'start' ? 0
-                    : crossJustify === 'end' ? cross - relative.cross
-                        : crossJustify === 'center' ? (cross - relative.cross) / 2
-                            : 0,
-            };
-            offset.main += paddingOffset.main;
-            offset.cross += paddingOffset.cross;
-            result.push({
-                ...positioned,
-                position: addToPosition(positioned.position, offset, direction),
-            })
-        }
+        result.push(...childLayout);
 
         // Increment offset
         offsetMain += dim.main + offsetStep;

@@ -118,10 +118,11 @@ export function renderPositionedElement({
     if (element.hidden) {
         return;
     }
+    context.save();
+    applyTextStyle(context, element);
     if (element.text) {
         context.save();
         context.textAlign = 'center';
-        applyTextStyle(context, element);
         context.translate(position.left, position.top);
         if (element.rotation) {
             context.textBaseline = 'middle';
@@ -141,11 +142,10 @@ export function renderPositionedElement({
         context.restore();
     }
     if (element.border) {
-        context.save();
         context.strokeStyle = resolveColor(element.border, context);
         context.strokeRect(position.left, position.top, dimensions.width, dimensions.height);
-        context.restore();
     }
+    context.restore();
 }
 
 export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {

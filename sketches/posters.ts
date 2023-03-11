@@ -1,12 +1,13 @@
 import {
     clearFrame, colorLayer, combineScenes, fromLayers, layoutAndRender,
-    layoutText, renderMask, renderPositionedElement, TextLayout,
+    layoutText, renderMask, renderPositionedElement, TextLayout, vals,
 } from '@/sketcher';
-import { pastelRainbows } from './organisms';
+import { molecules, pastelRainbows } from './organisms';
 
 export const variations: any[] = [
     pink(),
     sm(),
+    helloWorld(),
     words(),
 ];
 
@@ -168,7 +169,7 @@ export function sm() {
     );
 }
 
-export function words() {
+export function helloWorld() {
     return fromLayers({/* TODO: why do we need this emply layer? */ }, {
         render({ canvas, frame }) {
             clearFrame({ canvas, color: 'black' });
@@ -224,4 +225,39 @@ export function words() {
             });
         },
     });
+}
+
+export function words() {
+    return combineScenes(
+        fromLayers(colorLayer('black')),
+        molecules(),
+        fromLayers({
+            prepare({ canvas }) {
+                let text = 'Alina';
+                let unit = canvas.height / 100;
+                let font = {
+                    font: `bold ${unit * 20}pt sans-serif`,
+                    color: 'white',
+                };
+                let layout = layoutText({
+                    canvas, root: {
+                        grow: 1,
+                        direction: 'column',
+                        justify: 'center',
+                        crossJustify: 'center',
+                        content: vals(4).map(() => ({
+                            text, ...font,
+                        })),
+                    },
+                });
+
+                clearFrame({ canvas, color: 'pink' });
+                renderMask(canvas.context, context => {
+                    for (let positioned of layout) {
+                        renderPositionedElement({ context, positioned });
+                    }
+                });
+            },
+        }),
+    );
 }

@@ -1,7 +1,7 @@
 import { Scene, randomInt } from "@/sketcher";
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 
 export function multipager({
     variations, title, description,
@@ -14,64 +14,35 @@ export function multipager({
     skip?: number,
     chunk?: number,
 }) {
-    const getStaticPaths: GetStaticPaths = async function () {
-        return {
-            paths: [
-                {
-                    params: { id: [] },
-                },
-                {
-                    params: { id: ['index'] },
-                },
-                {
-                    params: { id: ['random'] },
-                },
-                ...variations.map(
-                    (_, idx) => ({
-                        params: {
-                            id: [`${idx}`],
-                        },
-                    }),
-                ),
-            ],
-            fallback: false,
-        };
-    }
-
     type Props = {
-        kind: 'index',
         index: number,
-    } | {
-        kind: 'random',
     };
-    const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
-        let id = params!.id as string;
-        let index = parseInt(id, 10);
-        if (Number.isNaN(index)) {
-            return {
-                props: { kind: 'random' },
-            };
-        } else {
-            return {
-                props: {
-                    kind: 'index',
-                    index: index,
+    const getServerSideProps: GetServerSideProps<Props> = async function ({ params }) {
+        let id = params?.id?.[0] ?? 'index';
+        switch (id) {
+            case 'index':
+            case 'random':
+                return {
+                    props: { index: randomInt(variations.length), },
+                };
+            default:
+                let index = parseInt(id, 10);
+                if (0 <= index && index < variations.length) {
+                    return { props: { index } };
+                } else {
+                    return { notFound: true };
                 }
-            }
         }
     }
 
-    function SketchComponent(props: Props) {
-        let index = props.kind === 'index'
-            ? props.index
-            : randomInt(variations.length);
-
+    function SketchComponent({ index }: Props) {
         let { node } = useSketcher({
             scene: variations[index]!,
             period: period ?? 40,
             skip,
             chunk,
         });
+
         return <PosterPage title={title} description={description}>
             <div>
                 {node}
@@ -80,6 +51,7 @@ export function multipager({
     }
 
     return {
-        getStaticPaths, getStaticProps, SketchComponent,
+        getServerSideProps,
+        SketchComponent,
     };
 }

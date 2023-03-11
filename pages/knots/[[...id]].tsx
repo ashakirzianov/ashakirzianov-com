@@ -3,7 +3,7 @@ import { variations } from "@/sketches/knots";
 
 // @refresh reset
 
-export const { getStaticPaths, getStaticProps, SketchComponent } = multipager({
+export const { getServerSideProps, SketchComponent } = multipager({
     title: 'Knots',
     description: 'Knots series',
     variations,

@@ -1,6 +1,6 @@
 import {
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
-    layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
+    layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
     renderPositionedLayout, sidesTextLayout, staticLayer, TextLayout, vals,
 } from '@/sketcher';
 import {
@@ -308,37 +308,49 @@ export function beautifulWorld() {
     return combineScenes(
         fromLayers(colorLayer('white')),
         fittedRainbow(),
-        fromLayers({
-            render({ canvas }) {
-                let unit = canvas.height / 100;
-                let layout = layoutOnCanvas(canvas, {
-                    grow: 1,
-                    direction: 'column',
-                    justify: 'center',
-                    crossJustify: 'end',
-                    padding: {
-                        top: .05,
-                        right: .1,
-                    },
-                    content: ['Beautiful', 'world,', 'where', 'are', 'you?']
-                        .map((text, n) => ({
-                            text,
-                            font: `bold ${unit * 10}pt sans-serif`,
-                            color: 'white',
-                            crossOffset: cross[n]! += (Math.random() - .5) * deg,
-                            offset: main[n]! += (Math.random() - .5) * deg,
-                            border: 'red',
-                        })),
-                });
+        fromLayers(renderLayer(({ canvas }) => {
+            let unit = canvas.height / 100;
+            let inside: TextLayout = {
+                grow: 1,
+                direction: 'column',
+                justify: 'center',
+                crossJustify: 'end',
+                padding: {
+                    top: .05,
+                    right: .1,
+                },
+                content: ['Beautiful', 'world,', 'where', 'are', 'you?']
+                    .map((text, n) => ({
+                        text,
+                        font: `bold ${unit * 10}pt sans-serif`,
+                        color: 'white',
+                        crossOffset: cross[n]! += (Math.random() - .5) * deg,
+                        offset: main[n]! += (Math.random() - .5) * deg,
+                        border: 'red',
+                    })),
+            };
+            let sides = sidesTextLayout({
+                canvas,
+                texts: {
+                    top: 'Sally Rooney',
+                    right: 'Author of Normal People',
+                    bottom: 'The number one Sunday Times Bestseller',
+                    left: "'Funny and smart, full of sex and love and people doing their best to connect' New York Times",
+                },
+                padding: 0.02,
+                style: {
+                    font: '3vh sans-serif',
+                    color: 'white',
+                },
+                inside,
+            });
 
-                clearFrame({ canvas, color: 'black' });
-                renderMask(canvas.context, context => {
-                    for (let positioned of layout) {
-                        renderPositionedElement({ context, positioned });
-                    }
-                });
-            },
-        }),
+            clearFrame({ canvas, color: 'black' });
+            renderMask(canvas.context, context => {
+                renderPositionedLayout({ context, layout: sides });
+            });
+        },
+        )),
     );
 }
 

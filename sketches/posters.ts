@@ -304,6 +304,7 @@ export function styleIsTheAnswer() {
 
 export function beautifulWorld() {
     let deg = 0.1;
+    let duration = 20;
     let initialState = {
         cross: [0, -0.05, -0.33, -0.4, -0.35],
         main: [0, 0, 0, 0, 0],
@@ -314,10 +315,18 @@ export function beautifulWorld() {
         scene({
             state: initialState,
             animator: alternateAnimators([{
-                duration: 20,
+                duration,
+                animator({ cross, main }) {
+                    return {
+                        cross: cross.map((c, i) => c - (c - initialState.cross[i]!) / 2),
+                        main: main.map((c, i) => c - (c - initialState.main[i]!) / duration),
+                    };
+                },
+            }, {
+                duration: 1,
                 animator: () => initialState,
             }, {
-                duration: 20,
+                duration: duration * 1.5,
                 animator({ cross, main }) {
                     return {
                         cross: cross.map(c => c + (Math.random() - .5) * deg),

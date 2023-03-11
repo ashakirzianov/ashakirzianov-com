@@ -1,5 +1,6 @@
+import { Layer } from "./layer";
 import { Canvas } from "./render";
-import { Layer, Scene } from "./scene";
+import { Scene } from "./scene";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps<State> = {

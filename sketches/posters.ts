@@ -15,7 +15,7 @@ export const variations: any[] = [
     alina(),
     styleIsTheAnswer(),
     beautifulWorld(),
-    current(),
+    // current(),
 ];
 
 export function pink() {
@@ -360,43 +360,29 @@ export function beautifulWorld() {
                     let sides = sidesTextLayout({
                         canvas,
                         texts: {
-                            top: 'Sally Rooney',
+                            top: {
+                                text: 'Sally Rooney'.toUpperCase(),
+                            },
                             right: [
-                                'Author of',
+                                'Author of'.toLowerCase(),
                                 {
-                                    text: ' Normal People',
-                                    font: 'italic 3vh sans-serif',
+                                    text: ' Normal People'.toLowerCase(),
+                                    font: 'small-caps bold italic 3vh sans-serif',
                                 },
                             ],
-                            bottom: [
-                                {
-                                    text: 'The number one',
-                                },
-                                {
-                                    text: ' Sunday Times',
-                                    font: '3vh sans-serif',
-                                },
-                                {
-                                    text: ' Bestseller',
-                                },
-                            ],
-                            left: [
-                                {
-                                    text: "'Funny and smart, full of sex and love and people doing their best to connect'",
-                                    font: 'italic 3vh sans-serif',
-                                },
-                                {
-                                    text: '  New York Times',
-                                    font: '3vh sans-serif',
-                                },
-                            ],
+                            left: [{
+                                text: '#1 New Your Times Bestseller'.toLowerCase(),
+                            }],
+                            bottom: [{
+                                text: 'Los Angeles | Venice | 2023'.toLowerCase(),
+                            }],
                         },
                         padding: 0.02,
                         style: {
-                            font: '3vh sans-serif',
-                            color: 'white',
+                            font: 'bold small-caps 3vh sans-serif',
+                            // color: 'violet',
+                            color: [234, 113, 196],
                             useFontBoundingBox: true,
-                            compositeOperation: 'destination-out',
                         },
                         inside,
                     });

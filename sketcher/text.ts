@@ -1,7 +1,8 @@
 import { boundingBox } from "./box";
 import { Color, resolveColor } from "./color";
 import {
-    Dimensions, layoutElement, LayoutElement, PositionedElement,
+    Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, Position,
+    PositionedElement, PositionedLayout,
 } from "./layout";
 import { Canvas, Canvas2DContext } from "./render";
 
@@ -18,37 +19,51 @@ export type TextLayoutProps = TextStyle & {
     border?: Color,
 }
 export type TextLayout = LayoutElement<TextLayoutProps>;
+export type PositionedTextLayout = PositionedLayout<TextLayoutProps>;
 
-export function layoutText(canvas: Canvas, root: TextLayout) {
-    return layoutElement(root, {
+export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
+    return layoutText({
+        context: canvas.context,
         position: { top: 0, left: 0 },
-        dimensions: {
-            width: canvas.width,
-            height: canvas.height,
-        },
+        dimensions: { width: canvas.width, height: canvas.height },
+        root,
+    });
+}
+
+export function layoutText({
+    context, position, dimensions, root,
+}: {
+    context: Canvas2DContext,
+    position: Position,
+    dimensions: Dimensions,
+    root: TextLayout,
+}) {
+    return layoutElement(root, {
+        position,
+        dimensions,
         resolveDimensions(element) {
             if (element.text === undefined) {
                 return undefined;
             }
-            canvas.context.save();
-            canvas.context.textBaseline = 'alphabetic';
-            canvas.context.textAlign = 'center';
-            applyTextStyle(canvas.context, element);
-            applyElementTransform(canvas.context, element);
-            let mesures = canvas.context.measureText(element.text);
+            context.save();
+            context.textBaseline = 'alphabetic';
+            context.textAlign = 'center';
+            applyTextStyle(context, element);
+            applyElementTransform(context, element);
+            let mesures = context.measureText(element.text);
             let dims = element.useFontBoundingBox ?? false
                 ? transformDimensions({
                     width: mesures.width,
                     height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
-                }, canvas.context)
+                }, context)
                 : transformDimensions({
                     width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
                     height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
-                }, canvas.context);
-            canvas.context.restore();
+                }, context);
+            context.restore();
             return dims;
         },
-    })
+    });
 }
 
 function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): Dimensions {
@@ -77,13 +92,20 @@ export function layoutAndRender({ canvas, root, style }: {
     if (style) {
         applyTextStyle(canvas.context, style);
     }
-    let layout = layoutText(canvas, root);
-    for (let positioned of layout) {
-        renderPositionedElement({
-            positioned, context: canvas.context,
-        });
-    }
+    let layout = layoutOnCanvas(canvas, root);
+    renderPositionedLayout({ layout, context: canvas.context });
     canvas.context.restore();
+}
+
+export function renderPositionedLayout({ context, layout }: {
+    context: Canvas2DContext,
+    layout: PositionedTextLayout,
+}) {
+    context.save();
+    layout.forEach(positioned => renderPositionedElement({
+        positioned, context,
+    }));
+    context.restore();
 }
 
 export function renderPositionedElement({
@@ -138,4 +160,114 @@ export function applyElementTransform(context: Canvas2DContext, element: TextLay
     if (element.rotation) {
         context.rotate(element.rotation);
     }
+}
+
+type SideProps = string | Omit<TextLayout, 'content'>;
+export function sidesTextLayout({
+    canvas, texts, padding, inside, style,
+}: {
+    canvas: Canvas,
+    texts: {
+        left?: SideProps,
+        top?: SideProps,
+        right?: SideProps,
+        bottom?: SideProps,
+    },
+    style?: TextStyle,
+    padding?: LayoutPadding,
+    inside?: TextLayout,
+}) {
+    function textProps(text: SideProps | undefined): TextLayout {
+        if (text === undefined) {
+            return {
+                text: '',
+                ...style,
+                hidden: true,
+            };
+        } else if (typeof text === 'string') {
+            return {
+                ...style,
+                text,
+            };
+        } else {
+            return {
+                ...style,
+                ...text,
+            };
+        }
+    }
+    function inverseJustification(justify: Justification) {
+        return justify === 'start' ? 'end'
+            : justify === 'end' ? 'start'
+                : justify;
+    }
+    let left = {
+        ...textProps(texts.left),
+        rotation: -Math.PI / 2,
+    };
+    let top = {
+        ...textProps(texts.top),
+    };
+    let right = {
+        ...textProps(texts.right),
+        rotation: Math.PI / 2,
+    };
+    let bottom = {
+        ...textProps(texts.bottom),
+        rotation: Math.PI,
+    };
+    let horizontal = layoutOnCanvas(canvas, {
+        padding,
+        direction: 'column',
+        justify: 'space-between',
+        content: [{
+            id: '--top-container',
+            justify: top.justify ?? 'start',
+            content: [top],
+        }, {
+            id: '--bottom-container',
+            justify: inverseJustification(bottom.justify ?? 'start'),
+            content: [bottom],
+        }],
+    });
+
+    let vertical = layoutOnCanvas(canvas, {
+        padding,
+        direction: 'row',
+        justify: 'space-between',
+        content: [{
+            id: '--left-container',
+            direction: 'column',
+            justify: inverseJustification(left.justify ?? 'start'),
+            content: [left],
+        }, {
+            id: '--right-container',
+            direction: 'column',
+            justify: right.justify ?? 'start',
+            content: [right],
+        }],
+    });
+
+    let topElement = horizontal.find(p => p.element.id === '--top-container')!; let bottomElement = horizontal.find(p => p.element.id === '--bottom-container')!;
+    let leftElement = vertical.find(p => p.element.id === '--left-container')!;
+    let rightElement = vertical.find(p => p.element.id === '--right-container')!;
+
+
+
+    let position = {
+        top: topElement.position.top + topElement.dimensions.height,
+        left: leftElement.position.left + leftElement.dimensions.width,
+    };
+    let dimensions = {
+        width: rightElement.position.left - position.left,
+        height: bottomElement.position.top - position.top,
+    };
+    let insideLayout = inside ? layoutText({
+        context: canvas.context,
+        position,
+        dimensions,
+        root: inside,
+    }) : [];
+
+    return [...horizontal, ...vertical, ...insideLayout];
 }

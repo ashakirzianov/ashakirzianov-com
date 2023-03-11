@@ -1,5 +1,5 @@
 import {
-    clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
+    clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutOnCanvas, renderMask, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
 import { pastelSlinky } from './organisms';
 
@@ -17,7 +17,7 @@ export function poster(): Scene {
         layers: [{
             prepare({ canvas }) {
                 let root = posterLayout({ ...canvas });
-                let layout = layoutText(canvas, root);
+                let layout = layoutOnCanvas(canvas, root);
 
                 // Calculate box
                 let small = layout.find(p => p.element.id === 'small-text')!;

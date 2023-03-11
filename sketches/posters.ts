@@ -1,10 +1,10 @@
 import {
-    clearFrame, colorLayer, combineScenes, fromLayers, gray, layoutAndRender,
-    layoutText, renderMask, renderPositionedElement, TextLayout, vals,
+    clearFrame, colorLayer, combineScenes, fromLayers, gray,
+    layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
+    renderPositionedLayout, sidesTextLayout, TextLayout, vals,
 } from '@/sketcher';
 import {
-    balanced, fittedRainbow, molecules, original, pastelSlinky, slinky,
-    strokedSlinky, rainbowStrings,
+    fittedRainbow, molecules, pastelSlinky, slinky,
 } from './organisms';
 
 export const variations: any[] = [
@@ -28,7 +28,7 @@ export function pink() {
                     font: `bold ${unit * 20}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'end',
@@ -99,7 +99,7 @@ export function sm() {
                     font: `bold ${34.5 * unit}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'end',
@@ -235,7 +235,7 @@ export function alina() {
             prepare({ canvas }) {
                 let unit = canvas.height / 100;
                 let delta = .1;
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'space-evenly',
@@ -270,7 +270,7 @@ export function styleIsTheAnswer() {
                     font: `small-caps bold ${unit * 15}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'space-between',
@@ -311,7 +311,7 @@ export function beautifulWorld() {
         fromLayers({
             render({ canvas }) {
                 let unit = canvas.height / 100;
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'center',
@@ -345,5 +345,38 @@ export function beautifulWorld() {
 export function current() {
     return combineScenes(
         fromLayers(colorLayer('black')),
+        fromLayers({
+            prepare({ canvas }) {
+                let layout = sidesTextLayout({
+                    texts: {
+                        left: { text: 'Left', justify: 'center' },
+                        top: {
+                            text: 'Top',
+                            color: 'red',
+                            border: 'blue',
+                        },
+                        right: 'Right',
+                        bottom: {
+                            text: 'Bottom',
+                            hidden: true,
+                        },
+                    },
+                    style: {
+                        font: '10vh sans-serif',
+                        color: 'white',
+                    },
+                    padding: 0.01,
+                    inside: {
+                        border: 'red',
+                        grow: 1,
+                    },
+                    canvas,
+                });
+                renderPositionedLayout({
+                    context: canvas.context,
+                    layout,
+                });
+            },
+        }),
     );
 }

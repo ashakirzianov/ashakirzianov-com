@@ -1,10 +1,10 @@
 import {
-    velocityStep, gravity, circle, WithPosition, WithVelocity, reduceAnimators,
-    arrayAnimator, Box, randomSubbox, randomVectorInBox, randomRange,
-    squareNBox, zoomToFit, rainbow, randomVector, boundingBox, clearFrame,
+    velocityStep, gravity, circle, WithPosition, WithVelocity,
+    reduceAnimators, arrayAnimator, Box, randomSubbox, randomVectorInBox,
+    randomRange, squareNBox, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox,
-    Vector, vals, subVector, addVector, setsScene, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, resolveColor,
+    Vector, vals, subVector, addVector, Render, resultingBody,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene,
 } from '@/sketcher';
 
 export function molecules() {
@@ -575,4 +575,55 @@ function zoomToBoundingBox({ sets, scale, canvas }: {
     let points = sets.flat().map(o => o.position);
     let box = multBox(boundingBox(points), scale);
     zoomToFit({ box, canvas });
+}
+
+type DrawObjectProps<O> = {
+    canvas: Canvas,
+    frame: number,
+    object: O,
+    seti: number,
+    index: number,
+};
+type DrawObject<O> = (props: DrawObjectProps<O>) => void;
+type State<O> = O[][];
+function setsScene<O>({
+    sets, animator, drawObject, prepare, prerender, background,
+}: {
+    sets: O[][],
+    animator: Animator<O[][]>,
+    drawObject: DrawObject<O>,
+    prepare?: Render<O[][]>,
+    prerender?: Render<O[][]>,
+    background?: {
+        prepare?: Render<O[][]>,
+        render?: Render<O[][]>,
+    },
+}): Scene<State<O>> {
+    return {
+        state: sets,
+        animator,
+        layers: [background ?? {}, {
+            prepare({ canvas, state, frame }) {
+                if (prepare) {
+                    prepare({ canvas, state, frame });
+                }
+            },
+            render({ canvas, state, frame }) {
+                canvas.context.save();
+                if (prerender) {
+                    prerender({ canvas, state, frame });
+                }
+                for (let seti = 0; seti < state.length; seti++) {
+                    let set = state[seti]!;
+                    for (let index = 0; index < set.length; index++) {
+                        let object = set[index]!;
+                        drawObject({
+                            canvas, frame, object, seti, index,
+                        });
+                    }
+                }
+                canvas.context.restore();
+            }
+        }],
+    };
 }

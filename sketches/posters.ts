@@ -1,4 +1,5 @@
 import {
+    alternateAnimators,
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
     renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, vals,
@@ -302,7 +303,7 @@ export function styleIsTheAnswer() {
 }
 
 export function beautifulWorld() {
-    let deg = 0.03;
+    let deg = 0.1;
     let initialState = {
         cross: [0, -0.05, -0.33, -0.4, -0.35],
         main: [0, 0, 0, 0, 0],
@@ -312,12 +313,18 @@ export function beautifulWorld() {
         fittedRainbow(),
         scene({
             state: initialState,
-            animator({ cross, main }) {
-                return {
-                    cross: cross.map(c => c + (Math.random() - .5) * deg),
-                    main: main.map(c => c + (Math.random() - .5) * deg),
-                };
-            },
+            animator: alternateAnimators([{
+                duration: 20,
+                animator: () => initialState,
+            }, {
+                duration: 20,
+                animator({ cross, main }) {
+                    return {
+                        cross: cross.map(c => c + (Math.random() - .5) * deg),
+                        main: main.map(c => c + (Math.random() - .5) * deg),
+                    };
+                },
+            }]),
             layers: [{
                 render({ canvas, state: { cross, main } }) {
                     let unit = canvas.height / 100;

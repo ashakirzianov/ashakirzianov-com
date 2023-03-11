@@ -1,17 +1,17 @@
 import { NumRange } from "./range";
 
-export type Animator<State> = (state: State) => State;
+export type Animator<State> = (state: State, frame: number) => State;
 
 export type CombineAnimatorsObject<State> = {
     [k in keyof State]: Animator<State[k]>;
 };
 export function combineAnimators<State>(object: CombineAnimatorsObject<State>): Animator<State> {
-    return function (state) {
+    return function (state, frame) {
         let next = Object.entries(object).reduce(
             (s, [key, value]) => {
                 let animator = value as Animator<any>;
                 let curr = s as any;
-                curr[key] = animator(curr[key]);
+                curr[key] = animator(curr[key], frame);
                 return s;
             },
             { ...state },
@@ -21,9 +21,9 @@ export function combineAnimators<State>(object: CombineAnimatorsObject<State>): 
 }
 
 export function reduceAnimators<State>(...animators: Animator<State>[]): Animator<State> {
-    return function reduced(state) {
+    return function reduced(state, frame) {
         return animators.reduce(
-            (s, law) => law(s),
+            (s, law) => law(s, frame),
             state,
         );
     };
@@ -33,6 +33,25 @@ export function arrayAnimator<State>(animator: Animator<State>): Animator<State[
     return function (state) {
         return state.map(animator);
     }
+}
+
+type AlternateAnimatorsObject<S> = {
+    duration: number,
+    animator: Animator<S>,
+};
+export function alternateAnimators<State>(animators: AlternateAnimatorsObject<State>[]): Animator<State> {
+    let total = animators.reduce((r, a) => r + a.duration, 0);
+    return function alternate(state, frame) {
+        let target = frame % total;
+        let current = 0;
+        for (let { duration, animator } of animators) {
+            current += duration;
+            if (current > target) {
+                return animator(state, frame);
+            }
+        }
+        return state;
+    };
 }
 
 export function counter(range?: Partial<NumRange>): Animator<number> {

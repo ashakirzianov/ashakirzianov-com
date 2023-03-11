@@ -14,10 +14,10 @@ export function scene<T>(scene: Scene<T>): Scene<T> {
 export function combineScenes(...scenes: Scene<any>[]): Scene {
     let result: Scene<unknown[]> = {
         state: scenes.map(s => s.state),
-        animator(states: any[]) {
+        animator(states: any[], frame) {
             return states.map((state, idx) => {
                 let animator = scenes[idx]?.animator;
-                return animator ? animator(state) : state;
+                return animator ? animator(state, frame) : state;
             });
         },
         layers: scenes.map((scene, idx) => {

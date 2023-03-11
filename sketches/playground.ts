@@ -17,7 +17,7 @@ export function poster(): Scene {
         layers: [{
             prepare({ canvas }) {
                 let root = posterLayout({ ...canvas });
-                let layout = layoutText({ canvas, root });
+                let layout = layoutText(canvas, root);
 
                 // Calculate box
                 let small = layout.find(p => p.element.id === 'small-text')!;

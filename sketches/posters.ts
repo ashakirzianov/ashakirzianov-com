@@ -22,47 +22,44 @@ export function pink() {
                     font: `bold ${unit * 20}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText({
-                    canvas,
-                    root: {
-                        grow: 1,
-                        direction: 'column',
-                        justify: 'end',
-                        crossJustify: 'stretch',
-                        padding: .02,
-                        content: [
-                            {
+                let layout = layoutText(canvas, {
+                    grow: 1,
+                    direction: 'column',
+                    justify: 'end',
+                    crossJustify: 'stretch',
+                    padding: .02,
+                    content: [
+                        {
 
-                                justify: 'start',
-                                padding: {
-                                    top: 0,
-                                    bottom: 0.2,
-                                },
-                                content: [{
-                                    id: 'small-text',
-                                    text: 'Gentlest of all colors',
-                                    font: `${unit * 1}pt sans-serif`,
-                                    color: 'black',
-                                    rotation: -Math.PI / 2
-                                }],
+                            justify: 'start',
+                            padding: {
+                                top: 0,
+                                bottom: 0.2,
                             },
-                            {
-                                justify: 'center',
-                                crossJustify: 'end',
-                                padding: {
-                                    bottom: 0.2,
-                                    top: 0,
-                                },
-                                content: [{
-                                    content: [{
-                                        id: 'large-text',
-                                        text: 'Pink',
-                                        ...font,
-                                    }]
-                                }],
+                            content: [{
+                                id: 'small-text',
+                                text: 'Gentlest of all colors',
+                                font: `${unit * 1}pt sans-serif`,
+                                color: 'black',
+                                rotation: -Math.PI / 2
+                            }],
+                        },
+                        {
+                            justify: 'center',
+                            crossJustify: 'end',
+                            padding: {
+                                bottom: 0.2,
+                                top: 0,
                             },
-                        ],
-                    },
+                            content: [{
+                                content: [{
+                                    id: 'large-text',
+                                    text: 'Pink',
+                                    ...font,
+                                }]
+                            }],
+                        },
+                    ],
                 });
 
                 // Calculate box
@@ -96,54 +93,51 @@ export function sm() {
                     font: `bold ${34.5 * unit}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText({
-                    canvas,
-                    root: {
-                        grow: 1,
-                        direction: 'column',
-                        justify: 'end',
-                        crossJustify: 'stretch',
-                        content: [
-                            {
-                                justify: 'start',
-                                padding: {
-                                    top: 0,
-                                    bottom: 0.2,
-                                    left: 0.02,
-                                },
-                                content: [{
-                                    id: 'small-text',
-                                    text: 'Zeven grafici uit Joegosiavië',
-                                    font: '2vh sans serif',
-                                    color: 'black',
-                                    rotation: -Math.PI / 2
-                                }],
+                let layout = layoutText(canvas, {
+                    grow: 1,
+                    direction: 'column',
+                    justify: 'end',
+                    crossJustify: 'stretch',
+                    content: [
+                        {
+                            justify: 'start',
+                            padding: {
+                                top: 0,
+                                bottom: 0.2,
+                                left: 0.02,
                             },
-                            {
-                                justify: 'end',
-                                crossJustify: 'end',
-                                padding: {
-                                    right: .02,
-                                    top: 0,
-                                    bottom: .03,
-                                },
-                                content: [{
-                                    content: [{
-                                        id: 'left-letter',
-                                        text: 'S',
-                                        ...font,
-                                        offset: -.03,
-                                        crossOffset: -.02,
-                                    },
-                                    {
-                                        id: 'right-letter',
-                                        text: 'M',
-                                        ...font,
-                                    }]
-                                }],
+                            content: [{
+                                id: 'small-text',
+                                text: 'Zeven grafici uit Joegosiavië',
+                                font: '2vh sans serif',
+                                color: 'black',
+                                rotation: -Math.PI / 2
+                            }],
+                        },
+                        {
+                            justify: 'end',
+                            crossJustify: 'end',
+                            padding: {
+                                right: .02,
+                                top: 0,
+                                bottom: .03,
                             },
-                        ],
-                    },
+                            content: [{
+                                content: [{
+                                    id: 'left-letter',
+                                    text: 'S',
+                                    ...font,
+                                    offset: -.03,
+                                    crossOffset: -.02,
+                                },
+                                {
+                                    id: 'right-letter',
+                                    text: 'M',
+                                    ...font,
+                                }]
+                            }],
+                        },
+                    ],
                 });
 
                 // Calculate box
@@ -239,16 +233,14 @@ export function words() {
                     font: `bold ${unit * 20}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText({
-                    canvas, root: {
-                        grow: 1,
-                        direction: 'column',
-                        justify: 'center',
-                        crossJustify: 'center',
-                        content: vals(4).map(() => ({
-                            text, ...font,
-                        })),
-                    },
+                let layout = layoutText(canvas, {
+                    grow: 1,
+                    direction: 'column',
+                    justify: 'center',
+                    crossJustify: 'center',
+                    content: vals(4).map(() => ({
+                        text, ...font,
+                    })),
                 });
 
                 clearFrame({ canvas, color: 'pink' });

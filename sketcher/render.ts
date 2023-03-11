@@ -284,10 +284,7 @@ export type TextLayoutProps = TextStyle & {
 }
 export type TextLayout = LayoutElement<TextLayoutProps>;
 
-export function layoutText({ canvas, root }: {
-    canvas: Canvas,
-    root: TextLayout,
-}) {
+export function layoutText(canvas: Canvas, root: TextLayout) {
     return layoutElement(root, {
         dimensions: {
             width: canvas.width,
@@ -339,7 +336,7 @@ export function layoutAndRender({ canvas, root, style }: {
     if (style) {
         applyTextStyle(canvas.context, style);
     }
-    let layout = layoutText({ canvas, root });
+    let layout = layoutText(canvas, root);
     for (let positioned of layout) {
         renderPositionedElement({
             positioned, context: canvas.context,

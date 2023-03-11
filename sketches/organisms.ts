@@ -352,15 +352,14 @@ export function rainbowStrings() {
     });
 }
 
-export function balanced() {
+export function balanced(batches?: number) {
     let batchRange = { min: 5, max: 20 };
-    let batches = 7;
     let maxVelocity = 5;
     let massRange = { min: 0.1, max: 4 };
     let boxes = randomBoxes({
         box: cubicBox(500),
         size: 250,
-        count: batches,
+        count: batches ?? 7,
     });
     let sets = boxes.map(box => {
         let batch = Math.floor(randomRange(batchRange));

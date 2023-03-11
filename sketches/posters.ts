@@ -3,14 +3,15 @@ import {
     layoutText, renderMask, renderPositionedElement, TextLayout, vals,
 } from '@/sketcher';
 import {
-    pastelSlinky, slinky,
+    molecules, pastelSlinky, slinky,
 } from './organisms';
 
 export const variations: any[] = [
     pink(),
     sm(),
     helloWorld(),
-    words(),
+    alina(),
+    styleIsTheAnswer(),
 ];
 
 export function pink() {
@@ -223,7 +224,7 @@ export function helloWorld() {
     });
 }
 
-export function words() {
+export function alina() {
     return combineScenes(
         fromLayers(colorLayer('black')),
         slinky(),
@@ -246,6 +247,45 @@ export function words() {
                 });
 
                 clearFrame({ canvas, color: 'pink' });
+                renderMask(canvas.context, context => {
+                    for (let positioned of layout) {
+                        renderPositionedElement({ context, positioned });
+                    }
+                });
+            },
+        }),
+    );
+}
+
+export function styleIsTheAnswer() {
+    return combineScenes(
+        fromLayers(colorLayer('black')),
+        molecules(),
+        fromLayers({
+            prepare({ canvas }) {
+                let unit = canvas.height / 100;
+                let font = {
+                    font: `small-caps bold ${unit * 15}pt sans-serif`,
+                    color: 'white',
+                };
+                let layout = layoutText(canvas, {
+                    grow: 1,
+                    direction: 'column',
+                    justify: 'center',
+                    crossJustify: 'center',
+                    content: [{
+                        text: 'Style',
+                        ...font,
+                    }, {
+                        text: 'is the',
+                        ...font,
+                    }, {
+                        text: 'answer',
+                        ...font,
+                    }],
+                });
+
+                clearFrame({ canvas, color: 'black' });
                 renderMask(canvas.context, context => {
                     for (let positioned of layout) {
                         renderPositionedElement({ context, positioned });

@@ -277,6 +277,7 @@ export type TextStyle = {
     font?: TextFont,
     color?: Color,
     rotation?: number,
+    useFontBoundingBox?: boolean,
 };
 export type TextLayoutProps = TextStyle & {
     text?: string,
@@ -296,14 +297,19 @@ export function layoutText(canvas: Canvas, root: TextLayout) {
             }
             canvas.context.save();
             canvas.context.textBaseline = 'alphabetic';
-            canvas.context.textAlign = 'left';
+            canvas.context.textAlign = 'center';
             applyTextStyle(canvas.context, element);
             applyElementTransform(canvas.context, element);
             let mesures = canvas.context.measureText(element.text);
-            let dims = transformDimensions({
-                width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
-                height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
-            }, canvas.context);
+            let dims = element.useFontBoundingBox ?? false
+                ? transformDimensions({
+                    width: mesures.width,
+                    height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
+                }, canvas.context)
+                : transformDimensions({
+                    width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
+                    height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
+                }, canvas.context);
             canvas.context.restore();
             return dims;
         },
@@ -363,7 +369,11 @@ export function renderPositionedElement({
             context.textBaseline = 'alphabetic';
             context.textAlign = 'start';
             let mesures = context.measureText(element.text);
-            context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
+            if (element.useFontBoundingBox) {
+                context.translate(mesures.actualBoundingBoxLeft, mesures.fontBoundingBoxAscent);
+            } else {
+                context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
+            }
         }
         applyElementTransform(context, element);
         context.fillText(element.text, 0, 0);

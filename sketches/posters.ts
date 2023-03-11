@@ -14,6 +14,7 @@ export const variations: any[] = [
     alina(),
     styleIsTheAnswer(),
     beautifulWorld(),
+    current(),
 ];
 
 export function pink() {
@@ -338,5 +339,11 @@ export function beautifulWorld() {
                 });
             },
         }),
+    );
+}
+
+export function current() {
+    return combineScenes(
+        fromLayers(colorLayer('black')),
     );
 }

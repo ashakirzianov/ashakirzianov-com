@@ -1,19 +1,18 @@
-import Head from 'next/head'
-import { Inter } from '@next/font/google'
+import { PosterPage } from "@/components/PosterPage";
+import { useSketcher } from "@/hooks/sketcher";
+import { variations } from "@/sketches/posters";
 
-const inter = Inter({ subsets: ['latin'] })
+// @refresh reset
 
-export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Anton Shakirzianov</title>
-        <meta name="description" content="Anton Shakirzianov's personal page" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      <main>
-        Anton Shakirzianov
-      </main>
-    </>
-  )
+export default function Main() {
+  let { node } = useSketcher({
+    scene: variations[0]!,
+    period: 40,
+    chunk: 500,
+  });
+  return <PosterPage title="Anton's page" description="Anton Shakirzianov">
+    <div>
+      {node}
+    </div>
+  </PosterPage>;
 }

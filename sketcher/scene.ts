@@ -1,76 +1,16 @@
 import { Animator } from "./animator";
-import { Color, ColorStop, resolveColor } from "./color";
-import { Canvas, Render } from "./render";
+import { Color } from "./color";
+import { Canvas, clearFrame, Render } from "./render";
 export type Layer<State> = {
     render?: Render<State>,
     prepare?: Render<State>,
     hidden?: boolean,
 }
-export type Scene<State> = {
+export type Scene<State = unknown> = {
     state: State,
     animator?: Animator<State>,
     layers: Layer<State>[],
 };
-
-// TODO: remove this utils?
-export function scene<State>(s: Scene<State>) {
-    return s;
-}
-
-export function layer<State>(render: Render<State>): Layer<State> {
-    return { render };
-}
-
-export function staticLayer<State>(render: Render<State>): Layer<State> {
-    return {
-        prepare: render,
-    };
-}
-
-export function statelessLayer(render: (canvas: Canvas) => void): Layer<unknown> {
-    return {
-        prepare({ canvas }) {
-            render(canvas);
-        },
-    };
-}
-
-export function colorLayer(color: Color): Layer<unknown> {
-    return {
-        prepare({ canvas: { context, width, height } }) {
-            context.save();
-            context.scale(width, height);
-            context.fillStyle = resolveColor(color, context);
-            context.fillRect(0, 0, 1, 1);
-            context.restore();
-        }
-    };
-}
-
-export function dynamicColorLayer<State>(
-    colorF: (state: State, frame: number) => Color,
-): Layer<State> {
-    return {
-        render({ canvas: { context, width, height }, state, frame }) {
-            context.save();
-            context.scale(width, height);
-            context.fillStyle = resolveColor(
-                colorF(state, frame), context,
-            );
-            context.fillRect(0, 0, 1, 1);
-            context.restore();
-        }
-    };
-}
-
-export function gradientLayer(stops: ColorStop[]) {
-    return colorLayer({
-        kind: 'gradient',
-        start: [0, 0],
-        end: [0, 1],
-        stops,
-    });
-}
 
 export type DrawObjectProps<O> = {
     canvas: Canvas,
@@ -120,5 +60,56 @@ export function setsScene<O>({
                 canvas.context.restore();
             }
         }],
+    };
+}
+
+export function combineScenes(...scenes: Scene<any>[]): Scene {
+    let result: Scene<unknown[]> = {
+        state: scenes.map(s => s.state),
+        animator(states: any[]) {
+            return states.map((state, idx) => {
+                let animator = scenes[idx]?.animator;
+                return animator ? animator(state) : state;
+            });
+        },
+        layers: scenes.map((scene, idx) => {
+            return scene.layers.map((layer): Layer<unknown[]> => {
+                return {
+                    hidden: layer.hidden,
+                    prepare({ canvas, frame, state }) {
+                        if (layer.prepare) {
+                            layer.prepare({
+                                canvas, frame,
+                                state: state[idx]!,
+                            });
+                        }
+                    },
+                    render({ canvas, frame, state }) {
+                        if (layer.render) {
+                            layer.render({
+                                canvas, frame,
+                                state: state[idx]!,
+                            });
+                        }
+                    },
+                };
+            });
+        }).flat(),
+    };
+    return result as Scene;
+}
+
+export function fromLayers(...layers: Layer<unknown>[]): Scene<unknown> {
+    return {
+        state: undefined,
+        layers,
+    };
+}
+
+export function colorLayer(color: Color): Layer<unknown> {
+    return {
+        prepare({ canvas }) {
+            clearFrame({ canvas, color });
+        }
     };
 }

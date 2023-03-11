@@ -353,7 +353,7 @@ export function beautifulWorld() {
                                 color: 'white',
                                 crossOffset: cross[n]!,
                                 offset: main[n]!,
-                                border: 'red',
+                                // border: 'red',
                                 compositeOperation: 'destination-out',
                             })),
                     };

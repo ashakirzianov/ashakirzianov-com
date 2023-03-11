@@ -117,7 +117,7 @@ export function sm() {
                                 text: 'Zeven grafici uit Joegosiavië',
                                 font: '2vh sans serif',
                                 color: 'black',
-                                rotation: -Math.PI / 2
+                                rotation: -Math.PI / 2,
                             }],
                         },
                         {

@@ -14,6 +14,7 @@ export type TextStyle = {
 };
 export type TextLayoutProps = TextStyle & {
     text?: string,
+    hidden?: boolean,
     border?: Color,
 }
 export type TextLayout = LayoutElement<TextLayoutProps>;
@@ -91,6 +92,9 @@ export function renderPositionedElement({
     context: Canvas2DContext,
     positioned: PositionedElement<TextLayoutProps>,
 }) {
+    if (element.hidden) {
+        return;
+    }
     if (element.text) {
         context.save();
         context.textAlign = 'center';

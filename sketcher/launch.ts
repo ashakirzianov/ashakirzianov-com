@@ -1,5 +1,6 @@
+import { Layer } from "./layer";
 import { Canvas } from "./render";
-import { Layer, Scene } from "./scene";
+import { Scene } from "./scene";
 
 export type CanvasGetter = (idx: number) => Canvas | undefined;
 export type LaunchProps<State> = {
@@ -19,7 +20,7 @@ export function launcher<State>({
         let renderState = makeRenderState({ layers, getCanvas });
         function loop(current?: number) {
             if (animator) {
-                state = animator(state);
+                state = animator(state, frame);
             }
             if (renderState(state, frame)) {
                 if (period) { // If animated

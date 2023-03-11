@@ -80,9 +80,9 @@ export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: O
         return momentum;
     }
 
-    return function preserveLaw(objects) {
+    return function preserveLaw(objects, frame) {
         let momentum = calculateMomentum(objects);
-        let next = law(objects);
+        let next = law(objects, frame);
         let nextmom = calculateMomentum(next);
         let coef = momentum / nextmom;
         for (let object of objects) {

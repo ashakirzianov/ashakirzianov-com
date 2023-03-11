@@ -1,9 +1,11 @@
 import {
-    clearFrame, colorLayer, combineScenes, fromLayers, layoutAndRender,
-    layoutText, renderMask, renderPositionedElement, TextLayout, vals,
+    alternateAnimators,
+    clearFrame, colorLayer, combineScenes, fromLayers, gray,
+    layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
+    renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, vals,
 } from '@/sketcher';
 import {
-    molecules, pastelSlinky, slinky,
+    fittedRainbow, molecules, pastelSlinky, slinky,
 } from './organisms';
 
 export const variations: any[] = [
@@ -12,6 +14,8 @@ export const variations: any[] = [
     helloWorld(),
     alina(),
     styleIsTheAnswer(),
+    beautifulWorld(),
+    // current(),
 ];
 
 export function pink() {
@@ -25,7 +29,7 @@ export function pink() {
                     font: `bold ${unit * 20}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'end',
@@ -96,7 +100,7 @@ export function sm() {
                     font: `bold ${34.5 * unit}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'end',
@@ -114,7 +118,7 @@ export function sm() {
                                 text: 'Zeven grafici uit Joegosiavië',
                                 font: '2vh sans serif',
                                 color: 'black',
-                                rotation: -Math.PI / 2
+                                rotation: -Math.PI / 2,
                             }],
                         },
                         {
@@ -226,23 +230,22 @@ export function helloWorld() {
 
 export function alina() {
     return combineScenes(
-        fromLayers(colorLayer('black')),
+        fromLayers(colorLayer(gray(30))),
         slinky(),
         fromLayers({
             prepare({ canvas }) {
-                let text = 'Alina';
                 let unit = canvas.height / 100;
-                let font = {
-                    font: `small-caps bold ${unit * 20}pt sans-serif`,
-                    color: 'white',
-                };
-                let layout = layoutText(canvas, {
+                let delta = .1;
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'space-evenly',
                     crossJustify: 'center',
-                    content: vals(4).map(() => ({
-                        text, ...font,
+                    content: vals(4, 'Alina').map((text, n) => ({
+                        text,
+                        font: `small-caps italic bold ${unit * 16}pt sans-serif`,
+                        color: 'white',
+                        offset: -3 / 2 * delta + n * delta,
                     })),
                 });
 
@@ -268,7 +271,7 @@ export function styleIsTheAnswer() {
                     font: `small-caps bold ${unit * 15}pt sans-serif`,
                     color: 'white',
                 };
-                let layout = layoutText(canvas, {
+                let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
                     justify: 'space-between',
@@ -295,6 +298,139 @@ export function styleIsTheAnswer() {
                     }
                 });
             },
+        }),
+    );
+}
+
+export function beautifulWorld() {
+    let deg = 0.1;
+    let duration = 20;
+    let initialState = {
+        cross: [0, -0.05, -0.33, -0.4, -0.35],
+        main: [0, 0, 0, 0, 0],
+    }
+    return combineScenes(
+        fromLayers(colorLayer('white')),
+        fittedRainbow(),
+        scene({
+            state: initialState,
+            animator: alternateAnimators([{
+                duration,
+                animator({ cross, main }) {
+                    return {
+                        cross: cross.map((c, i) => c - (c - initialState.cross[i]!) / 2),
+                        main: main.map((c, i) => c - (c - initialState.main[i]!) / duration),
+                    };
+                },
+            }, {
+                duration: 1,
+                animator: () => initialState,
+            }, {
+                duration: duration * 1.5,
+                animator({ cross, main }) {
+                    return {
+                        cross: cross.map(c => c + (Math.random() - .5) * deg),
+                        main: main.map(c => c + (Math.random() - .5) * deg),
+                    };
+                },
+            }]),
+            layers: [{
+                render({ canvas, state: { cross, main } }) {
+                    let unit = canvas.height / 100;
+                    let inside: TextLayout = {
+                        grow: 1,
+                        direction: 'column',
+                        justify: 'center',
+                        crossJustify: 'end',
+                        padding: {
+                            top: .05,
+                            right: .1,
+                        },
+                        content: ['Beautiful', 'world,', 'where', 'are', 'you?']
+                            .map((text, n): TextLayout => ({
+                                text,
+                                font: `bold ${unit * 10}pt sans-serif`,
+                                color: 'white',
+                                crossOffset: cross[n]!,
+                                offset: main[n]!,
+                                // border: 'red',
+                                compositeOperation: 'destination-out',
+                            })),
+                    };
+                    let sides = sidesTextLayout({
+                        canvas,
+                        texts: {
+                            top: {
+                                text: 'Sally Rooney'.toUpperCase(),
+                            },
+                            right: [
+                                'Author of'.toLowerCase(),
+                                {
+                                    text: ' Normal People'.toLowerCase(),
+                                    font: 'small-caps bold italic 3vh sans-serif',
+                                },
+                            ],
+                            left: [{
+                                text: '#1 New Your Times Bestseller'.toLowerCase(),
+                            }],
+                            bottom: [{
+                                text: 'Los Angeles | Venice | 2023'.toLowerCase(),
+                            }],
+                        },
+                        padding: 0.02,
+                        style: {
+                            font: 'bold small-caps 3vh sans-serif',
+                            // color: 'violet',
+                            color: [234, 113, 196],
+                            useFontBoundingBox: true,
+                        },
+                        inside,
+                    });
+
+                    clearFrame({ canvas, color: 'black' });
+                    renderPositionedLayout({
+                        context: canvas.context,
+                        layout: sides,
+                    });
+                }
+            }]
+        }),
+    );
+}
+
+export function current() {
+    return fromLayers(
+        colorLayer('black'),
+        staticLayer(({ canvas }) => {
+            let layout = sidesTextLayout({
+                texts: {
+                    left: { text: 'Left', justify: 'center' },
+                    top: {
+                        text: 'Top',
+                        color: 'red',
+                        border: 'blue',
+                    },
+                    right: 'Right',
+                    bottom: {
+                        text: 'Bottom',
+                        hidden: true,
+                    },
+                },
+                style: {
+                    font: '10vh sans-serif',
+                    color: 'white',
+                },
+                padding: 0.01,
+                inside: {
+                    border: 'red',
+                    grow: 1,
+                },
+                canvas,
+            });
+            renderPositionedLayout({
+                context: canvas.context,
+                layout,
+            });
         }),
     );
 }

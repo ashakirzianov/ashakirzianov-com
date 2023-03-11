@@ -1,75 +1,23 @@
 import { Animator } from "./animator";
-import { Color } from "./color";
-import { Canvas, clearFrame, Render } from "./render";
-export type Layer<State> = {
-    render?: Render<State>,
-    prepare?: Render<State>,
-    hidden?: boolean,
-}
+import { Layer } from "./layer";
+
 export type Scene<State = unknown> = {
     state: State,
     animator?: Animator<State>,
     layers: Layer<State>[],
 };
 
-export type DrawObjectProps<O> = {
-    canvas: Canvas,
-    frame: number,
-    object: O,
-    seti: number,
-    index: number,
-};
-export type DrawObject<O> = (props: DrawObjectProps<O>) => void;
-type State<O> = O[][];
-export function setsScene<O>({
-    sets, animator, drawObject, prepare, prerender, background,
-}: {
-    sets: O[][],
-    animator: Animator<O[][]>,
-    drawObject: DrawObject<O>,
-    prepare?: Render<O[][]>,
-    prerender?: Render<O[][]>,
-    background?: {
-        prepare?: Render<O[][]>,
-        render?: Render<O[][]>,
-    },
-}): Scene<State<O>> {
-    return {
-        state: sets,
-        animator,
-        layers: [background ?? {}, {
-            prepare({ canvas, state, frame }) {
-                if (prepare) {
-                    prepare({ canvas, state, frame });
-                }
-            },
-            render({ canvas, state, frame }) {
-                canvas.context.save();
-                if (prerender) {
-                    prerender({ canvas, state, frame });
-                }
-                for (let seti = 0; seti < state.length; seti++) {
-                    let set = state[seti]!;
-                    for (let index = 0; index < set.length; index++) {
-                        let object = set[index]!;
-                        drawObject({
-                            canvas, frame, object, seti, index,
-                        });
-                    }
-                }
-                canvas.context.restore();
-            }
-        }],
-    };
+export function scene<T>(scene: Scene<T>): Scene<T> {
+    return scene;
 }
 
 export function combineScenes(...scenes: Scene<any>[]): Scene {
     let result: Scene<unknown[]> = {
         state: scenes.map(s => s.state),
-        animator(states: any[]) {
+        animator(states: any[], frame) {
             return states.map((state, idx) => {
                 let animator = scenes[idx]?.animator;
-                return animator ? animator(state) : state;
+                return animator ? animator(state, frame) : state;
             });
         },
         layers: scenes.map((scene, idx) => {
@@ -103,13 +51,5 @@ export function fromLayers(...layers: Layer<unknown>[]): Scene<unknown> {
     return {
         state: undefined,
         layers,
-    };
-}
-
-export function colorLayer(color: Color): Layer<unknown> {
-    return {
-        prepare({ canvas }) {
-            clearFrame({ canvas, color });
-        }
     };
 }

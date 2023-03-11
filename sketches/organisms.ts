@@ -1,10 +1,10 @@
 import {
-    velocityStep, gravity, circle, WithPosition, WithVelocity, reduceAnimators,
-    arrayAnimator, Box, randomSubbox, randomVectorInBox, randomRange,
-    squareNBox, zoomToFit, rainbow, randomVector, boundingBox, clearFrame,
+    velocityStep, gravity, circle, WithPosition, WithVelocity,
+    reduceAnimators, arrayAnimator, Box, randomSubbox, randomVectorInBox,
+    randomRange, squareNBox, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox,
-    Vector, vals, subVector, addVector, setsScene, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas,
+    Vector, vals, subVector, addVector, Render, resultingBody,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene,
 } from '@/sketcher';
 
 export function molecules() {
@@ -429,6 +429,41 @@ export function original() {
     });
 }
 
+export function letters(text: string) {
+    let maxVelocity = 5;
+    let massRange = { min: 0.1, max: 4 };
+    let boxes = [cubicBox(500)];
+    let sets = boxes.map(box => {
+        let batch = text.length;
+        return Array(batch).fill(undefined).map(
+            () => randomObject({
+                massRange, maxVelocity, box, rToM: 4,
+            }),
+        );
+    });
+    let palette: Color[] = [
+        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+    ];
+    return setsScene({
+        sets,
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.2, power: 2 }),
+            gravity({ gravity: -0.002, power: 5 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object, seti, index }) {
+            canvas.context.font = '20vh sans-serif';
+            canvas.context.strokeStyle = 'black';
+            canvas.context.lineWidth = 0.1;
+            let sub = text.at((seti + index) % text.length)!;
+            canvas.context.strokeText(sub, object.position[0], object.position[1]);
+        },
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+        },
+    });
+}
+
 function enchanceWithSetI<T>(sets: T[][]) {
     return sets.map(
         (set, seti) => set.map(obj => ({ ...obj, seti }))
@@ -540,4 +575,55 @@ function zoomToBoundingBox({ sets, scale, canvas }: {
     let points = sets.flat().map(o => o.position);
     let box = multBox(boundingBox(points), scale);
     zoomToFit({ box, canvas });
+}
+
+type DrawObjectProps<O> = {
+    canvas: Canvas,
+    frame: number,
+    object: O,
+    seti: number,
+    index: number,
+};
+type DrawObject<O> = (props: DrawObjectProps<O>) => void;
+type State<O> = O[][];
+function setsScene<O>({
+    sets, animator, drawObject, prepare, prerender, background,
+}: {
+    sets: O[][],
+    animator: Animator<O[][]>,
+    drawObject: DrawObject<O>,
+    prepare?: Render<O[][]>,
+    prerender?: Render<O[][]>,
+    background?: {
+        prepare?: Render<O[][]>,
+        render?: Render<O[][]>,
+    },
+}): Scene<State<O>> {
+    return {
+        state: sets,
+        animator,
+        layers: [background ?? {}, {
+            prepare({ canvas, state, frame }) {
+                if (prepare) {
+                    prepare({ canvas, state, frame });
+                }
+            },
+            render({ canvas, state, frame }) {
+                canvas.context.save();
+                if (prerender) {
+                    prerender({ canvas, state, frame });
+                }
+                for (let seti = 0; seti < state.length; seti++) {
+                    let set = state[seti]!;
+                    for (let index = 0; index < set.length; index++) {
+                        let object = set[index]!;
+                        drawObject({
+                            canvas, frame, object, seti, index,
+                        });
+                    }
+                }
+                canvas.context.restore();
+            }
+        }],
+    };
 }

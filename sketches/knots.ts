@@ -5,7 +5,7 @@ import {
 import {
     bubbles, bubblesFlat, fittedRainbow, molecules, original,
     pastelSlinky, slinky, rainbowStrings,
-    balanced, strokedSlinky,
+    balanced, strokedSlinky, letters,
 } from './organisms';
 
 export const variations = [
@@ -92,6 +92,10 @@ export const variations = [
             }),
         })),
         original(),
+    ),
+    combineScenes(
+        fromLayers(colorLayer(gray(230))),
+        letters('Love me two times, baby'),
     ),
 ];
 

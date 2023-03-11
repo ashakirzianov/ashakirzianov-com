@@ -7,6 +7,10 @@ export type Scene<State = unknown> = {
     layers: Layer<State>[],
 };
 
+export function scene<T>(scene: Scene<T>): Scene<T> {
+    return scene;
+}
+
 export function combineScenes(...scenes: Scene<any>[]): Scene {
     let result: Scene<unknown[]> = {
         state: scenes.map(s => s.state),

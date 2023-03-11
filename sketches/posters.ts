@@ -1,7 +1,7 @@
 import {
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
-    renderPositionedLayout, sidesTextLayout, staticLayer, TextLayout, vals,
+    renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, vals,
 } from '@/sketcher';
 import {
     fittedRainbow, molecules, pastelSlinky, slinky,
@@ -302,85 +302,97 @@ export function styleIsTheAnswer() {
 }
 
 export function beautifulWorld() {
-    let cross = [0, -0.05, -0.33, -0.4, -0.35];
-    let main = [0, 0, 0, 0, 0];
     let deg = 0.03;
+    let initialState = {
+        cross: [0, -0.05, -0.33, -0.4, -0.35],
+        main: [0, 0, 0, 0, 0],
+    }
     return combineScenes(
         fromLayers(colorLayer('white')),
         fittedRainbow(),
-        fromLayers(renderLayer(({ canvas }) => {
-            let unit = canvas.height / 100;
-            let inside: TextLayout = {
-                grow: 1,
-                direction: 'column',
-                justify: 'center',
-                crossJustify: 'end',
-                padding: {
-                    top: .05,
-                    right: .1,
-                },
-                content: ['Beautiful', 'world,', 'where', 'are', 'you?']
-                    .map((text, n): TextLayout => ({
-                        text,
-                        font: `bold ${unit * 10}pt sans-serif`,
-                        color: 'white',
-                        crossOffset: cross[n]! += (Math.random() - .5) * deg,
-                        offset: main[n]! += (Math.random() - .5) * deg,
-                        border: 'red',
-                        compositeOperation: 'destination-out',
-                    })),
-            };
-            let sides = sidesTextLayout({
-                canvas,
-                texts: {
-                    top: 'Sally Rooney',
-                    right: [
-                        'Author of',
-                        {
-                            text: ' Normal People',
-                            font: 'italic 3vh sans-serif',
+        scene({
+            state: initialState,
+            animator({ cross, main }) {
+                return {
+                    cross: cross.map(c => c + (Math.random() - .5) * deg),
+                    main: main.map(c => c + (Math.random() - .5) * deg),
+                };
+            },
+            layers: [{
+                render({ canvas, state: { cross, main } }) {
+                    let unit = canvas.height / 100;
+                    let inside: TextLayout = {
+                        grow: 1,
+                        direction: 'column',
+                        justify: 'center',
+                        crossJustify: 'end',
+                        padding: {
+                            top: .05,
+                            right: .1,
                         },
-                    ],
-                    bottom: [
-                        {
-                            text: 'The number one',
+                        content: ['Beautiful', 'world,', 'where', 'are', 'you?']
+                            .map((text, n): TextLayout => ({
+                                text,
+                                font: `bold ${unit * 10}pt sans-serif`,
+                                color: 'white',
+                                crossOffset: cross[n]!,
+                                offset: main[n]!,
+                                border: 'red',
+                                compositeOperation: 'destination-out',
+                            })),
+                    };
+                    let sides = sidesTextLayout({
+                        canvas,
+                        texts: {
+                            top: 'Sally Rooney',
+                            right: [
+                                'Author of',
+                                {
+                                    text: ' Normal People',
+                                    font: 'italic 3vh sans-serif',
+                                },
+                            ],
+                            bottom: [
+                                {
+                                    text: 'The number one',
+                                },
+                                {
+                                    text: ' Sunday Times',
+                                    font: '3vh sans-serif',
+                                },
+                                {
+                                    text: ' Bestseller',
+                                },
+                            ],
+                            left: [
+                                {
+                                    text: "'Funny and smart, full of sex and love and people doing their best to connect'",
+                                    font: 'italic 3vh sans-serif',
+                                },
+                                {
+                                    text: '  New York Times',
+                                    font: '3vh sans-serif',
+                                },
+                            ],
                         },
-                        {
-                            text: ' Sunday Times',
+                        padding: 0.02,
+                        style: {
                             font: '3vh sans-serif',
+                            color: 'white',
+                            useFontBoundingBox: true,
+                            compositeOperation: 'destination-out',
                         },
-                        {
-                            text: ' Bestseller',
-                        },
-                    ],
-                    left: [
-                        {
-                            text: "'Funny and smart, full of sex and love and people doing their best to connect'",
-                            font: 'italic 3vh sans-serif',
-                        },
-                        {
-                            text: '  New York Times',
-                            font: '3vh sans-serif',
-                        },
-                    ],
-                },
-                padding: 0.02,
-                style: {
-                    font: '3vh sans-serif',
-                    color: 'white',
-                    useFontBoundingBox: true,
-                    compositeOperation: 'destination-out',
-                },
-                inside,
-            });
+                        inside,
+                    });
 
-            clearFrame({ canvas, color: 'black' });
-            renderPositionedLayout({
-                context: canvas.context,
-                layout: sides,
-            });
-        },
-        )),
+                    clearFrame({ canvas, color: 'black' });
+                    renderPositionedLayout({
+                        context: canvas.context,
+                        layout: sides,
+                    });
+                }
+            }]
+        }),
     );
 }
 

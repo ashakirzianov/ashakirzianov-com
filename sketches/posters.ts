@@ -320,13 +320,14 @@ export function beautifulWorld() {
                     right: .1,
                 },
                 content: ['Beautiful', 'world,', 'where', 'are', 'you?']
-                    .map((text, n) => ({
+                    .map((text, n): TextLayout => ({
                         text,
                         font: `bold ${unit * 10}pt sans-serif`,
                         color: 'white',
                         crossOffset: cross[n]! += (Math.random() - .5) * deg,
                         offset: main[n]! += (Math.random() - .5) * deg,
                         border: 'red',
+                        compositeOperation: 'destination-out',
                     })),
             };
             let sides = sidesTextLayout({
@@ -346,8 +347,9 @@ export function beautifulWorld() {
             });
 
             clearFrame({ canvas, color: 'black' });
-            renderMask(canvas.context, context => {
-                renderPositionedLayout({ context, layout: sides });
+            renderPositionedLayout({
+                context: canvas.context,
+                layout: sides,
             });
         },
         )),

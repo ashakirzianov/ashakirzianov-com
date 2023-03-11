@@ -12,6 +12,7 @@ export type TextStyle = {
     color?: Color,
     rotation?: number,
     useFontBoundingBox?: boolean,
+    compositeOperation?: GlobalCompositeOperation,
 };
 export type TextLayoutProps = TextStyle & {
     text?: string,
@@ -153,6 +154,9 @@ export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {
     }
     if (style.color) {
         context.fillStyle = resolveColor(style.color, context);
+    }
+    if (style.compositeOperation) {
+        context.globalCompositeOperation = style.compositeOperation;
     }
 }
 

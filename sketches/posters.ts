@@ -3,7 +3,8 @@ import {
     layoutText, renderMask, renderPositionedElement, TextLayout, vals,
 } from '@/sketcher';
 import {
-    fittedRainbow, molecules, pastelSlinky, slinky,
+    balanced, fittedRainbow, molecules, original, pastelSlinky, slinky,
+    strokedSlinky, rainbowStrings,
 } from './organisms';
 
 export const variations: any[] = [
@@ -300,11 +301,14 @@ export function styleIsTheAnswer() {
 }
 
 export function beautifulWorld() {
+    let cross = [0, -0.05, -0.33, -0.4, -0.35];
+    let main = [0, 0, 0, 0, 0];
+    let deg = 0.03;
     return combineScenes(
         fromLayers(colorLayer('white')),
         fittedRainbow(),
         fromLayers({
-            prepare({ canvas }) {
+            render({ canvas }) {
                 let unit = canvas.height / 100;
                 let layout = layoutText(canvas, {
                     grow: 1,
@@ -315,13 +319,14 @@ export function beautifulWorld() {
                         top: .05,
                         right: .1,
                     },
-
-                    content: ['Beautiful', 'world', 'where', 'are', 'you?']
+                    content: ['Beautiful', 'world,', 'where', 'are', 'you?']
                         .map((text, n) => ({
                             text,
                             font: `bold ${unit * 10}pt sans-serif`,
                             color: 'white',
-                            crossOffset: - 0.05 * n,
+                            crossOffset: cross[n]! += (Math.random() - .5) * deg,
+                            offset: main[n]! += (Math.random() - .5) * deg,
+                            border: 'red',
                         })),
                 });
 

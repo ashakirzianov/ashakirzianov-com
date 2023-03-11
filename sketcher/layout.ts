@@ -6,7 +6,8 @@ export type Position = {
     left: number,
     top: number,
 };
-export type Justification = 'start' | 'center' | 'end';
+export type Justification = 'start' | 'center' | 'end'
+    | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
 export type LayoutSize = number;
@@ -92,10 +93,34 @@ export function layoutElement<T>(
         }
     }
 
-    let adjustedMain = dims.reduce((r, d) => r + d.main, 0);
-    let offsetMain = justify === 'start' ? 0
-        : justify === 'end' ? main - adjustedMain
-            : (main - adjustedMain) / 2; // 'center'
+    function calcOffset(justify: Justification, main: number, dims: RelativeDimensions[]) {
+        let adjustedMain = dims.reduce((r, d) => r + d.main, 0);
+        let diff = main - adjustedMain;
+        switch (justify) {
+            case 'start':
+                return { offsetMain: 0, offsetStep: 0 };
+            case 'end':
+                return { offsetMain: diff, offsetStep: 0 };
+            case 'space-between':
+                return dims.length < 2
+                    ? { offsetMain: diff / 2, offsetStep: 0 }
+                    : { offsetMain: 0, offsetStep: diff / (dims.length - 1) };
+            case 'space-around':
+                let around = diff / ((dims.length - 1) * 2 + 2);
+                return dims.length < 2
+                    ? { offsetMain: diff / 2, offsetStep: 0 }
+                    : { offsetMain: around, offsetStep: 2 * around };
+            case 'space-evenly':
+                let evenly = diff / (dims.length + 1);
+                return dims.length < 2
+                    ? { offsetMain: diff / 2, offsetStep: 0 }
+                    : { offsetMain: evenly, offsetStep: evenly };
+            case 'center':
+            default:
+                return { offsetMain: diff / 2, offsetStep: 0 };
+        }
+    }
+    let { offsetMain, offsetStep } = calcOffset(justify, main, dims);
     for (let idx = 0; idx < content.length; idx++) {
         let child = content[idx]!;
         let dim = dims[idx]!;
@@ -121,7 +146,7 @@ export function layoutElement<T>(
         }
 
         // Increment offset
-        offsetMain += dim.main;
+        offsetMain += dim.main + offsetStep;
     }
 
     return result;

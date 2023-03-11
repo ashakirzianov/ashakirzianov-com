@@ -239,7 +239,7 @@ export function alina() {
                 let layout = layoutText(canvas, {
                     grow: 1,
                     direction: 'column',
-                    justify: 'center',
+                    justify: 'space-evenly',
                     crossJustify: 'center',
                     content: vals(4).map(() => ({
                         text, ...font,

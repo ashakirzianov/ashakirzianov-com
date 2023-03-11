@@ -166,7 +166,7 @@ export function applyElementTransform(context: Canvas2DContext, element: TextLay
     }
 }
 
-type SideProps = string | Omit<TextLayout, 'content'>;
+type SideProps = string | TextLayout | SideProps[];
 export function sidesTextLayout({
     canvas, texts, padding, inside, style,
 }: {
@@ -181,22 +181,39 @@ export function sidesTextLayout({
     padding?: LayoutPadding,
     inside?: TextLayout,
 }) {
-    function textProps(text: SideProps | undefined): TextLayout {
+    function textProps(text: SideProps | undefined, pos: 'left' | 'right' | 'top' | 'bottom'): TextLayout {
+        let rotation = pos === 'left' ? -Math.PI / 2
+            : pos === 'right' ? Math.PI / 2
+                : pos === 'top' ? undefined
+                    : Math.PI;
         if (text === undefined) {
             return {
                 text: '',
                 ...style,
                 hidden: true,
+                rotation,
             };
         } else if (typeof text === 'string') {
             return {
                 ...style,
                 text,
+                rotation
+            };
+        } else if (Array.isArray(text)) {
+            let content = text.map(t => textProps(t, pos));
+            if (pos === 'bottom' || pos === 'left') {
+                content.reverse();
+            }
+            return {
+                direction: pos === 'top' || pos === 'bottom'
+                    ? 'row' : 'column',
+                content,
             };
         } else {
             return {
                 ...style,
                 ...text,
+                rotation,
             };
         }
     }
@@ -205,21 +222,10 @@ export function sidesTextLayout({
             : justify === 'end' ? 'start'
                 : justify;
     }
-    let left = {
-        ...textProps(texts.left),
-        rotation: -Math.PI / 2,
-    };
-    let top = {
-        ...textProps(texts.top),
-    };
-    let right = {
-        ...textProps(texts.right),
-        rotation: Math.PI / 2,
-    };
-    let bottom = {
-        ...textProps(texts.bottom),
-        rotation: Math.PI,
-    };
+    let left = textProps(texts.left, 'left');
+    let top = textProps(texts.top, 'top');
+    let right = textProps(texts.right, 'right');
+    let bottom = textProps(texts.bottom, 'bottom');
     let horizontal = layoutOnCanvas(canvas, {
         padding,
         direction: 'column',

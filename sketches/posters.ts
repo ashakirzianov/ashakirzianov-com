@@ -334,14 +334,42 @@ export function beautifulWorld() {
                 canvas,
                 texts: {
                     top: 'Sally Rooney',
-                    right: 'Author of Normal People',
-                    bottom: 'The number one Sunday Times Bestseller',
-                    left: "'Funny and smart, full of sex and love and people doing their best to connect' New York Times",
+                    right: [
+                        'Author of',
+                        {
+                            text: ' Normal People',
+                            font: 'italic 3vh sans-serif',
+                        },
+                    ],
+                    bottom: [
+                        {
+                            text: 'The number one',
+                        },
+                        {
+                            text: ' Sunday Times',
+                            font: '3vh sans-serif',
+                        },
+                        {
+                            text: ' Bestseller',
+                        },
+                    ],
+                    left: [
+                        {
+                            text: "'Funny and smart, full of sex and love and people doing their best to connect'",
+                            font: 'italic 3vh sans-serif',
+                        },
+                        {
+                            text: '  New York Times',
+                            font: '3vh sans-serif',
+                        },
+                    ],
                 },
                 padding: 0.02,
                 style: {
                     font: '3vh sans-serif',
                     color: 'white',
+                    useFontBoundingBox: true,
+                    compositeOperation: 'destination-out',
                 },
                 inside,
             });

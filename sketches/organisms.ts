@@ -4,7 +4,7 @@ import {
     squareNBox, zoomToFit, rainbow, randomVector, boundingBox, clearFrame,
     multBox, Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox,
     Vector, vals, subVector, addVector, setsScene, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas,
+    concentringCircles, getGravity, clearCanvas, resolveColor,
 } from '@/sketcher';
 
 export function molecules() {
@@ -422,6 +422,41 @@ export function original() {
                 radius: object.radius,
                 context: canvas.context,
             });
+        },
+        prepare({ canvas, state }) {
+            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+        },
+    });
+}
+
+export function letters(text: string) {
+    let maxVelocity = 5;
+    let massRange = { min: 0.1, max: 4 };
+    let boxes = [cubicBox(500)];
+    let sets = boxes.map(box => {
+        let batch = text.length;
+        return Array(batch).fill(undefined).map(
+            () => randomObject({
+                massRange, maxVelocity, box, rToM: 4,
+            }),
+        );
+    });
+    let palette: Color[] = [
+        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
+    ];
+    return setsScene({
+        sets,
+        animator: arrayAnimator(reduceAnimators(
+            gravity({ gravity: 0.2, power: 2 }),
+            gravity({ gravity: -0.002, power: 5 }),
+            velocityStep(),
+        )),
+        drawObject({ canvas, object, seti, index }) {
+            canvas.context.font = '20vh sans-serif';
+            canvas.context.strokeStyle = 'black';
+            canvas.context.lineWidth = 0.1;
+            let sub = text.at((seti + index) % text.length)!;
+            canvas.context.strokeText(sub, object.position[0], object.position[1]);
         },
         prepare({ canvas, state }) {
             zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });

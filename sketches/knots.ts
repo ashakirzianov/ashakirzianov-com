@@ -4,8 +4,8 @@ import {
 } from '@/sketcher';
 import {
     bubbles, bubblesFlat, fittedRainbow, molecules, original,
-    pastelRainbows, rainbowSpring, rainbowStrings,
-    randomBatches, strokedRainbows,
+    pastelSlinky, slinky, rainbowStrings,
+    balanced, strokedSlinky,
 } from './organisms';
 
 export const variations = [
@@ -27,7 +27,7 @@ export const variations = [
     ),
     combineScenes(
         fromLayers(colorLayer('black')),
-        strokedRainbows(),
+        strokedSlinky(),
     ),
     function () {
         let back = rainbow({ count: 120, s: 40, l: 70 });
@@ -40,7 +40,7 @@ export const variations = [
                     });
                 },
             }),
-            pastelRainbows(),
+            pastelSlinky(),
         )
     }(),
     function () {
@@ -57,7 +57,7 @@ export const variations = [
                     });
                 },
             }),
-            rainbowSpring(),
+            slinky(),
         )
     }(),
     function () {
@@ -79,7 +79,7 @@ export const variations = [
     }(),
     combineScenes(
         fromLayers(colorLayer(gray(230))),
-        randomBatches(),
+        balanced(),
     ),
     combineScenes(
         fromLayers(colorLayer({

@@ -1,12 +1,12 @@
 import {
     clearFrame, colorLayer, combineScenes, Dimensions, fromLayers, layoutText, renderMask, renderPositionedElement, Scene, TextLayout,
 } from '@/sketcher';
-import { pastelRainbows } from './organisms';
+import { pastelSlinky } from './organisms';
 
 export function playground() {
     return combineScenes(
         fromLayers(colorLayer('white')),
-        pastelRainbows(),
+        pastelSlinky(),
         poster(),
     );
 }

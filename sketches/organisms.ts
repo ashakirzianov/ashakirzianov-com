@@ -1,15 +1,10 @@
 import {
-    velocityStep, gravity, circle, WithPosition, WithVelocity,
-    reduceAnimators, arrayAnimator, Box, randomSubbox,
-    randomVectorInBox, randomRange, squareNBox, zoomToFit,
-    rainbow, randomVector, boundingBox, clearFrame, multBox, gray,
-    multRGBA, Color, cubicBox, NumRange, Canvas,
-    boxSize, modItem, rectBox, hueRange, pulsating, Vector, vals,
-    subVector, addVector, makeStops, fromRGBA, setsScene, Render,
-    resultingBody,
-    concentringCircles,
-    getGravity,
-    clearCanvas,
+    velocityStep, gravity, circle, WithPosition, WithVelocity, reduceAnimators,
+    arrayAnimator, Box, randomSubbox, randomVectorInBox, randomRange,
+    squareNBox, zoomToFit, rainbow, randomVector, boundingBox, clearFrame,
+    multBox, Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox,
+    Vector, vals, subVector, addVector, setsScene, Render, resultingBody,
+    concentringCircles, getGravity, clearCanvas,
 } from '@/sketcher';
 
 export function molecules() {
@@ -193,7 +188,7 @@ export function fittedRainbow() {
     });
 }
 
-export function strokedRainbows() {
+export function strokedSlinky() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
@@ -232,7 +227,7 @@ export function strokedRainbows() {
     });
 }
 
-export function pastelRainbows() {
+export function pastelSlinky() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
@@ -277,7 +272,7 @@ export function pastelRainbows() {
     });
 }
 
-export function rainbowSpring() {
+export function slinky() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
@@ -357,7 +352,7 @@ export function rainbowStrings() {
     });
 }
 
-export function randomBatches() {
+export function balanced() {
     let batchRange = { min: 5, max: 20 };
     let batches = 7;
     let maxVelocity = 5;
@@ -546,11 +541,4 @@ function zoomToBoundingBox({ sets, scale, canvas }: {
     let points = sets.flat().map(o => o.position);
     let box = multBox(boundingBox(points), scale);
     zoomToFit({ box, canvas });
-}
-
-function staticBackground(color: Color) {
-    let prepare: Render<unknown> = ({ canvas }) => {
-        clearFrame({ canvas, color });
-    };
-    return { prepare };
 }

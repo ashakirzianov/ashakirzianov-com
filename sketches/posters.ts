@@ -2,7 +2,9 @@ import {
     clearFrame, colorLayer, combineScenes, fromLayers, layoutAndRender,
     layoutText, renderMask, renderPositionedElement, TextLayout, vals,
 } from '@/sketcher';
-import { molecules, pastelRainbows } from './organisms';
+import {
+    pastelSlinky, slinky,
+} from './organisms';
 
 export const variations: any[] = [
     pink(),
@@ -14,7 +16,7 @@ export const variations: any[] = [
 export function pink() {
     return combineScenes(
         fromLayers(colorLayer('white')),
-        pastelRainbows(),
+        pastelSlinky(),
         fromLayers({
             prepare({ canvas }) {
                 let unit = canvas.height / 100;
@@ -224,13 +226,13 @@ export function helloWorld() {
 export function words() {
     return combineScenes(
         fromLayers(colorLayer('black')),
-        molecules(),
+        slinky(),
         fromLayers({
             prepare({ canvas }) {
                 let text = 'Alina';
                 let unit = canvas.height / 100;
                 let font = {
-                    font: `bold ${unit * 20}pt sans-serif`,
+                    font: `small-caps bold ${unit * 20}pt sans-serif`,
                     color: 'white',
                 };
                 let layout = layoutText(canvas, {

@@ -16,36 +16,6 @@ export function randomRange(range: Partial<NumRange>) {
     });
 }
 
-export function randomSubbox({
-    box: { start, end }, width, height, depth
-}: {
-    box: Box,
-    width: number,
-    height: number,
-    depth?: number,
-}) {
-    let rstart: Vector = [
-        randomRange({ min: start[0], max: end[0] - width }),
-        randomRange({ min: start[1], max: end[1] - height }),
-        randomRange({ min: start[2] ?? 0, max: (end[2] ?? 0) - (depth ?? 0) }),
-    ];
-    let rend = addVector(rstart, [width, height, (depth ?? 0)]);
-    return {
-        start: rstart,
-        end: rend,
-    };
-}
-
-export function randomVectorInBox({ start, end }: Box) {
-    let result: Vector = [0, 0, 0];
-    for (let idx = 0; idx < Math.min(start.length, end.length); idx++) {
-        let min = start[idx]!;
-        let max = end[idx]!;
-        result[idx] = randomRange({ min, max });
-    }
-    return result;
-}
-
 export function randomItem<T>(arr: T[]): T {
     let idx = randomInt(arr.length);
     return arr[idx]!;

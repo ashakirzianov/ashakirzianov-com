@@ -1,3 +1,4 @@
+import { randomRange } from "./random";
 import { addVector, multsVector, Vector } from "./vector";
 
 export type Box = {
@@ -71,4 +72,88 @@ export function rectBox(width: number, height: number, depth?: number): Box {
         start: [-width / 2, -height / 2, -(depth ?? 100) / 2],
         end: [width / 2, height / 2, (depth ?? 100) / 2],
     };
+}
+
+export function cornerBoxes({ rows, cols }: {
+    rows: number,
+    cols: number,
+}): Box[] {
+    let aspect = rows / cols;
+    let ns = [
+        0, cols - 1,
+        cols * (rows - 1), cols * rows - 1,
+    ];
+    return squareBoxes({
+        box: rectBox(500 * aspect, 500),
+        count: 4, rows, cols,
+        getSquareN: n => ns[n]!,
+    });
+}
+
+export function squareBoxes({
+    count, rows, cols, getSquareN, box,
+}: {
+    count: number,
+    rows: number,
+    cols: number,
+    getSquareN: (idx: number) => number,
+    box: Box,
+}): Box[] {
+    return Array(count)
+        .fill(undefined)
+        .map(
+            (_, idx) => squareNBox({
+                n: getSquareN(idx),
+                box,
+                depth: boxSize(box).width / cols,
+                rows, cols,
+            }),
+        );
+}
+
+export function randomBoxes({ count, size, box }: {
+    count: number,
+    size: number,
+    box: Box,
+}): Box[] {
+    return Array(count)
+        .fill(undefined)
+        .map(
+            () => randomSubbox({
+                box,
+                width: size,
+                height: size,
+                depth: size,
+            }),
+        );
+}
+
+export function randomSubbox({
+    box: { start, end }, width, height, depth
+}: {
+    box: Box,
+    width: number,
+    height: number,
+    depth?: number,
+}) {
+    let rstart: Vector = [
+        randomRange({ min: start[0], max: end[0] - width }),
+        randomRange({ min: start[1], max: end[1] - height }),
+        randomRange({ min: start[2] ?? 0, max: (end[2] ?? 0) - (depth ?? 0) }),
+    ];
+    let rend = addVector(rstart, [width, height, (depth ?? 0)]);
+    return {
+        start: rstart,
+        end: rend,
+    };
+}
+
+export function randomVectorInBox({ start, end }: Box) {
+    let result: Vector = [0, 0, 0];
+    for (let idx = 0; idx < Math.min(start.length, end.length); idx++) {
+        let min = start[idx]!;
+        let max = end[idx]!;
+        result[idx] = randomRange({ min, max });
+    }
+    return result;
 }

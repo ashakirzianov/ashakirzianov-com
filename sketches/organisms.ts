@@ -1,10 +1,10 @@
 import {
     velocityStep, gravity, circle, WithPosition, WithVelocity,
-    reduceAnimators, arrayAnimator, Box, randomSubbox, randomVectorInBox,
-    randomRange, squareNBox, zoomToFit, rainbow, randomVector, boundingBox,
-    multBox, Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox,
+    reduceAnimators, arrayAnimator, Box, randomVectorInBox,
+    randomRange, zoomToFit, rainbow, randomVector, boundingBox,
+    multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes,
 } from '@/sketcher';
 
 export function molecules() {
@@ -435,15 +435,12 @@ export function letters(text: string) {
     let boxes = [cubicBox(500)];
     let sets = boxes.map(box => {
         let batch = text.length;
-        return Array(batch).fill(undefined).map(
+        return vals(batch).map(
             () => randomObject({
                 massRange, maxVelocity, box, rToM: 4,
             }),
         );
     });
-    let palette: Color[] = [
-        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
-    ];
     return setsScene({
         sets,
         animator: arrayAnimator(reduceAnimators(
@@ -493,60 +490,6 @@ function xSets<O extends WithVelocity>({
     });
 }
 
-function cornerBoxes({ rows, cols }: {
-    rows: number,
-    cols: number,
-}): Box[] {
-    let aspect = rows / cols;
-    let ns = [
-        0, cols - 1,
-        cols * (rows - 1), cols * rows - 1,
-    ];
-    return squareBoxes({
-        box: rectBox(500 * aspect, 500),
-        count: 4, rows, cols,
-        getSquareN: n => ns[n]!,
-    });
-}
-
-function squareBoxes({
-    count, rows, cols, getSquareN, box,
-}: {
-    count: number,
-    rows: number,
-    cols: number,
-    getSquareN: (idx: number) => number,
-    box: Box,
-}): Box[] {
-    return Array(count)
-        .fill(undefined)
-        .map(
-            (_, idx) => squareNBox({
-                n: getSquareN(idx),
-                box,
-                depth: boxSize(box).width / cols,
-                rows, cols,
-            }),
-        );
-}
-
-function randomBoxes({ count, size, box }: {
-    count: number,
-    size: number,
-    box: Box,
-}): Box[] {
-    return Array(count)
-        .fill(undefined)
-        .map(
-            () => randomSubbox({
-                box,
-                width: size,
-                height: size,
-                depth: size,
-            }),
-        );
-}
-
 function randomObject({
     massRange, maxVelocity, box, rToM,
 }: {
@@ -587,22 +530,18 @@ type DrawObjectProps<O> = {
 type DrawObject<O> = (props: DrawObjectProps<O>) => void;
 type State<O> = O[][];
 function setsScene<O>({
-    sets, animator, drawObject, prepare, prerender, background,
+    sets, animator, drawObject, prepare, prerender,
 }: {
     sets: O[][],
     animator: Animator<O[][]>,
     drawObject: DrawObject<O>,
     prepare?: Render<O[][]>,
     prerender?: Render<O[][]>,
-    background?: {
-        prepare?: Render<O[][]>,
-        render?: Render<O[][]>,
-    },
 }): Scene<State<O>> {
     return {
         state: sets,
         animator,
-        layers: [background ?? {}, {
+        layers: [{}, {
             prepare({ canvas, state, frame }) {
                 if (prepare) {
                     prepare({ canvas, state, frame });

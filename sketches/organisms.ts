@@ -506,6 +506,7 @@ export function letters2(text: string) {
         )),
         layers: [{
             prepare({ canvas, state }) {
+                canvas.context.translate(0, -canvas.height / 10);
                 let padding = 100;
                 let points = state.map(o => o.position);
                 let bb = boundingBox(points);

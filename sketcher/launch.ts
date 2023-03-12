@@ -20,7 +20,7 @@ export function launcher<State>({
         let renderState = makeRenderState({ layers, getCanvas });
         function loop(current?: number) {
             if (animator) {
-                state = animator(state, frame);
+                state = animator(state, { frame });
             }
             if (renderState(state, frame)) {
                 if (period) { // If animated

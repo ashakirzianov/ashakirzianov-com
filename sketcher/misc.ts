@@ -23,3 +23,34 @@ export function nums(to: number, from?: number): number[] {
     }
     return result;
 }
+
+export function breakIntoLines(text: string, lineLength: number): string[] {
+    if (lineLength <= 0) {
+        return [text];
+    }
+    let lines = [];
+    let current = '';
+    let words = text.split(' ');
+    for (let word of words) {
+        while (word.length > lineLength) {
+            if (current !== '') {
+                lines.push(current);
+                current = '';
+            }
+            let front = word.substring(0, lineLength);
+            lines.push(front);
+            word = word.substring(lineLength);
+        }
+        let next = current === '' ? word : `${current} ${word}`;
+        if (next.length > lineLength) {
+            lines.push(current);
+            current = word;
+        } else {
+            current = next;
+        }
+    }
+    if (current !== '') {
+        lines.push(current);
+    }
+    return lines;
+}

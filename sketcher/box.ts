@@ -1,3 +1,4 @@
+import { Dimensions, Position } from "./layout";
 import { randomRange } from "./random";
 import { addVector, multsVector, Vector } from "./vector";
 
@@ -167,22 +168,24 @@ export function randomVectorInBox({ start, end }: Box) {
 }
 
 export function boxesForText({
-    text, lineLength, letterWidth, letterHeight,
+    lines, getDimensions, offset,
 }: {
-    text: string,
-    lineLength: number,
-    letterWidth: number,
-    letterHeight: number,
+    lines: string[],
+    getDimensions: (text: string) => Dimensions,
+    offset?: Position,
 }) {
-    let lines = breakIntoLines(text, lineLength);
+    let loff = offset?.left ?? 0;
+    let toff = offset?.top ?? 0;
     let boxes = [];
     for (let lidx = 0; lidx < lines.length; lidx++) {
         let line = lines[lidx]!;
         for (let cidx = 0; cidx < line.length; cidx++) {
-            let left = cidx * letterWidth;
-            let top = lidx * letterHeight;
-            let right = left + letterWidth;
-            let bottom = top + letterHeight;
+            let letter = line[cidx]!;
+            let { width, height } = getDimensions(letter);
+            let left = cidx * width + loff;
+            let top = lidx * height + toff;
+            let right = left + width;
+            let bottom = top + height;
             let box: Box = {
                 start: [left, top, 0],
                 end: [right, bottom, 0],
@@ -193,35 +196,4 @@ export function boxesForText({
         }
     }
     return boxes;
-}
-
-function breakIntoLines(text: string, lineLength: number): string[] {
-    if (lineLength <= 0) {
-        return [text];
-    }
-    let lines = [];
-    let current = '';
-    let words = text.split(' ');
-    for (let word of words) {
-        while (word.length > lineLength) {
-            if (current !== '') {
-                lines.push(current);
-                current = '';
-            }
-            let front = word.substring(0, lineLength);
-            lines.push(front);
-            word = word.substring(lineLength);
-        }
-        let next = current === '' ? word : `${current} ${word}`;
-        if (next.length > lineLength) {
-            lines.push(current);
-            current = word;
-        } else {
-            current = next;
-        }
-    }
-    if (current !== '') {
-        lines.push(current);
-    }
-    return lines;
 }

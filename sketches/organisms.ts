@@ -4,7 +4,7 @@ import {
     randomRange, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor, breakIntoLines,
 } from '@/sketcher';
 
 export function molecules() {
@@ -462,9 +462,12 @@ export function letters(text: string) {
 }
 
 export function letters2(text: string) {
+    let lines = breakIntoLines(text, 7);
     let boxes = boxesForText({
-        text, lineLength: 7,
-        letterWidth: 100, letterHeight: 100,
+        lines,
+        getDimensions() {
+            return { width: 100, height: 100 };
+        },
     });
     let vel = 0;
     let state = boxes.map(({ box, letter }) => {

@@ -5,7 +5,6 @@ import {
     PositionedElement, PositionedLayout,
 } from "./layout";
 import { Canvas, Canvas2DContext } from "./render";
-import { fromTuple } from "./vector";
 
 export type TextFont = string;
 export type TextStyle = {
@@ -77,7 +76,9 @@ function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): 
     let c = transform.transformPoint(new DOMPoint(w, h));
     let d = transform.transformPoint(new DOMPoint(-w, h));
     let box = boundingBox(
-        [a, b, c, d].map(p => fromTuple([p.x, p.y, 0]))
+        [a, b, c, d].map(p => ({
+            x: p.x, y: p.y, z: 0,
+        }))
     );
     return boxSize(box);
 }

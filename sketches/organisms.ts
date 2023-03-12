@@ -1,10 +1,10 @@
 import {
     velocityStep, gravity, circle, WithPosition, WithVelocity,
     reduceAnimators, arrayAnimator, Box, randomVectorInBox,
-    randomRange, zoomToFit, rainbow, randomVector, boundingBox,
+    randomRange, zoomToFit, rainbow, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
-    Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor, breakIntoLines, valVector, fromTuple,
+    Vector, vals, Render, resultingBody,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor, breakIntoLines, vector,
 } from '@/sketcher';
 
 export function molecules() {
@@ -39,10 +39,10 @@ export function molecules() {
                             from, to,
                         });
                         for (let object of state[fromi]!) {
-                            object.velocity = addVector(object.velocity, force);
+                            object.velocity = vector.add(object.velocity, force);
                         }
                         for (let object of state[toi]!) {
-                            object.velocity = subVector(object.velocity, force);
+                            object.velocity = vector.sub(object.velocity, force);
                         }
                     }
                 }
@@ -476,7 +476,7 @@ export function letters2(text: string) {
             box,
             letter,
             position: center,
-            velocity: randomVector({ min: -vel, max: vel }),
+            velocity: vector.random({ min: -vel, max: vel }),
             mass: 5,
             anchor: {
                 position: center,
@@ -491,14 +491,14 @@ export function letters2(text: string) {
         state,
         animator: (reduceAnimators(
             arrayAnimator(function (object) {
-                let direction = subVector(object.anchor.position, object.position);
-                let step = multsVector(direction, 0.1);
+                let direction = vector.sub(object.anchor.position, object.position);
+                let step = vector.mults(direction, 0.1);
                 let d = .2;
-                let rand = randomVector({ min: -d, max: d });
-                let vel = addVector(step, rand);
+                let rand = vector.random({ min: -d, max: d });
+                let vel = vector.add(step, rand);
                 return {
                     ...object,
-                    velocity: addVector(object.velocity, vel),
+                    velocity: vector.add(object.velocity, vel),
                 };
             }),
             velocityStep(),
@@ -510,8 +510,8 @@ export function letters2(text: string) {
                 let padding = 100;
                 let points = state.map(o => o.position);
                 let bb = boundingBox(points);
-                bb.start = addVector(bb.start, valVector(-padding));
-                bb.end = addVector(bb.end, valVector(padding));
+                bb.start = vector.add(bb.start, vector.value(-padding));
+                bb.end = vector.add(bb.end, vector.value(padding));
                 zoomToFit({ box: bb, canvas });
             },
             render({ canvas, state }) {
@@ -555,17 +555,17 @@ function xSets<O extends WithVelocity>({
     creareObjects: (box: Box) => O[],
 }) {
     let vels: Vector[] = [
-        fromTuple([velocity, velocity, 0]),
-        fromTuple([-velocity, velocity, 0]),
-        fromTuple([velocity, -velocity, 0]),
-        fromTuple([-velocity, -velocity, 0]),
+        vector.fromTuple([velocity, velocity, 0]),
+        vector.fromTuple([-velocity, velocity, 0]),
+        vector.fromTuple([velocity, -velocity, 0]),
+        vector.fromTuple([-velocity, -velocity, 0]),
     ];
     let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
     return boxes.map((box, bi) => {
         let objects = creareObjects(box);
         return objects.map(object => ({
             ...object,
-            velocity: addVector(object.velocity, vels[bi]!),
+            velocity: vector.add(object.velocity, vels[bi]!),
         }));
     });
 }
@@ -584,7 +584,7 @@ function randomObject({
     };
     return {
         position: randomVectorInBox(box),
-        velocity: randomVector(velocityRange),
+        velocity: vector.random(velocityRange),
         mass,
         radius: mass * (rToM ?? 4),
     };

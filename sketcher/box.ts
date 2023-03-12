@@ -1,6 +1,6 @@
 import { Dimensions, Position } from "./layout";
 import { randomRange } from "./random";
-import { addVector, fromTuple, mapVector, multsVector, valVector, Vector } from "./vector";
+import { vector, Vector } from "./vector";
 
 export type Box = {
     start: Vector,
@@ -24,7 +24,7 @@ export function boxRange({ start, end }: Box) {
 }
 
 export function boxCenter(box: Box): Vector {
-    return multsVector(addVector(box.start, box.end), 0.5);
+    return vector.mults(vector.add(box.start, box.end), 0.5);
 }
 
 export function squareNBox({
@@ -41,11 +41,11 @@ export function squareNBox({
     let dh = height / rows;
     let row = Math.floor(n / cols);
     let column = n % cols;
-    let start: Vector = addVector(
+    let start: Vector = vector.add(
         { x: column * dw, y: row * dh, z: 0 },
         box.start,
     );
-    let end = addVector(
+    let end = vector.add(
         start,
         { x: dw, y: dh, z: depth ?? 0 },
     );
@@ -56,11 +56,11 @@ export function boundingBox(points: Vector[]): Box {
     let start: Vector = { ...points[0]! };
     let end: Vector = { ...points[0]! };
     for (let point of points) {
-        start = mapVector(
+        start = vector.map(
             start,
             (v, getter) => Math.min(v, getter(point)),
         );
-        end = mapVector(
+        end = vector.map(
             end,
             (v, getter) => Math.max(v, getter(point)),
         );
@@ -70,8 +70,8 @@ export function boundingBox(points: Vector[]): Box {
 
 export function multBox({ start, end }: Box, value: number) {
     return {
-        start: multsVector(start, value),
-        end: multsVector(end, value),
+        start: vector.mults(start, value),
+        end: vector.mults(end, value),
     };
 }
 
@@ -153,7 +153,7 @@ export function randomSubbox({
         y: randomRange({ min: start.y, max: end.y - height }),
         z: randomRange({ min: start.z ?? 0, max: (end.z ?? 0) - (depth ?? 0) }),
     };
-    let rend = addVector(
+    let rend = vector.add(
         rstart,
         { x: width, y: height, z: (depth ?? 0) },
     );
@@ -164,7 +164,7 @@ export function randomSubbox({
 }
 
 export function randomVectorInBox({ start, end }: Box) {
-    return mapVector(
+    return vector.map(
         start,
         (v, getter) => randomRange({ min: v, max: getter(end) }),
     );
@@ -190,8 +190,8 @@ export function boxesForText({
             let right = left + width;
             let bottom = top + height;
             let box: Box = {
-                start: fromTuple([left, top, 0]),
-                end: fromTuple([right, bottom, 0]),
+                start: vector.fromTuple([left, top, 0]),
+                end: vector.fromTuple([right, bottom, 0]),
             };
             boxes.push({
                 box, letter: line[cidx]!,

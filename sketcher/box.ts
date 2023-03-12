@@ -22,6 +22,14 @@ export function boxRange({ start, end }: Box) {
     };
 }
 
+export function boxCenter(box: Box): Vector {
+    return [
+        (box.end[0] + box.start[0]) / 2,
+        (box.end[1] + box.start[1]) / 2,
+        (box.end[2] + box.start[2]) / 2,
+    ];
+}
+
 export function squareNBox({
     n, rows, cols, box, depth,
 }: {
@@ -156,4 +164,64 @@ export function randomVectorInBox({ start, end }: Box) {
         result[idx] = randomRange({ min, max });
     }
     return result;
+}
+
+export function boxesForText({
+    text, lineLength, letterWidth, letterHeight,
+}: {
+    text: string,
+    lineLength: number,
+    letterWidth: number,
+    letterHeight: number,
+}) {
+    let lines = breakIntoLines(text, lineLength);
+    let boxes = [];
+    for (let lidx = 0; lidx < lines.length; lidx++) {
+        let line = lines[lidx]!;
+        for (let cidx = 0; cidx < line.length; cidx++) {
+            let left = cidx * letterWidth;
+            let top = lidx * letterHeight;
+            let right = left + letterWidth;
+            let bottom = top + letterHeight;
+            let box: Box = {
+                start: [left, top, 0],
+                end: [right, bottom, 0],
+            };
+            boxes.push({
+                box, letter: line[cidx]!,
+            });
+        }
+    }
+    return boxes;
+}
+
+function breakIntoLines(text: string, lineLength: number): string[] {
+    if (lineLength <= 0) {
+        return [text];
+    }
+    let lines = [];
+    let current = '';
+    let words = text.split(' ');
+    for (let word of words) {
+        while (word.length > lineLength) {
+            if (current !== '') {
+                lines.push(current);
+                current = '';
+            }
+            let front = word.substring(0, lineLength);
+            lines.push(front);
+            word = word.substring(lineLength);
+        }
+        let next = current === '' ? word : `${current} ${word}`;
+        if (next.length > lineLength) {
+            lines.push(current);
+            current = word;
+        } else {
+            current = next;
+        }
+    }
+    if (current !== '') {
+        lines.push(current);
+    }
+    return lines;
 }

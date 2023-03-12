@@ -4,7 +4,7 @@ import {
     randomRange, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, hueRange,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor,
 } from '@/sketcher';
 
 export function molecules() {
@@ -518,10 +518,8 @@ export function letters2(text: string) {
                 canvas.context.font = '10vh sans-serif';
                 canvas.context.fillStyle = 'orange';
                 canvas.context.lineWidth = .2;
-                let palette = hueRange({
-                    from: 0, to: 360,
-                    count: 30,
-                    s: 100, l: 50,
+                let palette = rainbow({
+                    count: 30, s: 100, l: 50,
                 });
 
                 for (let { letter, box, trace } of state) {
@@ -529,7 +527,7 @@ export function letters2(text: string) {
                     canvas.context.strokeStyle = 'rgb(20, 20, 20)';
                     let i = 0;
                     for (let position of trace.position) {
-                        canvas.context.strokeStyle = modItem(palette, i++);
+                        canvas.context.strokeStyle = resolvePrimitiveColor(modItem(palette, i++));
                         canvas.context.strokeText(letter, position[0], position[1]);
                     }
                 }

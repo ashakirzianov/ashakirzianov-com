@@ -1,6 +1,6 @@
 import {
-    rainbow, clearFrame, gray, multRGBA, Color, modItem, hueRange,
-    pulsating, makeStops, fromRGBA, Scene, combineScenes, fromLayers, colorLayer,
+    rainbow, clearFrame, gray, multRGBA, modItem,
+    pulsating, makeStops, fromRGBA, combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 import {
     bubbles, bubblesFlat, fittedRainbow, molecules, original,
@@ -44,9 +44,8 @@ export const variations = [
         )
     }(),
     function () {
-        let back = pulsating(hueRange({
-            from: 0, to: 360, count: 200,
-            s: 50, l: 90,
+        let back = pulsating(rainbow({
+            count: 200, s: 50, l: 90,
         }));
         return combineScenes(
             fromLayers({
@@ -61,9 +60,8 @@ export const variations = [
         )
     }(),
     function () {
-        let back = pulsating(hueRange({
-            from: 0, to: 360, count: 200,
-            s: 50, l: 90,
+        let back = pulsating(rainbow({
+            count: 200, s: 50, l: 90,
         }));
         return combineScenes(
             fromLayers({

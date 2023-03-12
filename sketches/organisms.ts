@@ -4,7 +4,7 @@ import {
     randomRange, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, zeroVector, clearFrame, boxSize, traceAnimator,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, clearFrame, boxSize, traceAnimator, pullToAnchor, alternateAnimators, boxCenter,
 } from '@/sketcher';
 
 export function molecules() {
@@ -467,36 +467,51 @@ export function letters2(text: string) {
         letterWidth: 100, letterHeight: 100,
     });
     let state = boxes.map(({ box, letter }) => {
+        let center = boxCenter(box);
         return {
             box,
             letter,
-            position: box.start,
+            position: center,
             velocity: randomVector({ min: -.5, max: .5 }),
             mass: 5,
+            anchor: {
+                position: center,
+                mass: 1,
+            },
             trace: {
-                position: [box.start],
+                position: [center],
             },
         };
     });
     return scene({
         state,
         animator: (reduceAnimators(
+            alternateAnimators([{
+                duration: 10,
+                // animator: gravity({ gravity: 0.02, power: 3 }),
+                animator: s => s,
+            }, {
+                duration: 50,
+                animator: arrayAnimator(pullToAnchor({ gravity: 0.04, power: 2 })),
+            }]),
             gravity({ gravity: 0.02, power: 2 }),
-            gravity({ gravity: -0.02, power: 5 }),
             velocityStep(),
-            arrayAnimator(traceAnimator('position', 100)),
+            arrayAnimator(traceAnimator('position', 50)),
         )),
         layers: [{
             prepare({ canvas, state }) {
+                let padding = 100;
                 let points = state.map(o => o.position);
-                let box = multBox(boundingBox(points), 1.2);
-                zoomToFit({ box, canvas });
+                let bb = boundingBox(points);
+                bb.start = addVector(bb.start, [-padding, -padding, -padding]);
+                bb.end = addVector(bb.end, [padding, padding, padding]);
+                zoomToFit({ box: bb, canvas });
             },
             render({ canvas, state }) {
                 canvas.context.save();
                 clearFrame({ canvas, color: 'white' })
-                canvas.context.textAlign = 'left';
-                canvas.context.textBaseline = 'top';
+                canvas.context.textAlign = 'center';
+                canvas.context.textBaseline = 'middle';
                 canvas.context.font = '10vh sans-serif';
                 canvas.context.strokeStyle = 'black';
                 canvas.context.fillStyle = 'orange';

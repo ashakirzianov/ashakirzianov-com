@@ -144,7 +144,7 @@ export function rainbow({
     count: number,
     s?: number,
     l?: number,
-}): PrimitiveColor[] {
+}): StringColor[] {
     return hslaRange({
         count,
         from: { h: 0, s: s ?? 80, l: l ?? 50 },
@@ -156,7 +156,7 @@ export function hslaRange({ from, to, count }: {
     from: HSLAColor,
     to: HSLAColor,
     count: number,
-}): PrimitiveColor[] {
+}): StringColor[] {
     if (count === 0) {
         return [];
     }
@@ -180,6 +180,37 @@ export function hslaRange({ from, to, count }: {
     };
     return Array(count).fill(undefined).map(
         (_, idx) => `hsla(${rfrom.h + delta.h * idx},${rfrom.s + delta.s * idx}%,${rfrom.l + delta.l * idx}%,${rfrom.a + delta.a * idx})`,
+    );
+}
+
+export function rgbaRange({ from, to, count }: {
+    from: RGBAColor,
+    to: RGBAColor,
+    count: number,
+}): StringColor[] {
+    if (count === 0) {
+        return [];
+    }
+    let rfrom = {
+        r: from.r ?? 0,
+        g: from.g ?? 0,
+        b: from.b ?? 0,
+        a: from.a ?? 1,
+    };
+    let rto = {
+        r: to.r ?? rfrom.r,
+        g: to.g ?? rfrom.g,
+        b: to.b ?? rfrom.b,
+        a: to.a ?? rfrom.a,
+    };
+    let delta = {
+        r: (rto.r - rfrom.r) / count,
+        g: (rto.g - rfrom.g) / count,
+        b: (rto.b - rfrom.b) / count,
+        a: (rto.a - rfrom.a) / count,
+    };
+    return Array(count).fill(undefined).map(
+        (_, idx) => `rgba(${rfrom.r + delta.r * idx},${rfrom.g + delta.g * idx},${rfrom.b + delta.b * idx},${rfrom.a + delta.a * idx})`,
     );
 }
 

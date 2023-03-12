@@ -1,7 +1,9 @@
 import { NumRange } from "./range";
+import { Canvas } from "./render";
 
 export type AnimatorContext = {
     frame: number,
+    getCanvas: (n: number) => Canvas | undefined,
 };
 export type Animator<State> = (state: State, context: AnimatorContext) => State;
 

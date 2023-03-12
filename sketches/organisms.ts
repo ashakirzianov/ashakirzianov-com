@@ -4,7 +4,7 @@ import {
     randomRange, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, zeroVector, clearFrame, boxSize,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, zeroVector, clearFrame, boxSize, traceAnimator,
 } from '@/sketcher';
 
 export function molecules() {
@@ -471,35 +471,40 @@ export function letters2(text: string) {
             box,
             letter,
             position: box.start,
-            velocity: zeroVector(3),
+            velocity: randomVector({ min: -.5, max: .5 }),
             mass: 5,
+            trace: {
+                position: [box.start],
+            },
         };
     });
-    console.log(state);
     return scene({
         state,
         animator: (reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             gravity({ gravity: -0.02, power: 5 }),
             velocityStep(),
+            arrayAnimator(traceAnimator('position', 100)),
         )),
         layers: [{
             prepare({ canvas, state }) {
                 let points = state.map(o => o.position);
-                let box = multBox(boundingBox(points), 1);
+                let box = multBox(boundingBox(points), 1.2);
                 zoomToFit({ box, canvas });
             },
             render({ canvas, state }) {
                 canvas.context.save();
-                // clearFrame({ canvas, color: 'white' })
+                clearFrame({ canvas, color: 'white' })
                 canvas.context.textAlign = 'left';
                 canvas.context.textBaseline = 'top';
                 canvas.context.font = '10vh sans-serif';
                 canvas.context.strokeStyle = 'black';
                 canvas.context.fillStyle = 'orange';
-                canvas.context.lineWidth = .4;
-                for (let { position, letter, box } of state) {
-                    canvas.context.strokeText(letter, position[0], position[1]);
+                canvas.context.lineWidth = .2;
+                for (let { letter, box, trace } of state) {
+                    for (let position of trace.position) {
+                        canvas.context.strokeText(letter, position[0], position[1]);
+                    }
                     let size = boxSize(box);
                     canvas.context.strokeRect(box.start[0], box.start[1], size.width, size.height);
                 }

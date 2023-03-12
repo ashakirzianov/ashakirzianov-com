@@ -1,10 +1,11 @@
-import { boundingBox } from "./box";
+import { boundingBox, boxSize } from "./box";
 import { Color, resolveColor } from "./color";
 import {
     Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, Position,
     PositionedElement, PositionedLayout,
 } from "./layout";
 import { Canvas, Canvas2DContext } from "./render";
+import { fromTuple } from "./vector";
 
 export type TextFont = string;
 export type TextStyle = {
@@ -76,12 +77,9 @@ function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): 
     let c = transform.transformPoint(new DOMPoint(w, h));
     let d = transform.transformPoint(new DOMPoint(-w, h));
     let box = boundingBox(
-        [a, b, c, d].map(p => ([p.x, p.y, 0]))
+        [a, b, c, d].map(p => fromTuple([p.x, p.y, 0]))
     );
-    return {
-        width: box.end[0] - box.start[0],
-        height: box.end[1] - box.start[1],
-    };
+    return boxSize(box);
 }
 
 export function layoutAndRender({ canvas, root, style }: {

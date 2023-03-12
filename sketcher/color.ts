@@ -1,5 +1,4 @@
 import type { Canvas2DContext } from "./render";
-import { Vector2d } from "./vector";
 
 export type StringColor = string;
 export type RGBAColor = {
@@ -19,8 +18,8 @@ export type HSLAColor = {
 export type TupleColor = [r: number, g: number, b: number, a?: number];
 export type GradientColor = {
     kind: 'gradient',
-    start: Vector2d,
-    end: Vector2d,
+    start: [number, number],
+    end: [number, number],
     stops: ColorStop[],
 };
 export type PrimitiveColor = StringColor | RGBAColor | HSLAColor | TupleColor;

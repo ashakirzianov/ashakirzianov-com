@@ -25,7 +25,7 @@ export function withinRange({
     return min < value && value < max;
 }
 
-export function withinDimensions({ dimensions, point: [x, y, z] }: {
+export function withinDimensions({ dimensions, point: { x, y, z } }: {
     dimensions: {
         x: NumRange, y: NumRange, z: NumRange,
     },

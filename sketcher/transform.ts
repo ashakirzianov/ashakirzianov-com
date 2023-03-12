@@ -23,8 +23,8 @@ export function centerOnObjectTransform<State extends WithSets<WithPosition>>({ 
         return function ({ canvas, frame, state }) {
             if (index < state.sets.length) {
                 canvas.context.save();
-                let [shiftx, shifty] = state.sets[index]!.position;
-                canvas.context.translate(-shiftx, -shifty);
+                let { x, y } = state.sets[index]!.position;
+                canvas.context.translate(-x, -y);
                 render({ canvas, frame, state });
                 canvas.context.restore();
             }
@@ -32,13 +32,13 @@ export function centerOnObjectTransform<State extends WithSets<WithPosition>>({ 
     }
 }
 
-export function centerOnPointTransform<State>({ point: [shiftx, shifty] }: {
+export function centerOnPointTransform<State>({ point: { x, y } }: {
     point: Vector,
 }): RenderTransform<State> {
     return function transform(render) {
         return function ({ canvas, frame, state }) {
             canvas.context.save();
-            canvas.context.translate(-shiftx, -shifty);
+            canvas.context.translate(-x, -y);
             render({ canvas, frame, state });
             canvas.context.restore();
         }

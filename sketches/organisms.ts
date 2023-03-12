@@ -4,7 +4,7 @@ import {
     randomRange, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor, breakIntoLines,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, resolvePrimitiveColor, breakIntoLines, valVector, fromTuple,
 } from '@/sketcher';
 
 export function molecules() {
@@ -453,7 +453,7 @@ export function letters(text: string) {
             canvas.context.strokeStyle = 'black';
             canvas.context.lineWidth = 0.1;
             let sub = text.at((seti + index) % text.length)!;
-            canvas.context.strokeText(sub, object.position[0], object.position[1]);
+            canvas.context.strokeText(sub, object.position.x, object.position.y);
         },
         prepare({ canvas, state }) {
             zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
@@ -510,8 +510,8 @@ export function letters2(text: string) {
                 let padding = 100;
                 let points = state.map(o => o.position);
                 let bb = boundingBox(points);
-                bb.start = addVector(bb.start, [-padding, -padding, -padding]);
-                bb.end = addVector(bb.end, [padding, padding, padding]);
+                bb.start = addVector(bb.start, valVector(-padding));
+                bb.end = addVector(bb.end, valVector(padding));
                 zoomToFit({ box: bb, canvas });
             },
             render({ canvas, state }) {
@@ -532,7 +532,7 @@ export function letters2(text: string) {
                     let i = 0;
                     for (let position of trace.position) {
                         canvas.context.strokeStyle = resolvePrimitiveColor(modItem(palette, i++));
-                        canvas.context.strokeText(letter, position[0], position[1]);
+                        canvas.context.strokeText(letter, position.x, position.y);
                     }
                 }
                 canvas.context.restore();
@@ -555,10 +555,10 @@ function xSets<O extends WithVelocity>({
     creareObjects: (box: Box) => O[],
 }) {
     let vels: Vector[] = [
-        [velocity, velocity, 0],
-        [-velocity, velocity, 0],
-        [velocity, -velocity, 0],
-        [-velocity, -velocity, 0],
+        fromTuple([velocity, velocity, 0]),
+        fromTuple([-velocity, velocity, 0]),
+        fromTuple([velocity, -velocity, 0]),
+        fromTuple([-velocity, -velocity, 0]),
     ];
     let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
     return boxes.map((box, bi) => {

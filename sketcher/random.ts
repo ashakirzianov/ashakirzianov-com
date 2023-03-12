@@ -1,12 +1,5 @@
-import { Box } from "./box";
+// TODO: remove this file
 import { mapRange, NumRange } from "./range";
-import { addVector, Vector, zeroVector } from "./vector";
-
-export function randomVector(range: NumRange): Vector {
-    return zeroVector(3).map(
-        () => randomRange(range)
-    ) as Vector;
-}
 
 export function randomRange(range: Partial<NumRange>) {
     return mapRange({

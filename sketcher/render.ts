@@ -35,7 +35,7 @@ export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, 
 
 export function circle({
     lineWidth, fill, stroke,
-    position: [x, y], radius,
+    position: { x, y }, radius,
     context,
 }: {
     lineWidth?: number,
@@ -100,7 +100,7 @@ export function strokeDimensions({
 }
 
 export function colorRect({
-    context, width, height, start: [x, y],
+    context, width, height, start: { x, y },
     colors: [top, bottom, left, right],
 }: {
     context: Canvas2DContext,
@@ -268,8 +268,7 @@ export function centerOnPoint({ canvas, point }: {
     point: Vector,
     canvas: Canvas,
 }) {
-    let [shiftx, shifty] = point;
-    canvas.context.translate(-shiftx, -shifty);
+    canvas.context.translate(-point.x, -point.y);
 }
 
 export function renderMask(

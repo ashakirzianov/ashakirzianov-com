@@ -4,7 +4,7 @@ import {
     randomRange, zoomToFit, rainbow, randomVector, boundingBox,
     multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, clearFrame, boxSize, traceAnimator, pullToAnchor, alternateAnimators, boxCenter,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, hueRange,
 } from '@/sketcher';
 
 export function molecules() {
@@ -466,13 +466,14 @@ export function letters2(text: string) {
         text, lineLength: 7,
         letterWidth: 100, letterHeight: 100,
     });
+    let vel = 0;
     let state = boxes.map(({ box, letter }) => {
         let center = boxCenter(box);
         return {
             box,
             letter,
             position: center,
-            velocity: randomVector({ min: -.5, max: .5 }),
+            velocity: randomVector({ min: -vel, max: vel }),
             mass: 5,
             anchor: {
                 position: center,
@@ -486,17 +487,19 @@ export function letters2(text: string) {
     return scene({
         state,
         animator: (reduceAnimators(
-            alternateAnimators([{
-                duration: 10,
-                // animator: gravity({ gravity: 0.02, power: 3 }),
-                animator: s => s,
-            }, {
-                duration: 50,
-                animator: arrayAnimator(pullToAnchor({ gravity: 0.04, power: 2 })),
-            }]),
-            gravity({ gravity: 0.02, power: 2 }),
+            arrayAnimator(function (object) {
+                let direction = subVector(object.anchor.position, object.position);
+                let step = multsVector(direction, 0.1);
+                let d = .2;
+                let rand = randomVector({ min: -d, max: d });
+                let vel = addVector(step, rand);
+                return {
+                    ...object,
+                    velocity: addVector(object.velocity, vel),
+                };
+            }),
             velocityStep(),
-            arrayAnimator(traceAnimator('position', 50)),
+            arrayAnimator(traceAnimator('position', 30)),
         )),
         layers: [{
             prepare({ canvas, state }) {
@@ -509,19 +512,26 @@ export function letters2(text: string) {
             },
             render({ canvas, state }) {
                 canvas.context.save();
-                clearFrame({ canvas, color: 'white' })
+                clearCanvas(canvas);
                 canvas.context.textAlign = 'center';
                 canvas.context.textBaseline = 'middle';
                 canvas.context.font = '10vh sans-serif';
-                canvas.context.strokeStyle = 'black';
                 canvas.context.fillStyle = 'orange';
                 canvas.context.lineWidth = .2;
+                let palette = hueRange({
+                    from: 0, to: 360,
+                    count: 30,
+                    s: 100, l: 50,
+                });
+
                 for (let { letter, box, trace } of state) {
+                    let size = boxSize(box);
+                    canvas.context.strokeStyle = 'rgb(20, 20, 20)';
+                    let i = 0;
                     for (let position of trace.position) {
+                        canvas.context.strokeStyle = modItem(palette, i++);
                         canvas.context.strokeText(letter, position[0], position[1]);
                     }
-                    let size = boxSize(box);
-                    canvas.context.strokeRect(box.start[0], box.start[1], size.width, size.height);
                 }
                 canvas.context.restore();
             },

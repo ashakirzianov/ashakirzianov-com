@@ -1,10 +1,10 @@
 import {
     velocityStep, gravity, circle, WithPosition, WithVelocity,
-    reduceAnimators, arrayAnimator, Box, randomSubbox, randomVectorInBox,
-    randomRange, squareNBox, zoomToFit, rainbow, randomVector, boundingBox,
-    multBox, Color, cubicBox, NumRange, Canvas, boxSize, modItem, rectBox,
+    reduceAnimators, arrayAnimator, Box, randomVectorInBox,
+    randomRange, zoomToFit, rainbow, randomVector, boundingBox,
+    multBox, Color, cubicBox, NumRange, Canvas, modItem,
     Vector, vals, subVector, addVector, Render, resultingBody,
-    concentringCircles, getGravity, clearCanvas, Animator, Scene,
+    concentringCircles, getGravity, clearCanvas, Animator, Scene, cornerBoxes, randomBoxes, scene, boxesForText, multsVector, boxSize, traceAnimator, boxCenter, hueRange,
 } from '@/sketcher';
 
 export function molecules() {
@@ -435,15 +435,12 @@ export function letters(text: string) {
     let boxes = [cubicBox(500)];
     let sets = boxes.map(box => {
         let batch = text.length;
-        return Array(batch).fill(undefined).map(
+        return vals(batch).map(
             () => randomObject({
                 massRange, maxVelocity, box, rToM: 4,
             }),
         );
     });
-    let palette: Color[] = [
-        '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
-    ];
     return setsScene({
         sets,
         animator: arrayAnimator(reduceAnimators(
@@ -461,6 +458,84 @@ export function letters(text: string) {
         prepare({ canvas, state }) {
             zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
         },
+    });
+}
+
+export function letters2(text: string) {
+    let boxes = boxesForText({
+        text, lineLength: 7,
+        letterWidth: 100, letterHeight: 100,
+    });
+    let vel = 0;
+    let state = boxes.map(({ box, letter }) => {
+        let center = boxCenter(box);
+        return {
+            box,
+            letter,
+            position: center,
+            velocity: randomVector({ min: -vel, max: vel }),
+            mass: 5,
+            anchor: {
+                position: center,
+                mass: 1,
+            },
+            trace: {
+                position: [center],
+            },
+        };
+    });
+    return scene({
+        state,
+        animator: (reduceAnimators(
+            arrayAnimator(function (object) {
+                let direction = subVector(object.anchor.position, object.position);
+                let step = multsVector(direction, 0.1);
+                let d = .2;
+                let rand = randomVector({ min: -d, max: d });
+                let vel = addVector(step, rand);
+                return {
+                    ...object,
+                    velocity: addVector(object.velocity, vel),
+                };
+            }),
+            velocityStep(),
+            arrayAnimator(traceAnimator('position', 30)),
+        )),
+        layers: [{
+            prepare({ canvas, state }) {
+                let padding = 100;
+                let points = state.map(o => o.position);
+                let bb = boundingBox(points);
+                bb.start = addVector(bb.start, [-padding, -padding, -padding]);
+                bb.end = addVector(bb.end, [padding, padding, padding]);
+                zoomToFit({ box: bb, canvas });
+            },
+            render({ canvas, state }) {
+                canvas.context.save();
+                clearCanvas(canvas);
+                canvas.context.textAlign = 'center';
+                canvas.context.textBaseline = 'middle';
+                canvas.context.font = '10vh sans-serif';
+                canvas.context.fillStyle = 'orange';
+                canvas.context.lineWidth = .2;
+                let palette = hueRange({
+                    from: 0, to: 360,
+                    count: 30,
+                    s: 100, l: 50,
+                });
+
+                for (let { letter, box, trace } of state) {
+                    let size = boxSize(box);
+                    canvas.context.strokeStyle = 'rgb(20, 20, 20)';
+                    let i = 0;
+                    for (let position of trace.position) {
+                        canvas.context.strokeStyle = modItem(palette, i++);
+                        canvas.context.strokeText(letter, position[0], position[1]);
+                    }
+                }
+                canvas.context.restore();
+            },
+        }],
     });
 }
 
@@ -491,60 +566,6 @@ function xSets<O extends WithVelocity>({
             velocity: addVector(object.velocity, vels[bi]!),
         }));
     });
-}
-
-function cornerBoxes({ rows, cols }: {
-    rows: number,
-    cols: number,
-}): Box[] {
-    let aspect = rows / cols;
-    let ns = [
-        0, cols - 1,
-        cols * (rows - 1), cols * rows - 1,
-    ];
-    return squareBoxes({
-        box: rectBox(500 * aspect, 500),
-        count: 4, rows, cols,
-        getSquareN: n => ns[n]!,
-    });
-}
-
-function squareBoxes({
-    count, rows, cols, getSquareN, box,
-}: {
-    count: number,
-    rows: number,
-    cols: number,
-    getSquareN: (idx: number) => number,
-    box: Box,
-}): Box[] {
-    return Array(count)
-        .fill(undefined)
-        .map(
-            (_, idx) => squareNBox({
-                n: getSquareN(idx),
-                box,
-                depth: boxSize(box).width / cols,
-                rows, cols,
-            }),
-        );
-}
-
-function randomBoxes({ count, size, box }: {
-    count: number,
-    size: number,
-    box: Box,
-}): Box[] {
-    return Array(count)
-        .fill(undefined)
-        .map(
-            () => randomSubbox({
-                box,
-                width: size,
-                height: size,
-                depth: size,
-            }),
-        );
 }
 
 function randomObject({
@@ -587,22 +608,18 @@ type DrawObjectProps<O> = {
 type DrawObject<O> = (props: DrawObjectProps<O>) => void;
 type State<O> = O[][];
 function setsScene<O>({
-    sets, animator, drawObject, prepare, prerender, background,
+    sets, animator, drawObject, prepare, prerender,
 }: {
     sets: O[][],
     animator: Animator<O[][]>,
     drawObject: DrawObject<O>,
     prepare?: Render<O[][]>,
     prerender?: Render<O[][]>,
-    background?: {
-        prepare?: Render<O[][]>,
-        render?: Render<O[][]>,
-    },
 }): Scene<State<O>> {
     return {
         state: sets,
         animator,
-        layers: [background ?? {}, {
+        layers: [{}, {
             prepare({ canvas, state, frame }) {
                 if (prepare) {
                     prepare({ canvas, state, frame });

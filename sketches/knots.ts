@@ -5,7 +5,7 @@ import {
 import {
     bubbles, bubblesFlat, fittedRainbow, molecules, original,
     pastelSlinky, slinky, rainbowStrings,
-    balanced, strokedSlinky, letters,
+    balanced, strokedSlinky, letters, letters2,
 } from './organisms';
 
 export const variations = [
@@ -97,11 +97,8 @@ export const variations = [
         fromLayers(colorLayer(gray(230))),
         letters('Love me two times, baby'),
     ),
+    combineScenes(
+        fromLayers(colorLayer(gray(230))),
+        letters2('Love me two times, baby'),
+    ),
 ];
-
-export function current() {
-    return combineScenes(
-        fromLayers(colorLayer('black')),
-        molecules(),
-    );
-}

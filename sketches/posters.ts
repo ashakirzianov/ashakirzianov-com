@@ -5,7 +5,7 @@ import {
     renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, vals,
 } from '@/sketcher';
 import {
-    fittedRainbow, molecules, pastelSlinky, slinky,
+    fittedRainbow, letters2, molecules, pastelSlinky, slinky,
 } from './organisms';
 
 export const variations: any[] = [
@@ -15,6 +15,7 @@ export const variations: any[] = [
     alina(),
     styleIsTheAnswer(),
     beautifulWorld(),
+    loveMeTwoTimes(),
     // current(),
 ];
 
@@ -395,6 +396,13 @@ export function beautifulWorld() {
                 }
             }]
         }),
+    );
+}
+
+export function loveMeTwoTimes() {
+    return combineScenes(
+        fromLayers(colorLayer(gray(240))),
+        letters2('Love me two times, baby'),
     );
 }
 

@@ -6,11 +6,13 @@ import {
     addVector, distance, lengthVector, multsVector, subVector, Vector, vectorLength,
 } from './vector';
 
+export type GravityObject = WithPosition & WithMass;
 export type WithPosition = { position: Vector };
 export type WithVelocity = { velocity: Vector };
 export type WithMass = { mass: number };
 export type WithRadius = { radius: number };
 export type WithColor = { color: Color };
+export type WithAnchor = { anchor: GravityObject };
 
 
 type Objects<ObjectT> = ObjectT[];
@@ -96,7 +98,6 @@ export type GravityProps = {
     gravity: number,
     power: number,
 };
-export type GravityObject = WithPosition & WithMass;
 export function getGravity({ gravity, power, from, to }: {
     gravity: number,
     power: number,
@@ -140,4 +141,20 @@ export function resultingBody(objects: GravityObject[]): GravityObject {
         { position: [0, 0, 0], mass: 0 },
     );
     return result;
+}
+
+export type AnchorObject = WithAnchor & GravityObject & WithVelocity;
+export function pullToAnchor<O extends AnchorObject>({
+    gravity, power,
+}: GravityProps): Animator<O> {
+    return function pullAnimator(state) {
+        let force = getGravity({
+            gravity, power, from: state, to: state.anchor,
+        });
+        return {
+            ...state,
+            position: addVector(state.position, force),
+            // velocity: addVector(state.velocity, force),
+        };
+    };
 }

@@ -21,8 +21,8 @@ export function vectorLength(v: Vector): number {
     return result;
 }
 
-export function zeroVector(dimensions: number): Vector {
-    return Array(Math.max(2, dimensions)).fill(0) as Vector;
+export function zeroVector(dimensions?: number): Vector {
+    return Array(Math.max(2, dimensions ?? 3)).fill(0) as Vector;
 }
 
 export function distance(v1: Vector, v2: Vector) {

@@ -13,6 +13,11 @@ export type TextStyle = {
     rotation?: number,
     useFontBoundingBox?: boolean,
     compositeOperation?: GlobalCompositeOperation,
+    letterBox?: {
+        padding?: number,
+        borderColor?: Color,
+        borderWidth?: number,
+    },
 };
 export type TextLayoutProps = TextStyle & {
     text?: string,
@@ -51,16 +56,25 @@ export function layoutText({
             context.textAlign = 'center';
             applyTextStyle(context, element);
             applyElementTransform(context, element);
+            let dims: Dimensions | undefined = undefined;
             let mesures = context.measureText(element.text);
-            let dims = element.useFontBoundingBox ?? false
-                ? transformDimensions({
-                    width: mesures.width,
-                    height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
-                }, context)
-                : transformDimensions({
-                    width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
-                    height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
+            if (element.letterBox) {
+                let side = (mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent) * (element.letterBox.padding ?? 1);
+                dims = transformDimensions({
+                    width: side * element.text.length,
+                    height: side,
                 }, context);
+            } else {
+                dims = element.useFontBoundingBox ?? false
+                    ? transformDimensions({
+                        width: mesures.width,
+                        height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
+                    }, context)
+                    : transformDimensions({
+                        width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
+                        height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
+                    }, context);
+            }
             context.restore();
             return dims;
         },
@@ -123,21 +137,41 @@ export function renderPositionedElement({
         context.save();
         context.textAlign = 'center';
         context.translate(position.left, position.top);
-        if (element.rotation) {
+        if (element.letterBox) {
             context.textBaseline = 'middle';
-            context.translate(dimensions.width / 2, dimensions.height / 2);
-        } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
-            context.textBaseline = 'alphabetic';
-            context.textAlign = 'start';
-            let mesures = context.measureText(element.text);
-            if (element.useFontBoundingBox) {
-                context.translate(mesures.actualBoundingBoxLeft, mesures.fontBoundingBoxAscent);
-            } else {
-                context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
+            let measures = context.measureText(element.text);
+            let side = measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent;
+            context.translate(-side / 2, side / 2);
+            applyElementTransform(context, element);
+            for (let idx = 0; idx < element.text.length; idx++) {
+                let char = element.text[idx]!;
+                context.translate(side, 0);
+                context.fillText(char, 0, 0);
+                if (element.letterBox.borderColor) {
+                    context.strokeStyle = resolveColor(element.letterBox.borderColor, context);
+                    if (element.letterBox.borderWidth) {
+                        context.lineWidth = element.letterBox.borderWidth;
+                    }
+                    context.strokeRect(-side / 2, -side / 2, side, side);
+                }
             }
+        } else {
+            if (element.rotation) {
+                context.textBaseline = 'middle';
+                context.translate(dimensions.width / 2, dimensions.height / 2);
+            } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
+                context.textBaseline = 'alphabetic';
+                context.textAlign = 'start';
+                let mesures = context.measureText(element.text);
+                if (element.useFontBoundingBox) {
+                    context.translate(mesures.actualBoundingBoxLeft, mesures.fontBoundingBoxAscent);
+                } else {
+                    context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
+                }
+            }
+            applyElementTransform(context, element);
+            context.fillText(element.text, 0, 0);
         }
-        applyElementTransform(context, element);
-        context.fillText(element.text, 0, 0);
         context.restore();
     }
     if (element.border) {

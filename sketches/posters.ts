@@ -2,7 +2,7 @@ import {
     alternateAnimators,
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
-    renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, vals,
+    renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, TextStyle, vals,
 } from '@/sketcher';
 import {
     fittedRainbow, letters2, molecules, pastelSlinky, slinky,
@@ -403,6 +403,45 @@ export function loveMeTwoTimes() {
     return combineScenes(
         fromLayers(colorLayer(gray(240))),
         letters2('Love me two times, baby'),
+        fromLayers(staticLayer(({ canvas }) => {
+            let style: TextStyle = {
+                font: '2vh sans-serif',
+                letterBox: {},
+            };
+            let layout = layoutOnCanvas(canvas, {
+                direction: 'column',
+                justify: 'space-between',
+                // crossJustify: 'start',
+                padding: {
+                    left: .1,
+                    bottom: .1,
+                    top: .05,
+                },
+                content: [{
+                    justify: 'center',
+                    content: [{
+                        text: 'Los Angeles, California',
+                        ...style,
+                        // letterBox: undefined,
+                    }],
+                }, {
+                    direction: 'column',
+                    content: [{
+                        text: 'The Doors',
+                        ...style,
+                    }, {
+                        text: 'Lyrics by Jim Morrison',
+                        ...style,
+                    }, {
+                        text: 'November 1967',
+                        ...style,
+                    }],
+                }],
+            });
+            renderPositionedLayout({
+                layout, context: canvas.context,
+            });
+        }))
     );
 }
 

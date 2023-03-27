@@ -37,7 +37,7 @@ export function poster(): Scene {
                 });
 
                 for (let positioned of layout) {
-                    renderPositionedElement({ context: canvas.context, positioned });
+                    renderPositionedElement({ canvas, positioned });
                 }
             },
         }],
@@ -68,8 +68,7 @@ function posterLayout({ height }: Dimensions): TextLayout {
                 content: [{
                     id: 'small-text',
                     text: 'Gentlest of all colors',
-                    fontSize: unit * 1,
-                    fontUnits: 'pt',
+                    fontSize: [unit * 1, 'pt'],
                     color: 'black',
                     rotation: -Math.PI / 2
                 }],

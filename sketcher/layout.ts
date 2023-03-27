@@ -10,7 +10,7 @@ export type Justification = 'start' | 'center' | 'end'
     | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutUnit = 'perc' | 'point'
+export type LayoutUnit = 'perc' | 'pt'
     | 'ew' | 'eh'
     | 'vw' | 'vh';
 export type LayoutSize = number
@@ -252,7 +252,7 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
         switch (unit) {
             case undefined:
                 return resolveSize([value, 'perc'], direction, env);
-            case 'point':
+            case 'pt':
                 return value;
             case 'eh':
                 return value * env.element.height;

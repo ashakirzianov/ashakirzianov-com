@@ -357,7 +357,7 @@ function resolveFontSize(fontSize: LayoutSize, dimensions: Dimensions): number {
         switch (units) {
             case undefined:
                 return resolveFontSize([value, 'perc'], dimensions);
-            case 'point':
+            case 'pt':
                 return value;
             case 'perc':
                 return resolveFontSize([value / 100, 'vh'], dimensions);

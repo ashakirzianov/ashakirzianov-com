@@ -412,7 +412,7 @@ export function loveMeTwoTimes() {
             let style = {
                 fontSize: 1,
                 letterBox: {
-                    padding: .15,
+                    padding: 15,
                     borderColor: 'black',
                     borderWidth: .1,
                 },

@@ -20,10 +20,8 @@ export type TextStyle = TextFont & {
     useFontBoundingBox?: boolean,
     compositeOperation?: GlobalCompositeOperation,
     letterBox?: {
-        // TODO: use LayoutSize
-        padding?: number,
+        padding?: LayoutSize,
         borderColor?: Color,
-        // TODO: use LayoutSize?
         borderWidth?: number,
     },
 };
@@ -70,7 +68,12 @@ export function layoutText({
             let dims: Dimensions | undefined = undefined;
             let measures = context.measureText(element.text);
             if (element.letterBox) {
-                let side = (measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent) * (1 + (element.letterBox.padding ?? 0));
+                let side = (measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent);
+                let padding = resolveSize(
+                    element.letterBox.padding ?? 0,
+                    { width: side, height: side },
+                );
+                side += padding;
                 dims = transformDimensions({
                     width: side * element.text.length,
                     height: side,
@@ -151,8 +154,7 @@ export function renderPositionedElement({
         context.translate(position.left, position.top);
         if (element.letterBox) {
             context.textBaseline = 'middle';
-            let measures = context.measureText(element.text);
-            let side = (measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent) * (1 + (element.letterBox.padding ?? 0));
+            let side = dimensions.height;
             context.translate(-side / 2, side / 2);
             applyElementTransform(context, element);
             for (let idx = 0; idx < element.text.length; idx++) {
@@ -341,7 +343,7 @@ function resolveFont({
             italic ? 'italic' : undefined,
             smallCaps ? 'small-caps' : undefined,
         ]).join(' ');
-        let size = resolveFontSize(fontSize ?? 1, dimensions);
+        let size = resolveSize(fontSize ?? 1, dimensions);
         let family = fontFamily ?? 'sans-serif';
         return `${prefix} ${size}pt ${family}`;
     } else {
@@ -349,22 +351,22 @@ function resolveFont({
     }
 }
 
-function resolveFontSize(fontSize: LayoutSize, dimensions: Dimensions): number {
+function resolveSize(fontSize: LayoutSize, dimensions: Dimensions): number {
     if (typeof fontSize === 'number') {
-        return resolveFontSize([fontSize], dimensions);
+        return resolveSize([fontSize], dimensions);
     } else {
         let [value, units] = fontSize;
         switch (units) {
             case undefined:
-                return resolveFontSize([value, 'perc'], dimensions);
+                return resolveSize([value, 'perc'], dimensions);
             case 'pt':
                 return value;
             case 'perc':
-                return resolveFontSize([value / 100, 'vh'], dimensions);
+                return resolveSize([value, 'vh'], dimensions);
             case 'eh': case 'vh':
-                return value * dimensions.height;
+                return value * dimensions.height / 100;
             case 'ew': case 'vw':
-                return value * dimensions.width;
+                return value * dimensions.width / 100;
         }
     }
 }

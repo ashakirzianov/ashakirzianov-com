@@ -57,9 +57,9 @@ export function layoutText({
             applyTextStyle(context, element);
             applyElementTransform(context, element);
             let dims: Dimensions | undefined = undefined;
-            let mesures = context.measureText(element.text);
+            let measures = context.measureText(element.text);
             if (element.letterBox) {
-                let side = (mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent) * (element.letterBox.padding ?? 1);
+                let side = (measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent) * (1 + (element.letterBox.padding ?? 0));
                 dims = transformDimensions({
                     width: side * element.text.length,
                     height: side,
@@ -67,12 +67,12 @@ export function layoutText({
             } else {
                 dims = element.useFontBoundingBox ?? false
                     ? transformDimensions({
-                        width: mesures.width,
-                        height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
+                        width: measures.width,
+                        height: measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent,
                     }, context)
                     : transformDimensions({
-                        width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
-                        height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
+                        width: (measures.actualBoundingBoxRight + measures.actualBoundingBoxLeft),
+                        height: measures.actualBoundingBoxDescent + measures.actualBoundingBoxAscent,
                     }, context);
             }
             context.restore();
@@ -140,7 +140,7 @@ export function renderPositionedElement({
         if (element.letterBox) {
             context.textBaseline = 'middle';
             let measures = context.measureText(element.text);
-            let side = measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent;
+            let side = (measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent) * (1 + (element.letterBox.padding ?? 0));
             context.translate(-side / 2, side / 2);
             applyElementTransform(context, element);
             for (let idx = 0; idx < element.text.length; idx++) {

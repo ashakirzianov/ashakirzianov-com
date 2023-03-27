@@ -404,9 +404,16 @@ export function loveMeTwoTimes() {
         fromLayers(colorLayer(gray(240))),
         letters2('Love me two times, baby'),
         fromLayers(staticLayer(({ canvas }) => {
-            let style: TextStyle = {
+            let style = {
                 font: '2vh sans-serif',
-                letterBox: {},
+                letterBox: {
+                    padding: .15,
+                    borderColor: 'black',
+                    borderWidth: .1,
+                },
+                padding: {
+                    // top: .15,
+                },
             };
             let layout = layoutOnCanvas(canvas, {
                 direction: 'column',
@@ -420,8 +427,9 @@ export function loveMeTwoTimes() {
                 content: [{
                     justify: 'center',
                     content: [{
-                        text: 'Los Angeles, California',
+                        // text: 'Los Angeles, California',
                         ...style,
+                        letterBox: {},
                         // letterBox: undefined,
                     }],
                 }, {

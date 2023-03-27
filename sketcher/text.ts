@@ -4,11 +4,19 @@ import {
     Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, Position,
     PositionedElement, PositionedLayout,
 } from "./layout";
+import { removeUndefined } from "./misc";
 import { Canvas, Canvas2DContext } from "./render";
 
-export type TextFont = string;
-export type TextStyle = {
-    font?: TextFont,
+export type TextFont = {
+    font?: string,
+    fontSize?: number | string,
+    fontUnits?: string,
+    fontFamily?: string,
+    bold?: boolean,
+    italic?: boolean,
+    smallCaps?: boolean,
+};
+export type TextStyle = TextFont & {
     color?: Color,
     useFontBoundingBox?: boolean,
     compositeOperation?: GlobalCompositeOperation,
@@ -183,9 +191,8 @@ export function renderPositionedElement({
 }
 
 export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {
-    if (style.font) {
-        context.font = style.font;
-    }
+    let font = resolveFont(style);
+    context.font = font;
     if (style.color) {
         context.fillStyle = resolveColor(style.color, context);
     }
@@ -314,4 +321,25 @@ export function sidesTextLayout({
     }) : [];
 
     return [...horizontal, ...vertical, ...insideLayout];
+}
+
+function resolveFont({
+    font,
+    fontFamily, fontSize, fontUnits,
+    bold, italic, smallCaps,
+}: TextFont): string {
+    if (font) {
+        return font;
+    }
+    let prefix = removeUndefined([
+        bold ? 'bold' : undefined,
+        italic ? 'italic' : undefined,
+        smallCaps ? 'small-caps' : undefined,
+    ]).join(' ');
+    let units = fontUnits ?? 'vh';
+    let size = typeof fontSize === 'number'
+        ? `${fontSize}${units}`
+        : (fontSize ?? '12pt');
+    let family = fontFamily ?? 'sans-serif';
+    return `${prefix} ${size} ${family}`;
 }

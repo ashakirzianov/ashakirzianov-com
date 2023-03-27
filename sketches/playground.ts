@@ -68,7 +68,8 @@ function posterLayout({ height }: Dimensions): TextLayout {
                 content: [{
                     id: 'small-text',
                     text: 'Gentlest of all colors',
-                    font: `${unit * 1}pt sans-serif`,
+                    fontSize: unit * 1,
+                    fontUnits: 'pt',
                     color: 'black',
                     rotation: -Math.PI / 2
                 }],

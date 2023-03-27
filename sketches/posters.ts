@@ -47,7 +47,8 @@ export function pink() {
                             content: [{
                                 id: 'small-text',
                                 text: 'Gentlest of all colors',
-                                font: `${unit * 1}pt sans-serif`,
+                                fontSize: unit * 1,
+                                fontUnits: 'pt',
                                 color: 'black',
                                 rotation: -Math.PI / 2
                             }],
@@ -117,7 +118,8 @@ export function sm() {
                             content: [{
                                 id: 'small-text',
                                 text: 'Zeven grafici uit Joegosiavië',
-                                font: '2vh sans serif',
+                                fontSize: 2,
+                                fontUnits: 'vh',
                                 color: 'black',
                                 rotation: -Math.PI / 2,
                             }],
@@ -221,7 +223,9 @@ export function helloWorld() {
             canvas.context.lineWidth = 5;
             layoutAndRender({
                 canvas, root, style: {
-                    font: '10vh serif',
+                    fontSize: 10,
+                    fontUnits: 'vh',
+                    fontFamily: 'serif',
                     color: 'red',
                 }
             });
@@ -350,7 +354,9 @@ export function beautifulWorld() {
                         content: ['Beautiful', 'world,', 'where', 'are', 'you?']
                             .map((text, n): TextLayout => ({
                                 text,
-                                font: `bold ${unit * 10}pt sans-serif`,
+                                fontSize: unit * 10,
+                                fontUnits: 'pt',
+                                bold: true,
                                 color: 'white',
                                 crossOffset: cross[n]!,
                                 offset: main[n]!,
@@ -368,7 +374,8 @@ export function beautifulWorld() {
                                 'Author of'.toLowerCase(),
                                 {
                                     text: ' Normal People'.toLowerCase(),
-                                    font: 'small-caps bold italic 3vh sans-serif',
+                                    bold: true, smallCaps: true, italic: true,
+                                    fontSize: 3,
                                 },
                             ],
                             left: [{
@@ -380,7 +387,9 @@ export function beautifulWorld() {
                         },
                         padding: 0.02,
                         style: {
-                            font: 'bold small-caps 3vh sans-serif',
+                            fontSize: 3,
+                            bold: true,
+                            smallCaps: true,
                             // color: 'violet',
                             color: [234, 113, 196],
                             useFontBoundingBox: true,
@@ -405,7 +414,7 @@ export function loveMeTwoTimes() {
         letters2('Love me two times, baby'),
         fromLayers(staticLayer(({ canvas }) => {
             let style = {
-                font: '2vh sans-serif',
+                fontSize: 2,
                 letterBox: {
                     padding: .15,
                     borderColor: 'black',
@@ -468,7 +477,7 @@ export function current() {
                     },
                 },
                 style: {
-                    font: '10vh sans-serif',
+                    fontSize: 10,
                     color: 'white',
                 },
                 padding: 0.01,

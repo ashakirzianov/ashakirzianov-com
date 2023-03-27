@@ -10,8 +10,11 @@ export type Justification = 'start' | 'center' | 'end'
     | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutSize = number;
+export type LayoutUnit = 'fraction' | 'point';
+export type LayoutSize = number
+    | readonly [value: number, unit?: LayoutUnit];
 export type LayoutPadding = LayoutSize | {
+    kind?: 'unresolved',
     left?: LayoutSize,
     right?: LayoutSize,
     top?: LayoutSize,
@@ -52,16 +55,29 @@ export function layoutElement<T>(
     let justify = root.justify ?? 'center';
     let crossJustify = root.crossJustify ?? 'stretch';
     let direction = root.direction ?? 'row';
-    let padding = resolvePadding(root.padding ?? 0);
+    let sizeEnv: SizeEnvironment = {
+        element: dimensions,
+    };
+    let padding = resolvePadding(root.padding ?? 0, sizeEnv);
 
-    let withPadding = subPadding(dimensions, padding);
     // Conver to dimensions relative to direction
-    let { main, cross } = toRelative(withPadding, direction);
+    let { main, cross } = toRelative({
+        width: dimensions.width - padding.left - padding.right,
+        height: dimensions.height - padding.top - padding.bottom,
+    }, direction);
 
     // Offset from props:
     let extraOffset = {
-        main: calcSize(root.offset ?? 0, main),
-        cross: calcSize(root.crossOffset ?? 0, cross),
+        main: resolveSize(
+            root.offset ?? 0,
+            direction === 'row' ? 'horizontal' : 'vertical',
+            sizeEnv,
+        ),
+        cross: resolveSize(
+            root.crossOffset ?? 0,
+            direction === 'row' ? 'vertical' : 'horizontal',
+            sizeEnv,
+        ),
     };
 
     // Add self
@@ -73,12 +89,17 @@ export function layoutElement<T>(
 
     // Apply padding
     let paddingOffset = toRelative({
-        width: calcSize(padding.left, dimensions.width),
-        height: calcSize(padding.top, dimensions.height),
+        width: padding.left,
+        height: padding.top,
     }, direction);
 
     // Calculate growth
-    let dims = content.map(el => toRelative(getDimensions(el, resolveDimensions), direction));
+    let dims = content.map(
+        el => toRelative(
+            getDimensions(el, resolveDimensions, sizeEnv),
+            direction,
+        ),
+    );
     let contentMain = dims.reduce((r, d) => r + d.main, 0);
     let totalGrow = content.reduce((r, e) => r + (e.grow ?? 0), 0);
     let extraLength = Math.max(0, main - contentMain);
@@ -150,16 +171,23 @@ export function layoutElement<T>(
     return result;
 }
 
-function getDimensions<T>(element: LayoutElement<T>, resolveDimensions: LayoutContext<T>['resolveDimensions']): Dimensions {
-    let direction = element.direction ?? 'row';
-    let padding = resolvePadding(element.padding ?? 0);
+function getDimensions<T>(
+    element: LayoutElement<T>,
+    resolveDimensions: LayoutContext<T>['resolveDimensions'],
+    env: SizeEnvironment,
+): Dimensions {
     let resolved = resolveDimensions(element);
     if (resolved) {
-        return addPadding(resolved, padding);
+        return addPadding(
+            resolved,
+            element.padding ?? 0,
+            { ...env, element: resolved },
+        );
     }
+    let direction = element.direction ?? 'row';
     let relative = (element.content ?? []).reduce(
         (res, el) => {
-            let dims = getDimensions(el, resolveDimensions);
+            let dims = getDimensions(el, resolveDimensions, env);
             let rel = toRelative(dims, direction);
             return {
                 main: res.main + rel.main,
@@ -169,23 +197,20 @@ function getDimensions<T>(element: LayoutElement<T>, resolveDimensions: LayoutCo
         { main: 0, cross: 0 },
     );
     let absolute = toAbsolute(relative, direction);
-    let withPadding = addPadding(absolute, padding);
+    let withPadding = addPadding(
+        absolute,
+        element.padding ?? 0,
+        { ...env, element: absolute },
+    );
 
     return withPadding;
 }
 
-function addPadding(dimensions: Dimensions, padding: LayoutPadding) {
-    let resolved = resolvePadding(padding);
+function addPadding(dimensions: Dimensions, padding: LayoutPadding, env: SizeEnvironment) {
+    let resolved = resolvePadding(padding, env);
     return {
-        width: dimensions.width / (1 - resolved.left - resolved.right),
-        height: dimensions.height / (1 - resolved.top - resolved.bottom),
-    };
-}
-function subPadding(dimensions: Dimensions, padding: LayoutPadding) {
-    let resolved = resolvePadding(padding);
-    return {
-        width: dimensions.width - calcSize(resolved.left, dimensions.width) - calcSize(resolved.right, dimensions.width),
-        height: dimensions.height - calcSize(resolved.top, dimensions.height) - calcSize(resolved.bottom, dimensions.height),
+        width: dimensions.width + resolved.left + resolved.right,
+        height: dimensions.height + resolved.top + resolved.bottom,
     };
 }
 
@@ -209,29 +234,60 @@ function addToPosition(position: Position, relative: RelativeDimensions, directi
         : { left: position.left + relative.cross, top: position.top + relative.main };
 }
 
-function sumRelative(left: RelativeDimensions, right: RelativeDimensions): RelativeDimensions {
-    return {
-        main: left.main + right.main,
-        cross: left.cross + right.cross,
-    };
+type SizeEnvironment = {
+    element: Dimensions,
+};
+type SizeDirection = 'horizontal' | 'vertical';
+function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnvironment): number {
+    if (typeof size === 'number') {
+        return resolveSize([size, 'fraction'], direction, env);
+    } else {
+        let [value, unit] = size;
+        switch (unit) {
+            case 'point':
+                return value;
+            case 'fraction':
+            case undefined:
+            default:
+                return direction === 'horizontal'
+                    ? value * env.element.width
+                    : value * env.element.height;
+        }
+    }
 }
 
-function calcSize(size: LayoutSize, axis: number) {
-    return size * axis;
+function isReadonlyArray(obj: any): obj is readonly any[] {
+    return Array.isArray(obj);
 }
 
-function resolvePadding(padding: LayoutPadding) {
+type ResolvedPadding = {
+    kind: 'resolved',
+    top: number, bottom: number,
+    left: number, right: number,
+};
+function resolvePadding(padding: LayoutPadding, env: SizeEnvironment): ResolvedPadding {
     if (typeof padding === 'number') {
-        return {
-            left: padding, right: padding,
+        return resolvePadding([padding], env);
+    } else if (isReadonlyArray(padding)) {
+        return resolvePadding({
             top: padding, bottom: padding,
-        };
+            left: padding, right: padding,
+        }, env);
     } else {
         return {
-            left: padding.left ?? padding.right ?? 0,
-            right: padding.right ?? padding.left ?? 0,
-            top: padding.top ?? padding.bottom ?? 0,
-            bottom: padding.bottom ?? padding.top ?? 0,
+            kind: 'resolved',
+            left: resolveSize(
+                padding.left ?? padding.right ?? 0, 'horizontal', env,
+            ),
+            right: resolveSize(
+                padding.right ?? padding.left ?? 0, 'horizontal', env,
+            ),
+            top: resolveSize(
+                padding.top ?? padding.bottom ?? 0, 'vertical', env,
+            ),
+            bottom: resolveSize(
+                padding.bottom ?? padding.top ?? 0, 'vertical', env,
+            ),
         };
     }
 }

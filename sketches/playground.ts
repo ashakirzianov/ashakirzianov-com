@@ -45,9 +45,9 @@ export function poster(): Scene {
 }
 
 function posterLayout({ height }: Dimensions): TextLayout {
-    let unit = height / 100;
     let font = {
-        font: `bold ${unit * 20}pt sans-serif`,
+        fontSize: 20,
+        bold: true,
         color: 'white',
     };
     return {
@@ -55,20 +55,20 @@ function posterLayout({ height }: Dimensions): TextLayout {
         direction: 'column',
         justify: 'end',
         crossJustify: 'stretch',
-        padding: .02,
+        padding: 2,
         content: [
             {
 
                 justify: 'start',
                 padding: {
                     top: 0,
-                    bottom: 0.2,
+                    bottom: 20,
                     // left: 0.02,
                 },
                 content: [{
                     id: 'small-text',
                     text: 'Gentlest of all colors',
-                    fontSize: [unit * 1, 'pt'],
+                    fontSize: 1,
                     color: 'black',
                     rotation: -Math.PI / 2
                 }],
@@ -78,7 +78,7 @@ function posterLayout({ height }: Dimensions): TextLayout {
                 crossJustify: 'end',
                 // grow: 1,
                 padding: {
-                    bottom: 0.2,
+                    bottom: 20,
                     top: 0,
                 },
                 content: [{

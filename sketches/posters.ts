@@ -236,8 +236,6 @@ export function alina() {
         slinky(),
         fromLayers({
             prepare({ canvas }) {
-                // TODO: remove
-                let unit = canvas.height / 100;
                 let delta = 10;
                 let layout = layoutOnCanvas(canvas, {
                     grow: 1,
@@ -246,7 +244,10 @@ export function alina() {
                     crossJustify: 'center',
                     content: vals(4, 'Alina').map((text, n) => ({
                         text,
-                        font: `small-caps italic bold ${unit * 16}pt sans-serif`,
+                        fontSize: 16,
+                        smallCaps: true,
+                        italic: true,
+                        bold: true,
                         color: 'white',
                         offset: -3 / 2 * delta + n * delta,
                     })),
@@ -269,10 +270,10 @@ export function styleIsTheAnswer() {
         molecules(),
         fromLayers({
             prepare({ canvas }) {
-                // TODO: remove
-                let unit = canvas.height / 100;
                 let font = {
-                    font: `small-caps bold ${unit * 15}pt sans-serif`,
+                    fontSize: 15,
+                    smallCaps: true,
+                    bold: true,
                     color: 'white',
                 };
                 let layout = layoutOnCanvas(canvas, {

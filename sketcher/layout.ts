@@ -246,7 +246,7 @@ type SizeEnvironment = {
 type SizeDirection = 'horizontal' | 'vertical';
 function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnvironment): number {
     if (typeof size === 'number') {
-        return resolveSize([size, 'fraction'], direction, env);
+        return resolveSize([size], direction, env);
     } else {
         let [value, unit] = size;
         switch (unit) {
@@ -268,10 +268,6 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
                     : value * env.element.height;
         }
     }
-}
-
-function isReadonlyArray(obj: any): obj is readonly any[] {
-    return Array.isArray(obj);
 }
 
 type ResolvedPadding = {
@@ -304,4 +300,8 @@ function resolvePadding(padding: LayoutPadding, env: SizeEnvironment): ResolvedP
             ),
         };
     }
+}
+
+function isReadonlyArray(obj: any): obj is readonly any[] {
+    return Array.isArray(obj);
 }

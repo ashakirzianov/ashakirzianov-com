@@ -419,11 +419,7 @@ export function loveMeTwoTimes() {
                 direction: 'column',
                 justify: 'space-between',
                 // crossJustify: 'start',
-                padding: {
-                    left: .1,
-                    bottom: .1,
-                    top: .05,
-                },
+                padding: [.1, 'fraction'],
                 content: [{
                     justify: 'center',
                     content: [{

@@ -20,8 +20,10 @@ export type TextStyle = TextFont & {
     useFontBoundingBox?: boolean,
     compositeOperation?: GlobalCompositeOperation,
     letterBox?: {
+        // TODO: use LayoutSize
         padding?: number,
         borderColor?: Color,
+        // TODO: use LayoutSize?
         borderWidth?: number,
     },
 };
@@ -359,8 +361,6 @@ function resolveFontSize(fontSize: LayoutSize, dimensions: Dimensions): number {
                 return value;
             case 'perc':
                 return resolveFontSize([value / 100, 'vh'], dimensions);
-            case 'fraction':
-                return resolveFontSize([value * 100, 'perc'], dimensions);
             case 'eh': case 'vh':
                 return value * dimensions.height;
             case 'ew': case 'vw':

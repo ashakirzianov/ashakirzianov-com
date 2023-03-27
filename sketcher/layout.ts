@@ -10,7 +10,7 @@ export type Justification = 'start' | 'center' | 'end'
     | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutUnit = 'fraction' | 'perc' | 'point'
+export type LayoutUnit = 'perc' | 'point'
     | 'ew' | 'eh'
     | 'vw' | 'vh';
 export type LayoutSize = number
@@ -251,9 +251,7 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
         let [value, unit] = size;
         switch (unit) {
             case undefined:
-                return resolveSize([value, 'fraction'], direction, env);
-            case 'perc':
-                return resolveSize([value / 100, 'fraction'], direction, env);
+                return resolveSize([value, 'perc'], direction, env);
             case 'point':
                 return value;
             case 'eh':
@@ -264,10 +262,10 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
                 return value * env.view.height;
             case 'vw':
                 return value * env.view.width;
-            case 'fraction':
+            case 'perc':
                 return direction === 'horizontal'
-                    ? value * env.element.width
-                    : value * env.element.height;
+                    ? value * env.element.width / 100
+                    : value * env.element.height / 100;
         }
     }
 }

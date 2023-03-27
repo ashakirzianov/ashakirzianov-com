@@ -35,14 +35,14 @@ export function pink() {
                     direction: 'column',
                     justify: 'end',
                     crossJustify: 'stretch',
-                    padding: .02,
+                    padding: 2,
                     content: [
                         {
 
                             justify: 'start',
                             padding: {
                                 top: 0,
-                                bottom: 0.2,
+                                bottom: 20,
                             },
                             content: [{
                                 id: 'small-text',
@@ -56,7 +56,7 @@ export function pink() {
                             justify: 'center',
                             crossJustify: 'end',
                             padding: {
-                                bottom: 0.2,
+                                bottom: 20,
                                 top: 0,
                             },
                             content: [{
@@ -111,8 +111,8 @@ export function sm() {
                             justify: 'start',
                             padding: {
                                 top: 0,
-                                bottom: 0.2,
-                                left: 0.02,
+                                bottom: 20,
+                                left: 2,
                             },
                             content: [{
                                 id: 'small-text',
@@ -126,17 +126,17 @@ export function sm() {
                             justify: 'end',
                             crossJustify: 'end',
                             padding: {
-                                right: .02,
+                                right: 2,
                                 top: 0,
-                                bottom: .03,
+                                bottom: 3,
                             },
                             content: [{
                                 content: [{
                                     id: 'left-letter',
                                     text: 'S',
                                     ...font,
-                                    offset: -.03,
-                                    crossOffset: -.02,
+                                    offset: -3,
+                                    crossOffset: -2,
                                 },
                                 {
                                     id: 'right-letter',
@@ -221,9 +221,8 @@ export function helloWorld() {
             canvas.context.lineWidth = 5;
             layoutAndRender({
                 canvas, root, style: {
-                    font: '10vh serif',
-                    // fontSize: 10,
-                    // fontFamily: 'serif',
+                    fontSize: 5,
+                    fontFamily: 'serif',
                     color: 'red',
                 }
             });
@@ -237,8 +236,9 @@ export function alina() {
         slinky(),
         fromLayers({
             prepare({ canvas }) {
+                // TODO: remove
                 let unit = canvas.height / 100;
-                let delta = .1;
+                let delta = 10;
                 let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
@@ -269,6 +269,7 @@ export function styleIsTheAnswer() {
         molecules(),
         fromLayers({
             prepare({ canvas }) {
+                // TODO: remove
                 let unit = canvas.height / 100;
                 let font = {
                     font: `small-caps bold ${unit * 15}pt sans-serif`,
@@ -280,7 +281,7 @@ export function styleIsTheAnswer() {
                     justify: 'space-between',
                     crossJustify: 'center',
                     padding: {
-                        top: 0.3,
+                        top: 30,
                     },
                     content: [{
                         text: 'Style',
@@ -306,10 +307,10 @@ export function styleIsTheAnswer() {
 }
 
 export function beautifulWorld() {
-    let deg = 0.1;
+    let deg = 10;
     let duration = 20;
     let initialState = {
-        cross: [0, -0.05, -0.33, -0.4, -0.35],
+        cross: [0, -5, -33, -40, -35],
         main: [0, 0, 0, 0, 0],
     }
     return combineScenes(
@@ -339,15 +340,14 @@ export function beautifulWorld() {
             }]),
             layers: [{
                 render({ canvas, state: { cross, main } }) {
-                    let unit = canvas.height / 100;
                     let inside: TextLayout = {
                         grow: 1,
                         direction: 'column',
                         justify: 'center',
                         crossJustify: 'end',
                         padding: {
-                            top: .05,
-                            right: .1,
+                            top: 5,
+                            right: 10,
                         },
                         content: ['Beautiful', 'world,', 'where', 'are', 'you?']
                             .map((text, n): TextLayout => ({
@@ -416,14 +416,14 @@ export function loveMeTwoTimes() {
                     borderWidth: .1,
                 },
                 padding: {
-                    // top: .15,
+                    // top: 15,
                 },
             };
             let layout = layoutOnCanvas(canvas, {
                 direction: 'column',
                 justify: 'space-between',
                 // crossJustify: 'start',
-                padding: [.1, 'fraction'],
+                padding: 10,
                 content: [{
                     justify: 'center',
                     content: [{
@@ -475,7 +475,7 @@ export function current() {
                     fontSize: 10,
                     color: 'white',
                 },
-                padding: 0.01,
+                padding: 1,
                 inside: {
                     border: 'red',
                     grow: 1,

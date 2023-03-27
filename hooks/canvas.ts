@@ -2,10 +2,27 @@ import {
     createElement, createRef, RefObject, useEffect, useRef,
 } from "react";
 
-export function useCanvases(count: number) {
-    let refs = useRefArray<HTMLCanvasElement>(count);
-    let nodes = Array(count).fill(undefined).map(
-        (_, idx) => createElement('canvas', {
+export function useCanvases(count: number): void;
+export function useCanvases(dimensions: CanvasDimensions[]): void;
+export function useCanvases(arg: number | CanvasDimensions[]) {
+    if (typeof arg === 'number') {
+        return useCanvasesImpl(Array(arg).fill({
+            width: '100%',
+            height: '100%',
+        }));
+    } else {
+        return useCanvasesImpl(arg);
+    }
+}
+
+type CanvasDimensions = {
+    width: number | string,
+    height: number | string,
+};
+function useCanvasesImpl(dims: CanvasDimensions[]) {
+    let refs = useRefArray<HTMLCanvasElement>(dims.length);
+    let nodes = dims.map(
+        (dim, idx) => createElement('canvas', {
             ref: refs[idx],
             key: `layer-${idx}`,
             style: {
@@ -13,8 +30,8 @@ export function useCanvases(count: number) {
                 backgroundColor: 'transparent',
                 gridColumn: 1,
                 gridRow: 1,
-                width: '100%',
-                height: '100%',
+                width: dim.width,
+                height: dim.height,
             },
         }),
     );

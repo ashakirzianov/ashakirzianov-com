@@ -9,8 +9,8 @@ export function useCanvases(dimensions: CanvasDimensions[]): UseCanvasesReturn;
 export function useCanvases(arg: number | CanvasDimensions[] | CanvasDimensions, arg2?: number) {
     if (typeof arg === 'number') {
         return useCanvasesImpl(Array(arg).fill({
-            width: '100%',
-            height: '100%',
+            width: undefined,
+            height: undefined,
         }));
     } else if (Array.isArray(arg)) {
         return useCanvasesImpl(arg);
@@ -20,8 +20,8 @@ export function useCanvases(arg: number | CanvasDimensions[] | CanvasDimensions,
 }
 
 type CanvasDimensions = {
-    width: number | string,
-    height: number | string,
+    width: number | undefined,
+    height: number | undefined,
 };
 function useCanvasesImpl(dims: CanvasDimensions[]) {
     let refs = useRefArray<HTMLCanvasElement>(dims.length);
@@ -29,13 +29,15 @@ function useCanvasesImpl(dims: CanvasDimensions[]) {
         (dim, idx) => createElement('canvas', {
             ref: refs[idx],
             key: `layer-${idx}`,
+            width: dim.width,
+            height: dim.height,
             style: {
                 zIndex: idx,
                 backgroundColor: 'transparent',
                 gridColumn: 1,
                 gridRow: 1,
-                width: dim.width,
-                height: dim.height,
+                width: '100%',
+                height: '100%',
             },
         }),
     );
@@ -80,14 +82,24 @@ export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement> | undef
 }
 
 export function setupCanvas(canvas: HTMLCanvasElement) {
+    if (canvas.width === undefined || canvas.width === 300) {
+        canvas.dataset['autowidth'] = 'true';
+    }
+    if (canvas.height === undefined || canvas.height === 150) {
+        canvas.dataset['autoheight'] = 'true';
+    }
     let dpi = window.devicePixelRatio || 1;
     let style = getComputedStyle(canvas);
     let styleWidth = style.getPropertyValue('width');
     let styleHeight = style.getPropertyValue('height');
     let width = parseInt(styleWidth, 10) * dpi;
     let height = parseInt(styleHeight, 10) * dpi;
-    canvas.setAttribute('width', width.toString());
-    canvas.setAttribute('height', height.toString());
+    if (canvas.dataset['autowidth']) {
+        canvas.setAttribute('width', width.toString());
+    }
+    if (canvas.dataset['autoheight']) {
+        canvas.setAttribute('height', height.toString());
+    }
 }
 
 function useRefArray<T>(count: number) {

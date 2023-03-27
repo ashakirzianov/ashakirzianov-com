@@ -1,14 +1,24 @@
 import { Animator } from "./animator";
 import { Layer } from "./layer";
+import { Dimensions } from "./layout";
 
 export type Scene<State = unknown> = {
     state: State,
-    animator?: Animator<State>,
     layers: Layer<State>[],
+    dimensions?: Dimensions,
+    animator?: Animator<State>,
 };
 
 export function scene<T>(scene: Scene<T>): Scene<T> {
     return scene;
+}
+
+export function sceneDimensions(dimensions: Dimensions): Scene {
+    return {
+        state: null,
+        layers: [],
+        dimensions,
+    };
 }
 
 export function combineScenes(...scenes: Scene<any>[]): Scene {
@@ -20,6 +30,21 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
                 return animator ? animator(state, frame) : state;
             });
         },
+        dimensions: scenes.reduce<Dimensions | undefined>(
+            (prev, curr) => {
+                if (curr.dimensions && prev !== undefined) {
+                    return {
+                        width: Math.max(curr.dimensions.width, prev.width),
+                        height: Math.max(curr.dimensions.height, prev.height),
+                    };
+                } else if (curr.dimensions) {
+                    return curr.dimensions;
+                } else {
+                    return prev;
+                }
+            },
+            undefined,
+        ),
         layers: scenes.map((scene, idx) => {
             return scene.layers.map((layer): Layer<unknown[]> => {
                 return {

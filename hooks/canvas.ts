@@ -2,16 +2,20 @@ import {
     createElement, createRef, RefObject, useEffect, useRef,
 } from "react";
 
-export function useCanvases(count: number): void;
-export function useCanvases(dimensions: CanvasDimensions[]): void;
-export function useCanvases(arg: number | CanvasDimensions[]) {
+export type UseCanvasesReturn = ReturnType<typeof useCanvasesImpl>;
+export function useCanvases(count: number): UseCanvasesReturn;
+export function useCanvases(dimension: CanvasDimensions, count: number): UseCanvasesReturn;
+export function useCanvases(dimensions: CanvasDimensions[]): UseCanvasesReturn;
+export function useCanvases(arg: number | CanvasDimensions[] | CanvasDimensions, arg2?: number) {
     if (typeof arg === 'number') {
         return useCanvasesImpl(Array(arg).fill({
             width: '100%',
             height: '100%',
         }));
-    } else {
+    } else if (Array.isArray(arg)) {
         return useCanvasesImpl(arg);
+    } else {
+        return useCanvasesImpl(Array(arg2).fill(arg));
     }
 }
 

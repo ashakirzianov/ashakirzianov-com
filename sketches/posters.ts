@@ -2,7 +2,7 @@ import {
     alternateAnimators,
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
-    renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, TextStyle, vals,
+    renderPositionedLayout, scene, sceneDimensions, sidesTextLayout, staticLayer, TextLayout, TextStyle, vals,
 } from '@/sketcher';
 import {
     fittedRainbow, letters2, molecules, pastelSlinky, slinky,

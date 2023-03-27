@@ -10,7 +10,6 @@ export type TextFont = string;
 export type TextStyle = {
     font?: TextFont,
     color?: Color,
-    rotation?: number,
     useFontBoundingBox?: boolean,
     compositeOperation?: GlobalCompositeOperation,
     letterBox?: {
@@ -23,6 +22,7 @@ export type TextLayoutProps = TextStyle & {
     text?: string,
     hidden?: boolean,
     border?: Color,
+    rotation?: number,
 }
 export type TextLayout = LayoutElement<TextLayoutProps>;
 export type PositionedTextLayout = PositionedLayout<TextLayoutProps>;

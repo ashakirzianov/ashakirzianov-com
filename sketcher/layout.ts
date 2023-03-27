@@ -10,7 +10,7 @@ export type Justification = 'start' | 'center' | 'end'
     | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutUnit = 'fraction' | 'point';
+export type LayoutUnit = 'fraction' | 'point' | 'ew' | 'eh';
 export type LayoutSize = number
     | readonly [value: number, unit?: LayoutUnit];
 export type LayoutPadding = LayoutSize | {
@@ -246,9 +246,12 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
         switch (unit) {
             case 'point':
                 return value;
+            case 'eh':
+                return value * env.element.height;
+            case 'ew':
+                return value * env.element.width;
             case 'fraction':
             case undefined:
-            default:
                 return direction === 'horizontal'
                     ? value * env.element.width
                     : value * env.element.height;

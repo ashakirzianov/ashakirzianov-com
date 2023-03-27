@@ -47,6 +47,7 @@ export function layoutText({
     return layoutElement(root, {
         position,
         dimensions,
+        view: dimensions,
         resolveDimensions(element) {
             if (element.text === undefined) {
                 return undefined;

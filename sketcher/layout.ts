@@ -10,7 +10,9 @@ export type Justification = 'start' | 'center' | 'end'
     | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutUnit = 'fraction' | 'point' | 'ew' | 'eh';
+export type LayoutUnit = 'fraction' | 'point'
+    | 'ew' | 'eh'
+    | 'vw' | 'vh';
 export type LayoutSize = number
     | readonly [value: number, unit?: LayoutUnit];
 export type LayoutPadding = LayoutSize | {
@@ -41,12 +43,13 @@ export type PositionedLayout<T> = PositionedElement<T>[];
 export type LayoutContext<T> = {
     position: Position,
     dimensions: Dimensions,
+    view: Dimensions,
     resolveDimensions: (element: T) => Dimensions | undefined,
 };
 
 export function layoutElement<T>(
     root: LayoutElement<T>,
-    { position, dimensions, resolveDimensions }: LayoutContext<T>,
+    { position, dimensions, view, resolveDimensions }: LayoutContext<T>,
 ): PositionedLayout<T> {
     let result: PositionedLayout<T> = [];
 
@@ -57,6 +60,7 @@ export function layoutElement<T>(
     let direction = root.direction ?? 'row';
     let sizeEnv: SizeEnvironment = {
         element: dimensions,
+        view,
     };
     let padding = resolvePadding(root.padding ?? 0, sizeEnv);
 
@@ -160,6 +164,7 @@ export function layoutElement<T>(
         let childLayout = layoutElement(child, {
             position: addToPosition(position, offset, direction),
             dimensions: toAbsolute(dim, direction),
+            view,
             resolveDimensions,
         });
         result.push(...childLayout);
@@ -236,6 +241,7 @@ function addToPosition(position: Position, relative: RelativeDimensions, directi
 
 type SizeEnvironment = {
     element: Dimensions,
+    view: Dimensions,
 };
 type SizeDirection = 'horizontal' | 'vertical';
 function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnvironment): number {
@@ -244,14 +250,19 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
     } else {
         let [value, unit] = size;
         switch (unit) {
+            case undefined:
+                return resolveSize([value, 'fraction'], direction, env);
             case 'point':
                 return value;
             case 'eh':
                 return value * env.element.height;
             case 'ew':
                 return value * env.element.width;
+            case 'vh':
+                return value * env.view.height;
+            case 'vw':
+                return value * env.view.width;
             case 'fraction':
-            case undefined:
                 return direction === 'horizontal'
                     ? value * env.element.width
                     : value * env.element.height;

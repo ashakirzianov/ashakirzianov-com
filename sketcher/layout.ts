@@ -10,7 +10,7 @@ export type Justification = 'start' | 'center' | 'end'
     | 'space-between' | 'space-around' | 'space-evenly';
 export type CrossJustification = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutDirection = 'row' | 'column';
-export type LayoutUnit = 'fraction' | 'point'
+export type LayoutUnit = 'fraction' | 'perc' | 'point'
     | 'ew' | 'eh'
     | 'vw' | 'vh';
 export type LayoutSize = number
@@ -239,7 +239,7 @@ function addToPosition(position: Position, relative: RelativeDimensions, directi
         : { left: position.left + relative.cross, top: position.top + relative.main };
 }
 
-type SizeEnvironment = {
+export type SizeEnvironment = {
     element: Dimensions,
     view: Dimensions,
 };
@@ -252,6 +252,8 @@ function resolveSize(size: LayoutSize, direction: SizeDirection, env: SizeEnviro
         switch (unit) {
             case undefined:
                 return resolveSize([value, 'fraction'], direction, env);
+            case 'perc':
+                return resolveSize([value / 100, 'fraction'], direction, env);
             case 'point':
                 return value;
             case 'eh':

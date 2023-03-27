@@ -1,16 +1,15 @@
 import { boundingBox, boxSize } from "./box";
 import { Color, resolveColor } from "./color";
 import {
-    Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, Position,
-    PositionedElement, PositionedLayout,
+    Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, LayoutSize, Position,
+    PositionedElement, PositionedLayout, SizeEnvironment,
 } from "./layout";
 import { removeUndefined } from "./misc";
 import { Canvas, Canvas2DContext } from "./render";
 
 export type TextFont = {
     font?: string,
-    fontSize?: number | string,
-    fontUnits?: string,
+    fontSize?: LayoutSize,
     fontFamily?: string,
     bold?: boolean,
     italic?: boolean,
@@ -37,7 +36,7 @@ export type PositionedTextLayout = PositionedLayout<TextLayoutProps>;
 
 export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
     return layoutText({
-        context: canvas.context,
+        canvas,
         position: { top: 0, left: 0 },
         dimensions: { width: canvas.width, height: canvas.height },
         root,
@@ -45,9 +44,9 @@ export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
 }
 
 export function layoutText({
-    context, position, dimensions, root,
+    canvas, position, dimensions, root,
 }: {
-    context: Canvas2DContext,
+    canvas: Canvas,
     position: Position,
     dimensions: Dimensions,
     root: TextLayout,
@@ -60,10 +59,11 @@ export function layoutText({
             if (element.text === undefined) {
                 return undefined;
             }
+            let { context } = canvas;
             context.save();
             context.textBaseline = 'alphabetic';
             context.textAlign = 'center';
-            applyTextStyle(context, element);
+            applyTextStyle(canvas, element);
             applyElementTransform(context, element);
             let dims: Dimensions | undefined = undefined;
             let measures = context.measureText(element.text);
@@ -113,35 +113,36 @@ export function layoutAndRender({ canvas, root, style }: {
 }) {
     canvas.context.save();
     if (style) {
-        applyTextStyle(canvas.context, style);
+        applyTextStyle(canvas, style);
     }
     let layout = layoutOnCanvas(canvas, root);
-    renderPositionedLayout({ layout, context: canvas.context });
+    renderPositionedLayout({ layout, canvas });
     canvas.context.restore();
 }
 
-export function renderPositionedLayout({ context, layout }: {
-    context: Canvas2DContext,
+export function renderPositionedLayout({ canvas, layout }: {
+    canvas: Canvas,
     layout: PositionedTextLayout,
 }) {
-    context.save();
+    canvas.context.save();
     layout.forEach(positioned => renderPositionedElement({
-        positioned, context,
+        positioned, canvas,
     }));
-    context.restore();
+    canvas.context.restore();
 }
 
 export function renderPositionedElement({
-    context, positioned: { element, position, dimensions },
+    canvas, positioned: { element, position, dimensions },
 }: {
-    context: Canvas2DContext,
+    canvas: Canvas,
     positioned: PositionedElement<TextLayoutProps>,
 }) {
     if (element.hidden) {
         return;
     }
+    let { context } = canvas;
     context.save();
-    applyTextStyle(context, element);
+    applyTextStyle(canvas, element);
     if (element.text) {
         context.save();
         context.textAlign = 'center';
@@ -190,14 +191,16 @@ export function renderPositionedElement({
     context.restore();
 }
 
-export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {
-    let font = resolveFont(style);
-    context.font = font;
+export function applyTextStyle(canvas: Canvas, style: TextStyle) {
+    let font = resolveFont(style, canvas);
+    if (font) {
+        canvas.context.font = font;
+    }
     if (style.color) {
-        context.fillStyle = resolveColor(style.color, context);
+        canvas.context.fillStyle = resolveColor(style.color, canvas.context);
     }
     if (style.compositeOperation) {
-        context.globalCompositeOperation = style.compositeOperation;
+        canvas.context.globalCompositeOperation = style.compositeOperation;
     }
 }
 
@@ -314,7 +317,7 @@ export function sidesTextLayout({
         height: bottomElement.position.top - position.top,
     };
     let insideLayout = inside ? layoutText({
-        context: canvas.context,
+        canvas,
         position,
         dimensions,
         root: inside,
@@ -325,21 +328,43 @@ export function sidesTextLayout({
 
 function resolveFont({
     font,
-    fontFamily, fontSize, fontUnits,
+    fontFamily, fontSize,
     bold, italic, smallCaps,
-}: TextFont): string {
+}: TextFont, dimensions: Dimensions): string | undefined {
     if (font) {
         return font;
+    } else if (fontSize || fontFamily) {
+        let prefix = removeUndefined([
+            bold ? 'bold' : undefined,
+            italic ? 'italic' : undefined,
+            smallCaps ? 'small-caps' : undefined,
+        ]).join(' ');
+        let size = resolveFontSize(fontSize ?? 1, dimensions);
+        let family = fontFamily ?? 'sans-serif';
+        return `${prefix} ${size}pt ${family}`;
+    } else {
+        return undefined;
     }
-    let prefix = removeUndefined([
-        bold ? 'bold' : undefined,
-        italic ? 'italic' : undefined,
-        smallCaps ? 'small-caps' : undefined,
-    ]).join(' ');
-    let units = fontUnits ?? 'vh';
-    let size = typeof fontSize === 'number'
-        ? `${fontSize}${units}`
-        : (fontSize ?? '12pt');
-    let family = fontFamily ?? 'sans-serif';
-    return `${prefix} ${size} ${family}`;
+}
+
+function resolveFontSize(fontSize: LayoutSize, dimensions: Dimensions): number {
+    if (typeof fontSize === 'number') {
+        return resolveFontSize([fontSize], dimensions);
+    } else {
+        let [value, units] = fontSize;
+        switch (units) {
+            case undefined:
+                return resolveFontSize([value, 'perc'], dimensions);
+            case 'point':
+                return value;
+            case 'perc':
+                return resolveFontSize([value / 100, 'vh'], dimensions);
+            case 'fraction':
+                return resolveFontSize([value * 100, 'perc'], dimensions);
+            case 'eh': case 'vh':
+                return value * dimensions.height;
+            case 'ew': case 'vw':
+                return value * dimensions.width;
+        }
+    }
 }

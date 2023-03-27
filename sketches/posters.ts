@@ -25,9 +25,9 @@ export function pink() {
         pastelSlinky(),
         fromLayers({
             prepare({ canvas }) {
-                let unit = canvas.height / 100;
                 let font = {
-                    font: `bold ${unit * 20}pt sans-serif`,
+                    fontSize: 20,
+                    bold: true,
                     color: 'white',
                 };
                 let layout = layoutOnCanvas(canvas, {
@@ -47,8 +47,7 @@ export function pink() {
                             content: [{
                                 id: 'small-text',
                                 text: 'Gentlest of all colors',
-                                fontSize: unit * 1,
-                                fontUnits: 'pt',
+                                fontSize: 1,
                                 color: 'black',
                                 rotation: -Math.PI / 2
                             }],
@@ -84,7 +83,7 @@ export function pink() {
                 });
 
                 for (let positioned of layout) {
-                    renderPositionedElement({ context: canvas.context, positioned });
+                    renderPositionedElement({ canvas, positioned });
                 }
             },
         }),
@@ -97,9 +96,9 @@ export function sm() {
         colorLayer([220, 63, 66]),
         {
             prepare({ canvas }) {
-                let unit = canvas.height / 100;
                 let font = {
-                    font: `bold ${34.5 * unit}pt sans-serif`,
+                    fontSize: 34.5,
+                    bold: true,
                     color: 'white',
                 };
                 let layout = layoutOnCanvas(canvas, {
@@ -118,8 +117,7 @@ export function sm() {
                             content: [{
                                 id: 'small-text',
                                 text: 'Zeven grafici uit Joegosiavië',
-                                fontSize: 2,
-                                fontUnits: 'vh',
+                                fontSize: .8,
                                 color: 'black',
                                 rotation: -Math.PI / 2,
                             }],
@@ -166,7 +164,7 @@ export function sm() {
                 canvas.context.clearRect(x, y, side, side);
 
                 for (let positioned of layout) {
-                    renderPositionedElement({ context: canvas.context, positioned });
+                    renderPositionedElement({ canvas, positioned });
                 }
             },
         },
@@ -223,9 +221,9 @@ export function helloWorld() {
             canvas.context.lineWidth = 5;
             layoutAndRender({
                 canvas, root, style: {
-                    fontSize: 10,
-                    fontUnits: 'vh',
-                    fontFamily: 'serif',
+                    font: '10vh serif',
+                    // fontSize: 10,
+                    // fontFamily: 'serif',
                     color: 'red',
                 }
             });
@@ -257,7 +255,7 @@ export function alina() {
                 clearFrame({ canvas, color: 'pink' });
                 renderMask(canvas.context, context => {
                     for (let positioned of layout) {
-                        renderPositionedElement({ context, positioned });
+                        renderPositionedElement({ canvas, positioned });
                     }
                 });
             },
@@ -299,7 +297,7 @@ export function styleIsTheAnswer() {
                 clearFrame({ canvas, color: 'black' });
                 renderMask(canvas.context, context => {
                     for (let positioned of layout) {
-                        renderPositionedElement({ context, positioned });
+                        renderPositionedElement({ canvas, positioned });
                     }
                 });
             },
@@ -354,13 +352,11 @@ export function beautifulWorld() {
                         content: ['Beautiful', 'world,', 'where', 'are', 'you?']
                             .map((text, n): TextLayout => ({
                                 text,
-                                fontSize: unit * 10,
-                                fontUnits: 'pt',
+                                fontSize: 10,
                                 bold: true,
                                 color: 'white',
                                 crossOffset: cross[n]!,
                                 offset: main[n]!,
-                                // border: 'red',
                                 compositeOperation: 'destination-out',
                             })),
                     };
@@ -375,7 +371,6 @@ export function beautifulWorld() {
                                 {
                                     text: ' Normal People'.toLowerCase(),
                                     bold: true, smallCaps: true, italic: true,
-                                    fontSize: 3,
                                 },
                             ],
                             left: [{
@@ -387,7 +382,7 @@ export function beautifulWorld() {
                         },
                         padding: 0.02,
                         style: {
-                            fontSize: 3,
+                            fontSize: 1,
                             bold: true,
                             smallCaps: true,
                             // color: 'violet',
@@ -399,7 +394,7 @@ export function beautifulWorld() {
 
                     clearFrame({ canvas, color: 'black' });
                     renderPositionedLayout({
-                        context: canvas.context,
+                        canvas,
                         layout: sides,
                     });
                 }
@@ -414,7 +409,7 @@ export function loveMeTwoTimes() {
         letters2('Love me two times, baby'),
         fromLayers(staticLayer(({ canvas }) => {
             let style = {
-                fontSize: 2,
+                fontSize: 1,
                 letterBox: {
                     padding: .15,
                     borderColor: 'black',
@@ -452,7 +447,7 @@ export function loveMeTwoTimes() {
                 }],
             });
             renderPositionedLayout({
-                layout, context: canvas.context,
+                layout, canvas,
             });
         }))
     );
@@ -488,7 +483,7 @@ export function current() {
                 canvas,
             });
             renderPositionedLayout({
-                context: canvas.context,
+                canvas,
                 layout,
             });
         }),

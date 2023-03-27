@@ -22,7 +22,7 @@ export type LayoutPadding = LayoutSize | {
 };
 export type LayoutElement<T> = T & {
     id?: string,
-    content?: LayoutElement<T>[],
+    content?: readonly LayoutElement<T>[],
     grow?: number,
     direction?: LayoutDirection,
     justify?: Justification,

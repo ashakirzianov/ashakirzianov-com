@@ -4,8 +4,8 @@ import { getCanvasFromRef, useCanvases } from "./canvas";
 
 export function useSketcher<State>(props: LaunchProps<State>) {
     let { node, refs } = useCanvases(Array(props.scene.layers.length).fill(props.scene.dimensions ?? {
-        width: 2400,
-        height: 3200,
+        width: undefined,
+        height: undefined,
     }));
     useEffect(() => {
         let { launch } = launcher(props);

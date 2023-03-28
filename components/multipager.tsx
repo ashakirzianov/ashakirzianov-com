@@ -4,11 +4,14 @@ import { useSketcher } from "@/hooks/sketcher";
 import { GetServerSideProps } from "next";
 
 export function multipager({
-    variations, title, description,
+    variations,
+    title, description, titlePlaceholder, descriptionPlaceholder,
     period, skip, chunk,
 }: {
     title?: string,
+    titlePlaceholder?: string,
     description?: string,
+    descriptionPlaceholder?: string,
     variations: Scene[],
     period?: number,
     skip?: number,
@@ -44,7 +47,10 @@ export function multipager({
             chunk,
         });
 
-        return <PosterPage title={title ?? scene.title} description={description ?? scene.description}>
+        return <PosterPage
+            title={title ?? scene.title ?? titlePlaceholder}
+            description={description ?? scene.description ?? descriptionPlaceholder}
+        >
             <div>
                 {node}
             </div>

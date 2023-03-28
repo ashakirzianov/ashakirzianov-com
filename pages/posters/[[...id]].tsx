@@ -13,8 +13,8 @@ export const variations = [
 export const {
     getServerSideProps, SketchComponent,
 } = multipager({
-    title: 'Posters',
-    description: 'Poster experiments',
+    titlePlaceholder: 'Poster',
+    descriptionPlaceholder: 'Dynamic poster',
     variations,
 });
 export default SketchComponent;

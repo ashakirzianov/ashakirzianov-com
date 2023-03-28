@@ -5,7 +5,7 @@ import {
 import {
     bubbles, bubblesFlat, rave, molecules, knot,
     pastelCircles, slinky, rainbowStrings,
-    balanced, strokedSlinky, letters, letters2,
+    balanced, strokedSlinky, letters,
 } from './forms';
 
 export const variations = [
@@ -94,9 +94,5 @@ export const variations = [
     combineScenes(
         fromLayers(colorLayer(gray(230))),
         letters('Love me two times, baby'),
-    ),
-    combineScenes(
-        fromLayers(colorLayer(gray(230))),
-        letters2('Love me two times, baby'),
     ),
 ];

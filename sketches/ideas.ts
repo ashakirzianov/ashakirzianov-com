@@ -1,24 +1,12 @@
 import {
-    alternateAnimators,
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
-    renderPositionedLayout, scene, sidesTextLayout, staticLayer,
+    renderPositionedLayout, sidesTextLayout, staticLayer,
     TextLayout, vals,
 } from '@/sketcher';
 import {
-    rave, letters2, molecules, pastelCircles, slinky,
+    molecules, pastelCircles, slinky,
 } from './forms';
-
-export const variations: any[] = [
-    pink(),
-    sm(),
-    helloWorld(),
-    alina(),
-    styleIsTheAnswer(),
-    beautifulWorld(),
-    loveMeTwoTimes(),
-    // current(),
-];
 
 export function pink() {
     return combineScenes(
@@ -305,153 +293,6 @@ export function styleIsTheAnswer() {
                 });
             },
         }),
-    );
-}
-
-export function beautifulWorld() {
-    let deg = 10;
-    let duration = 20;
-    let initialState = {
-        cross: [0, -5, -33, -40, -35],
-        main: [0, 0, 0, 0, 0],
-    }
-    return combineScenes(
-        fromLayers(colorLayer('white')),
-        rave(),
-        scene({
-            state: initialState,
-            animator: alternateAnimators([{
-                duration,
-                animator({ cross, main }) {
-                    return {
-                        cross: cross.map((c, i) => c - (c - initialState.cross[i]!) / 2),
-                        main: main.map((c, i) => c - (c - initialState.main[i]!) / duration),
-                    };
-                },
-            }, {
-                duration: 1,
-                animator: () => initialState,
-            }, {
-                duration: duration * 1.5,
-                animator({ cross, main }) {
-                    return {
-                        cross: cross.map(c => c + (Math.random() - .5) * deg),
-                        main: main.map(c => c + (Math.random() - .5) * deg),
-                    };
-                },
-            }]),
-            layers: [{
-                render({ canvas, state: { cross, main } }) {
-                    let inside: TextLayout = {
-                        grow: 1,
-                        direction: 'column',
-                        justify: 'center',
-                        crossJustify: 'end',
-                        padding: {
-                            top: 5,
-                            right: 10,
-                        },
-                        content: ['Beautiful', 'world,', 'where', 'are', 'you?']
-                            .map((text, n): TextLayout => ({
-                                text,
-                                fontSize: 10,
-                                bold: true,
-                                color: 'white',
-                                crossOffset: cross[n]!,
-                                offset: main[n]!,
-                                compositeOperation: 'destination-out',
-                            })),
-                    };
-                    let sides = sidesTextLayout({
-                        canvas,
-                        texts: {
-                            top: {
-                                text: 'Sally Rooney'.toUpperCase(),
-                            },
-                            right: [
-                                'Author of'.toLowerCase(),
-                                {
-                                    text: ' Normal People'.toLowerCase(),
-                                    bold: true, smallCaps: true, italic: true,
-                                },
-                            ],
-                            left: [{
-                                text: '#1 New Your Times Bestseller'.toLowerCase(),
-                            }],
-                            bottom: [{
-                                text: 'Los Angeles | Venice | 2023'.toLowerCase(),
-                            }],
-                        },
-                        padding: 0.02,
-                        style: {
-                            fontSize: 1,
-                            bold: true,
-                            smallCaps: true,
-                            // color: 'violet',
-                            color: [234, 113, 196],
-                            useFontBoundingBox: true,
-                        },
-                        inside,
-                    });
-
-                    clearFrame({ canvas, color: 'black' });
-                    renderPositionedLayout({
-                        canvas,
-                        layout: sides,
-                    });
-                }
-            }]
-        }),
-    );
-}
-
-export function loveMeTwoTimes() {
-    return combineScenes(
-        fromLayers(colorLayer(gray(240))),
-        letters2('Love me two times, baby'),
-        fromLayers(staticLayer(({ canvas }) => {
-            let style = {
-                fontSize: 1,
-                letterBox: {
-                    padding: 15,
-                    borderColor: 'black',
-                    borderWidth: .1,
-                },
-                padding: {
-                    // top: 15,
-                },
-            };
-            let layout = layoutOnCanvas(canvas, {
-                direction: 'column',
-                justify: 'space-between',
-                // crossJustify: 'start',
-                padding: 10,
-                content: [{
-                    justify: 'center',
-                    content: [{
-                        // text: 'Los Angeles, California',
-                        ...style,
-                        letterBox: {},
-                        // letterBox: undefined,
-                    }],
-                }, {
-                    direction: 'column',
-                    content: [{
-                        text: 'The Doors',
-                        ...style,
-                    }, {
-                        text: 'Lyrics by Jim Morrison',
-                        ...style,
-                    }, {
-                        text: 'November 1967',
-                        ...style,
-                    }],
-                }],
-            });
-            renderPositionedLayout({
-                layout, canvas,
-            });
-        }))
     );
 }
 

@@ -1,12 +1,12 @@
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { variations } from "@/sketches/posters";
+import { loveMeTwoTimes } from "@/sketches/posters";
 
 // @refresh reset
 
 export default function Main() {
   let { node } = useSketcher({
-    scene: variations[0]!,
+    scene: loveMeTwoTimes(),
     period: 40,
     chunk: 500,
   });

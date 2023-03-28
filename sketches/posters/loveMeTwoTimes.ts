@@ -2,8 +2,7 @@ import {
     arrayAnimator, boundingBox, boxCenter, boxesForText, breakIntoLines,
     clearCanvas, colorLayer, combineScenes, fromLayers, gray, layoutOnCanvas,
     modItem, rainbow, reduceAnimators, renderPositionedLayout,
-    resolvePrimitiveColor, scene, sceneMeta, staticLayer, traceAnimator, vector,
-    velocityStep, zoomToFit,
+    resolvePrimitiveColor, scene, sceneMeta, staticLayer, traceAnimator, vector, velocityStep, zoomToFit,
 } from "@/sketcher";
 
 export function loveMeTwoTimes() {

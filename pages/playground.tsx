@@ -1,6 +1,6 @@
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/hooks/sketcher";
-import { playground } from "@/sketches/playground";
+import { colorLayer, fromLayers } from "@/sketcher";
 
 // @refresh reset
 
@@ -15,4 +15,10 @@ export default function Playground() {
             {node}
         </div>
     </PosterPage>;
+}
+
+function playground() {
+    return fromLayers(
+        colorLayer([230, 230, 230]),
+    );
 }

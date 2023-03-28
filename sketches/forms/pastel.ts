@@ -1,10 +1,25 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, rainbow, modItem, vals,
+    randomRange, rainbow, modItem, vals, combineScenes, fromLayers, clearFrame,
 } from '@/sketcher';
 import {
     enchanceWithSetI, randomObject, setsScene, xSets, zoomToBoundingBox,
 } from './utils';
+
+export function example() {
+    let back = rainbow({ count: 120, s: 40, l: 70 });
+    return combineScenes(
+        fromLayers({
+            render({ canvas, frame }) {
+                clearFrame({
+                    canvas,
+                    color: modItem(back, frame),
+                });
+            },
+        }),
+        pastelCircles(),
+    )
+}
 
 export function pastelCircles() {
     let batchRange = { min: 10, max: 10 };

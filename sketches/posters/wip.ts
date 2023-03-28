@@ -1,12 +1,12 @@
 import {
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
     layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
-    renderPositionedLayout, sidesTextLayout, staticLayer,
     TextLayout, vals,
 } from '@/sketcher';
 import {
-    molecules, pastelCircles, slinky,
-} from './forms';
+    molecules, pastelCircles,
+} from '../forms';
+import { slinky } from '../forms/wip';
 
 export function pink() {
     return combineScenes(
@@ -292,43 +292,6 @@ export function styleIsTheAnswer() {
                     }
                 });
             },
-        }),
-    );
-}
-
-export function current() {
-    return fromLayers(
-        colorLayer('black'),
-        staticLayer(({ canvas }) => {
-            let layout = sidesTextLayout({
-                texts: {
-                    left: { text: 'Left', justify: 'center' },
-                    top: {
-                        text: 'Top',
-                        color: 'red',
-                        border: 'blue',
-                    },
-                    right: 'Right',
-                    bottom: {
-                        text: 'Bottom',
-                        hidden: true,
-                    },
-                },
-                style: {
-                    fontSize: 10,
-                    color: 'white',
-                },
-                padding: 1,
-                inside: {
-                    border: 'red',
-                    grow: 1,
-                },
-                canvas,
-            });
-            renderPositionedLayout({
-                canvas,
-                layout,
-            });
         }),
     );
 }

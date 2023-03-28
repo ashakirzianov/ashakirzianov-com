@@ -1,12 +1,14 @@
 import {
-    rainbow, clearFrame, gray, multRGBA, modItem,
+    rainbow, clearFrame, gray, modItem, multRGBA,
     pulsating, makeStops, fromRGBA, combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 import {
     bubbles, bubblesFlat, rave, molecules, knot,
-    pastelCircles, slinky, rainbowStrings,
-    balanced, strokedSlinky, letters,
-} from './forms';
+    pastelCircles, balanced,
+} from '../forms';
+import {
+    slinky, rainbowStrings, strokedSlinky, letters,
+} from '../forms/wip';
 
 export const variations = [
     combineScenes(
@@ -84,15 +86,14 @@ export const variations = [
             kind: 'gradient',
             start: [0, 0], end: [0, 1],
             stops: makeStops({
-                0: fromRGBA({ r: 230, g: 230, b: 230 }),
-                0.7: fromRGBA(multRGBA({ r: 230, g: 230, b: 230 }, 1.2)),
-                1: gray(50),
+                0: gray(180),
+                0.2: fromRGBA({ r: 230, g: 230, b: 230 }),
             }),
         })),
         knot(),
     ),
     combineScenes(
         fromLayers(colorLayer(gray(230))),
-        letters('Love me two times, baby'),
+        letters('What is going on?'),
     ),
 ];

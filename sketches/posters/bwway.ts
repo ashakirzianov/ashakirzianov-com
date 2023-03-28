@@ -14,7 +14,7 @@ export function bwway() {
     return combineScenes(
         sceneMeta({
             title: 'Beuatiful World, Where Are You',
-            description: `Poster for Sally Rooney's book "Beautiful World, Where Are You`,
+            description: `Poster for Sally Rooney's book "Beautiful World, Where Are You"`,
         }),
         fromLayers(colorLayer('white')),
         rave(),

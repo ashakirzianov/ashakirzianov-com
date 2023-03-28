@@ -9,6 +9,7 @@ import {
 import {
     slinky, rainbowStrings, strokedSlinky, letters,
 } from '../forms/wip';
+import { helloWorld, styleIsTheAnswer } from '../posters/wip';
 
 export const variations = [
     combineScenes(
@@ -96,4 +97,6 @@ export const variations = [
         fromLayers(colorLayer(gray(230))),
         letters('What is going on?'),
     ),
+    styleIsTheAnswer(),
+    helloWorld(),
 ];

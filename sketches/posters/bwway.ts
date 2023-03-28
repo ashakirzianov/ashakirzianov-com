@@ -1,6 +1,6 @@
 import {
     alternateAnimators, clearFrame, colorLayer, combineScenes, fromLayers,
-    renderPositionedLayout, scene, sidesTextLayout, TextLayout,
+    renderPositionedLayout, scene, sceneMeta, sidesTextLayout, TextLayout,
 } from "@/sketcher";
 import { rave } from "../forms";
 
@@ -12,6 +12,10 @@ export function bwway() {
         main: [0, 0, 0, 0, 0],
     }
     return combineScenes(
+        sceneMeta({
+            title: 'Beuatiful World, Where Are You',
+            description: `Poster for Sally Rooney's book "Beautiful World, Where Are You`,
+        }),
         fromLayers(colorLayer('white')),
         rave(),
         scene({
@@ -78,7 +82,7 @@ export function bwway() {
                                 text: 'Los Angeles | Venice | 2023'.toLowerCase(),
                             }],
                         },
-                        padding: 0.02,
+                        padding: 1,
                         style: {
                             fontSize: 1,
                             bold: true,

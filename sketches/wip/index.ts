@@ -1,15 +1,16 @@
 import {
-    rainbow, clearFrame, gray, modItem, multRGBA,
-    pulsating, makeStops, fromRGBA, combineScenes, fromLayers, colorLayer,
+    rainbow, clearFrame, gray, modItem, pulsating, makeStops, fromRGBA,
+    combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 import {
-    bubbles, bubblesFlat, rave, molecules, knot,
-    pastelCircles, balanced,
+    bubbles, bubblesFlat, rave, molecules, knot, pastelCircles, balanced,
 } from '../forms';
 import {
     slinky, rainbowStrings, strokedSlinky, letters,
 } from '../forms/wip';
-import { helloWorld, styleIsTheAnswer } from '../posters/wip';
+import {
+    helloWorld, styleIsTheAnswer,
+} from '../posters/wip';
 
 export const variations = [
     combineScenes(

@@ -1,30 +1,42 @@
-import { boundingBox } from "./box";
+import { boundingBox, boxSize } from "./box";
 import { Color, resolveColor } from "./color";
 import {
-    Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, Position,
-    PositionedElement, PositionedLayout,
+    Dimensions, Justification, layoutElement, LayoutElement, LayoutPadding, LayoutSize, Position,
+    PositionedElement, PositionedLayout, SizeEnvironment,
 } from "./layout";
+import { removeUndefined } from "./misc";
 import { Canvas, Canvas2DContext } from "./render";
 
-export type TextFont = string;
-export type TextStyle = {
-    font?: TextFont,
+export type TextFont = {
+    font?: string,
+    fontSize?: LayoutSize,
+    fontFamily?: string,
+    bold?: boolean,
+    italic?: boolean,
+    smallCaps?: boolean,
+};
+export type TextStyle = TextFont & {
     color?: Color,
-    rotation?: number,
     useFontBoundingBox?: boolean,
     compositeOperation?: GlobalCompositeOperation,
+    letterBox?: {
+        padding?: LayoutSize,
+        borderColor?: Color,
+        borderWidth?: number,
+    },
 };
 export type TextLayoutProps = TextStyle & {
     text?: string,
     hidden?: boolean,
     border?: Color,
+    rotation?: number,
 }
 export type TextLayout = LayoutElement<TextLayoutProps>;
 export type PositionedTextLayout = PositionedLayout<TextLayoutProps>;
 
 export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
     return layoutText({
-        context: canvas.context,
+        canvas,
         position: { top: 0, left: 0 },
         dimensions: { width: canvas.width, height: canvas.height },
         root,
@@ -32,9 +44,9 @@ export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
 }
 
 export function layoutText({
-    context, position, dimensions, root,
+    canvas, position, dimensions, root,
 }: {
-    context: Canvas2DContext,
+    canvas: Canvas,
     position: Position,
     dimensions: Dimensions,
     root: TextLayout,
@@ -42,25 +54,41 @@ export function layoutText({
     return layoutElement(root, {
         position,
         dimensions,
+        view: dimensions,
         resolveDimensions(element) {
             if (element.text === undefined) {
                 return undefined;
             }
+            let { context } = canvas;
             context.save();
             context.textBaseline = 'alphabetic';
             context.textAlign = 'center';
-            applyTextStyle(context, element);
+            applyTextStyle(canvas, element);
             applyElementTransform(context, element);
-            let mesures = context.measureText(element.text);
-            let dims = element.useFontBoundingBox ?? false
-                ? transformDimensions({
-                    width: mesures.width,
-                    height: mesures.fontBoundingBoxAscent + mesures.fontBoundingBoxDescent,
-                }, context)
-                : transformDimensions({
-                    width: (mesures.actualBoundingBoxRight + mesures.actualBoundingBoxLeft),
-                    height: mesures.actualBoundingBoxDescent + mesures.actualBoundingBoxAscent,
+            let dims: Dimensions | undefined = undefined;
+            let measures = context.measureText(element.text);
+            if (element.letterBox) {
+                let side = (measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent);
+                let padding = resolveSize(
+                    element.letterBox.padding ?? 0,
+                    { width: side, height: side },
+                );
+                side += padding;
+                dims = transformDimensions({
+                    width: side * element.text.length,
+                    height: side,
                 }, context);
+            } else {
+                dims = element.useFontBoundingBox ?? false
+                    ? transformDimensions({
+                        width: measures.width,
+                        height: measures.fontBoundingBoxAscent + measures.fontBoundingBoxDescent,
+                    }, context)
+                    : transformDimensions({
+                        width: (measures.actualBoundingBoxRight + measures.actualBoundingBoxLeft),
+                        height: measures.actualBoundingBoxDescent + measures.actualBoundingBoxAscent,
+                    }, context);
+            }
             context.restore();
             return dims;
         },
@@ -76,12 +104,11 @@ function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): 
     let c = transform.transformPoint(new DOMPoint(w, h));
     let d = transform.transformPoint(new DOMPoint(-w, h));
     let box = boundingBox(
-        [a, b, c, d].map(p => ([p.x, p.y, 0]))
+        [a, b, c, d].map(p => ({
+            x: p.x, y: p.y, z: 0,
+        }))
     );
-    return {
-        width: box.end[0] - box.start[0],
-        height: box.end[1] - box.start[1],
-    };
+    return boxSize(box);
 }
 
 export function layoutAndRender({ canvas, root, style }: {
@@ -91,54 +118,74 @@ export function layoutAndRender({ canvas, root, style }: {
 }) {
     canvas.context.save();
     if (style) {
-        applyTextStyle(canvas.context, style);
+        applyTextStyle(canvas, style);
     }
     let layout = layoutOnCanvas(canvas, root);
-    renderPositionedLayout({ layout, context: canvas.context });
+    renderPositionedLayout({ layout, canvas });
     canvas.context.restore();
 }
 
-export function renderPositionedLayout({ context, layout }: {
-    context: Canvas2DContext,
+export function renderPositionedLayout({ canvas, layout }: {
+    canvas: Canvas,
     layout: PositionedTextLayout,
 }) {
-    context.save();
+    canvas.context.save();
     layout.forEach(positioned => renderPositionedElement({
-        positioned, context,
+        positioned, canvas,
     }));
-    context.restore();
+    canvas.context.restore();
 }
 
 export function renderPositionedElement({
-    context, positioned: { element, position, dimensions },
+    canvas, positioned: { element, position, dimensions },
 }: {
-    context: Canvas2DContext,
+    canvas: Canvas,
     positioned: PositionedElement<TextLayoutProps>,
 }) {
     if (element.hidden) {
         return;
     }
+    let { context } = canvas;
     context.save();
-    applyTextStyle(context, element);
+    applyTextStyle(canvas, element);
     if (element.text) {
         context.save();
         context.textAlign = 'center';
         context.translate(position.left, position.top);
-        if (element.rotation) {
+        if (element.letterBox) {
             context.textBaseline = 'middle';
-            context.translate(dimensions.width / 2, dimensions.height / 2);
-        } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
-            context.textBaseline = 'alphabetic';
-            context.textAlign = 'start';
-            let mesures = context.measureText(element.text);
-            if (element.useFontBoundingBox) {
-                context.translate(mesures.actualBoundingBoxLeft, mesures.fontBoundingBoxAscent);
-            } else {
-                context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
+            let side = dimensions.height;
+            context.translate(-side / 2, side / 2);
+            applyElementTransform(context, element);
+            for (let idx = 0; idx < element.text.length; idx++) {
+                let char = element.text[idx]!;
+                context.translate(side, 0);
+                context.fillText(char, 0, 0);
+                if (element.letterBox.borderColor) {
+                    context.strokeStyle = resolveColor(element.letterBox.borderColor, context);
+                    if (element.letterBox.borderWidth) {
+                        context.lineWidth = element.letterBox.borderWidth;
+                    }
+                    context.strokeRect(-side / 2, -side / 2, side, side);
+                }
             }
+        } else {
+            if (element.rotation) {
+                context.textBaseline = 'middle';
+                context.translate(dimensions.width / 2, dimensions.height / 2);
+            } else { // 'alphabetic' baseline is more precise (but doesn't work with rotation)
+                context.textBaseline = 'alphabetic';
+                context.textAlign = 'start';
+                let mesures = context.measureText(element.text);
+                if (element.useFontBoundingBox) {
+                    context.translate(mesures.actualBoundingBoxLeft, mesures.fontBoundingBoxAscent);
+                } else {
+                    context.translate(mesures.actualBoundingBoxLeft, mesures.actualBoundingBoxAscent);
+                }
+            }
+            applyElementTransform(context, element);
+            context.fillText(element.text, 0, 0);
         }
-        applyElementTransform(context, element);
-        context.fillText(element.text, 0, 0);
         context.restore();
     }
     if (element.border) {
@@ -148,15 +195,16 @@ export function renderPositionedElement({
     context.restore();
 }
 
-export function applyTextStyle(context: Canvas2DContext, style: TextStyle) {
-    if (style.font) {
-        context.font = style.font;
+export function applyTextStyle(canvas: Canvas, style: TextStyle) {
+    let font = resolveFont(style, canvas);
+    if (font) {
+        canvas.context.font = font;
     }
     if (style.color) {
-        context.fillStyle = resolveColor(style.color, context);
+        canvas.context.fillStyle = resolveColor(style.color, canvas.context);
     }
     if (style.compositeOperation) {
-        context.globalCompositeOperation = style.compositeOperation;
+        canvas.context.globalCompositeOperation = style.compositeOperation;
     }
 }
 
@@ -273,11 +321,52 @@ export function sidesTextLayout({
         height: bottomElement.position.top - position.top,
     };
     let insideLayout = inside ? layoutText({
-        context: canvas.context,
+        canvas,
         position,
         dimensions,
         root: inside,
     }) : [];
 
     return [...horizontal, ...vertical, ...insideLayout];
+}
+
+function resolveFont({
+    font,
+    fontFamily, fontSize,
+    bold, italic, smallCaps,
+}: TextFont, dimensions: Dimensions): string | undefined {
+    if (font) {
+        return font;
+    } else if (fontSize || fontFamily) {
+        let prefix = removeUndefined([
+            bold ? 'bold' : undefined,
+            italic ? 'italic' : undefined,
+            smallCaps ? 'small-caps' : undefined,
+        ]).join(' ');
+        let size = resolveSize(fontSize ?? 1, dimensions);
+        let family = fontFamily ?? 'sans-serif';
+        return `${prefix} ${size}pt ${family}`;
+    } else {
+        return undefined;
+    }
+}
+
+function resolveSize(fontSize: LayoutSize, dimensions: Dimensions): number {
+    if (typeof fontSize === 'number') {
+        return resolveSize([fontSize], dimensions);
+    } else {
+        let [value, units] = fontSize;
+        switch (units) {
+            case undefined:
+                return resolveSize([value, 'perc'], dimensions);
+            case 'pt':
+                return value;
+            case 'perc':
+                return resolveSize([value, 'vh'], dimensions);
+            case 'eh': case 'vh':
+                return value * dimensions.height / 100;
+            case 'ew': case 'vw':
+                return value * dimensions.width / 100;
+        }
+    }
 }

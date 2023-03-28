@@ -1,10 +1,8 @@
 import { Animator } from './animator';
 import { Color } from './color';
-import { randomRange, randomVector } from './random';
+import { randomRange } from './random';
 import { NumRange } from './range';
-import {
-    addVector, distance, lengthVector, multsVector, subVector, Vector, vectorLength,
-} from './vector';
+import { Vector, vector } from './vector';
 
 export type GravityObject = WithPosition & WithMass;
 export type WithPosition = { position: Vector };
@@ -29,10 +27,10 @@ export function randomObjects<Keys extends keyof FullObject>(count: number, prop
             position, velocity, radius, mass,
         } = props as ObjectMap<keyof FullObject, NumRange | undefined>;
         if (position) {
-            object.position = randomVector(position);
+            object.position = vector.random(position);
         }
         if (velocity) {
-            object.velocity = randomVector(velocity);
+            object.velocity = vector.random(velocity);
         }
         if (radius) {
             object.radius = randomRange(radius);
@@ -55,8 +53,8 @@ export function createObjects({
 }): FullObject[] {
     return Array(count).fill(undefined).map(() => {
         return {
-            position: randomVector(position),
-            velocity: randomVector(velocity),
+            position: vector.random(position),
+            velocity: vector.random(velocity),
             radius: randomRange(radius),
             mass: randomRange(mass),
         };
@@ -67,7 +65,7 @@ export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Obj
     return function velocityLaw(objects) {
         let next = objects.map(object => ({
             ...object,
-            position: addVector(object.position, object.velocity),
+            position: vector.add(object.position, object.velocity),
         }));
         return next;
     }
@@ -76,7 +74,7 @@ export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Obj
 export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: ObjectAnimator<ObjectT>): ObjectAnimator<ObjectT> {
     function calculateMomentum(objects: Objects<ObjectT>) {
         let momentum = objects.reduce(
-            (sum, obj) => sum + lengthVector(obj.velocity) * obj.mass,
+            (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
             0,
         );
         return momentum;
@@ -88,7 +86,7 @@ export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: O
         let nextmom = calculateMomentum(next);
         let coef = momentum / nextmom;
         for (let object of objects) {
-            object.velocity = multsVector(object.velocity, coef);
+            object.velocity = vector.mults(object.velocity, coef);
         }
         return next;
     };
@@ -104,13 +102,13 @@ export function getGravity({ gravity, power, from, to }: {
     from: GravityObject,
     to: GravityObject,
 }): Vector {
-    let direction = subVector(to.position, from.position);
-    let dist = vectorLength(direction);
+    let direction = vector.sub(to.position, from.position);
+    let dist = vector.length(direction);
     if (dist === 0) {
-        return [0, 0, 0];
+        return vector.value(0);
     }
     let multiplier = (from.mass * to.mass * gravity) / (dist ** power);
-    let result = multsVector(direction, multiplier);
+    let result = vector.mults(direction, multiplier);
     return result;
 }
 
@@ -124,8 +122,8 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
                 let force = getGravity({
                     gravity, power, from, to,
                 });
-                from.velocity = addVector(from.velocity, force);
-                to.velocity = subVector(to.velocity, force);
+                from.velocity = vector.add(from.velocity, force);
+                to.velocity = vector.sub(to.velocity, force);
             }
         }
         return objects;
@@ -135,10 +133,10 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
 export function resultingBody(objects: GravityObject[]): GravityObject {
     let result = objects.reduce(
         (sum, curr) => ({
-            position: addVector(sum.position, multsVector(curr.position, curr.mass)),
+            position: vector.add(sum.position, vector.mults(curr.position, curr.mass)),
             mass: sum.mass + curr.mass,
         }),
-        { position: [0, 0, 0], mass: 0 },
+        { position: vector.value(0), mass: 0 },
     );
     return result;
 }
@@ -153,8 +151,7 @@ export function pullToAnchor<O extends AnchorObject>({
         });
         return {
             ...state,
-            position: addVector(state.position, force),
-            // velocity: addVector(state.velocity, force),
+            position: vector.add(state.position, force),
         };
     };
 }

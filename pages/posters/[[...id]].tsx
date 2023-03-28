@@ -1,13 +1,20 @@
 import { multipager } from "@/components/multipager";
-import { variations } from "@/sketches/posters";
+import {
+    bwway, loveMeTwoTimes,
+} from "@/sketches/posters";
 
 // @refresh reset
+
+export const variations = [
+    bwway(),
+    loveMeTwoTimes(),
+];
 
 export const {
     getServerSideProps, SketchComponent,
 } = multipager({
-    title: 'Posters',
-    description: 'Posters experiments',
+    titlePlaceholder: 'Poster',
+    descriptionPlaceholder: 'Dynamic poster',
     variations,
 });
 export default SketchComponent;

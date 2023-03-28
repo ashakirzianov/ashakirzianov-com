@@ -1,47 +1,72 @@
-export type Vector2d = [number, number];
-export type Vector = [number, number, number];
+import { randomRange } from "./random";
+import { NumRange } from "./range";
 
-export function addVector(v1: Vector, v2: Vector): Vector {
-    return v1.map((x, i) => x + (v2[i] ?? 0)) as Vector;
+export type VectorTuple = readonly [x: number, y: number, z: number];
+export type Vector = {
+    x: number,
+    y: number,
+    z: number,
+};
+
+function add(v1: Vector, v2: Vector): Vector {
+    return {
+        x: v1.x + v2.x,
+        y: v1.y + v2.y,
+        z: v1.z + v2.z,
+    };
 }
 
-export function multsVector(v: Vector, s: number): Vector {
-    return v.map(x => x * s) as Vector;
+function mults({ x, y, z }: Vector, sclar: number): Vector {
+    return {
+        x: x * sclar,
+        y: y * sclar,
+        z: z * sclar,
+    };
 }
 
-export function subVector(v1: Vector, v2: Vector): Vector {
-    return addVector(v1, multsVector(v2, -1));
+function sub(v1: Vector, v2: Vector): Vector {
+    return add(v1, mults(v2, -1));
 }
 
-export function vectorLength(v: Vector): number {
-    let result = Math.sqrt(v.reduce(
-        (sum, x) => sum + x ** 2,
-        0,
-    ));
-    return result;
+function length({ x, y, z }: Vector): number {
+    return Math.sqrt(x * x + y * y + z * z);
 }
 
-export function zeroVector(dimensions?: number): Vector {
-    return Array(Math.max(2, dimensions ?? 3)).fill(0) as Vector;
-}
-
-export function distance(v1: Vector, v2: Vector) {
-    let result = Math.sqrt(
-        v1.reduce(
-            (sum, x, i) => sum + (x - (v2[i] ?? 0)) ** 2,
-            0,
-        )
-    );
-    return result;
-}
-
-export function lengthVector(v: Vector) {
-    return distance(v, zeroVector(v.length));
-}
-
-export function midpoint(points: Vector[]) {
-    let mid = points.reduce(
-        (res, curr) => addVector(res, curr)
-    );
-    return multsVector(mid, 1 / points.length);
-}
+export const vector = {
+    add, mults, sub, length,
+    value(val: number): Vector {
+        return { x: val, y: val, z: val };
+    },
+    distance(v1: Vector, v2: Vector) {
+        return length(sub(v1, v2));
+    },
+    midpoint(points: Vector[]) {
+        let mid = points.reduce(
+            (res, curr) => add(res, curr)
+        );
+        return mults(mid, 1 / points.length);
+    },
+    random(range: NumRange): Vector {
+        return {
+            x: randomRange(range),
+            y: randomRange(range),
+            z: randomRange(range),
+        };
+    },
+    map(
+        { x, y, z }: Vector,
+        mapFn: (v: number, getter: (v: Vector) => number) => number,
+    ) {
+        return {
+            x: mapFn(x, v => v.x),
+            y: mapFn(y, v => v.y),
+            z: mapFn(z, v => v.z),
+        };
+    },
+    fromTuple([x, y, z]: VectorTuple): Vector {
+        return { x, y, z };
+    },
+    toTuple({ x, y, z }: Vector): VectorTuple {
+        return [x, y, z];
+    },
+};

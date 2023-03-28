@@ -1,12 +1,16 @@
 import {
-    rainbow, clearFrame, gray, multRGBA, Color, modItem, hueRange,
-    pulsating, makeStops, fromRGBA, Scene, combineScenes, fromLayers, colorLayer,
+    rainbow, clearFrame, gray, modItem, pulsating, makeStops, fromRGBA,
+    combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 import {
-    bubbles, bubblesFlat, fittedRainbow, molecules, original,
-    pastelSlinky, slinky, rainbowStrings,
-    balanced, strokedSlinky, letters, letters2,
-} from './organisms';
+    bubbles, bubblesFlat, rave, molecules, knot, pastelCircles, balanced,
+} from '../forms';
+import {
+    slinky, rainbowStrings, strokedSlinky, letters,
+} from '../forms/wip';
+import {
+    helloWorld, styleIsTheAnswer,
+} from '../posters/wip';
 
 export const variations = [
     combineScenes(
@@ -23,7 +27,7 @@ export const variations = [
     ),
     combineScenes(
         fromLayers(colorLayer('black')),
-        fittedRainbow(),
+        rave(),
     ),
     combineScenes(
         fromLayers(colorLayer('black')),
@@ -40,13 +44,12 @@ export const variations = [
                     });
                 },
             }),
-            pastelSlinky(),
+            pastelCircles(),
         )
     }(),
     function () {
-        let back = pulsating(hueRange({
-            from: 0, to: 360, count: 200,
-            s: 50, l: 90,
+        let back = pulsating(rainbow({
+            count: 200, s: 50, l: 90,
         }));
         return combineScenes(
             fromLayers({
@@ -61,9 +64,8 @@ export const variations = [
         )
     }(),
     function () {
-        let back = pulsating(hueRange({
-            from: 0, to: 360, count: 200,
-            s: 50, l: 90,
+        let back = pulsating(rainbow({
+            count: 200, s: 50, l: 90,
         }));
         return combineScenes(
             fromLayers({
@@ -86,19 +88,16 @@ export const variations = [
             kind: 'gradient',
             start: [0, 0], end: [0, 1],
             stops: makeStops({
-                0: fromRGBA({ r: 230, g: 230, b: 230 }),
-                0.7: fromRGBA(multRGBA({ r: 230, g: 230, b: 230 }, 1.2)),
-                1: gray(50),
+                0: gray(180),
+                0.2: fromRGBA({ r: 230, g: 230, b: 230 }),
             }),
         })),
-        original(),
+        knot(),
     ),
     combineScenes(
         fromLayers(colorLayer(gray(230))),
-        letters('Love me two times, baby'),
+        letters('What is going on?'),
     ),
-    combineScenes(
-        fromLayers(colorLayer(gray(230))),
-        letters2('Love me two times, baby'),
-    ),
+    styleIsTheAnswer(),
+    helloWorld(),
 ];

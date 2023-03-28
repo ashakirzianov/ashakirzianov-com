@@ -1,5 +1,6 @@
+import { Dimensions, Position } from "./layout";
 import { randomRange } from "./random";
-import { addVector, multsVector, Vector } from "./vector";
+import { vector, Vector } from "./vector";
 
 export type Box = {
     start: Vector,
@@ -8,26 +9,22 @@ export type Box = {
 
 export function boxSize({ start, end }: Box) {
     return {
-        width: end[0] - start[0],
-        height: end[1] - start[1],
-        depth: end[2] - start[2],
+        width: end.x - start.x,
+        height: end.y - start.y,
+        depth: end.z - start.z,
     };
 }
 
 export function boxRange({ start, end }: Box) {
     return {
-        widthRange: { min: start[0], max: end[0] },
-        heightRange: { min: start[1], max: end[1] },
-        depthRange: { min: start[2], max: end[2] },
+        widthRange: { min: start.x, max: end.x },
+        heightRange: { min: start.y, max: end.y },
+        depthRange: { min: start.z, max: end.z },
     };
 }
 
 export function boxCenter(box: Box): Vector {
-    return [
-        (box.end[0] + box.start[0]) / 2,
-        (box.end[1] + box.start[1]) / 2,
-        (box.end[2] + box.start[2]) / 2,
-    ];
+    return vector.mults(vector.add(box.start, box.end), 0.5);
 }
 
 export function squareNBox({
@@ -44,30 +41,37 @@ export function squareNBox({
     let dh = height / rows;
     let row = Math.floor(n / cols);
     let column = n % cols;
-    let start: Vector = addVector(
-        [column * dw, row * dh, 0],
+    let start: Vector = vector.add(
+        { x: column * dw, y: row * dh, z: 0 },
         box.start,
     );
-    let end = addVector(start, [dw, dh, depth ?? 0]);
+    let end = vector.add(
+        start,
+        { x: dw, y: dh, z: depth ?? 0 },
+    );
     return { start, end };
 }
 
 export function boundingBox(points: Vector[]): Box {
-    let start: Vector = [...points[0]!];
-    let end: Vector = [...points[0]!];
+    let start: Vector = { ...points[0]! };
+    let end: Vector = { ...points[0]! };
     for (let point of points) {
-        for (let idx = 0; idx < 3; idx++) {
-            start[idx] = Math.min(start[idx]!, point[idx]!);
-            end[idx] = Math.max(end[idx]!, point[idx]!);
-        }
+        start = vector.map(
+            start,
+            (v, getter) => Math.min(v, getter(point)),
+        );
+        end = vector.map(
+            end,
+            (v, getter) => Math.max(v, getter(point)),
+        );
     }
     return { start, end };
 }
 
 export function multBox({ start, end }: Box, value: number) {
     return {
-        start: multsVector(start, value),
-        end: multsVector(end, value),
+        start: vector.mults(start, value),
+        end: vector.mults(end, value),
     };
 }
 
@@ -77,8 +81,8 @@ export function cubicBox(size: number): Box {
 
 export function rectBox(width: number, height: number, depth?: number): Box {
     return {
-        start: [-width / 2, -height / 2, -(depth ?? 100) / 2],
-        end: [width / 2, height / 2, (depth ?? 100) / 2],
+        start: { x: -width / 2, y: -height / 2, z: -(depth ?? 100) / 2 },
+        end: { x: width / 2, y: height / 2, z: (depth ?? 100) / 2 },
     };
 }
 
@@ -144,12 +148,15 @@ export function randomSubbox({
     height: number,
     depth?: number,
 }) {
-    let rstart: Vector = [
-        randomRange({ min: start[0], max: end[0] - width }),
-        randomRange({ min: start[1], max: end[1] - height }),
-        randomRange({ min: start[2] ?? 0, max: (end[2] ?? 0) - (depth ?? 0) }),
-    ];
-    let rend = addVector(rstart, [width, height, (depth ?? 0)]);
+    let rstart: Vector = {
+        x: randomRange({ min: start.x, max: end.x - width }),
+        y: randomRange({ min: start.y, max: end.y - height }),
+        z: randomRange({ min: start.z ?? 0, max: (end.z ?? 0) - (depth ?? 0) }),
+    };
+    let rend = vector.add(
+        rstart,
+        { x: width, y: height, z: (depth ?? 0) },
+    );
     return {
         start: rstart,
         end: rend,
@@ -157,35 +164,34 @@ export function randomSubbox({
 }
 
 export function randomVectorInBox({ start, end }: Box) {
-    let result: Vector = [0, 0, 0];
-    for (let idx = 0; idx < Math.min(start.length, end.length); idx++) {
-        let min = start[idx]!;
-        let max = end[idx]!;
-        result[idx] = randomRange({ min, max });
-    }
-    return result;
+    return vector.map(
+        start,
+        (v, getter) => randomRange({ min: v, max: getter(end) }),
+    );
 }
 
 export function boxesForText({
-    text, lineLength, letterWidth, letterHeight,
+    lines, getDimensions, offset,
 }: {
-    text: string,
-    lineLength: number,
-    letterWidth: number,
-    letterHeight: number,
+    lines: string[],
+    getDimensions: (text: string) => Dimensions,
+    offset?: Position,
 }) {
-    let lines = breakIntoLines(text, lineLength);
+    let loff = offset?.left ?? 0;
+    let toff = offset?.top ?? 0;
     let boxes = [];
     for (let lidx = 0; lidx < lines.length; lidx++) {
         let line = lines[lidx]!;
         for (let cidx = 0; cidx < line.length; cidx++) {
-            let left = cidx * letterWidth;
-            let top = lidx * letterHeight;
-            let right = left + letterWidth;
-            let bottom = top + letterHeight;
+            let letter = line[cidx]!;
+            let { width, height } = getDimensions(letter);
+            let left = cidx * width + loff;
+            let top = lidx * height + toff;
+            let right = left + width;
+            let bottom = top + height;
             let box: Box = {
-                start: [left, top, 0],
-                end: [right, bottom, 0],
+                start: vector.fromTuple([left, top, 0]),
+                end: vector.fromTuple([right, bottom, 0]),
             };
             boxes.push({
                 box, letter: line[cidx]!,
@@ -193,35 +199,4 @@ export function boxesForText({
         }
     }
     return boxes;
-}
-
-function breakIntoLines(text: string, lineLength: number): string[] {
-    if (lineLength <= 0) {
-        return [text];
-    }
-    let lines = [];
-    let current = '';
-    let words = text.split(' ');
-    for (let word of words) {
-        while (word.length > lineLength) {
-            if (current !== '') {
-                lines.push(current);
-                current = '';
-            }
-            let front = word.substring(0, lineLength);
-            lines.push(front);
-            word = word.substring(lineLength);
-        }
-        let next = current === '' ? word : `${current} ${word}`;
-        if (next.length > lineLength) {
-            lines.push(current);
-            current = word;
-        } else {
-            current = next;
-        }
-    }
-    if (current !== '') {
-        lines.push(current);
-    }
-    return lines;
 }

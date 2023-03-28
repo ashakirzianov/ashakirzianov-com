@@ -1,5 +1,4 @@
 import type { Canvas2DContext } from "./render";
-import { Vector2d } from "./vector";
 
 export type StringColor = string;
 export type RGBAColor = {
@@ -19,8 +18,8 @@ export type HSLAColor = {
 export type TupleColor = [r: number, g: number, b: number, a?: number];
 export type GradientColor = {
     kind: 'gradient',
-    start: Vector2d,
-    end: Vector2d,
+    start: [number, number],
+    end: [number, number],
     stops: ColorStop[],
 };
 export type PrimitiveColor = StringColor | RGBAColor | HSLAColor | TupleColor;
@@ -144,23 +143,73 @@ export function rainbow({
     count: number,
     s?: number,
     l?: number,
-}): Color[] {
-    return hueRange({
+}): StringColor[] {
+    return hslaRange({
         count,
-        from: 0, to: 360,
-        s: s ?? 80, l: l ?? 50,
+        from: { h: 0, s: s ?? 80, l: l ?? 50 },
+        to: { h: 360 },
     });
 }
 
-export function hueRange({
-    from, to, count, s, l,
-}: {
-    from: number, to: number, count: number,
-    s: number, l: number,
-}) {
-    let delta = (to - from) / count;
+export function hslaRange({ from, to, count }: {
+    from: HSLAColor,
+    to: HSLAColor,
+    count: number,
+}): StringColor[] {
+    if (count === 0) {
+        return [];
+    }
+    let rfrom = {
+        h: from.h ?? 0,
+        s: from.s ?? 0,
+        l: from.l ?? 0,
+        a: from.a ?? 1,
+    };
+    let rto = {
+        h: to.h ?? rfrom.h,
+        s: to.s ?? rfrom.s,
+        l: to.l ?? rfrom.l,
+        a: to.a ?? rfrom.a,
+    };
+    let delta = {
+        h: (rto.h - rfrom.h) / count,
+        s: (rto.s - rfrom.s) / count,
+        l: (rto.l - rfrom.l) / count,
+        a: (rto.a - rfrom.a) / count,
+    };
     return Array(count).fill(undefined).map(
-        (_, idx) => `hsl(${from + Math.floor(delta * idx)},${s}%,${l}%)`,
+        (_, idx) => `hsla(${rfrom.h + delta.h * idx},${rfrom.s + delta.s * idx}%,${rfrom.l + delta.l * idx}%,${rfrom.a + delta.a * idx})`,
+    );
+}
+
+export function rgbaRange({ from, to, count }: {
+    from: RGBAColor,
+    to: RGBAColor,
+    count: number,
+}): StringColor[] {
+    if (count === 0) {
+        return [];
+    }
+    let rfrom = {
+        r: from.r ?? 0,
+        g: from.g ?? 0,
+        b: from.b ?? 0,
+        a: from.a ?? 1,
+    };
+    let rto = {
+        r: to.r ?? rfrom.r,
+        g: to.g ?? rfrom.g,
+        b: to.b ?? rfrom.b,
+        a: to.a ?? rfrom.a,
+    };
+    let delta = {
+        r: (rto.r - rfrom.r) / count,
+        g: (rto.g - rfrom.g) / count,
+        b: (rto.b - rfrom.b) / count,
+        a: (rto.a - rfrom.a) / count,
+    };
+    return Array(count).fill(undefined).map(
+        (_, idx) => `rgba(${rfrom.r + delta.r * idx},${rfrom.g + delta.g * idx},${rfrom.b + delta.b * idx},${rfrom.a + delta.a * idx})`,
     );
 }
 

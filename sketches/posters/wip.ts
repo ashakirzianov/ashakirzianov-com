@@ -1,33 +1,22 @@
 import {
-    alternateAnimators,
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
-    layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
-    renderPositionedLayout, scene, sidesTextLayout, staticLayer, TextLayout, vals,
+    layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
+    TextLayout, vals,
 } from '@/sketcher';
 import {
-    fittedRainbow, letters2, molecules, pastelSlinky, slinky,
-} from './organisms';
-
-export const variations: any[] = [
-    pink(),
-    sm(),
-    helloWorld(),
-    alina(),
-    styleIsTheAnswer(),
-    beautifulWorld(),
-    loveMeTwoTimes(),
-    // current(),
-];
+    molecules, pastelCircles,
+} from '../forms';
+import { slinky } from '../forms/wip';
 
 export function pink() {
     return combineScenes(
         fromLayers(colorLayer('white')),
-        pastelSlinky(),
+        pastelCircles(),
         fromLayers({
             prepare({ canvas }) {
-                let unit = canvas.height / 100;
                 let font = {
-                    font: `bold ${unit * 20}pt sans-serif`,
+                    fontSize: 20,
+                    bold: true,
                     color: 'white',
                 };
                 let layout = layoutOnCanvas(canvas, {
@@ -35,19 +24,19 @@ export function pink() {
                     direction: 'column',
                     justify: 'end',
                     crossJustify: 'stretch',
-                    padding: .02,
+                    padding: 2,
                     content: [
                         {
 
                             justify: 'start',
                             padding: {
                                 top: 0,
-                                bottom: 0.2,
+                                bottom: 20,
                             },
                             content: [{
                                 id: 'small-text',
                                 text: 'Gentlest of all colors',
-                                font: `${unit * 1}pt sans-serif`,
+                                fontSize: 1,
                                 color: 'black',
                                 rotation: -Math.PI / 2
                             }],
@@ -56,7 +45,7 @@ export function pink() {
                             justify: 'center',
                             crossJustify: 'end',
                             padding: {
-                                bottom: 0.2,
+                                bottom: 20,
                                 top: 0,
                             },
                             content: [{
@@ -83,7 +72,7 @@ export function pink() {
                 });
 
                 for (let positioned of layout) {
-                    renderPositionedElement({ context: canvas.context, positioned });
+                    renderPositionedElement({ canvas, positioned });
                 }
             },
         }),
@@ -96,9 +85,9 @@ export function sm() {
         colorLayer([220, 63, 66]),
         {
             prepare({ canvas }) {
-                let unit = canvas.height / 100;
                 let font = {
-                    font: `bold ${34.5 * unit}pt sans-serif`,
+                    fontSize: 34.5,
+                    bold: true,
                     color: 'white',
                 };
                 let layout = layoutOnCanvas(canvas, {
@@ -111,13 +100,13 @@ export function sm() {
                             justify: 'start',
                             padding: {
                                 top: 0,
-                                bottom: 0.2,
-                                left: 0.02,
+                                bottom: 20,
+                                left: 2,
                             },
                             content: [{
                                 id: 'small-text',
                                 text: 'Zeven grafici uit Joegosiavië',
-                                font: '2vh sans serif',
+                                fontSize: .8,
                                 color: 'black',
                                 rotation: -Math.PI / 2,
                             }],
@@ -126,17 +115,17 @@ export function sm() {
                             justify: 'end',
                             crossJustify: 'end',
                             padding: {
-                                right: .02,
+                                right: 2,
                                 top: 0,
-                                bottom: .03,
+                                bottom: 3,
                             },
                             content: [{
                                 content: [{
                                     id: 'left-letter',
                                     text: 'S',
                                     ...font,
-                                    offset: -.03,
-                                    crossOffset: -.02,
+                                    offset: -3,
+                                    crossOffset: -2,
                                 },
                                 {
                                     id: 'right-letter',
@@ -164,7 +153,7 @@ export function sm() {
                 canvas.context.clearRect(x, y, side, side);
 
                 for (let positioned of layout) {
-                    renderPositionedElement({ context: canvas.context, positioned });
+                    renderPositionedElement({ canvas, positioned });
                 }
             },
         },
@@ -221,7 +210,8 @@ export function helloWorld() {
             canvas.context.lineWidth = 5;
             layoutAndRender({
                 canvas, root, style: {
-                    font: '10vh serif',
+                    fontSize: 5,
+                    fontFamily: 'serif',
                     color: 'red',
                 }
             });
@@ -235,8 +225,7 @@ export function alina() {
         slinky(),
         fromLayers({
             prepare({ canvas }) {
-                let unit = canvas.height / 100;
-                let delta = .1;
+                let delta = 10;
                 let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
@@ -244,7 +233,10 @@ export function alina() {
                     crossJustify: 'center',
                     content: vals(4, 'Alina').map((text, n) => ({
                         text,
-                        font: `small-caps italic bold ${unit * 16}pt sans-serif`,
+                        fontSize: 16,
+                        smallCaps: true,
+                        italic: true,
+                        bold: true,
                         color: 'white',
                         offset: -3 / 2 * delta + n * delta,
                     })),
@@ -253,7 +245,7 @@ export function alina() {
                 clearFrame({ canvas, color: 'pink' });
                 renderMask(canvas.context, context => {
                     for (let positioned of layout) {
-                        renderPositionedElement({ context, positioned });
+                        renderPositionedElement({ canvas, positioned });
                     }
                 });
             },
@@ -267,9 +259,10 @@ export function styleIsTheAnswer() {
         molecules(),
         fromLayers({
             prepare({ canvas }) {
-                let unit = canvas.height / 100;
                 let font = {
-                    font: `small-caps bold ${unit * 15}pt sans-serif`,
+                    fontSize: 15,
+                    smallCaps: true,
+                    bold: true,
                     color: 'white',
                 };
                 let layout = layoutOnCanvas(canvas, {
@@ -278,7 +271,7 @@ export function styleIsTheAnswer() {
                     justify: 'space-between',
                     crossJustify: 'center',
                     padding: {
-                        top: 0.3,
+                        top: 30,
                     },
                     content: [{
                         text: 'Style',
@@ -295,150 +288,10 @@ export function styleIsTheAnswer() {
                 clearFrame({ canvas, color: 'black' });
                 renderMask(canvas.context, context => {
                     for (let positioned of layout) {
-                        renderPositionedElement({ context, positioned });
+                        renderPositionedElement({ canvas, positioned });
                     }
                 });
             },
-        }),
-    );
-}
-
-export function beautifulWorld() {
-    let deg = 0.1;
-    let duration = 20;
-    let initialState = {
-        cross: [0, -0.05, -0.33, -0.4, -0.35],
-        main: [0, 0, 0, 0, 0],
-    }
-    return combineScenes(
-        fromLayers(colorLayer('white')),
-        fittedRainbow(),
-        scene({
-            state: initialState,
-            animator: alternateAnimators([{
-                duration,
-                animator({ cross, main }) {
-                    return {
-                        cross: cross.map((c, i) => c - (c - initialState.cross[i]!) / 2),
-                        main: main.map((c, i) => c - (c - initialState.main[i]!) / duration),
-                    };
-                },
-            }, {
-                duration: 1,
-                animator: () => initialState,
-            }, {
-                duration: duration * 1.5,
-                animator({ cross, main }) {
-                    return {
-                        cross: cross.map(c => c + (Math.random() - .5) * deg),
-                        main: main.map(c => c + (Math.random() - .5) * deg),
-                    };
-                },
-            }]),
-            layers: [{
-                render({ canvas, state: { cross, main } }) {
-                    let unit = canvas.height / 100;
-                    let inside: TextLayout = {
-                        grow: 1,
-                        direction: 'column',
-                        justify: 'center',
-                        crossJustify: 'end',
-                        padding: {
-                            top: .05,
-                            right: .1,
-                        },
-                        content: ['Beautiful', 'world,', 'where', 'are', 'you?']
-                            .map((text, n): TextLayout => ({
-                                text,
-                                font: `bold ${unit * 10}pt sans-serif`,
-                                color: 'white',
-                                crossOffset: cross[n]!,
-                                offset: main[n]!,
-                                // border: 'red',
-                                compositeOperation: 'destination-out',
-                            })),
-                    };
-                    let sides = sidesTextLayout({
-                        canvas,
-                        texts: {
-                            top: {
-                                text: 'Sally Rooney'.toUpperCase(),
-                            },
-                            right: [
-                                'Author of'.toLowerCase(),
-                                {
-                                    text: ' Normal People'.toLowerCase(),
-                                    font: 'small-caps bold italic 3vh sans-serif',
-                                },
-                            ],
-                            left: [{
-                                text: '#1 New Your Times Bestseller'.toLowerCase(),
-                            }],
-                            bottom: [{
-                                text: 'Los Angeles | Venice | 2023'.toLowerCase(),
-                            }],
-                        },
-                        padding: 0.02,
-                        style: {
-                            font: 'bold small-caps 3vh sans-serif',
-                            // color: 'violet',
-                            color: [234, 113, 196],
-                            useFontBoundingBox: true,
-                        },
-                        inside,
-                    });
-
-                    clearFrame({ canvas, color: 'black' });
-                    renderPositionedLayout({
-                        context: canvas.context,
-                        layout: sides,
-                    });
-                }
-            }]
-        }),
-    );
-}
-
-export function loveMeTwoTimes() {
-    return combineScenes(
-        fromLayers(colorLayer(gray(240))),
-        letters2('Love me two times, baby'),
-    );
-}
-
-export function current() {
-    return fromLayers(
-        colorLayer('black'),
-        staticLayer(({ canvas }) => {
-            let layout = sidesTextLayout({
-                texts: {
-                    left: { text: 'Left', justify: 'center' },
-                    top: {
-                        text: 'Top',
-                        color: 'red',
-                        border: 'blue',
-                    },
-                    right: 'Right',
-                    bottom: {
-                        text: 'Bottom',
-                        hidden: true,
-                    },
-                },
-                style: {
-                    font: '10vh sans-serif',
-                    color: 'white',
-                },
-                padding: 0.01,
-                inside: {
-                    border: 'red',
-                    grow: 1,
-                },
-                canvas,
-            });
-            renderPositionedLayout({
-                context: canvas.context,
-                layout,
-            });
         }),
     );
 }

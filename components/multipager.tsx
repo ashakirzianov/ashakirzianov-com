@@ -4,11 +4,14 @@ import { useSketcher } from "@/hooks/sketcher";
 import { GetServerSideProps } from "next";
 
 export function multipager({
-    variations, title, description,
+    variations,
+    title, description, titlePlaceholder, descriptionPlaceholder,
     period, skip, chunk,
 }: {
-    title: string,
-    description: string,
+    title?: string,
+    titlePlaceholder?: string,
+    description?: string,
+    descriptionPlaceholder?: string,
     variations: Scene[],
     period?: number,
     skip?: number,
@@ -36,14 +39,18 @@ export function multipager({
     }
 
     function SketchComponent({ index }: Props) {
+        let scene = variations[index]!;
         let { node } = useSketcher({
-            scene: variations[index]!,
+            scene,
             period: period ?? 40,
             skip,
             chunk,
         });
 
-        return <PosterPage title={title} description={description}>
+        return <PosterPage
+            title={title ?? scene.title ?? titlePlaceholder}
+            description={description ?? scene.description ?? descriptionPlaceholder}
+        >
             <div>
                 {node}
             </div>

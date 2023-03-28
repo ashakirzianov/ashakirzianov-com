@@ -1,12 +1,13 @@
 import {
     alternateAnimators,
     clearFrame, colorLayer, combineScenes, fromLayers, gray,
-    layoutAndRender, layoutOnCanvas, renderLayer, renderMask, renderPositionedElement,
-    renderPositionedLayout, scene, sceneDimensions, sidesTextLayout, staticLayer, TextLayout, TextStyle, vals,
+    layoutAndRender, layoutOnCanvas, renderMask, renderPositionedElement,
+    renderPositionedLayout, scene, sidesTextLayout, staticLayer,
+    TextLayout, vals,
 } from '@/sketcher';
 import {
-    fittedRainbow, letters2, molecules, pastelSlinky, slinky,
-} from './organisms';
+    rave, letters2, molecules, pastelCircles, slinky,
+} from './forms';
 
 export const variations: any[] = [
     pink(),
@@ -22,7 +23,7 @@ export const variations: any[] = [
 export function pink() {
     return combineScenes(
         fromLayers(colorLayer('white')),
-        pastelSlinky(),
+        pastelCircles(),
         fromLayers({
             prepare({ canvas }) {
                 let font = {
@@ -316,7 +317,7 @@ export function beautifulWorld() {
     }
     return combineScenes(
         fromLayers(colorLayer('white')),
-        fittedRainbow(),
+        rave(),
         scene({
             state: initialState,
             animator: alternateAnimators([{

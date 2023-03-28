@@ -3,10 +3,10 @@ import {
     pulsating, makeStops, fromRGBA, combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 import {
-    bubbles, bubblesFlat, fittedRainbow, molecules, original,
-    pastelSlinky, slinky, rainbowStrings,
+    bubbles, bubblesFlat, rave, molecules, knot,
+    pastelCircles, slinky, rainbowStrings,
     balanced, strokedSlinky, letters, letters2,
-} from './organisms';
+} from './forms';
 
 export const variations = [
     combineScenes(
@@ -23,7 +23,7 @@ export const variations = [
     ),
     combineScenes(
         fromLayers(colorLayer('black')),
-        fittedRainbow(),
+        rave(),
     ),
     combineScenes(
         fromLayers(colorLayer('black')),
@@ -40,7 +40,7 @@ export const variations = [
                     });
                 },
             }),
-            pastelSlinky(),
+            pastelCircles(),
         )
     }(),
     function () {
@@ -89,7 +89,7 @@ export const variations = [
                 1: gray(50),
             }),
         })),
-        original(),
+        knot(),
     ),
     combineScenes(
         fromLayers(colorLayer(gray(230))),

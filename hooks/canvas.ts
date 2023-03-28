@@ -4,33 +4,27 @@ import {
 
 export type UseCanvasesReturn = ReturnType<typeof useCanvasesImpl>;
 export function useCanvases(count: number): UseCanvasesReturn;
-export function useCanvases(dimension: CanvasDimensions, count: number): UseCanvasesReturn;
 export function useCanvases(dimensions: CanvasDimensions[]): UseCanvasesReturn;
-export function useCanvases(arg: number | CanvasDimensions[] | CanvasDimensions, arg2?: number) {
+export function useCanvases(arg: number | CanvasDimensions[]) {
     if (typeof arg === 'number') {
         return useCanvasesImpl(Array(arg).fill({
             width: undefined,
             height: undefined,
         }));
-    } else if (Array.isArray(arg)) {
-        return useCanvasesImpl(arg);
     } else {
-        return useCanvasesImpl(Array(arg2).fill(arg));
+        return useCanvasesImpl(arg);
     }
 }
 
-type CanvasDimensions = {
-    width: number | undefined,
-    height: number | undefined,
-};
+type CanvasDimensions = [width: number | undefined, height: number | undefined];
 function useCanvasesImpl(dims: CanvasDimensions[]) {
     let refs = useRefArray<HTMLCanvasElement>(dims.length);
     let nodes = dims.map(
-        (dim, idx) => createElement('canvas', {
+        ([width, height], idx) => createElement('canvas', {
             ref: refs[idx],
             key: `layer-${idx}`,
-            width: dim.width,
-            height: dim.height,
+            width: width,
+            height: height,
             style: {
                 zIndex: idx,
                 backgroundColor: 'transparent',

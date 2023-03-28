@@ -5,15 +5,15 @@ import { ReactNode } from "react";
 export function PosterPage({
     title, description, children,
 }: {
-    title: string,
+    title?: string,
     description?: string,
     children?: ReactNode,
 }) {
     return (
         <>
             <Head>
-                <title>{title}</title>
-                {description ? <meta name="description" content="Knot sketch" /> : null}
+                <title>{title ?? 'Poster'}</title>
+                {description ? <meta name="description" content={description} /> : null}
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <main>

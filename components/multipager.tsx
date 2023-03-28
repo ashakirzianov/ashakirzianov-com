@@ -7,8 +7,8 @@ export function multipager({
     variations, title, description,
     period, skip, chunk,
 }: {
-    title: string,
-    description: string,
+    title?: string,
+    description?: string,
     variations: Scene[],
     period?: number,
     skip?: number,
@@ -36,14 +36,15 @@ export function multipager({
     }
 
     function SketchComponent({ index }: Props) {
+        let scene = variations[index]!;
         let { node } = useSketcher({
-            scene: variations[index]!,
+            scene,
             period: period ?? 40,
             skip,
             chunk,
         });
 
-        return <PosterPage title={title} description={description}>
+        return <PosterPage title={title ?? scene.title} description={description ?? scene.description}>
             <div>
                 {node}
             </div>

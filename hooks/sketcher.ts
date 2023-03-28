@@ -3,10 +3,8 @@ import { useEffect } from "react";
 import { getCanvasFromRef, useCanvases } from "./canvas";
 
 export function useSketcher<State>(props: LaunchProps<State>) {
-    let { node, refs } = useCanvases(Array(props.scene.layers.length).fill(props.scene.dimensions ?? {
-        width: undefined,
-        height: undefined,
-    }));
+    let dims = Array(props.scene.layers.length).fill(props.scene.dimensions ?? [undefined, undefined]);
+    let { node, refs } = useCanvases(dims);
     useEffect(() => {
         let { launch } = launcher(props);
         let { cleanup } = launch(idx => getCanvasFromRef(refs[idx]));

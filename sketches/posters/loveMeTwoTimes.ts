@@ -19,7 +19,7 @@ export function loveMeTwoTimes() {
                 letterBox: {
                     padding: 15,
                     borderColor: 'black',
-                    borderWidth: .1,
+                    borderWidth: .5,
                 },
                 padding: {
                     // top: 15,

@@ -2,12 +2,16 @@ import {
     arrayAnimator, boundingBox, boxCenter, boxesForText, breakIntoLines,
     clearCanvas, colorLayer, combineScenes, fromLayers, gray, layoutOnCanvas,
     modItem, rainbow, reduceAnimators, renderPositionedLayout,
-    resolvePrimitiveColor, scene, staticLayer, traceAnimator, vector,
+    resolvePrimitiveColor, scene, sceneMeta, staticLayer, traceAnimator, vector,
     velocityStep, zoomToFit,
 } from "@/sketcher";
 
 export function loveMeTwoTimes() {
     return combineScenes(
+        sceneMeta({
+            title: 'Love Me Two Times',
+            description: `Poster for The Doors song "Love Me Two Times"`,
+        }),
         fromLayers(colorLayer(gray(240))),
         letters('Love me two times, baby'),
         fromLayers(staticLayer(({ canvas }) => {

@@ -23,6 +23,7 @@ export function Poster({ children }: PosterProps) {
             border-radius: 5px;
             max-width: 100%;
             max-height: 100%;
+            overflow: hidden;
         }
         `}</style>
     </div>

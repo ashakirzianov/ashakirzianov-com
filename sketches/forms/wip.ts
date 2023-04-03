@@ -1,9 +1,7 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, zoomToFit, rainbow, boundingBox,
-    cubicBox, modItem, vals, clearCanvas, scene, boxesForText,
-    boxSize, traceAnimator, boxCenter, resolvePrimitiveColor,
-    breakIntoLines, vector,
+    randomRange, rainbow, cubicBox, modItem, vals,
+    resolvePrimitiveColor, gray,
 } from '@/sketcher';
 import {
     enchanceWithSetI, randomObject, setsScene, xSets, zoomToBoundingBox,
@@ -12,7 +10,7 @@ import {
 export function letters(text: string) {
     let maxVelocity = 5;
     let massRange = { min: 0.1, max: 4 };
-    let boxes = [cubicBox(500)];
+    let boxes = [cubicBox(600)];
     let sets = boxes.map(box => {
         let batch = text.length;
         return vals(batch).map(
@@ -30,10 +28,12 @@ export function letters(text: string) {
         )),
         drawObject({ canvas, object, seti, index }) {
             canvas.context.font = '20vh sans-serif';
-            canvas.context.strokeStyle = 'black';
-            canvas.context.lineWidth = 0.1;
+            canvas.context.lineWidth = .1;
             let sub = text.at((seti + index) % text.length)!;
+            canvas.context.strokeStyle = 'black';
             canvas.context.strokeText(sub, object.position.x, object.position.y);
+            canvas.context.fillStyle = resolvePrimitiveColor(gray(230));
+            // canvas.context.fillText(sub, object.position.x, object.position.y);
         },
         prepare({ canvas, state }) {
             zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });

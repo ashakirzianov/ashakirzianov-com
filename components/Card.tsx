@@ -13,6 +13,7 @@ export function Card({ children }: {
             height: 100%;
             max-width: 100%;
             max-height: 100%;
+            clip-path: border-box;
         }
         `}</style>
     </div>;

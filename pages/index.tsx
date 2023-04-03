@@ -1,18 +1,73 @@
-import { PosterPage } from "@/components/PosterPage";
+import { Draggable, Position } from "@/components/Draggable";
 import { useSketcher } from "@/hooks/sketcher";
-import { loveMeTwoTimes } from "@/sketches/posters";
+import { Scene } from "@/sketcher";
+import { bwway, loveMeTwoTimes } from "@/sketches/posters";
+import { useRouter } from "next/router";
 
 // @refresh reset
 
-export default function Main() {
+function Sketch({ sketch, offset, link }: {
+  sketch: Scene,
+  link: string,
+  offset?: Position,
+}) {
   let { node } = useSketcher({
-    scene: loveMeTwoTimes(),
-    period: 40,
-    chunk: 500,
+    scene: sketch, period: 40,
   });
-  return <PosterPage title="Anton's page" description="Anton Shakirzianov">
-    <div>
-      {node}
+  let router = useRouter();
+  return <>
+    <Draggable
+      position={offset ?? { top: 0, left: 0 }}
+      onClick={() => router.push(link)}
+      cursor="pointer"
+    >
+      <div className="sketch">{node}</div>
+      <style jsx>{`
+    .sketch {
+      aspect-ratio: 3/4;
+      width: 200pt;
+      max-width: 50vw;
+      box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.2);
+      border-radius: 5px;
+    }
+    `}</style>
+    </Draggable>
+  </>;
+}
+
+export default function Main() {
+  return <div className="container">
+    <div className="card" style={{
+      top: '15vh',
+      left: '13vw',
+    }}>
+      <Sketch
+        link="/posters/0"
+        sketch={loveMeTwoTimes()}
+      />
     </div>
-  </PosterPage>;
+    <div className="card" style={{
+      bottom: '25vh',
+      right: '21vw',
+    }}>
+      <Sketch
+        link="/posters/1"
+        sketch={bwway()}
+      />
+    </div>
+
+    <style jsx>{`
+      .container {
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+      }
+      .card {
+        position: absolute;
+      }
+      `}</style>
+  </div>;
 }

@@ -6,15 +6,16 @@ import {
 // @refresh reset
 
 export const variations = [
-    bwway(),
     loveMeTwoTimes(),
+    bwway(),
 ];
 
-export const {
+const {
     getServerSideProps, SketchComponent,
 } = multipager({
     titlePlaceholder: 'Poster',
     descriptionPlaceholder: 'Dynamic poster',
     variations,
 });
+export { getServerSideProps };
 export default SketchComponent;

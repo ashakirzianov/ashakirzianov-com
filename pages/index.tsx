@@ -2,18 +2,22 @@ import { Draggable, Position } from "@/components/Draggable";
 import { useSketcher } from "@/hooks/sketcher";
 import { Scene } from "@/sketcher";
 import { bwway, loveMeTwoTimes } from "@/sketches/posters";
+import Link from "next/link";
 
 // @refresh reset
 
-function Sketch({ sketch, offset }: {
+function Sketch({ sketch, offset, link }: {
   sketch: Scene,
+  link: string,
   offset?: Position,
 }) {
   let { node } = useSketcher({
     scene: sketch, period: 40,
   });
   return <Draggable position={offset ?? { top: 0, left: 0 }}>
-    <div className="sketch">{node}</div>
+    <Link href={link}>
+      <div className="sketch">{node}</div>
+    </Link>
     <style jsx>{`
     .sketch {
       aspect-ratio: 3/4;
@@ -33,6 +37,7 @@ export default function Main() {
       left: '13vw',
     }}>
       <Sketch
+        link="/posters/0"
         sketch={loveMeTwoTimes()}
       />
     </div>
@@ -41,6 +46,7 @@ export default function Main() {
       right: '21vw',
     }}>
       <Sketch
+        link="/posters/1"
         sketch={bwway()}
       />
     </div>

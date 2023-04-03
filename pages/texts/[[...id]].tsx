@@ -1,5 +1,6 @@
 import { TextPost, getAllTextIds, getTextForId } from "@/texts";
 import { GetStaticPaths, GetStaticProps } from "next"
+import Head from "next/head";
 
 export const getStaticPaths: GetStaticPaths = async function () {
     let ids = await getAllTextIds();
@@ -24,11 +25,16 @@ export const getStaticProps: GetStaticProps<Props> = async function ({ params })
 }
 
 export default function TextPostPage({ post }: Props) {
-    return <div className="container">
-        <div className="post">
-            <div dangerouslySetInnerHTML={{ __html: post.html }} />
-        </div>
-        <style>{`
+    return <>
+        <Head>
+            <title>{post.title ?? 'Post'}</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </Head>
+        <div className="container">
+            <div className="post">
+                <div dangerouslySetInnerHTML={{ __html: post.html }} />
+            </div>
+            <style>{`
     .container {
         display: flex;
         justify-content: center;
@@ -50,5 +56,6 @@ export default function TextPostPage({ post }: Props) {
         margin-bottom: 1em; /* between paragraphs */
     }
     `}</style>
-    </div>;
+        </div>
+    </>;
 }

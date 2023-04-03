@@ -8,8 +8,9 @@ import { parseISO } from 'date-fns';
 
 export type TextPost = {
     id: string,
-    date?: string,
     html: string,
+    title?: string,
+    date?: string,
 };
 
 export async function getAllTexts() {
@@ -41,6 +42,7 @@ async function getText(fileName: string): Promise<TextPost | undefined> {
             id,
             html: htmlData.toString(),
             date: matterResult.data.date,
+            title: matterResult.data.title,
         };
     } catch {
         return undefined;

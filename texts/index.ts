@@ -15,7 +15,7 @@ export type TextPost = {
 export async function getAllTexts() {
     let ids = await getAllTextIds();
     let objects = await Promise.all(ids.map(getTextForId));
-    return objects;
+    return objects.filter((o): o is TextPost => o !== undefined);
 }
 
 export async function getTextForId(id: string) {

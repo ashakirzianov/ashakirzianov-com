@@ -1,11 +1,11 @@
-import { Draggable, Position } from "@/components/Draggable";
+import { ReactNode, useState } from "react";
+import Link from "next/link";
+import { GetStaticProps } from "next";
 import { useSketcher } from "@/hooks/sketcher";
 import { Scene } from "@/sketcher";
 import { bwway, loveMeTwoTimes } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
-import { GetStaticProps } from "next";
-import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import { Draggable } from "@/components/Draggable";
 
 // @refresh reset
 
@@ -18,7 +18,6 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
 }
 
 export default function Main({ posts }: Props) {
-  console.log(posts);
   return <div className="container">
     <div className="card" style={{
       top: '15vh',
@@ -64,28 +63,30 @@ export default function Main({ posts }: Props) {
   </div>;
 }
 
-function Card({ children, offset, link }: {
+function Card({ children, link }: {
   children: ReactNode,
   link: string,
-  offset?: Position,
 }) {
-  let router = useRouter();
-  return <>
-    <Draggable
-      position={offset ?? { top: 0, left: 0 }}
-      onClick={() => router.push(link)}
-      cursor="pointer"
-    >
-      <div className="container">
-        <div className="sketch">{children}</div>
-      </div>
-      <style jsx>{`
+  let [navigable, setNavigable] = useState(true);
+  return <div>
+    <Link href={navigable ? link : ''} draggable={false}>
+      <Draggable
+        onDrag={() => setNavigable(false)}
+        onStop={() => setTimeout(() => setNavigable(true))}
+      >
+        <div className="container handle">
+          <div className="sketch">{children}</div>
+        </div>
+      </Draggable>
+    </Link>
+    <style jsx>{`
       .sketch {
         overflow: hidden;
         border-radius: 5px;
         clip-path: border-box;
       }
     .container {
+      position: relative;
       display: flex;
       justify-content: stretch;
       align-items: stretch;
@@ -103,8 +104,7 @@ function Card({ children, offset, link }: {
       border-radius: 5px;
     }
     `}</style>
-    </Draggable>
-  </>;
+  </div>;
 }
 
 function SketchCard({ sketch, link }: {

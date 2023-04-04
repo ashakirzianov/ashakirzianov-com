@@ -6,6 +6,7 @@ import { Scene } from "@/sketcher";
 import { bwway, loveMeTwoTimes } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
+import { Paper } from "@/components/Paper";
 
 // @refresh reset
 
@@ -68,24 +69,22 @@ function Card({ children, link }: {
   link: string,
 }) {
   let [navigable, setNavigable] = useState(true);
-  return <div>
+  return <>
     <Link href={navigable ? link : ''} draggable={false}>
       <Draggable
         onDrag={() => setNavigable(false)}
         onStop={() => setTimeout(() => setNavigable(true))}
       >
-        <div className="container handle">
-          <div className="sketch">{children}</div>
-        </div>
+        <Paper>
+          <div className="container">
+            {children}
+          </div>
+        </Paper>
       </Draggable>
     </Link>
     <style jsx>{`
-      .sketch {
-        overflow: hidden;
-        border-radius: 5px;
-        clip-path: border-box;
-      }
     .container {
+      display: flex;
       position: relative;
       display: flex;
       justify-content: stretch;
@@ -93,18 +92,14 @@ function Card({ children, link }: {
       padding: 0;
       aspect-ratio: 3/4;
       width: 200pt;
+      height: 100%;
       max-width: 50vw;
-      box-shadow:
-        0 2.8px 2.2px rgba(0, 0, 0, 0.034),
-        0 6.7px 5.3px rgba(0, 0, 0, 0.048),
-        0 12.5px 10px rgba(0, 0, 0, 0.06),
-        0 22.3px 17.9px rgba(0, 0, 0, 0.072),
-        0 41.8px 33.4px rgba(0, 0, 0, 0.086),
-        0 100px 80px rgba(0, 0, 0, 0.12);
+      max-height: 30vh;
       border-radius: 5px;
+      overflow: hidden;
     }
     `}</style>
-  </div>;
+  </>;
 }
 
 function SketchCard({ sketch, link }: {
@@ -123,38 +118,35 @@ function TextPostCard({ post, link }: {
 }) {
   return <Card link={link}>
     <div className="container">
-      <div className="post">
-        <div dangerouslySetInnerHTML={{ __html: post.html }} />
-      </div>
-      <style>{`
-    .container {
-        aspect-ratio: 3/4;
+      <div className="post" dangerouslySetInnerHTML={{ __html: post.html }} />
+      <style jsx>{`
+      .container {
         display: flex;
         justify-content: center;
         align-items: start;
+        height: 100%;
+        width: 100%;
+        background-color: rgb(230,230,230);
+      }
+      .post {
+        overflow: hidden;
         font-family: Avenir Next,Helvetics,sans-serif;
         font-size: 5pt;
-        padding: 10pt;
-        padding-top: 15pt;
+        padding: 3em 5%;
         width: 100%;
-        max-height: 100%;
-        background-color: rgb(230,230,230);
-        -webkit-user-select: none;
-        -ms-user-select: none;
+        max-height: 45em;
         user-select: none;
-    }
-    .post {
-      max-height: 48em;
-      overflow: hidden;
-    }
-    h1 {
-        margin-bottom: 1em;
-    }
-    p {
-        text-indent: 2em;
-        line-height: 1.2em;
-        margin-bottom: 1em;
-    }
+      }
+      `}</style>
+      <style>{`
+      h1 {
+          margin-bottom: 1em;
+      }
+      p {
+          text-indent: 2em;
+          line-height: 1.2em;
+          margin-bottom: 1em;
+      }
     `}</style>
     </div>
   </Card>;

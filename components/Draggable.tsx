@@ -1,5 +1,5 @@
 import {
-    CSSProperties, MouseEvent, ReactNode, useEffect, useRef, useState,
+    MouseEvent, ReactNode, useCallback, useEffect, useRef, useState,
 } from "react";
 
 let globalZ = 0;
@@ -32,9 +32,8 @@ export function Draggable({
             }
         }));
     }
-    function handleDragging({ x, y }: Position) {
+    let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
         if (dragging) {
-
             setState(state => {
                 let MIN_STEP = 100;
                 let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
@@ -55,14 +54,14 @@ export function Draggable({
                 }
             });
         }
-    }
-    function handleEndDragging() {
+    }, [dragging, onDrag]);
+    let handleEndDragging = useCallback(function handleEndDragging() {
         if (onStop) {
             onStop();
         }
         setDragging(false);
         setCursorChanged(false);
-    }
+    }, [onStop]);
 
     function getTouchPosition(event: globalThis.TouchEvent) {
         let touches = event.targetTouches;
@@ -114,7 +113,7 @@ export function Draggable({
                 ref.removeEventListener('touchcancel', handleTouchEnd);
             }
         }
-    }, [divRef.current])
+    }, [divRef, handleDragging, handleEndDragging])
 
     useEffect(() => {
         window.addEventListener('mouseup', handleEndDragging);
@@ -126,7 +125,7 @@ export function Draggable({
             window.removeEventListener('touchend', handleEndDragging);
             window.removeEventListener('touchcancel', handleEndDragging);
         };
-    }, []);
+    }, [handleEndDragging]);
 
     return <div ref={divRef} style={{
         position: 'relative',

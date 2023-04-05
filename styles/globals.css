@@ -29,3 +29,7 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+html {
+  background-color: #E6E6E6;
+}

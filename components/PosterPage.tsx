@@ -50,10 +50,6 @@ export function PosterPage({
                     border-radius: 5px;
                     clip-path: border-box;
                     overflow: hidden;
-                    
-                }
-                main {
-                    background-color: #DDDDDD;
                 }
                 `}</style>
             </main>

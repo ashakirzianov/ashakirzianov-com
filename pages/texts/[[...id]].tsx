@@ -34,28 +34,29 @@ export default function TextPostPage({ post }: Props) {
             <div className="post">
                 <div dangerouslySetInnerHTML={{ __html: post.html }} />
             </div>
+            <style jsx>{`
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: Avenir Next,Helvetics,sans-serif;
+                padding: 10pt;
+                width: 100%;
+            }
+            .post {
+                max-width: 480pt;
+            }
+            `}</style>
             <style>{`
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: Avenir Next,Helvetics,sans-serif;
-        padding: 10pt;
-        width: 100%;
-        background-color: rgb(230,230,230);
-    }
-    .post {
-        max-width: 480pt;
-    }
-    h1 {
-        margin-bottom: 1em;
-    }
-    p {
-        text-indent: 2em;
-        line-height: 1.2em;   /* within paragraph */
-        margin-bottom: 1em; /* between paragraphs */
-    }
-    `}</style>
+            h1 {
+                margin-bottom: 1em;
+            }
+            p {
+                text-indent: 2em;
+                line-height: 1.2em;   /* within paragraph */
+                margin-bottom: 1em; /* between paragraphs */
+            }
+            `}</style>
         </div>
     </>;
 }

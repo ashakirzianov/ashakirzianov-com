@@ -1,56 +1,145 @@
-import { CSSProperties, ReactNode, useEffect, useState } from "react";
+import {
+    CSSProperties, MouseEvent, ReactNode, useEffect, useRef, useState,
+} from "react";
 
 let globalZ = 0;
-export type Position = { top: number, left: number };
+export type Position = { x: number, y: number };
 export function Draggable({
-    position, children, onClick, cursor,
+    children, onDrag, onStop,
 }: {
-    position: Position,
-    children: ReactNode,
-    cursor?: CSSProperties['cursor'],
-    onClick?: () => void,
+    children?: ReactNode,
+    onDrag?: () => void,
+    onStop?: () => void,
 }) {
+    let divRef = useRef<HTMLDivElement>(null);
     let [dragging, setDragging] = useState(false);
-    let [dragged, setDragged] = useState(false);
-    let [offset, setOffset] = useState({ top: 0, left: 0 });
+    let [state, setState] = useState({
+        offset: { x: 0, y: 0 },
+        touchStart: { x: 0, y: 0 },
+    });
     let [zIndex, setZIndex] = useState(globalZ);
-    useEffect(() => {
-        const handleMouseUp = () => {
-            setDragged(false);
-            setDragging(false);
-        };
+    let [cursorChanged, setCursorChanged] = useState(false);
 
-        window.addEventListener('mouseup', handleMouseUp);
+    function handleStartDragging({ x, y }: Position) {
+        setDragging(true);
+        setZIndex(() => globalZ++);
+        setCursorChanged(true);
+        setState(state => ({
+            ...state,
+            touchStart: {
+                x: state.offset.x - x,
+                y: state.offset.y - y,
+            }
+        }));
+    }
+    function handleDragging({ x, y }: Position) {
+        if (dragging) {
+
+            setState(state => {
+                let MIN_STEP = 100;
+                let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
+                let dy = Math.abs(y - (state.touchStart.y - state.offset.y));
+                if (dx > MIN_STEP || dy > MIN_STEP) {
+                    if (onDrag) {
+                        onDrag();
+                    }
+                    return {
+                        ...state,
+                        offset: {
+                            x: state.touchStart.x + x,
+                            y: state.touchStart.y + y,
+                        },
+                    };
+                } else {
+                    return state;
+                }
+            });
+        }
+    }
+    function handleEndDragging() {
+        if (onStop) {
+            onStop();
+        }
+        setDragging(false);
+        setCursorChanged(false);
+    }
+
+    function getTouchPosition(event: globalThis.TouchEvent) {
+        let touches = event.targetTouches;
+        if (touches.length !== 1) {
+            return undefined;
+        }
+        let touch = event.targetTouches[0]!;
+        return {
+            x: touch.clientX,
+            y: touch.clientY,
+        };
+    }
+
+    function getMousePosition({ clientX, clientY }: MouseEvent<unknown>) {
+        return {
+            x: clientX, y: clientY,
+        };
+    }
+
+    useEffect(() => {
+        function handleTouchStart(event: globalThis.TouchEvent) {
+            let position = getTouchPosition(event);
+            if (position) {
+                handleStartDragging(position);
+            }
+        }
+        function handleTouchMove(event: globalThis.TouchEvent) {
+            let position = getTouchPosition(event);
+            if (position) {
+                event.preventDefault();
+                handleDragging(position);
+            }
+        }
+        function handleTouchEnd() {
+            handleEndDragging();
+        }
+        let ref = divRef.current;
+        if (ref) {
+            ref.addEventListener('touchstart', handleTouchStart);
+            ref.addEventListener('touchmove', handleTouchMove, { passive: false });
+            ref.addEventListener('touchend', handleTouchEnd);
+            ref.addEventListener('touchcancel', handleTouchEnd)
+        }
+        return function cleanup() {
+            if (ref) {
+                ref.removeEventListener('touchstart', handleTouchStart);
+                ref.removeEventListener('touchmove', handleTouchStart);
+                ref.removeEventListener('touchend', handleTouchEnd);
+                ref.removeEventListener('touchcancel', handleTouchEnd);
+            }
+        }
+    }, [divRef.current])
+
+    useEffect(() => {
+        window.addEventListener('mouseup', handleEndDragging);
+        window.addEventListener('touchend', handleEndDragging);
+        window.addEventListener('touchcancel', handleEndDragging);
 
         return () => {
-            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('mouseup', handleEndDragging);
+            window.removeEventListener('touchend', handleEndDragging);
+            window.removeEventListener('touchcancel', handleEndDragging);
         };
     }, []);
-    let [cursorChanged, setCursorChanged] = useState(false);
-    return <div style={{
+
+    return <div ref={divRef} style={{
         position: 'relative',
-        top: position.top + offset.top,
-        left: position.left + offset.left,
+        left: state.offset.x,
+        top: state.offset.y,
         zIndex,
-        cursor: cursorChanged ? 'grab' : cursor,
+        cursor: cursorChanged ? 'grab' : undefined,
     }}
         onMouseDown={function (event) {
-            setDragging(true);
-            setZIndex(() => globalZ++);
+            handleStartDragging(getMousePosition(event));
         }}
-        onMouseUp={function (event) {
-            if (!dragged && onClick) {
-                onClick();
-            }
-        }}
-        onMouseMove={function ({ movementX, movementY }) {
-            if (dragging) {
-                setDragged(true);
-                setOffset(offset => ({
-                    left: offset.left + movementX,
-                    top: offset.top + movementY,
-                }));
-            }
+        onMouseMove={function (event) {
+            handleDragging(getMousePosition(event));
         }}
         onMouseEnter={function () {
             setTimeout(() => setCursorChanged(true), 1000);

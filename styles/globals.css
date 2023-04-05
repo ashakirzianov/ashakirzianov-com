@@ -33,8 +33,21 @@ a {
 html {
   --background-light: #E6E6E6;
   --foreground-light: black;
+  --shadow-light: rgba(0, 0, 0, .1);
+  --background-dark: #222222;
+  --foreground-dark: #CCCCCC;
+  --shadow-dark: rgba(0, 0, 0, .5);
   --background: var(--background-light);
   --foreground: var(--foreground-light);
+  --shadow: var(--shadow-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    --background: var(--background-dark);
+    --foreground: var(--foreground-dark);
+    --shadow: var(--shadow-dark);
+  }
 }
 
 body {

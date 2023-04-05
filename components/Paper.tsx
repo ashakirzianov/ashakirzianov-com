@@ -9,15 +9,15 @@ export function Paper({ children }: {
         .paper
         {
             position:relative;
-            filter: drop-shadow(0px 0px 5px rgba(0,0,0,.1));
+            filter: drop-shadow(0px 0px 5px var(--shadow));
         }
         .paper:before, .paper:after
         {
             content:"";
             position:absolute;
             z-index:-1;
-            box-shadow: 5px 0 20px rgba(0,0,0,0.1),
-            -5px 0 20px rgba(0,0,0,0.1);
+            box-shadow: 5px 0 20px var(--shadow),
+            -5px 0 20px var(--shadow);
             top:10px;
             bottom:10px;
             left:0;

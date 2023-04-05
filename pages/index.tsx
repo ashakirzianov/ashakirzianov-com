@@ -131,7 +131,8 @@ function TextPostCard({ post, link }: {
         align-items: start;
         height: 100%;
         width: 100%;
-        background-color: #E6E6E6;
+        background-color: var(--background-light);
+        color: var(--foreground-light);
       }
       .post {
         overflow: hidden;

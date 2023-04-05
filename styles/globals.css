@@ -31,5 +31,13 @@ a {
 }
 
 html {
-  background-color: #E6E6E6;
+  --background-light: #E6E6E6;
+  --foreground-light: black;
+  --background: var(--background-light);
+  --foreground: var(--foreground-light);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
 }

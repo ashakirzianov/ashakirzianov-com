@@ -1,6 +1,6 @@
-import { Poster } from "@/components/Poster";
 import Head from "next/head";
 import { ReactNode } from "react";
+import { Paper } from "./Paper";
 
 export function PosterPage({
     title, description, children,
@@ -17,22 +17,43 @@ export function PosterPage({
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <main>
-                <div className="poster-page">
-                    <Poster>
-                        {children ?? null}
-                    </Poster>
+                <div className="page">
+                    <div className="container">
+                        <Paper>
+                            <div className="content">
+                                {children ?? null}
+                            </div>
+                        </Paper>
+                    </div>
                 </div>
                 <style jsx>{`
-                .poster-page {
+                .page {
                     display: flex;
                     align-items: start;
                     justify-content: center;
                     height: 100vh;
                     width: 100vw;
-                    padding: 10vh 10px;
+                    padding: min(10vh,40pt) min(2vw,20pt);
+                }
+                .container {
+                    display: flex;
+                    aspect-ratio: 3 / 4;
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+                .content {
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    align-items: stretch;
+                    justify-items: stretch;
+                    border-radius: 5px;
+                    clip-path: border-box;
+                    overflow: hidden;
+                    
                 }
                 main {
-                    background-color: #222222;
+                    background-color: #DDDDDD;
                 }
                 `}</style>
             </main>

@@ -75,11 +75,13 @@ function Card({ children, link }: {
         onDrag={() => setNavigable(false)}
         onStop={() => setTimeout(() => setNavigable(true))}
       >
-        <Paper>
-          <div className="container">
-            {children}
-          </div>
-        </Paper>
+        <div className="container">
+          <Paper>
+            <div className="content">
+              {children}
+            </div>
+          </Paper>
+        </div>
       </Draggable>
     </Link>
     <style jsx>{`
@@ -89,14 +91,17 @@ function Card({ children, link }: {
       display: flex;
       justify-content: stretch;
       align-items: stretch;
-      padding: 0;
       aspect-ratio: 3/4;
-      width: 200pt;
+      width: min(200pt,50vw);
       height: 100%;
-      max-width: 50vw;
-      max-height: 30vh;
+    }
+    .content {
+      display: flex;
       border-radius: 5px;
       overflow: hidden;
+      clip-path: border-box;
+      width: 100%;
+      height: 100%;
     }
     `}</style>
   </>;
@@ -134,7 +139,7 @@ function TextPostCard({ post, link }: {
         font-size: 5pt;
         padding: 3em 5%;
         width: 100%;
-        max-height: 45em;
+        max-height: min(50em,64vw);
         user-select: none;
       }
       `}</style>

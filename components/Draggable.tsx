@@ -34,16 +34,26 @@ export function Draggable({
     }
     function handleDragging({ x, y }: Position) {
         if (dragging) {
-            setState(state => ({
-                ...state,
-                offset: {
-                    x: state.touchStart.x + x,
-                    y: state.touchStart.y + y,
-                },
-            }));
-            if (onDrag) {
-                onDrag();
-            }
+
+            setState(state => {
+                let MIN_STEP = 100;
+                let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
+                let dy = Math.abs(y - (state.touchStart.y - state.offset.y));
+                if (dx > MIN_STEP || dy > MIN_STEP) {
+                    if (onDrag) {
+                        onDrag();
+                    }
+                    return {
+                        ...state,
+                        offset: {
+                            x: state.touchStart.x + x,
+                            y: state.touchStart.y + y,
+                        },
+                    };
+                } else {
+                    return state;
+                }
+            });
         }
     }
     function handleEndDragging() {

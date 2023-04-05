@@ -1,10 +1,10 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
     randomRange, rainbow, cubicBox, modItem, vals,
-    resolvePrimitiveColor, gray,
+    resolvePrimitiveColor, gray, scene,
 } from '@/sketcher';
 import {
-    enchanceWithSetI, randomObject, setsScene, xSets, zoomToBoundingBox,
+    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
 } from './utils';
 
 export function letters(text: string) {
@@ -19,25 +19,31 @@ export function letters(text: string) {
             }),
         );
     });
-    return setsScene({
-        sets,
+    return scene({
+        state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),
             gravity({ gravity: -0.002, power: 5 }),
             velocityStep(),
         )),
-        drawObject({ canvas, object, seti, index }) {
-            canvas.context.font = '20vh sans-serif';
-            canvas.context.lineWidth = .1;
-            let sub = text.at((seti + index) % text.length)!;
-            canvas.context.strokeStyle = 'black';
-            canvas.context.strokeText(sub, object.position.x, object.position.y);
-            canvas.context.fillStyle = resolvePrimitiveColor(gray(230));
-            // canvas.context.fillText(sub, object.position.x, object.position.y);
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
-        },
+        layers: [{}, {
+            prepare({ canvas, state }) {
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+            },
+            render({ canvas, state }) {
+                state.forEach((set, seti) => set.forEach(
+                    (object, index) => {
+                        canvas.context.font = '20vh sans-serif';
+                        canvas.context.lineWidth = .1;
+                        let sub = text.at((seti + index) % text.length)!;
+                        canvas.context.strokeStyle = 'black';
+                        canvas.context.strokeText(sub, object.position.x, object.position.y);
+                        canvas.context.fillStyle = resolvePrimitiveColor(gray(230));
+                        // canvas.context.fillText(sub, object.position.x, object.position.y);
+                    }
+                ))
+            }
+        }],
     });
 }
 
@@ -56,27 +62,33 @@ export function strokedSlinky() {
             }));
         },
     }));
-    return setsScene({
-        sets: [sets.flat()],
+    return scene({
+        state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
         )),
-        drawObject({ canvas, frame, object }) {
-            let fill = modItem(palette, 100 * object.seti + frame + 20);
-            circle({
-                lineWidth: 0.2,
-                fill: fill,
-                stroke: 'black',
-                position: object.position,
-                radius: object.radius * 3,
-                context: canvas.context,
-            });
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
-        },
+        layers: [{}, {
+            prepare({ canvas, state }) {
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+            },
+            render({ canvas, state, frame }) {
+                state.forEach(set => set.forEach(
+                    object => {
+                        let fill = modItem(palette, 100 * object.seti + frame + 20);
+                        circle({
+                            lineWidth: 0.2,
+                            fill: fill,
+                            stroke: 'black',
+                            position: object.position,
+                            radius: object.radius * 3,
+                            context: canvas.context,
+                        });
+                    }
+                ))
+            }
+        }],
     });
 }
 
@@ -95,28 +107,33 @@ export function slinky() {
         }
     }));
     let palette = rainbow({ count: 120 });
-    return setsScene({
-        sets: [sets.flat()],
+    return scene({
+        state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
         )),
-        drawObject({ canvas, frame, object }) {
-            let offset = object.seti * 100 + frame;
-            let fill = modItem(palette, offset);
-            let stroke = modItem(palette, offset + 4);
-            circle({
-                lineWidth: 3,
-                stroke,
-                position: object.position,
-                radius: object.radius,
-                context: canvas.context,
-            });
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
-        },
+        layers: [{}, {
+            prepare({ canvas, state }) {
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+            },
+            render({ canvas, state, frame }) {
+                state.forEach(set => set.forEach(
+                    object => {
+                        let offset = object.seti * 100 + frame;
+                        let stroke = modItem(palette, offset + 4);
+                        circle({
+                            lineWidth: 3,
+                            stroke,
+                            position: object.position,
+                            radius: object.radius,
+                            context: canvas.context,
+                        });
+                    }
+                ))
+            }
+        }]
     });
 }
 
@@ -135,26 +152,32 @@ export function rainbowStrings() {
         }
     }));
     let palette = rainbow({ count: 120 });
-    return setsScene({
-        sets: [sets.flat()],
+    return scene({
+        state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
         )),
-        drawObject({ canvas, frame, object }) {
-            let fill = modItem(palette, object.seti * 100 + frame);
-            circle({
-                lineWidth: 0.5,
-                fill,
-                stroke: 'black',
-                position: object.position,
-                radius: object.radius,
-                context: canvas.context,
-            });
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
-        },
+        layers: [{}, {
+            prepare({ canvas, state }) {
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+            },
+            render({ canvas, state, frame }) {
+                state.forEach(set => set.forEach(
+                    object => {
+                        let fill = modItem(palette, object.seti * 100 + frame);
+                        circle({
+                            lineWidth: 0.5,
+                            fill,
+                            stroke: 'black',
+                            position: object.position,
+                            radius: object.radius,
+                            context: canvas.context,
+                        });
+                    }
+                ))
+            }
+        }],
     });
 }

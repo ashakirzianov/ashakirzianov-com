@@ -1,9 +1,9 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, Color, cubicBox, modItem, randomBoxes
+    randomRange, Color, cubicBox, modItem, randomBoxes, scene, NumRange
 } from '@/sketcher';
 import {
-    randomObject, setsScene, zoomToBoundingBox,
+    randomObject, zoomToBoundingBox,
 } from './utils';
 
 export function balanced(batches?: number) {
@@ -26,25 +26,29 @@ export function balanced(batches?: number) {
     let palette: Color[] = [
         '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
     ];
-    return setsScene({
-        sets,
+    return scene({
+        state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),
             gravity({ gravity: -0.002, power: 5 }),
             velocityStep(),
         )),
-        drawObject({ canvas, object, seti }) {
-            circle({
-                lineWidth: 0.5,
-                fill: modItem(palette, seti),
-                stroke: 'black',
-                position: object.position,
-                radius: object.radius,
-                context: canvas.context,
-            });
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
-        },
+        layers: [{}, {
+            prepare({ canvas, state }) {
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+            },
+            render({ canvas, state }) {
+                state.forEach((set, seti) => set.forEach(
+                    object => circle({
+                        lineWidth: 0.5,
+                        fill: modItem(palette, seti),
+                        stroke: 'black',
+                        position: object.position,
+                        radius: object.radius,
+                        context: canvas.context,
+                    })
+                ));
+            },
+        }],
     });
 }

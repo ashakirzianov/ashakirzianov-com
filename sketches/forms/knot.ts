@@ -1,9 +1,9 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, cubicBox, vals,
+    randomRange, cubicBox, vals, scene,
 } from '@/sketcher';
 import {
-    randomObject, setsScene, zoomToBoundingBox,
+    randomObject, zoomToBoundingBox,
 } from './utils';
 
 export function knot() {
@@ -16,25 +16,31 @@ export function knot() {
         massRange, maxVelocity, box,
         rToM: 1,
     }));
-    return setsScene({
-        sets: [set],
+    return scene({
+        state: [set],
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.06, power: 2 }),
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
         )),
-        drawObject({ canvas, object }) {
-            circle({
-                lineWidth: 0.5,
-                fill: 'orange',
-                stroke: 'black',
-                position: object.position,
-                radius: object.radius,
-                context: canvas.context,
-            });
-        },
-        prepare({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
-        },
+        layers: [{}, {
+            prepare({ canvas, state }) {
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+            },
+            render({ canvas, state }) {
+                state.forEach(set => set.forEach(
+                    object => {
+                        circle({
+                            lineWidth: 0.5,
+                            fill: 'orange',
+                            stroke: 'black',
+                            position: object.position,
+                            radius: object.radius,
+                            context: canvas.context,
+                        });
+                    }
+                ))
+            }
+        }],
     });
 }

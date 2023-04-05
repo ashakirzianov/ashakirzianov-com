@@ -1,8 +1,8 @@
 import {
-    arrayAnimator, clearCanvas, concentringCircles, getGravity, gravity, modItem, rainbow, randomRange, reduceAnimators, resultingBody, vals, vector, velocityStep,
+    arrayAnimator, clearCanvas, concentringCircles, getGravity, gravity, modItem, rainbow, randomRange, reduceAnimators, resultingBody, scene, vals, vector, velocityStep,
 } from "@/sketcher";
 import {
-    enchanceWithSetI, randomObject, setsScene, xSets, zoomToBoundingBox,
+    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
 } from "./utils";
 
 export function molecules() {
@@ -10,8 +10,8 @@ export function molecules() {
     let maxVelocity = 10;
     let massRange = { min: 1, max: 20 };
     let palette = rainbow({ count: 100, s: 100, l: 70 });
-    return setsScene({
-        sets: enchanceWithSetI(xSets({
+    return scene({
+        state: enchanceWithSetI(xSets({
             size: 10, velocity: 0,
             creareObjects(box) {
                 let batch = Math.floor(randomRange(batchRange));
@@ -47,21 +47,27 @@ export function molecules() {
                 return state;
             },
         ),
-        drawObject({ canvas, object, frame }) {
-            let offset = object.seti * 30 + frame;
-            let fills = vals(5).map(
-                (_, i) => modItem(palette, offset - 3 * i)
-            );
-            concentringCircles({
-                context: canvas.context,
-                position: object.position,
-                radius: object.radius,
-                fills,
-            });
-        },
-        prerender({ canvas, state }) {
-            clearCanvas(canvas);
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
-        },
+        layers: [{}, {
+            render({ canvas, state, frame }) {
+                canvas.context.save();
+                clearCanvas(canvas);
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+                state.forEach(set => set.forEach(
+                    object => {
+                        let offset = object.seti * 30 + frame;
+                        let fills = vals(5).map(
+                            (_, i) => modItem(palette, offset - 3 * i)
+                        );
+                        concentringCircles({
+                            context: canvas.context,
+                            position: object.position,
+                            radius: object.radius,
+                            fills,
+                        });
+                    }
+                ));
+                canvas.context.restore();
+            }
+        }],
     });
 }

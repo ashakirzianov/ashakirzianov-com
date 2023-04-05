@@ -1,9 +1,9 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
-    randomRange, rainbow, modItem, vals, concentringCircles,
+    randomRange, rainbow, modItem, vals, concentringCircles, scene,
 } from '@/sketcher';
 import {
-    randomObject, setsScene, xSets, zoomToBoundingBox,
+    randomObject, xSets, zoomToBoundingBox,
 } from './utils';
 
 export function rave() {
@@ -21,27 +21,33 @@ export function rave() {
             }));
         },
     });
-    return setsScene({
-        sets,
+    return scene({
+        state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
         )),
-        drawObject({ canvas, frame, object, seti }) {
-            let offset = seti * 30 + frame;
-            let fills = vals(5).map(
-                (_, i) => modItem(palette, offset - 3 * i)
-            );
-            concentringCircles({
-                context: canvas.context,
-                position: object.position,
-                radius: object.radius,
-                fills,
-            });
-        },
-        prerender({ canvas, state }) {
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
-        },
+        layers: [{}, {
+            render({ canvas, state, frame }) {
+                canvas.context.save();
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                state.forEach((set, seti) => set.forEach(
+                    object => {
+                        let offset = seti * 30 + frame;
+                        let fills = vals(5).map(
+                            (_, i) => modItem(palette, offset - 3 * i)
+                        );
+                        concentringCircles({
+                            context: canvas.context,
+                            position: object.position,
+                            radius: object.radius,
+                            fills,
+                        });
+                    }
+                ));
+                canvas.context.restore();
+            }
+        }],
     });
 }

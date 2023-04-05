@@ -1,10 +1,10 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     randomRange, rainbow, modItem, vals,
-    concentringCircles, clearCanvas,
+    concentringCircles, clearCanvas, scene,
 } from '@/sketcher';
 import {
-    enchanceWithSetI, randomObject, setsScene, xSets, zoomToBoundingBox,
+    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
 } from './utils';
 
 export function bubbles() {
@@ -22,28 +22,34 @@ export function bubbles() {
             }));
         },
     }));
-    return setsScene({
-        sets,
+    return scene({
+        state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
-        drawObject({ canvas, object, frame }) {
-            let offset = object.seti * 30 + frame;
-            let fills = vals(5).map(
-                (_, i) => modItem(palette, offset - 3 * i)
-            );
-            concentringCircles({
-                context: canvas.context,
-                position: object.position,
-                radius: object.radius,
-                fills,
-            });
-        },
-        prerender({ canvas, state }) {
-            clearCanvas(canvas);
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
-        },
+        layers: [{}, {
+            render({ canvas, state, frame }) {
+                canvas.context.save();
+                clearCanvas(canvas);
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                state.forEach(set => set.forEach(
+                    object => {
+                        let offset = object.seti * 30 + frame;
+                        let fills = vals(5).map(
+                            (_, i) => modItem(palette, offset - 3 * i)
+                        );
+                        concentringCircles({
+                            context: canvas.context,
+                            position: object.position,
+                            radius: object.radius,
+                            fills,
+                        });
+                    }
+                ));
+                canvas.context.restore();
+            }
+        }],
     });
 }
 
@@ -62,27 +68,33 @@ export function bubblesFlat() {
             }));
         },
     }));
-    return setsScene({
-        sets: [sets.flat()],
+    return scene({
+        state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
-        drawObject({ canvas, object, frame }) {
-            let offset = object.seti * 30 + frame;
-            let fills = vals(5).map(
-                (_, i) => modItem(palette, offset - 3 * i)
-            );
-            concentringCircles({
-                context: canvas.context,
-                position: object.position,
-                radius: object.radius,
-                fills,
-            });
-        },
-        prerender({ canvas, state }) {
-            clearCanvas(canvas);
-            zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
-        },
+        layers: [{}, {
+            render({ canvas, state, frame }) {
+                canvas.context.save();
+                clearCanvas(canvas);
+                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                state.forEach(set => set.forEach(
+                    object => {
+                        let offset = object.seti * 30 + frame;
+                        let fills = vals(5).map(
+                            (_, i) => modItem(palette, offset - 3 * i)
+                        );
+                        concentringCircles({
+                            context: canvas.context,
+                            position: object.position,
+                            radius: object.radius,
+                            fills,
+                        });
+                    },
+                ));
+                canvas.context.restore();
+            }
+        }],
     });
 }

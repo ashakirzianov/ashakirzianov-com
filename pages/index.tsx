@@ -92,7 +92,7 @@ function Card({ children, link }: {
       justify-content: stretch;
       align-items: stretch;
       aspect-ratio: 3/4;
-      width: min(200pt,50vw);
+      width: min(192pt,48vw);
       height: 100%;
     }
     .content {
@@ -139,18 +139,19 @@ function TextPostCard({ post, link }: {
         font-size: 5pt;
         padding: 3em 5%;
         width: 100%;
-        max-height: min(50em,64vw);
+        max-height: min(244pt,58vw);
         user-select: none;
       }
       `}</style>
       <style>{`
       h1 {
-          margin-bottom: 1em;
+          margin-bottom: 12pt;
+          line-height: 12pt;
       }
       p {
-          text-indent: 2em;
-          line-height: 1.2em;
-          margin-bottom: 1em;
+          text-indent: 12pt;
+          line-height: 6pt;
+          margin-bottom: 6pt;
       }
     `}</style>
     </div>

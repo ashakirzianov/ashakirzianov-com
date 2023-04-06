@@ -1,3 +1,4 @@
+import { TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTextIds, getTextForId } from "@/texts";
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head";
@@ -30,33 +31,8 @@ export default function TextPostPage({ post }: Props) {
             <title>{post.title ?? 'Post'}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <div className="container">
-            <div className="post">
-                <div dangerouslySetInnerHTML={{ __html: post.html }} />
-            </div>
-            <style jsx>{`
-            .container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-family: Avenir Next,Helvetics,sans-serif;
-                padding: 10pt;
-                width: 100%;
-            }
-            .post {
-                max-width: 480pt;
-            }
-            `}</style>
-            <style>{`
-            h1 {
-                margin-bottom: 1em;
-            }
-            p {
-                text-indent: 2em;
-                line-height: 1.2em;   /* within paragraph */
-                margin-bottom: 1em; /* between paragraphs */
-            }
-            `}</style>
-        </div>
+        <TextBlock>
+            <div dangerouslySetInnerHTML={{ __html: post.html }} />
+        </TextBlock>
     </>;
 }

@@ -7,6 +7,7 @@ import { bwway, loveMeTwoTimes } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import { Paper } from "@/components/Paper";
+import Head from "next/head";
 
 // @refresh reset
 
@@ -21,45 +22,53 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
 type HighlightKind = 'stories' | 'posters';
 export default function Main({ posts }: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  return <div className="container">
-    <div className="card" style={{
-      top: '15vh',
-      left: '13vw',
-    }}>
-      <SketchCard
-        link="/posters/0"
-        sketch={loveMeTwoTimes()}
-        highlight={hl === 'posters'}
-      />
-    </div>
-    <div className="card" style={{
-      top: '25vh',
-      right: '12vw',
-    }}>
-      <SketchCard
-        link="/posters/1"
-        sketch={bwway()}
-        highlight={hl === 'posters'}
-      />
-    </div>
-    <div className="card" style={{
-      bottom: '15vh',
-      left: '30vw',
-    }}>
-      <TextPostCard
-        link="/texts/thirty-four"
-        post={posts[0]!}
-        highlight={hl === 'stories'}
-      />
-    </div>
-    <div className="card" style={{
-      top: '10vw',
-      left: '30vh',
-    }}>
-      <AboutCard onHover={setHl} />
-    </div>
+  return <>
+    <Head>
+      <title>Анҗан</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </Head><div className="container">
+      <div style={{
+        position: 'absolute',
+        top: '15vh',
+        left: '13vw',
+      }}>
+        <SketchCard
+          link="/posters/0"
+          sketch={loveMeTwoTimes()}
+          highlight={hl === 'posters'}
+        />
+      </div>
+      <div style={{
+        position: 'absolute',
+        top: '25vh',
+        right: '12vw',
+      }}>
+        <SketchCard
+          link="/posters/1"
+          sketch={bwway()}
+          highlight={hl === 'posters'}
+        />
+      </div>
+      <div style={{
+        position: 'absolute',
+        bottom: '15vh',
+        left: '30vw',
+      }}>
+        <TextPostCard
+          link="/texts/thirty-four"
+          post={posts[0]!}
+          highlight={hl === 'stories'}
+        />
+      </div>
+      <div style={{
+        position: 'absolute',
+        top: '10vw',
+        right: '30vh',
+      }}>
+        <AboutCard onHover={setHl} />
+      </div>
 
-    <style jsx>{`
+      <style jsx>{`
       .container {
         display: flex;
         flex-flow: column;
@@ -68,11 +77,9 @@ export default function Main({ posts }: Props) {
         width: 100%;
         height: 100vh;
       }
-      .card {
-        position: absolute;
-      }
       `}</style>
-  </div>;
+    </div>
+  </>;
 }
 
 type CardProps = {
@@ -225,7 +232,7 @@ function AboutCard({ onHover }: {
         background-color: var(--background);
         color: var(--foreground);
         overflow: hidden;
-        font-size: 1.6em;
+        font-size: 2.5vh;
         line-height: 1.2em;
         padding: 10%;
         width: 100%;
@@ -233,6 +240,7 @@ function AboutCard({ onHover }: {
         user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
+        cursor: default;
     }
     span {
       content: "oops";

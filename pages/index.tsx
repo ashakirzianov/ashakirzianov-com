@@ -18,7 +18,9 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
   return { props: { posts } };
 }
 
+type HighlightKind = 'stories' | 'posters';
 export default function Main({ posts }: Props) {
+  let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
   return <div className="container">
     <div className="card" style={{
       top: '15vh',
@@ -27,6 +29,7 @@ export default function Main({ posts }: Props) {
       <SketchCard
         link="/posters/0"
         sketch={loveMeTwoTimes()}
+        highlight={hl === 'posters'}
       />
     </div>
     <div className="card" style={{
@@ -36,6 +39,7 @@ export default function Main({ posts }: Props) {
       <SketchCard
         link="/posters/1"
         sketch={bwway()}
+        highlight={hl === 'posters'}
       />
     </div>
     <div className="card" style={{
@@ -45,7 +49,14 @@ export default function Main({ posts }: Props) {
       <TextPostCard
         link="/texts/thirty-four"
         post={posts[0]!}
+        highlight={hl === 'stories'}
       />
+    </div>
+    <div className="card" style={{
+      top: '10vw',
+      left: '30vh',
+    }}>
+      <AboutCard onHover={setHl} />
     </div>
 
     <style jsx>{`
@@ -64,28 +75,31 @@ export default function Main({ posts }: Props) {
   </div>;
 }
 
-function Card({ children, link }: {
-  children: ReactNode,
-  link: string,
-}) {
-  let [navigable, setNavigable] = useState(true);
+type CardProps = {
+  highlight?: boolean,
+  children?: ReactNode,
+  onDrag?: () => void,
+  onStop?: () => void,
+};
+function Card({ children, onDrag, onStop, highlight }: CardProps) {
   return <>
-    <Link href={navigable ? link : ''} draggable={false}>
-      <Draggable
-        onDrag={() => setNavigable(false)}
-        onStop={() => setTimeout(() => setNavigable(true))}
-      >
-        <div className="container">
-          <Paper>
-            <div className="content">
-              {children}
-            </div>
-          </Paper>
-        </div>
-      </Draggable>
-    </Link>
+    <Draggable
+      onDrag={onDrag}
+      onStop={onStop}
+    >
+      <div className="container" style={highlight ? {
+        transform: `scale(1.2)`
+      } : undefined}>
+        <Paper>
+          <div className="content">
+            {children}
+          </div>
+        </Paper>
+      </div>
+    </Draggable>
     <style jsx>{`
     .container {
+      transition: transform .3s;
       display: flex;
       position: relative;
       display: flex;
@@ -97,7 +111,7 @@ function Card({ children, link }: {
     }
     .content {
       display: flex;
-      border-radius: 5px;
+      border-radius: 8px;
       overflow: hidden;
       clip-path: border-box;
       width: 100%;
@@ -107,21 +121,36 @@ function Card({ children, link }: {
   </>;
 }
 
-function SketchCard({ sketch, link }: {
+function LinkCard({ link, children, ...rest }: CardProps & {
+  link: string,
+}) {
+  let [navigable, setNavigable] = useState(true);
+  return <Link draggable={false} href={navigable ? link : ''}>
+    <Card
+      onDrag={() => setNavigable(false)}
+      onStop={() => setTimeout(() => setNavigable(true))}
+      {...rest}
+    >
+      {children}
+    </Card>
+  </Link>;
+}
+
+function SketchCard({ sketch, ...rest }: CardProps & {
   sketch: Scene,
   link: string,
 }) {
   let { node } = useSketcher({
     scene: sketch, period: 40,
   });
-  return <Card link={link}>{node}</Card>;
+  return <LinkCard {...rest}>{node}</LinkCard>;
 }
 
-function TextPostCard({ post, link }: {
+function TextPostCard({ post, ...rest }: CardProps & {
   post: TextPost,
   link: string,
 }) {
-  return <Card link={link}>
+  return <LinkCard {...rest}>
     <div className="container">
       <div className="post" dangerouslySetInnerHTML={{ __html: post.html }} />
       <style jsx>{`
@@ -136,7 +165,7 @@ function TextPostCard({ post, link }: {
       }
       .post {
         overflow: hidden;
-        font-family: Avenir Next,Helvetics,sans-serif;
+        // font-family: Avenir Next,Helvetics,sans-serif;
         font-size: 5pt;
         padding: 3em 5%;
         width: 100%;
@@ -156,5 +185,63 @@ function TextPostCard({ post, link }: {
       }
     `}</style>
     </div>
-  </Card>;
+  </LinkCard>;
+}
+
+function AboutCard({ onHover }: {
+  onHover?: (target?: HighlightKind) => void,
+}) {
+  function TextLink({ children, href, highlight }: {
+    href: string,
+    children?: ReactNode,
+    highlight?: HighlightKind,
+  }) {
+    return <Link className="link" href={href} legacyBehavior>
+      <a className='link'
+        onMouseOver={function () {
+          if (onHover && highlight) {
+            onHover(highlight)
+          }
+        }}
+        onMouseOut={function () {
+          if (onHover) {
+            onHover(undefined);
+          }
+        }}
+        style={{
+          color: 'skyblue',
+        }}>{children}</a>
+    </Link>;
+  }
+  return <Card>
+    <div className="content" unselectable="on">
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/texts' highlight="stories">рассказы</TextLink> и делаю <TextLink href='/posters' highlight="posters">постеры</TextLink>.
+      <p>&nbsp;</p>
+      — Что? Кто ты такой и <TextLink href='/about'>что это за буква җ?</TextLink>
+
+      <style jsx>{`
+    .content {
+      text-indent: 1em;
+        background-color: var(--background);
+        color: var(--foreground);
+        overflow: hidden;
+        font-size: 1.6em;
+        line-height: 1.2em;
+        padding: 10%;
+        width: 100%;
+        height: 100%;
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+    span {
+      content: "oops";
+      color: skyblue;
+    }
+    a.link {
+      color: skyblue; important
+    }
+    `}</style>
+    </div>
+  </Card >;
 }

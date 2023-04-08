@@ -2,12 +2,13 @@ import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
 import { useSketcher } from "@/hooks/sketcher";
-import { Scene } from "@/sketcher";
+import { Scene, colorLayer, combineScenes, fromLayers, gray } from "@/sketcher";
 import { bwway, loveMeTwoTimes } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { Press_Start_2P } from '@next/font/google';
+import { balanced } from "@/sketches/forms";
 const p2p = Press_Start_2P({
   subsets: ['cyrillic-ext'],
   weight: '400',
@@ -39,6 +40,19 @@ export default function Main({ posts }: Props) {
         <SketchCard
           link="/posters/0"
           sketch={loveMeTwoTimes()}
+          highlight={hl === 'posters'}
+        />
+      </div>
+      <div className="card" style={{
+        top: '15vh',
+        left: '-10vw',
+      }}>
+        <SketchCard
+          link="/wip/8"
+          sketch={combineScenes(
+            fromLayers(colorLayer(gray(230))),
+            balanced(),
+          )}
           highlight={hl === 'posters'}
         />
       </div>
@@ -164,19 +178,21 @@ function LinkCard({ link, children, ...rest }: CardProps & {
   link: string,
 }) {
   let [navigable, setNavigable] = useState(true);
-  return <Link draggable={false} href={navigable ? link : ''}>
-    <Card
-      onDrag={() => setNavigable(false)}
-      onStop={() => setTimeout(() => setNavigable(true))}
-      {...rest}
-    >
-      {children}
-    </Card>
-  </Link>;
+  return <>
+    <Link draggable={false} href={navigable ? link : ''}>
+      <Card
+        onDrag={() => setNavigable(false)}
+        onStop={() => setTimeout(() => setNavigable(true))}
+        {...rest}
+      >
+        {children}
+      </Card>
+    </Link>
+  </>;
 }
 
 function SketchCard({ sketch, ...rest }: CardProps & {
-  sketch: Scene,
+  sketch: Scene<any>,
   link: string,
 }) {
   let [pixelated, setPixelated] = useState(true);

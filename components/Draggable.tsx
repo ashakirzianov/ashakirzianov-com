@@ -129,9 +129,7 @@ export function Draggable({
     }, [handleEndDragging]);
 
     return <div ref={divRef} style={{
-        position: 'relative',
-        left: state.offset.x,
-        top: state.offset.y,
+        transform: `translate(${state.offset.x}px, ${state.offset.y}px)`,
         zIndex: front ? globalZ + 1 : zIndex,
         cursor: cursorChanged ? 'grab' : undefined,
     }}

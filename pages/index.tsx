@@ -66,7 +66,7 @@ export default function Main({ posts }: Props) {
         left: '0vh',
       }}>
         <AboutCard
-        // onHover={setHl}
+          onHover={setHl}
         />
       </div>
 
@@ -96,7 +96,6 @@ type CardProps = {
 function Card({ children, onDrag, onStop, highlight }: CardProps) {
   return <>
     <Draggable
-      front={highlight}
       onDrag={onDrag}
       onStop={onStop}
     >

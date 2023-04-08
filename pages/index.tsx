@@ -30,7 +30,8 @@ export default function Main({ posts }: Props) {
     <Head>
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-    </Head><div className="container">
+    </Head>
+    <div className="container">
       <div className="card" style={{
         top: '-18vh',
         left: '5vw',
@@ -69,7 +70,11 @@ export default function Main({ posts }: Props) {
           onHover={setHl}
         />
       </div>
-
+      <style jsx global>{`
+      body {
+        background-color: palevioletred;
+      }
+      `}</style>
       <style jsx>{`
       .card {
         position: relative;
@@ -142,7 +147,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       justify-content: stretch;
       align-items: stretch;
       padding: 0;
-      filter: drop-shadow(10px 10px 0px rgba(0,0,0,.9));
+      filter: drop-shadow(10px 10px 0px #222);
     }
     .content {
       display: flex;

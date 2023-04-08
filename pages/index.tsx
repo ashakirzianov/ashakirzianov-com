@@ -239,8 +239,8 @@ function AboutCard({ onHover }: {
     children?: ReactNode,
     highlight?: HighlightKind,
   }) {
-    return <Link className="link" href={href} legacyBehavior>
-      <a className='link'
+    return <Link href={href} legacyBehavior>
+      <a
         onMouseOver={function () {
           if (onHover && highlight) {
             onHover(highlight)
@@ -255,9 +255,6 @@ function AboutCard({ onHover }: {
           if (onHover) {
             onHover(undefined);
           }
-        }}
-        style={{
-          color: 'skyblue',
         }}>{children}</a>
     </Link>;
   }
@@ -284,9 +281,6 @@ function AboutCard({ onHover }: {
     }
     span {
       color: skyblue;
-    }
-    a.link {
-      color: skyblue; important
     }
     `}</style>
     </div>

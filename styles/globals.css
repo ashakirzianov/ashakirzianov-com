@@ -60,3 +60,7 @@ body {
   background-color: var(--background);
   color: var(--foreground);
 }
+
+a {
+  color: skyblue;
+}

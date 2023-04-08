@@ -34,11 +34,11 @@ html {
   --paper-light: #eee;
   --background-light: #E6E6E6;
   --foreground-light: black;
-  --shadow-light: rgba(0, 0, 0, .1);
+  --shadow-light: rgba(0, 0, 0, .3);
   --paper-dark: #000;
   --background-dark: #222222;
   --foreground-dark: #CCCCCC;
-  --shadow-dark: rgba(0, 0, 0, .5);
+  --shadow-dark: rgba(100, 100, 100, .3);
   --paper: var(--paper-light);
   --background: var(--background-light);
   --foreground: var(--foreground-light);

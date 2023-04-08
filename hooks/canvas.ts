@@ -32,7 +32,7 @@ function useCanvasesImpl(dims: CanvasDimensions[]) {
                 gridRow: 1,
                 width: '100%',
                 height: '100%',
-                imageRendering: 'crisp-edges',
+                imageRendering: 'pixelated',
             },
         }),
     );

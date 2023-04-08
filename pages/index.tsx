@@ -44,6 +44,16 @@ export default function Main({ posts }: Props) {
         />
       </div>
       <div className="card" style={{
+        top: '7vh',
+        left: '-17vw',
+      }}>
+        <SketchCard
+          link="/posters/1"
+          sketch={bwway()}
+          highlight={hl === 'posters'}
+        />
+      </div>
+      <div className="card" style={{
         top: '15vh',
         left: '-10vw',
       }}>
@@ -53,16 +63,6 @@ export default function Main({ posts }: Props) {
             fromLayers(colorLayer(gray(230))),
             balanced(),
           )}
-          highlight={hl === 'posters'}
-        />
-      </div>
-      <div className="card" style={{
-        top: '7vh',
-        left: '-15vw',
-      }}>
-        <SketchCard
-          link="/posters/1"
-          sketch={bwway()}
           highlight={hl === 'posters'}
         />
       </div>

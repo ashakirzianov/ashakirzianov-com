@@ -6,7 +6,6 @@ import { Scene } from "@/sketcher";
 import { bwway, loveMeTwoTimes } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
-import { Paper } from "@/components/Paper";
 import Head from "next/head";
 
 // @refresh reset
@@ -97,11 +96,11 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       <div className="container" style={highlight ? {
         transform: `scale(1.2)`
       } : undefined}>
-        <Paper>
+        <div className="paper">
           <div className="content">
             {children}
           </div>
-        </Paper>
+        </div>
       </div>
     </Draggable>
     <style jsx>{`
@@ -123,6 +122,28 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       clip-path: border-box;
       width: 100%;
       height: 100%;
+    }
+    .paper {
+      position:relative;
+      filter: drop-shadow(0px 0px 5px var(--shadow));
+      
+    }
+    .paper:before, .paper:after {
+      content:"";
+      position:absolute;
+      z-index:-1;
+      box-shadow: 5px 0 20px var(--shadow),
+      -5px 0 20px var(--shadow);
+      top:10px;
+      bottom:10px;
+      left:0;
+      right:0;
+      border-radius:100px / 10px;
+    }
+    .paper:after {
+      right:10px;
+      left:auto;
+      transform:skew(8deg) rotate(3deg);
     }
     `}</style>
   </>;

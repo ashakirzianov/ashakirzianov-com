@@ -7,6 +7,11 @@ import { bwway, loveMeTwoTimes } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
+import { Press_Start_2P } from '@next/font/google';
+const p2p = Press_Start_2P({
+  subsets: ['cyrillic-ext'],
+  weight: '400',
+});
 
 // @refresh reset
 
@@ -26,10 +31,9 @@ export default function Main({ posts }: Props) {
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head><div className="container">
-      <div style={{
-        position: 'absolute',
-        top: '15vh',
-        left: '13vw',
+      <div className="card" style={{
+        top: '-18vh',
+        left: '5vw',
       }}>
         <SketchCard
           link="/posters/0"
@@ -37,10 +41,9 @@ export default function Main({ posts }: Props) {
           highlight={hl === 'posters'}
         />
       </div>
-      <div style={{
-        position: 'absolute',
-        top: '25vh',
-        right: '12vw',
+      <div className="card" style={{
+        top: '7vh',
+        left: '-15vw',
       }}>
         <SketchCard
           link="/posters/1"
@@ -48,10 +51,9 @@ export default function Main({ posts }: Props) {
           highlight={hl === 'posters'}
         />
       </div>
-      <div style={{
-        position: 'absolute',
-        bottom: '15vh',
-        left: '30vw',
+      <div className="card" style={{
+        bottom: '-12vh',
+        left: '25vw',
       }}>
         <TextPostCard
           link="/texts/thirty-four"
@@ -59,20 +61,24 @@ export default function Main({ posts }: Props) {
           highlight={hl === 'stories'}
         />
       </div>
-      <div style={{
-        position: 'absolute',
-        top: '10vw',
-        right: '30vh',
+      <div className="card" style={{
+        top: '0vw',
+        left: '0vh',
       }}>
-        <AboutCard onHover={setHl} />
+        <AboutCard
+        // onHover={setHl}
+        />
       </div>
 
       <style jsx>{`
+      .card {
+        position: relative;
+        grid-area: mid;
+      }
       .container {
-        display: flex;
-        flex-flow: column;
-        justify-content: center;
-        align-items: center;
+        display: grid;
+        grid-template-areas: "mid";
+        place-items: center;
         width: 100%;
         height: 100vh;
       }
@@ -90,20 +96,45 @@ type CardProps = {
 function Card({ children, onDrag, onStop, highlight }: CardProps) {
   return <>
     <Draggable
+      front={highlight}
       onDrag={onDrag}
       onStop={onStop}
     >
       <div className="container" style={highlight ? {
         transform: `scale(1.2)`
       } : undefined}>
-        <div className="paper">
-          <div className="content">
+        <div className="pixel-corners">
+          <div className={`content ${p2p.className}`}>
             {children}
           </div>
         </div>
       </div>
     </Draggable>
     <style jsx>{`
+    .pixel-corners {
+      clip-path: polygon(
+        0px 8px,
+        4px 8px,
+        4px 4px,
+        8px 4px,
+        8px 0px,
+        calc(100% - 8px) 0px,
+        calc(100% - 8px) 4px,
+        calc(100% - 4px) 4px,
+        calc(100% - 4px) 8px,
+        100% 8px,
+        100% calc(100% - 8px),
+        calc(100% - 4px) calc(100% - 8px),
+        calc(100% - 4px) calc(100% - 4px),
+        calc(100% - 8px) calc(100% - 4px),
+        calc(100% - 8px) 100%,
+        8px 100%,
+        8px calc(100% - 4px),
+        4px calc(100% - 4px),
+        4px calc(100% - 8px),
+        0px calc(100% - 8px)
+      );
+    }
     .container {
       transition: transform .3s;
       display: flex;
@@ -111,39 +142,15 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       display: flex;
       justify-content: stretch;
       align-items: stretch;
-      aspect-ratio: 3/4;
-      width: min(192pt,48vw);
-      height: 100%;
+      padding: 0;
+      filter: drop-shadow(10px 10px 0px rgba(0,0,0,.9));
     }
     .content {
       display: flex;
-      border-radius: var(--radius);
       overflow: hidden;
       clip-path: border-box;
-      width: 100%;
-      height: 100%;
-    }
-    .paper {
-      position:relative;
-      filter: drop-shadow(0px 0px 5px var(--shadow));
-      
-    }
-    .paper:before, .paper:after {
-      content:"";
-      position:absolute;
-      z-index:-1;
-      box-shadow: 5px 0 20px var(--shadow),
-      -5px 0 20px var(--shadow);
-      top:10px;
-      bottom:10px;
-      left:0;
-      right:0;
-      border-radius:100px / 10px;
-    }
-    .paper:after {
-      right:10px;
-      left:auto;
-      transform:skew(8deg) rotate(3deg);
+      aspect-ratio: 3/4;
+      width: min(300px, 50vw);
     }
     `}</style>
   </>;
@@ -168,10 +175,19 @@ function SketchCard({ sketch, ...rest }: CardProps & {
   sketch: Scene,
   link: string,
 }) {
+  let [pixelated, setPixelated] = useState(true);
+  let u = pixelated ? 30 : 200;
   let { node } = useSketcher({
     scene: sketch, period: 40,
+    dimensions: [3 * u, 4 * u],
   });
-  return <LinkCard {...rest}>{node}</LinkCard>;
+  return <div
+    onMouseOver={() => setPixelated(false)}
+    onMouseOut={() => setPixelated(true)}
+    onMouseLeave={() => setPixelated(true)}
+  >
+    <LinkCard {...rest}>{node}</LinkCard>
+  </div>;
 }
 
 function TextPostCard({ post, ...rest }: CardProps & {
@@ -188,16 +204,15 @@ function TextPostCard({ post, ...rest }: CardProps & {
         align-items: start;
         height: 100%;
         width: 100%;
-        background-color: var(--background-light);
+        background-color: var(--paper-light);
         color: var(--foreground-light);
       }
       .post {
         overflow: hidden;
-        // font-family: Avenir Next,Helvetics,sans-serif;
-        font-size: 5pt;
+        font-size: min(4.8pt,11.6vw);
+        max-height: min(290pt,58vw);
         padding: 3em 5%;
         width: 100%;
-        max-height: min(244pt,58vw);
         user-select: none;
       }
       `}</style>
@@ -231,6 +246,11 @@ function AboutCard({ onHover }: {
             onHover(highlight)
           }
         }}
+        onMouseLeave={function () {
+          if (onHover) {
+            onHover(undefined);
+          }
+        }}
         onMouseOut={function () {
           if (onHover) {
             onHover(undefined);
@@ -249,22 +269,20 @@ function AboutCard({ onHover }: {
 
       <style jsx>{`
     .content {
+      color: var(--foreground-light);
+      background-color: var(--paper-light);
       text-indent: 1em;
-        background-color: var(--background);
-        color: var(--foreground);
-        overflow: hidden;
-        font-size: 2.5vh;
-        line-height: 1.2em;
-        padding: 10%;
-        width: 100%;
-        height: 100%;
-        user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        cursor: default;
+      color: var(--foreground);
+      overflow: hidden;
+      font-size: 1.8vh;
+      line-height: 1.2em;
+      padding: 10%;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      cursor: default;
     }
     span {
-      content: "oops";
       color: skyblue;
     }
     a.link {

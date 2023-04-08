@@ -168,7 +168,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       overflow: hidden;
       clip-path: border-box;
       aspect-ratio: 3/4;
-      width: min(300px, 50vw);
+      width: min(200px, 50vw);
     }
     `}</style>
   </>;
@@ -226,11 +226,12 @@ function TextPostCard({ post, ...rest }: CardProps & {
         width: 100%;
         background-color: var(--paper-light);
         color: var(--foreground-light);
+        word-break: break-word;
       }
       .post {
         overflow: hidden;
-        font-size: min(4.8pt,11.6vw);
-        max-height: min(290pt,58vw);
+        font-size: min(5pt,11.6vw);
+        max-height: min(189pt,58vw);
         padding: 3em 5%;
         width: 100%;
         user-select: none;
@@ -291,7 +292,7 @@ function AboutCard({ onHover }: {
       text-indent: 1em;
       color: var(--foreground);
       overflow: hidden;
-      font-size: 1.8vh;
+      font-size: 1.4vh;
       line-height: 1.2em;
       padding: 10%;
       width: 100%;

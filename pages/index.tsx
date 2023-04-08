@@ -117,7 +117,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
     }
     .content {
       display: flex;
-      border-radius: 8px;
+      border-radius: var(--radius);
       overflow: hidden;
       clip-path: border-box;
       width: 100%;

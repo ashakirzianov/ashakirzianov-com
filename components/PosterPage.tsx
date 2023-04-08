@@ -45,7 +45,7 @@ export function PosterPage({
                     height: 100%;
                     align-items: stretch;
                     justify-items: stretch;
-                    border-radius: 5px;
+                    border-radius: var(--radius);
                     clip-path: border-box;
                     overflow: hidden;
                 }

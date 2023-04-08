@@ -5,8 +5,9 @@ import {
 let globalZ = 0;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop,
+    children, onDrag, onStop, front,
 }: {
+    front?: boolean,
     children?: ReactNode,
     onDrag?: () => void,
     onStop?: () => void,
@@ -131,7 +132,7 @@ export function Draggable({
         position: 'relative',
         left: state.offset.x,
         top: state.offset.y,
-        zIndex,
+        zIndex: front ? globalZ + 1 : zIndex,
         cursor: cursorChanged ? 'grab' : undefined,
     }}
         onMouseDown={function (event) {

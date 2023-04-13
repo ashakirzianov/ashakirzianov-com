@@ -8,6 +8,8 @@ import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
+import { useQuery } from "@/hooks/query";
+import { useRouter } from "next/router";
 
 // @refresh reset
 
@@ -27,15 +29,18 @@ type HighlightKind = 'stories' | 'posters';
 export default function Main({
   posts,
 }: Props) {
+  let { hue } = useQuery();
+  let router = useRouter();
+
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
   let [grid, setGrid] = useState(true);
   let [pixelated, setPixelated] = useState(false);
-  let [hueIdx, setHueIdx] = useState(0);
-  let hues = [40, 210, 340, 360];
   function nextHue() {
-    setHueIdx(idx => idx < hues.length - 1 ? idx + 1 : 0);
+    let hues = [40, 210, 340, 360];
+    let idx = hues.findIndex(h => h > hue);
+    let nextHue = idx >= 0 ? hues[idx]! : hues[0]!;
+    router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
-  let hue = hues[hueIdx]!;
   return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>

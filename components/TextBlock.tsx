@@ -1,10 +1,16 @@
 import { ReactNode } from "react";
+import { Cormorant } from '@next/font/google';
+const textFont = Cormorant({
+    subsets: ['cyrillic-ext'],
+    weight: '500',
+    variable: '--font-text',
+});
 
 export function TextBlock({ children }: {
     children?: ReactNode,
 }) {
     return <div className="container">
-        <div className="post">
+        <div className={`post ${textFont.variable}`}>
             {children}
         </div>
         <style jsx>{`
@@ -12,16 +18,18 @@ export function TextBlock({ children }: {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                // font-family: Avenir Next,Helvetics,sans-serif;
-                padding: 10pt;
                 width: 100%;
             }
             .post {
-                max-width: 480pt;
+                padding: 10pt;
+                max-width: min(540pt, 100%);
+                font-size: 140%;
+                font-family: var(--font-text), serif;
             }
             `}</style>
         <style>{`
             h1 {
+                font-size: 1.5em;
                 margin-bottom: 1em;
             }
             p {

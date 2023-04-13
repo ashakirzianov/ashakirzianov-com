@@ -36,7 +36,7 @@ html {
   --foreground-light: black;
   --shadow-light: rgba(0, 0, 0, .3);
   --paper-dark: #000;
-  --background-dark: #222222;
+  --background-dark: #383838;
   --foreground-dark: #CCCCCC;
   --shadow-dark: rgba(100, 100, 100, .3);
   --paper: var(--paper-light);

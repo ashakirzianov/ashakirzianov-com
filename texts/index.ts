@@ -35,7 +35,26 @@ async function getText(fileName: string): Promise<TextPost | undefined> {
         let fileContents = await promisify(fs.readFile)(fileName, 'utf8');
         let matterResult = matter(fileContents);
         let htmlData = await remark()
-            .use(html)
+            .use(html, {
+                handlers: {
+                    heading(state, node) {
+                        if (node.depth !== 1) {
+                            return {
+                                type: 'element',
+                                tagName: 'h1',
+                                properties: { id },
+                                children: state.all(node),
+                            };
+                        } else {
+                            return {
+                                type: 'element',
+                                tagName: `h${node.depth}`,
+                                children: state.all(node),
+                            };
+                        }
+                    }
+                }
+            })
             .process(matterResult.content);
 
         return {

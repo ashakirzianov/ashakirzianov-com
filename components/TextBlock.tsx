@@ -6,6 +6,14 @@ const textFont = Cormorant({
     variable: '--font-text',
 });
 
+export function HtmlBlock({ html }: {
+    html: string,
+}) {
+    return <TextBlock>
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+    </TextBlock>
+}
+
 export function TextBlock({ children }: {
     children?: ReactNode,
 }) {

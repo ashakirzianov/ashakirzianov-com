@@ -1,4 +1,4 @@
-import { TextBlock } from "@/components/TextBlock";
+import { HtmlBlock, TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTextIds, getTextForId } from "@/texts";
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head";
@@ -31,8 +31,6 @@ export default function TextPostPage({ post }: Props) {
             <title>{post.title ?? 'Post'}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <TextBlock>
-            <div dangerouslySetInnerHTML={{ __html: post.html }} />
-        </TextBlock>
+        <HtmlBlock html={post.html} />
     </>;
 }

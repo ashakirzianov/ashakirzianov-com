@@ -311,7 +311,7 @@ function AboutCard({ onHover }: {
   }
   return <Card>
     <div className="content" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/texts' highlight="stories">рассказы</TextLink> и делаю <TextLink href='/posters' highlight="posters">постеры</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href='/posters' highlight="posters">постеры</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href='/about'>что это за буква җ?</TextLink>
 

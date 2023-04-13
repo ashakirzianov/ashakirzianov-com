@@ -31,19 +31,25 @@ a {
 }
 
 html {
+  --paper-light: #eee;
   --background-light: #E6E6E6;
   --foreground-light: black;
-  --shadow-light: rgba(0, 0, 0, .1);
-  --background-dark: #222222;
+  --shadow-light: rgba(0, 0, 0, .3);
+  --paper-dark: #000;
+  --background-dark: #383838;
   --foreground-dark: #CCCCCC;
-  --shadow-dark: rgba(0, 0, 0, .5);
+  --shadow-dark: rgba(100, 100, 100, .3);
+  --paper: var(--paper-light);
   --background: var(--background-light);
   --foreground: var(--foreground-light);
   --shadow: var(--shadow-light);
+  --radius: 7px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   html {
+    --paper: var(--paper-dark);
     --background: var(--background-dark);
     --foreground: var(--foreground-dark);
     --shadow: var(--shadow-dark);
@@ -53,4 +59,57 @@ html {
 body {
   background-color: var(--background);
   color: var(--foreground);
+}
+
+a {
+  color: skyblue;
+}
+
+.pixel-corners {
+  clip-path: polygon(0px 9px,
+      3px 9px,
+      3px 3px,
+      6px 3px,
+      9px 3px,
+      9px 0px,
+      calc(100% - 9px) 0px,
+      calc(100% - 9px) 3px,
+      calc(100% - 3px) 3px,
+      calc(100% - 3px) 6px,
+      calc(100% - 3px) 9px,
+      100% 9px,
+      100% calc(100% - 9px),
+      calc(100% - 3px) calc(100% - 9px),
+      calc(100% - 3px) calc(100% - 3px),
+      calc(100% - 6px) calc(100% - 3px),
+      calc(100% - 9px) calc(100% - 3px),
+      calc(100% - 9px) 100%,
+      9px 100%,
+      9px calc(100% - 3px),
+      3px calc(100% - 3px),
+      3px calc(100% - 6px),
+      3px calc(100% - 9px),
+      0px calc(100% - 9px));
+}
+
+.pixel-shadow {
+  filter: drop-shadow(10px 10px 0px #222);
+}
+
+.paper {
+  background-color: var(--paper);
+  color: var(--foreground);
+}
+
+.card-frame {
+  display: flex;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  width: min(200px, 50vw);
+}
+
+.noselect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

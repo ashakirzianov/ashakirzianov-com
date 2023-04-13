@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { ReactNode } from "react";
-import { Paper } from "./Paper";
 
 export function PosterPage({
     title, description, children,
@@ -19,11 +18,9 @@ export function PosterPage({
             <main>
                 <div className="page">
                     <div className="container">
-                        <Paper>
-                            <div className="content">
-                                {children ?? null}
-                            </div>
-                        </Paper>
+                        <div className="content">
+                            {children ?? null}
+                        </div>
                     </div>
                 </div>
                 <style jsx>{`
@@ -40,6 +37,7 @@ export function PosterPage({
                     aspect-ratio: 3 / 4;
                     max-width: 100%;
                     max-height: 100%;
+                    filter: drop-shadow(0px 0px 20px var(--shadow));
                 }
                 .content {
                     display: flex;
@@ -47,7 +45,7 @@ export function PosterPage({
                     height: 100%;
                     align-items: stretch;
                     justify-items: stretch;
-                    border-radius: 5px;
+                    border-radius: var(--radius);
                     clip-path: border-box;
                     overflow: hidden;
                 }

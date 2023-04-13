@@ -5,8 +5,9 @@ import {
 let globalZ = 0;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop,
+    children, onDrag, onStop, front,
 }: {
+    front?: boolean,
     children?: ReactNode,
     onDrag?: () => void,
     onStop?: () => void,
@@ -35,7 +36,7 @@ export function Draggable({
     let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
         if (dragging) {
             setState(state => {
-                let MIN_STEP = 100;
+                let MIN_STEP = 200;
                 let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
                 let dy = Math.abs(y - (state.touchStart.y - state.offset.y));
                 if (dx > MIN_STEP || dy > MIN_STEP) {
@@ -129,9 +130,8 @@ export function Draggable({
 
     return <div ref={divRef} style={{
         position: 'relative',
-        left: state.offset.x,
-        top: state.offset.y,
-        zIndex,
+        transform: `translate(${state.offset.x}px, ${state.offset.y}px)`,
+        zIndex: front ? globalZ + 1 : zIndex,
         cursor: cursorChanged ? 'grab' : undefined,
     }}
         onMouseDown={function (event) {

@@ -7,12 +7,7 @@ import { posters } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
-import { Press_Start_2P } from '@next/font/google';
-const p2p = Press_Start_2P({
-  subsets: ['cyrillic-ext'],
-  weight: '400',
-  variable: '--font-pixel',
-});
+import { Page } from "@/components/Page";
 
 // @refresh reset
 
@@ -42,6 +37,10 @@ export default function Main({
   }
   let hue = hues[hueIdx]!;
   return <Page hue={hue}>
+    <Head>
+      <title>Анҗан</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </Head>
     <div className="buttons">
       <Button
         color="red"
@@ -104,15 +103,11 @@ export default function Main({
         left: '0vh',
       }}>
         <AboutCard
+          hue={hue}
           onHover={setHl}
         />
       </div>
     </div>
-    <style jsx global>{`
-      body {
-        background-color: hsl(${hue},60%,65%);
-      }
-      `}</style>
     <style jsx>{`
       .buttons {
         display: flex;
@@ -144,48 +139,6 @@ export default function Main({
       }
       `}</style>
   </Page>
-}
-
-function Page({ hue, children }: {
-  hue: number,
-  children: ReactNode,
-}) {
-  return <>
-    <Head>
-      <title>Анҗан</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-    </Head>
-    <main className={`page ${p2p.variable}`}>
-      <div className="back">Җ</div>
-      <div className="content">{children}</div>
-      <style jsx>{`
-      .page {
-        display: grid;
-        grid-template-areas: "mid";
-        place-items: center center;
-        width: 100%;
-        height: 100vh;
-        -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10 and IE 11 */
-        user-select: none; /* Standard syntax */
-        cursor: default;
-      }
-      .back {
-        grid-area: mid;
-        font-size: min(80vh,90vw);
-        font-family: var(--font-pixel);
-        color: hsl(${hue},45%,65%);
-      }
-      .content {
-        grid-area: mid;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100vh;
-      }
-    `}</style>
-    </main>
-  </>
 }
 
 function Button({ color, onClick, toggle, once }: {
@@ -277,7 +230,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
         transform: `scale(1.2)`
       } : undefined}>
         <div className="pixel-corners">
-          <div className={`content ${p2p.className}`}>
+          <div className={`content`}>
             {children}
           </div>
         </div>
@@ -328,6 +281,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       clip-path: border-box;
       aspect-ratio: 3/4;
       width: min(200px, 50vw);
+      font-family: var(--font-pixel);
     }
     `}</style>
   </>;
@@ -425,7 +379,8 @@ function TextPostCard({ post, ...rest }: CardProps & {
   </LinkCard>;
 }
 
-function AboutCard({ onHover }: {
+function AboutCard({ hue, onHover }: {
+  hue: number,
   onHover?: (target?: HighlightKind) => void,
 }) {
   function TextLink({ children, href, highlight }: {
@@ -454,7 +409,7 @@ function AboutCard({ onHover }: {
   }
   return <Card>
     <div className="content" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href='/posters' highlight="posters">постеры</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters">постеры</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href='/about'>что это за буква җ?</TextLink>
 

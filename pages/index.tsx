@@ -38,7 +38,7 @@ export default function Main({
   posts, hue, pixelatedSketches,
 }: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  let grid = true;
+  let [grid, setGrid] = useState(false);
   return <Page hue={hue}>
     <div className={grid ? 'grid' : 'flex'}>
       <div className="card" style={{
@@ -93,6 +93,9 @@ export default function Main({
     <style jsx global>{`
       body {
         background-color: hsl(${hue},60%,65%);
+      }
+      div {
+        transition: display 3s;
       }
       `}</style>
     <style jsx>{`
@@ -152,10 +155,82 @@ function Page({ hue, children }: {
       }
       .content {
         grid-area: mid;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
       }
     `}</style>
     </main>
   </>
+}
+
+function Button({ color, onClick, toggle }: {
+  color: string,
+  onClick: () => void,
+  toggle?: boolean,
+}) {
+  let size = '30px';
+  let drop = '8px';
+  let [pressed, setPressed] = useState(false);
+  let [toggled, setToggled] = useState(false);
+  let down = pressed || toggled;
+  let left = down ? drop : '0px';
+  let top = down ? drop : '0px';
+  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`;
+  return <div className="outer">
+    <div className="inner pixel-corners"
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => { setPressed(false) }}
+      onMouseLeave={() => setPressed(false)}
+      onClick={() => {
+        if (onClick) onClick();
+        if (toggle) setToggled(v => !v);
+      }}
+    />
+    <style jsx>{`
+    .outer {
+      filter: ${filter};
+    }
+    .inner {
+      position: relative;
+      top: ${top};
+      left: ${left};
+      margin: 10px;
+      width: ${size};
+      height: ${size};
+      background-color: ${color};
+    }
+    .pixel-corners {
+      clip-path: polygon(
+        0px 9px,
+        3px 9px,
+        3px 3px,
+        6px 3px,
+        9px 3px,
+        9px 0px,
+        calc(100% - 9px) 0px,
+        calc(100% - 9px) 3px,
+        calc(100% - 3px) 3px,
+        calc(100% - 3px) 6px,
+        calc(100% - 3px) 9px,
+        100% 9px,
+        100% calc(100% - 9px),
+        calc(100% - 3px) calc(100% - 9px),
+        calc(100% - 3px) calc(100% - 3px),
+        calc(100% - 6px) calc(100% - 3px),
+        calc(100% - 9px) calc(100% - 3px),
+        calc(100% - 9px) 100%,
+        9px 100%,
+        9px calc(100% - 3px),
+        3px calc(100% - 3px),
+        3px calc(100% - 6px),
+        3px calc(100% - 9px),
+        0px calc(100% - 9px)
+      );
+    }
+    `}</style>
+  </div>
 }
 
 type CardProps = {

@@ -42,7 +42,7 @@ function PosterCard({ scene }: {
         scene, period: 40,
     });
     return <div className="pixel-shadow">
-        <div className="card pixel-corners">
+        <div className="card-frame pixel-corners">
             {node}
         </div>
     </div>

@@ -101,9 +101,16 @@ a {
   color: var(--foreground);
 }
 
-.card {
+.card-frame {
   display: flex;
   overflow: hidden;
   aspect-ratio: 3/4;
   width: min(200px, 50vw);
+}
+
+.noselect {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
 }

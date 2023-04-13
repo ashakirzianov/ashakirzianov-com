@@ -207,7 +207,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
         transform: `scale(1.2)`
       } : undefined}>
         <div className="pixel-corners">
-          <div className={`content`}>
+          <div className="card-frame">
             {children}
           </div>
         </div>
@@ -222,14 +222,6 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       justify-content: stretch;
       align-items: stretch;
       padding: 0;
-    }
-    .content {
-      display: flex;
-      overflow: hidden;
-      clip-path: border-box;
-      aspect-ratio: 3/4;
-      width: min(200px, 50vw);
-      font-family: var(--font-pixel);
     }
     `}</style>
   </>;
@@ -291,7 +283,7 @@ function TextPostCard({ post, ...rest }: CardProps & {
 }) {
   return <LinkCard {...rest}>
     <div className="container">
-      <div className="post" dangerouslySetInnerHTML={{ __html: post.html }} />
+      <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
       <style jsx>{`
       .container {
         display: flex;
@@ -309,7 +301,6 @@ function TextPostCard({ post, ...rest }: CardProps & {
         max-height: min(189pt,58vw);
         padding: 3em 5%;
         width: 100%;
-        user-select: none;
       }
       `}</style>
       <style>{`
@@ -356,7 +347,7 @@ function AboutCard({ hue, onHover }: {
     </Link>;
   }
   return <Card>
-    <div className="content" unselectable="on">
+    <div className="content noselect" unselectable="on">
       —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters">постеры</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
@@ -366,17 +357,11 @@ function AboutCard({ hue, onHover }: {
       color: var(--foreground-light);
       background-color: var(--paper-light);
       text-indent: 1em;
-      color: var(--foreground-light);
-      overflow: hidden;
       font-size: 1.4vh;
       line-height: 1.2em;
       padding: 10%;
       width: 100%;
       height: 100%;
-      -webkit-user-select: none; /* Safari */
-      -ms-user-select: none; /* IE 10 and IE 11 */
-      user-select: none; /* Standard syntax */
-      cursor: default;
     }
     span {
       color: var(--foreground-light);

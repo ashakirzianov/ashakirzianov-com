@@ -367,17 +367,12 @@ function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
   link: string,
   pixelated: boolean,
 }) {
-  let [focused, setFocused] = useState(true);
-  let u = focused ? 30 : 200;
+  let u = 20;
   let { node } = useSketcher({
     scene: sketch, period: 40,
     dimensions: pixelated ? [3 * u, 4 * u] : undefined,
   });
-  return <div
-    onMouseOver={() => setFocused(false)}
-    onMouseOut={() => setFocused(true)}
-    onMouseLeave={() => setFocused(true)}
-  >
+  return <div>
     <LinkCard {...rest}>{node}</LinkCard>
   </div>;
 }

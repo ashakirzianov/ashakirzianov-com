@@ -20,6 +20,7 @@ const p2p = Press_Start_2P({
 type Props = {
   posts: TextPost[];
   hue: number,
+  pixelatedSketches: boolean,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
   let posts = await getAllTexts();
@@ -28,12 +29,15 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
     props: {
       posts,
       hue: hues[0]!,
+      pixelatedSketches: false,
     }
   };
 }
 
 type HighlightKind = 'stories' | 'posters';
-export default function Main({ posts, hue }: Props) {
+export default function Main({
+  posts, hue, pixelatedSketches,
+}: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
   return <>
     <Head>
@@ -55,6 +59,7 @@ export default function Main({ posts, hue }: Props) {
           link="/posters/0"
           sketch={loveMeTwoTimes()}
           highlight={hl === 'posters'}
+          pixelated={pixelatedSketches}
         />
       </div>
       <div className="card" style={{
@@ -65,6 +70,7 @@ export default function Main({ posts, hue }: Props) {
           link="/posters/1"
           sketch={bwway()}
           highlight={hl === 'posters'}
+          pixelated={pixelatedSketches}
         />
       </div>
       <div className="card" style={{
@@ -78,6 +84,7 @@ export default function Main({ posts, hue }: Props) {
             balanced(),
           )}
           highlight={hl === 'posters'}
+          pixelated={pixelatedSketches}
         />
       </div>
       <div className="card" style={{
@@ -209,20 +216,21 @@ function LinkCard({ link, children, ...rest }: CardProps & {
   </>;
 }
 
-function SketchCard({ sketch, ...rest }: CardProps & {
+function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
   sketch: Scene<any>,
   link: string,
+  pixelated: boolean,
 }) {
-  let [pixelated, setPixelated] = useState(true);
-  let u = pixelated ? 30 : 200;
+  let [focused, setFocused] = useState(true);
+  let u = focused ? 30 : 200;
   let { node } = useSketcher({
     scene: sketch, period: 40,
-    dimensions: [3 * u, 4 * u],
+    dimensions: pixelated ? [3 * u, 4 * u] : undefined,
   });
   return <div
-    onMouseOver={() => setPixelated(false)}
-    onMouseOut={() => setPixelated(true)}
-    onMouseLeave={() => setPixelated(true)}
+    onMouseOver={() => setFocused(false)}
+    onMouseOut={() => setFocused(true)}
+    onMouseLeave={() => setFocused(true)}
   >
     <LinkCard {...rest}>{node}</LinkCard>
   </div>;

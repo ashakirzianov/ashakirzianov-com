@@ -92,7 +92,7 @@ export default function Main({
         left: '25vw',
       }}>
         <TextPostCard
-          link="/texts/thirty-four"
+          link="/stories/thirty-four"
           post={posts[0]!}
           highlight={hl === 'stories'}
         />

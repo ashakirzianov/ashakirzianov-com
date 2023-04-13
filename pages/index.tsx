@@ -182,34 +182,6 @@ function Button({ color, onClick, toggle, once }: {
       height: ${size};
       background-color: ${color};
     }
-    .pixel-corners {
-      clip-path: polygon(
-        0px 9px,
-        3px 9px,
-        3px 3px,
-        6px 3px,
-        9px 3px,
-        9px 0px,
-        calc(100% - 9px) 0px,
-        calc(100% - 9px) 3px,
-        calc(100% - 3px) 3px,
-        calc(100% - 3px) 6px,
-        calc(100% - 3px) 9px,
-        100% 9px,
-        100% calc(100% - 9px),
-        calc(100% - 3px) calc(100% - 9px),
-        calc(100% - 3px) calc(100% - 3px),
-        calc(100% - 6px) calc(100% - 3px),
-        calc(100% - 9px) calc(100% - 3px),
-        calc(100% - 9px) 100%,
-        9px 100%,
-        9px calc(100% - 3px),
-        3px calc(100% - 3px),
-        3px calc(100% - 6px),
-        3px calc(100% - 9px),
-        0px calc(100% - 9px)
-      );
-    }
     `}</style>
   </div>
 }
@@ -226,7 +198,7 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       onDrag={onDrag}
       onStop={onStop}
     >
-      <div className="container" style={highlight ? {
+      <div className="container pixel-shadow" style={highlight ? {
         transform: `scale(1.2)`
       } : undefined}>
         <div className="pixel-corners">
@@ -237,34 +209,6 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       </div>
     </Draggable>
     <style jsx>{`
-    .pixel-corners {
-      clip-path: polygon(
-        0px 9px,
-        3px 9px,
-        3px 3px,
-        6px 3px,
-        9px 3px,
-        9px 0px,
-        calc(100% - 9px) 0px,
-        calc(100% - 9px) 3px,
-        calc(100% - 3px) 3px,
-        calc(100% - 3px) 6px,
-        calc(100% - 3px) 9px,
-        100% 9px,
-        100% calc(100% - 9px),
-        calc(100% - 3px) calc(100% - 9px),
-        calc(100% - 3px) calc(100% - 3px),
-        calc(100% - 6px) calc(100% - 3px),
-        calc(100% - 9px) calc(100% - 3px),
-        calc(100% - 9px) 100%,
-        9px 100%,
-        9px calc(100% - 3px),
-        3px calc(100% - 3px),
-        3px calc(100% - 6px),
-        3px calc(100% - 9px),
-        0px calc(100% - 9px)
-      );
-    }
     .container {
       transition: transform .3s;
       display: flex;
@@ -273,7 +217,6 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
       justify-content: stretch;
       align-items: stretch;
       padding: 0;
-      filter: drop-shadow(10px 10px 0px #222);
     }
     .content {
       display: flex;

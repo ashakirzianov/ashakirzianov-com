@@ -64,3 +64,39 @@ body {
 a {
   color: skyblue;
 }
+
+.pixel-corners {
+  clip-path: polygon(0px 9px,
+      3px 9px,
+      3px 3px,
+      6px 3px,
+      9px 3px,
+      9px 0px,
+      calc(100% - 9px) 0px,
+      calc(100% - 9px) 3px,
+      calc(100% - 3px) 3px,
+      calc(100% - 3px) 6px,
+      calc(100% - 3px) 9px,
+      100% 9px,
+      100% calc(100% - 9px),
+      calc(100% - 3px) calc(100% - 9px),
+      calc(100% - 3px) calc(100% - 3px),
+      calc(100% - 6px) calc(100% - 3px),
+      calc(100% - 9px) calc(100% - 3px),
+      calc(100% - 9px) 100%,
+      9px 100%,
+      9px calc(100% - 3px),
+      3px calc(100% - 3px),
+      3px calc(100% - 6px),
+      3px calc(100% - 9px),
+      0px calc(100% - 9px));
+}
+
+.pixel-shadow {
+  filter: drop-shadow(10px 10px 0px #222);
+}
+
+.paper {
+  background-color: var(--paper);
+  color: var(--foreground);
+}

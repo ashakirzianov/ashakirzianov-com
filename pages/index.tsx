@@ -134,8 +134,8 @@ export default function Main({
       }
       .flex {
         display: flex;
-        flex-flow: row wrap;
-        align-content: flex-start;
+        flex-flow: row-reverse wrap-reverse;
+        align-content: flex-end;
         justify-content: center;
         gap: 10pt;
         padding: 10pt;

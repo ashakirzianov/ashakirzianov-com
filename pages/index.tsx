@@ -122,7 +122,7 @@ export default function Main({
         padding: 10pt;
       }
       .card {
-        position: ${grid ? 'relative' : 'static'};
+        ${grid ? 'position: relative;' : 'position: static; top: 0; left: 0;'}
         grid-area: mid;
       }
       .grid {

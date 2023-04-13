@@ -12,27 +12,41 @@ import { balanced } from "@/sketches/forms";
 const p2p = Press_Start_2P({
   subsets: ['cyrillic-ext'],
   weight: '400',
+  variable: '--font-pixel',
 });
 
 // @refresh reset
 
 type Props = {
   posts: TextPost[];
+  hue: number,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
   let posts = await getAllTexts();
-  return { props: { posts } };
+  let hues = [40, 210, 340, 360];
+  return {
+    props: {
+      posts,
+      hue: hues[0]!,
+    }
+  };
 }
 
 type HighlightKind = 'stories' | 'posters';
-export default function Main({ posts }: Props) {
+export default function Main({ posts, hue }: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
   return <>
     <Head>
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
-    <div className="container">
+    <main className={`container ${p2p.variable}`}>
+      <div style={{
+        gridArea: 'mid',
+        fontSize: 'min(80vh,90vw)',
+        fontFamily: 'var(--font-pixel)',
+        color: `hsl(${hue},45%,65%)`,
+      }}>Җ</div>
       <div className="card" style={{
         top: '-18vh',
         left: '5vw',
@@ -86,7 +100,7 @@ export default function Main({ posts }: Props) {
       </div>
       <style jsx global>{`
       body {
-        background-color: palevioletred;
+        background-color: hsl(${hue},60%,65%);
       }
       `}</style>
       <style jsx>{`
@@ -97,12 +111,12 @@ export default function Main({ posts }: Props) {
       .container {
         display: grid;
         grid-template-areas: "mid";
-        place-items: center;
+        place-items: center center;
         width: 100%;
         height: 100vh;
       }
       `}</style>
-    </div>
+    </main>
   </>;
 }
 

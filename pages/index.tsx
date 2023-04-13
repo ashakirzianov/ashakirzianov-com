@@ -33,15 +33,31 @@ export default function Main({
   posts,
 }: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  let [grid, setGrid] = useState(false);
+  let [grid, setGrid] = useState(true);
   let [pixelated, setPixelated] = useState(false);
   let [hueIdx, setHueIdx] = useState(0);
   let hues = [40, 210, 340, 360];
   function nextHue() {
-    setHueIdx(idx => idx < hues.length - 1 ? idx++ : 0);
+    setHueIdx(idx => idx < hues.length - 1 ? idx + 1 : 0);
   }
   let hue = hues[hueIdx]!;
   return <Page hue={hue}>
+    <div className="buttons">
+      <Button
+        color="red"
+        onClick={() => setGrid(v => !v)}
+        toggle
+      />
+      <Button
+        color="yellow"
+        onClick={() => setPixelated(v => !v)}
+        toggle
+      />
+      <Button
+        color="green"
+        onClick={nextHue}
+      />
+    </div>
     <div className={grid ? 'grid' : 'flex'}>
       <div className="card" style={{
         top: '-18vh',
@@ -101,6 +117,13 @@ export default function Main({
       }
       `}</style>
     <style jsx>{`
+      .buttons {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-end;
+        gap: 10pt;
+        padding: 10pt;
+      }
       .card {
         position: ${grid ? 'relative' : 'static'};
         grid-area: mid;
@@ -169,7 +192,7 @@ function Page({ hue, children }: {
 
 function Button({ color, onClick, toggle }: {
   color: string,
-  onClick: () => void,
+  onClick?: () => void,
   toggle?: boolean,
 }) {
   let size = '30px';
@@ -183,8 +206,11 @@ function Button({ color, onClick, toggle }: {
   return <div className="outer">
     <div className="inner pixel-corners"
       onMouseDown={() => setPressed(true)}
+      onTouchStart={() => setPressed(true)}
       onMouseUp={() => { setPressed(false) }}
+      onTouchEnd={() => setPressed(false)}
       onMouseLeave={() => setPressed(false)}
+      onTouchCancel={() => setPressed(false)}
       onClick={() => {
         if (onClick) onClick();
         if (toggle) setToggled(v => !v);
@@ -198,7 +224,6 @@ function Button({ color, onClick, toggle }: {
       position: relative;
       top: ${top};
       left: ${left};
-      margin: 10px;
       width: ${size};
       height: ${size};
       background-color: ${color};

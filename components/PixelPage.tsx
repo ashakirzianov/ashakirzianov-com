@@ -20,12 +20,11 @@ export function PixelPage({ hue, children }: {
           -ms-user-select: none; /* IE 10 and IE 11 */
           user-select: none; /* Standard syntax */
           cursor: default;
-          font-family: var(--font-pixel);
+          font-family: var(--font-pixel), serif;
         }
         .back {
           grid-area: mid;
           font-size: min(80vh,90vw);
-          font-family: var(--font-pixel);
           color: hsl(${hue},45%,65%);
         }
         .content {

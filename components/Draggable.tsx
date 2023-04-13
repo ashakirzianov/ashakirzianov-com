@@ -2,15 +2,16 @@ import {
     MouseEvent, ReactNode, useCallback, useEffect, useRef, useState,
 } from "react";
 
-let globalZ = 0;
+let globalZ = 1;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop, front,
+    children, onDrag, onStop, front, top,
 }: {
     front?: boolean,
     children?: ReactNode,
     onDrag?: () => void,
     onStop?: () => void,
+    top?: boolean,
 }) {
     let divRef = useRef<HTMLDivElement>(null);
     let [dragging, setDragging] = useState(false);
@@ -18,12 +19,12 @@ export function Draggable({
         offset: { x: 0, y: 0 },
         touchStart: { x: 0, y: 0 },
     });
-    let [zIndex, setZIndex] = useState(globalZ);
+    let [zIndex, setZIndex] = useState(top ? 1 : 0);
     let [cursorChanged, setCursorChanged] = useState(false);
 
     function handleStartDragging({ x, y }: Position) {
         setDragging(true);
-        setZIndex(() => globalZ++);
+        setZIndex(globalZ++);
         setCursorChanged(true);
         setState(state => ({
             ...state,

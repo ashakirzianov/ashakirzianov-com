@@ -51,7 +51,7 @@ export default function Main({
       <Button
         color="yellow"
         onClick={() => setPixelated(v => !v)}
-        toggle
+        toggle once
       />
       <Button
         color="green"
@@ -139,6 +139,7 @@ export default function Main({
         display: flex;
         flex-flow: row wrap;
         align-content: flex-start;
+        justify-content: center;
         gap: 10pt;
         padding: 10pt;
         width: 100%;
@@ -190,15 +191,17 @@ function Page({ hue, children }: {
   </>
 }
 
-function Button({ color, onClick, toggle }: {
+function Button({ color, onClick, toggle, once }: {
   color: string,
   onClick?: () => void,
   toggle?: boolean,
+  once?: boolean,
 }) {
   let size = '30px';
   let drop = '8px';
   let [pressed, setPressed] = useState(false);
   let [toggled, setToggled] = useState(false);
+  let [clicked, setClicked] = useState(false);
   let down = pressed || toggled;
   let left = down ? drop : '0px';
   let top = down ? drop : '0px';
@@ -212,8 +215,9 @@ function Button({ color, onClick, toggle }: {
       onMouseLeave={() => setPressed(false)}
       onTouchCancel={() => setPressed(false)}
       onClick={() => {
-        if (onClick) onClick();
-        if (toggle) setToggled(v => !v);
+        if (onClick && (!once || !clicked)) onClick();
+        if (toggle) setToggled(v => once ? true : !v);
+        setClicked(true);
       }}
     />
     <style jsx>{`

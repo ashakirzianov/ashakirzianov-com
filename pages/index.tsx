@@ -315,7 +315,7 @@ function AboutCard({ onHover }: {
       cursor: default;
     }
     span {
-      color: skyblue;
+      color: black;
     }
     `}</style>
     </div>

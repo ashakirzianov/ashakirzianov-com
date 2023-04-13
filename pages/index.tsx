@@ -19,7 +19,6 @@ const p2p = Press_Start_2P({
 type Props = {
   posts: TextPost[];
   hue: number,
-  pixelatedSketches: boolean,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
   let posts = await getAllTexts();
@@ -28,17 +27,17 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
     props: {
       posts,
       hue: hues[0]!,
-      pixelatedSketches: false,
     }
   };
 }
 
 type HighlightKind = 'stories' | 'posters';
 export default function Main({
-  posts, hue, pixelatedSketches,
+  posts, hue,
 }: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
   let [grid, setGrid] = useState(false);
+  let [pixelated, setPixelated] = useState(false);
   return <Page hue={hue}>
     <div className={grid ? 'grid' : 'flex'}>
       <div className="card" style={{
@@ -48,7 +47,7 @@ export default function Main({
         <PosterCard
           index={0}
           highlight={hl === 'posters'}
-          pixelated={pixelatedSketches}
+          pixelated={pixelated}
         />
       </div>
       <div className="card" style={{
@@ -58,7 +57,7 @@ export default function Main({
         <PosterCard
           index={1}
           highlight={hl === 'posters'}
-          pixelated={pixelatedSketches}
+          pixelated={pixelated}
         />
       </div>
       <div className="card" style={{
@@ -68,7 +67,7 @@ export default function Main({
         <PosterCard
           index={2}
           highlight={hl === 'posters'}
-          pixelated={pixelatedSketches}
+          pixelated={pixelated}
         />
       </div>
       <div className="card" style={{

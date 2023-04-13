@@ -1,18 +1,13 @@
 import { useSketcher } from "@/hooks/sketcher";
 import { Scene } from "@/sketcher";
-import {
-    bwway, loveMeTwoTimes,
-} from "@/sketches/posters";
+import { posters } from "@/sketches/posters";
 import Link from "next/link";
-export const posters = [
-    loveMeTwoTimes(),
-    bwway(),
-];
+
 
 export default function AllPosters() {
     return <div className="container">
         {posters.map((poster, idx) =>
-            <Link href={`/posters/${idx}`}>
+            <Link key={idx} href={`/posters/${idx}`}>
                 <PosterCard scene={poster} />
             </Link>
         )}

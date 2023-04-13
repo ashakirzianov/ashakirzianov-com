@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import { useSketcher } from "@/hooks/sketcher";
 import { PosterPage } from "@/components/PosterPage";
-import { posters } from ".";
+import { posters } from "@/sketches/posters";
 
 // @refresh reset
 

@@ -2,13 +2,12 @@ import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
 import { useSketcher } from "@/hooks/sketcher";
-import { Scene, colorLayer, combineScenes, fromLayers, gray } from "@/sketcher";
-import { bwway, loveMeTwoTimes } from "@/sketches/posters";
+import { Scene } from "@/sketcher";
+import { posters } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { Press_Start_2P } from '@next/font/google';
-import { balanced } from "@/sketches/forms";
 const p2p = Press_Start_2P({
   subsets: ['cyrillic-ext'],
   weight: '400',
@@ -55,9 +54,8 @@ export default function Main({
         top: '-18vh',
         left: '5vw',
       }}>
-        <SketchCard
-          link="/posters/0"
-          sketch={loveMeTwoTimes()}
+        <PosterCard
+          index={0}
           highlight={hl === 'posters'}
           pixelated={pixelatedSketches}
         />
@@ -66,9 +64,8 @@ export default function Main({
         top: '7vh',
         left: '-17vw',
       }}>
-        <SketchCard
-          link="/posters/1"
-          sketch={bwway()}
+        <PosterCard
+          index={1}
           highlight={hl === 'posters'}
           pixelated={pixelatedSketches}
         />
@@ -77,12 +74,8 @@ export default function Main({
         top: '15vh',
         left: '-10vw',
       }}>
-        <SketchCard
-          link="/wip/8"
-          sketch={combineScenes(
-            fromLayers(colorLayer(gray(230))),
-            balanced(),
-          )}
+        <PosterCard
+          index={2}
           highlight={hl === 'posters'}
           pixelated={pixelatedSketches}
         />
@@ -218,6 +211,19 @@ function LinkCard({ link, children, ...rest }: CardProps & {
       </Card>
     </Link>
   </>;
+}
+
+function PosterCard({ index, pixelated, highlight }: {
+  index: number,
+  pixelated: boolean,
+  highlight: boolean,
+}) {
+  return <SketchCard
+    link={`/poster/${index}`}
+    sketch={posters[index]!}
+    highlight={highlight}
+    pixelated={pixelated}
+  />;
 }
 
 function SketchCard({ sketch, pixelated, ...rest }: CardProps & {

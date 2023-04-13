@@ -42,22 +42,6 @@ export default function Main({
     let nextHue = idx >= 0 ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
-  function Tile({
-    position: [left, top], shifted, children
-  }: {
-    position: [number, number],
-    shifted: boolean,
-    children: ReactNode,
-  }) {
-    return <div className="card" style={{
-      position: shifted ? 'relative' : 'static',
-      top: shifted ? `${top}vh` : 0,
-      left: shifted ? `${left}vw` : 0,
-      gridArea: 'mid',
-    }}>
-      {children}
-    </div>
-  }
   return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>
@@ -144,6 +128,23 @@ export default function Main({
   </PixelPage>
 }
 
+function Tile({
+  position: [left, top], shifted, children
+}: {
+  position: [number, number],
+  shifted: boolean,
+  children: ReactNode,
+}) {
+  return <div className="card" style={{
+    position: shifted ? 'relative' : 'static',
+    top: shifted ? `${top}vh` : 0,
+    left: shifted ? `${left}vw` : 0,
+    gridArea: 'mid',
+  }}>
+    {children}
+  </div>
+}
+
 type CardProps = {
   highlight?: boolean,
   children?: ReactNode,
@@ -154,31 +155,26 @@ type CardProps = {
 function Card({
   children, onDrag, onStop, highlight, top,
 }: CardProps) {
+  let scaled = highlight ? 'scaled' : '';
   return <>
     <Draggable
       onDrag={onDrag}
       onStop={onStop}
       top={top}
     >
-      <div className="container pixel-shadow" style={highlight ? {
-        transform: `scale(1.2)`
-      } : undefined}>
-        <div className="pixel-corners">
-          <div className="card-frame">
-            {children}
-          </div>
+      <div className="pixel-shadow">
+        <div className={`content card-frame pixel-corners ${scaled}`}>
+          {children}
         </div>
       </div>
     </Draggable>
     <style jsx>{`
-    .container {
+    .scaled {
+      transform: scale(1.2);
+    }
+    .content {
       transition: transform .3s;
       display: flex;
-      position: relative;
-      display: flex;
-      justify-content: stretch;
-      align-items: stretch;
-      padding: 0;
     }
     `}</style>
   </>;
@@ -281,33 +277,9 @@ function AboutCard({ hue, onHover }: {
   hue: number,
   onHover?: (target?: HighlightKind) => void,
 }) {
-  function TextLink({ children, href, highlight }: {
-    href: string,
-    children?: ReactNode,
-    highlight?: HighlightKind,
-  }) {
-    return <Link href={href} legacyBehavior>
-      <a
-        onMouseOver={function () {
-          if (onHover && highlight) {
-            onHover(highlight)
-          }
-        }}
-        onMouseLeave={function () {
-          if (onHover) {
-            onHover(undefined);
-          }
-        }}
-        onMouseOut={function () {
-          if (onHover) {
-            onHover(undefined);
-          }
-        }}>{children}</a>
-    </Link>;
-  }
   return <Card top>
     <div className="content noselect" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters">постеры</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>постеры</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
 
@@ -327,4 +299,30 @@ function AboutCard({ hue, onHover }: {
     `}</style>
     </div>
   </Card >;
+}
+
+function TextLink({ children, href, highlight, onHover }: {
+  href: string,
+  children?: ReactNode,
+  highlight?: HighlightKind,
+  onHover?: (target?: HighlightKind) => void,
+}) {
+  return <Link href={href} legacyBehavior>
+    <a
+      onMouseOver={function () {
+        if (onHover && highlight) {
+          onHover(highlight)
+        }
+      }}
+      onMouseLeave={function () {
+        if (onHover) {
+          onHover(undefined);
+        }
+      }}
+      onMouseOut={function () {
+        if (onHover) {
+          onHover(undefined);
+        }
+      }}>{children}</a>
+  </Link>;
 }

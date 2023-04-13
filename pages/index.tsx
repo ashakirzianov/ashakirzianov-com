@@ -121,6 +121,10 @@ export default function Main({
         place-items: center center;
         width: 100%;
         height: 100vh;
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+        cursor: default;
       }
       `}</style>
     </main>
@@ -323,7 +327,9 @@ function AboutCard({ onHover }: {
       padding: 10%;
       width: 100%;
       height: 100%;
-      user-select: none;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
       cursor: default;
     }
     span {

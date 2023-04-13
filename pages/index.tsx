@@ -10,6 +10,7 @@ import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/hooks/query";
 import { useRouter } from "next/router";
+import { PixelButton } from "@/components/Buttons";
 
 // @refresh reset
 
@@ -63,17 +64,17 @@ export default function Main({
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
     <div className="buttons">
-      <Button
+      <PixelButton
         color="red"
         onClick={() => setGrid(v => !v)}
         toggle
       />
-      <Button
+      <PixelButton
         color="yellow"
         onClick={() => setPixelated(v => !v)}
         toggle once
       />
-      <Button
+      <PixelButton
         color="green"
         onClick={nextHue}
       />
@@ -141,51 +142,6 @@ export default function Main({
       }
       `}</style>
   </PixelPage>
-}
-
-function Button({ color, onClick, toggle, once }: {
-  color: string,
-  onClick?: () => void,
-  toggle?: boolean,
-  once?: boolean,
-}) {
-  let size = '30px';
-  let drop = '8px';
-  let [pressed, setPressed] = useState(false);
-  let [toggled, setToggled] = useState(false);
-  let [clicked, setClicked] = useState(false);
-  let down = pressed || toggled;
-  let left = down ? drop : '0px';
-  let top = down ? drop : '0px';
-  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`;
-  return <div className="outer">
-    <div className="inner pixel-corners"
-      onMouseDown={() => setPressed(true)}
-      onTouchStart={() => setPressed(true)}
-      onMouseUp={() => { setPressed(false) }}
-      onTouchEnd={() => setPressed(false)}
-      onMouseLeave={() => setPressed(false)}
-      onTouchCancel={() => setPressed(false)}
-      onClick={() => {
-        if (onClick && (!once || !clicked)) onClick();
-        if (toggle) setToggled(v => once ? true : !v);
-        setClicked(true);
-      }}
-    />
-    <style jsx>{`
-    .outer {
-      filter: ${filter};
-    }
-    .inner {
-      position: relative;
-      top: ${top};
-      left: ${left};
-      width: ${size};
-      height: ${size};
-      background-color: ${color};
-    }
-    `}</style>
-  </div>
 }
 
 type CardProps = {

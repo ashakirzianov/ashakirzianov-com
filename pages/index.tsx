@@ -79,6 +79,12 @@ export default function Main({
       />
     </div>
     <div className={grid ? 'grid' : 'flex'}>
+      <Tile shifted={grid} position={[0, 0]}>
+        <AboutCard
+          hue={hue}
+          onHover={setHl}
+        />
+      </Tile>
       <Tile shifted={grid} position={[5, -18]}>
         <PosterCard
           index={0}
@@ -107,12 +113,6 @@ export default function Main({
           highlight={hl === 'stories'}
         />
       </Tile>
-      <Tile shifted={grid} position={[0, 0]}>
-        <AboutCard
-          hue={hue}
-          onHover={setHl}
-        />
-      </Tile>
     </div>
     <style jsx>{`
       .buttons {
@@ -131,8 +131,8 @@ export default function Main({
       }
       .flex {
         display: flex;
-        flex-flow: row-reverse wrap-reverse;
-        align-content: flex-end;
+        flex-flow: row wrap;
+        align-content: flex-start;
         justify-content: center;
         gap: 10pt;
         padding: 10pt;
@@ -193,12 +193,16 @@ type CardProps = {
   children?: ReactNode,
   onDrag?: () => void,
   onStop?: () => void,
+  top?: boolean,
 };
-function Card({ children, onDrag, onStop, highlight }: CardProps) {
+function Card({
+  children, onDrag, onStop, highlight, top,
+}: CardProps) {
   return <>
     <Draggable
       onDrag={onDrag}
       onStop={onStop}
+      top={top}
     >
       <div className="container pixel-shadow" style={highlight ? {
         transform: `scale(1.2)`
@@ -227,7 +231,9 @@ function Card({ children, onDrag, onStop, highlight }: CardProps) {
 function LinkCard({ link, children, ...rest }: CardProps & {
   link: string,
 }) {
-  let [navigable, setNavigable] = useState(true);
+  let navigable = true;
+  function lock() { navigable = false; }
+  function unlock() { setTimeout(() => { navigable = true; }) }
   return <>
     <Link draggable={false} href={link}
       onClick={event => {
@@ -236,8 +242,8 @@ function LinkCard({ link, children, ...rest }: CardProps & {
       }}
     >
       <Card
-        onDrag={() => setNavigable(false)}
-        onStop={() => setTimeout(() => setNavigable(true))}
+        onDrag={lock}
+        onStop={unlock}
         {...rest}
       >
         {children}
@@ -343,7 +349,7 @@ function AboutCard({ hue, onHover }: {
         }}>{children}</a>
     </Link>;
   }
-  return <Card>
+  return <Card top>
     <div className="content noselect" unselectable="on">
       —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters">постеры</TextLink>.
       <p>&nbsp;</p>

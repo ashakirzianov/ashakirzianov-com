@@ -100,3 +100,10 @@ a {
   background-color: var(--paper);
   color: var(--foreground);
 }
+
+.card {
+  display: flex;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  width: min(200px, 50vw);
+}

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Cormorant } from '@next/font/google';
 const textFont = Cormorant({
     subsets: ['cyrillic-ext'],
-    weight: '500',
+    weight: '600',
     variable: '--font-text',
 });
 

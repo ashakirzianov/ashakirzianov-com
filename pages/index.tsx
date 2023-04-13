@@ -320,7 +320,7 @@ function AboutCard({ onHover }: {
       color: var(--foreground-light);
       background-color: var(--paper-light);
       text-indent: 1em;
-      color: var(--foreground);
+      color: var(--foreground-light);
       overflow: hidden;
       font-size: 1.4vh;
       line-height: 1.2em;
@@ -333,7 +333,7 @@ function AboutCard({ onHover }: {
       cursor: default;
     }
     span {
-      color: black;
+      color: var(--foreground-light);
     }
     `}</style>
     </div>

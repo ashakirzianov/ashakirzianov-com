@@ -1,14 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next"
-import {
-    bwway, loveMeTwoTimes,
-} from "@/sketches/posters";
 import { useSketcher } from "@/hooks/sketcher";
 import { PosterPage } from "@/components/PosterPage";
-
-export const posters = [
-    loveMeTwoTimes(),
-    bwway(),
-];
+import { posters } from ".";
 
 // @refresh reset
 

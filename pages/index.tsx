@@ -41,6 +41,22 @@ export default function Main({
     let nextHue = idx >= 0 ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
+  function Tile({
+    position: [left, top], shifted, children
+  }: {
+    position: [number, number],
+    shifted: boolean,
+    children: ReactNode,
+  }) {
+    return <div className="card" style={{
+      position: shifted ? 'relative' : 'static',
+      top: shifted ? `${top}vh` : 0,
+      left: shifted ? `${left}vw` : 0,
+      gridArea: 'mid',
+    }}>
+      {children}
+    </div>
+  }
   return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>
@@ -63,55 +79,40 @@ export default function Main({
       />
     </div>
     <div className={grid ? 'grid' : 'flex'}>
-      <div className="card" style={{
-        top: '-18vh',
-        left: '5vw',
-      }}>
+      <Tile shifted={grid} position={[5, -18]}>
         <PosterCard
           index={0}
           highlight={hl === 'posters'}
           pixelated={pixelated}
         />
-      </div>
-      <div className="card" style={{
-        top: '7vh',
-        left: '-17vw',
-      }}>
+      </Tile>
+      <Tile shifted={grid} position={[-17, 7]}>
         <PosterCard
           index={1}
           highlight={hl === 'posters'}
           pixelated={pixelated}
         />
-      </div>
-      <div className="card" style={{
-        top: '15vh',
-        left: '-10vw',
-      }}>
+      </Tile>
+      <Tile shifted={grid} position={[-10, 15]}>
         <PosterCard
           index={2}
           highlight={hl === 'posters'}
           pixelated={pixelated}
         />
-      </div>
-      <div className="card" style={{
-        bottom: '-12vh',
-        left: '25vw',
-      }}>
+      </Tile>
+      <Tile shifted={grid} position={[25, 10]}>
         <TextPostCard
           link="/stories/thirty-four"
           post={posts[0]!}
           highlight={hl === 'stories'}
         />
-      </div>
-      <div className="card" style={{
-        top: '0vw',
-        left: '0vh',
-      }}>
+      </Tile>
+      <Tile shifted={grid} position={[0, 0]}>
         <AboutCard
           hue={hue}
           onHover={setHl}
         />
-      </div>
+      </Tile>
     </div>
     <style jsx>{`
       .buttons {
@@ -120,10 +121,6 @@ export default function Main({
         justify-content: flex-end;
         gap: 10pt;
         padding: 10pt;
-      }
-      .card {
-        ${grid ? 'position: relative;' : 'position: static; top: 0; left: 0;'}
-        grid-area: mid;
       }
       .grid {
         display: grid;

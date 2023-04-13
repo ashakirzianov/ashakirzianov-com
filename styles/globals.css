@@ -104,8 +104,8 @@ a {
   display: flex;
   overflow: hidden;
   aspect-ratio: 3/4;
-  width: min(200px, 50vw);
-  font-size: min(16px, 3vw);
+  width: 160pt;
+  font-size: 12pt;
 }
 
 .noselect {

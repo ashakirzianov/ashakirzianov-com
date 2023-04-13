@@ -297,8 +297,8 @@ function TextPostCard({ post, ...rest }: CardProps & {
       }
       .post {
         overflow: hidden;
-        font-size: min(5pt,11.6vw);
-        max-height: min(189pt,58vw);
+        font-size: 5pt;
+        max-height: 200pt;
         padding: 3em 5%;
         width: 100%;
       }

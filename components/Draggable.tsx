@@ -36,7 +36,7 @@ export function Draggable({
     let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
         if (dragging) {
             setState(state => {
-                let MIN_STEP = 100;
+                let MIN_STEP = 200;
                 let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
                 let dy = Math.abs(y - (state.touchStart.y - state.offset.y));
                 if (dx > MIN_STEP || dy > MIN_STEP) {

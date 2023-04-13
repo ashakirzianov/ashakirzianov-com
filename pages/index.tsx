@@ -338,7 +338,12 @@ function LinkCard({ link, children, ...rest }: CardProps & {
 }) {
   let [navigable, setNavigable] = useState(true);
   return <>
-    <Link draggable={false} href={navigable ? link : ''}>
+    <Link draggable={false} href={link}
+      onClick={event => {
+        if (!navigable)
+          event.preventDefault();
+      }}
+    >
       <Card
         onDrag={() => setNavigable(false)}
         onStop={() => setTimeout(() => setNavigable(true))}

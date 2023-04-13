@@ -112,9 +112,6 @@ export default function Main({
       body {
         background-color: hsl(${hue},60%,65%);
       }
-      div {
-        transition: display 3s;
-      }
       `}</style>
     <style jsx>{`
       .buttons {
@@ -133,7 +130,7 @@ export default function Main({
         grid-template-areas: "mid";
         place-items: center center;
         width: 100%;
-        height: 100vh;
+        height: 100%;
       }
       .flex {
         display: flex;
@@ -143,7 +140,7 @@ export default function Main({
         gap: 10pt;
         padding: 10pt;
         width: 100%;
-        height: 100vh;
+        height: 100%;
       }
       `}</style>
   </Page>

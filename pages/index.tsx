@@ -106,7 +106,7 @@ export default function Main({
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[25, 10]}>
+      <Tile shifted={grid} position={[23, 10]}>
         <TextPostCard
           link="/stories/thirty-four"
           post={posts[0]!}

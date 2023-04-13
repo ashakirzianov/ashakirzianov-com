@@ -44,7 +44,6 @@ html {
   --foreground: var(--foreground-light);
   --shadow: var(--shadow-light);
   --radius: 7px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,6 +105,7 @@ a {
   overflow: hidden;
   aspect-ratio: 3/4;
   width: min(200px, 50vw);
+  font-size: min(16px, 3vw);
 }
 
 .noselect {

@@ -357,7 +357,6 @@ function AboutCard({ hue, onHover }: {
       color: var(--foreground-light);
       background-color: var(--paper-light);
       text-indent: 1em;
-      font-size: 1.4vh;
       line-height: 1.2em;
       padding: 10%;
       width: 100%;

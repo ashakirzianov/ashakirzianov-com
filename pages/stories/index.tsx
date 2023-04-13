@@ -1,4 +1,4 @@
-import { HtmlBlock, TextBlock } from "@/components/TextBlock";
+import { TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTexts } from "@/texts";
 import { GetStaticProps } from "next";
 import Head from "next/head";

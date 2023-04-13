@@ -1,18 +1,4 @@
 import { ReactNode } from "react";
-import { Cormorant } from '@next/font/google';
-const textFont = Cormorant({
-    subsets: ['cyrillic-ext'],
-    weight: '600',
-    variable: '--font-text',
-});
-
-export function HtmlBlock({ html }: {
-    html: string,
-}) {
-    return <TextBlock>
-        <div dangerouslySetInnerHTML={{ __html: html }} />
-    </TextBlock>
-}
 
 export function TextBlock({ font, children }: {
     font?: string,
@@ -20,7 +6,7 @@ export function TextBlock({ font, children }: {
 }) {
     let family = font ?? 'var(--font-text), serif';
     return <div className="container">
-        <div className={`post ${textFont.variable}`}>
+        <div className="post">
             {children}
         </div>
         <style jsx>{`

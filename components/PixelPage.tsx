@@ -1,21 +1,21 @@
 import { ReactNode } from "react";
 import { Press_Start_2P } from '@next/font/google';
 const p2p = Press_Start_2P({
-    subsets: ['cyrillic-ext'],
-    weight: '400',
-    variable: '--font-pixel',
+  subsets: ['cyrillic-ext'],
+  weight: '400',
+  variable: '--font-pixel',
 });
 
-export function Page({ hue, children }: {
-    hue: number,
-    children: ReactNode,
+export function PixelPage({ hue, children }: {
+  hue: number,
+  children: ReactNode,
 }) {
-    return <>
-        <main className={`page ${p2p.variable}`}>
-            <div className="back">Җ</div>
-            <div className="content">{children}</div>
-        </main>
-        <style jsx>{`
+  return <>
+    <main className={`page ${p2p.variable}`}>
+      <div className="back">Җ</div>
+      <div className="content">{children}</div>
+    </main>
+    <style jsx>{`
         .page {
           display: grid;
           grid-template-areas: "mid";
@@ -26,6 +26,7 @@ export function Page({ hue, children }: {
           -ms-user-select: none; /* IE 10 and IE 11 */
           user-select: none; /* Standard syntax */
           cursor: default;
+          font-family: var(--font-pixel);
         }
         .back {
           grid-area: mid;
@@ -41,10 +42,10 @@ export function Page({ hue, children }: {
           height: 100vh;
         }
       `}</style>
-        <style jsx global>{`
+    <style jsx global>{`
         body {
             background-color: hsl(${hue},60%,65%);
         }
       `}</style>
-    </>
+  </>
 }

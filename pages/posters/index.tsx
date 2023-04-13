@@ -1,4 +1,4 @@
-import { Page } from "@/components/Page";
+import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/hooks/query";
 import { useSketcher } from "@/hooks/sketcher";
 import { Scene } from "@/sketcher";
@@ -9,7 +9,7 @@ type Props = {};
 
 export default function AllPosters({ }: Props) {
     let { hue } = useQuery();
-    return <Page hue={hue}>
+    return <PixelPage hue={hue}>
         <div className="container">
             {posters.map((poster, idx) =>
                 <Link key={idx} href={`/posters/${idx}`}>
@@ -27,7 +27,7 @@ export default function AllPosters({ }: Props) {
         }
         `}</style>
         </div>
-    </Page>
+    </PixelPage>
 }
 
 function PosterCard({ scene }: {

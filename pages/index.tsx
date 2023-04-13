@@ -7,7 +7,7 @@ import { posters } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
-import { Page } from "@/components/Page";
+import { PixelPage } from "@/components/PixelPage";
 
 // @refresh reset
 
@@ -36,7 +36,7 @@ export default function Main({
     setHueIdx(idx => idx < hues.length - 1 ? idx + 1 : 0);
   }
   let hue = hues[hueIdx]!;
-  return <Page hue={hue}>
+  return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -138,7 +138,7 @@ export default function Main({
         height: 100%;
       }
       `}</style>
-  </Page>
+  </PixelPage>
 }
 
 function Button({ color, onClick, toggle, once }: {

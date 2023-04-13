@@ -356,7 +356,7 @@ function PosterCard({ index, pixelated, highlight }: {
   highlight: boolean,
 }) {
   return <SketchCard
-    link={`/poster/${index}`}
+    link={`/posters/${index}`}
     sketch={posters[index]!}
     highlight={highlight}
     pixelated={pixelated}

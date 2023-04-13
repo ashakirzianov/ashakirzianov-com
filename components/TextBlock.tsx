@@ -14,9 +14,11 @@ export function HtmlBlock({ html }: {
     </TextBlock>
 }
 
-export function TextBlock({ children }: {
+export function TextBlock({ font, children }: {
+    font?: string,
     children?: ReactNode,
 }) {
+    let family = font ?? 'var(--font-text), serif';
     return <div className="container">
         <div className={`post ${textFont.variable}`}>
             {children}
@@ -32,7 +34,7 @@ export function TextBlock({ children }: {
                 padding: 10pt;
                 max-width: min(540pt, 100%);
                 font-size: 140%;
-                font-family: var(--font-text), serif;
+                font-family: ${family};
             }
             `}</style>
         <style>{`

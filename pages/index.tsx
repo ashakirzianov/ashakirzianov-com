@@ -354,7 +354,7 @@ function AboutCard({ hue, onHover }: {
     <div className="content" unselectable="on">
       —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories">рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters">постеры</TextLink>.
       <p>&nbsp;</p>
-      — Что? Кто ты такой и <TextLink href='/about'>что это за буква җ?</TextLink>
+      — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
 
       <style jsx>{`
     .content {

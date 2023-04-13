@@ -18,26 +18,29 @@ const p2p = Press_Start_2P({
 
 type Props = {
   posts: TextPost[];
-  hue: number,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
   let posts = await getAllTexts();
-  let hues = [40, 210, 340, 360];
   return {
     props: {
       posts,
-      hue: hues[0]!,
     }
   };
 }
 
 type HighlightKind = 'stories' | 'posters';
 export default function Main({
-  posts, hue,
+  posts,
 }: Props) {
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
   let [grid, setGrid] = useState(false);
   let [pixelated, setPixelated] = useState(false);
+  let [hueIdx, setHueIdx] = useState(0);
+  let hues = [40, 210, 340, 360];
+  function nextHue() {
+    setHueIdx(idx => idx < hues.length - 1 ? idx++ : 0);
+  }
+  let hue = hues[hueIdx]!;
   return <Page hue={hue}>
     <div className={grid ? 'grid' : 'flex'}>
       <div className="card" style={{

@@ -27,6 +27,7 @@ export default function AboutPage() {
         }
         .content {
             background-color: var(--paper-light);
+            color: var(--foreground-light);
         }
         `}</style>
     </PixelPage>

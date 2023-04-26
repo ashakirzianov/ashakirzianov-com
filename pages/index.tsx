@@ -159,10 +159,13 @@ function Tile({
       onDrag={lock}
       onStop={unlock}
       front={front}
+      disabled={!shifted}
     >
         {children}
       </Draggable></Link>
-    : <Draggable front={front}>{children}</Draggable>
+    : <Draggable front={front} disabled={!shifted}>
+      {children}
+    </Draggable>
   return <div style={{
     position: shifted ? 'relative' : 'static',
     top: shifted ? `${top}vh` : 0,

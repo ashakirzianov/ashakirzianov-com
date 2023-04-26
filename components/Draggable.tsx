@@ -5,8 +5,9 @@ import {
 let globalZ = 1;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop, front,
+    children, onDrag, onStop, front, disabled,
 }: {
+    disabled?: boolean,
     front?: boolean,
     children?: ReactNode,
     onDrag?: () => void,
@@ -22,16 +23,18 @@ export function Draggable({
     let [cursorChanged, setCursorChanged] = useState(false);
 
     function handleStartDragging({ x, y }: Position) {
-        setDragging(true);
-        setZIndex(globalZ++);
-        setCursorChanged(true);
-        setState(state => ({
-            ...state,
-            touchStart: {
-                x: state.offset.x - x,
-                y: state.offset.y - y,
-            }
-        }));
+        if (!disabled) {
+            setDragging(true);
+            setZIndex(globalZ++);
+            setCursorChanged(true);
+            setState(state => ({
+                ...state,
+                touchStart: {
+                    x: state.offset.x - x,
+                    y: state.offset.y - y,
+                }
+            }));
+        }
     }
     let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
         if (dragging) {
@@ -130,8 +133,9 @@ export function Draggable({
 
     return <div ref={divRef} style={{
         position: 'relative',
-        transform: `translate(${state.offset.x}px, ${state.offset.y}px)`,
-        cursor: cursorChanged ? 'grab' : undefined,
+        transform: disabled
+            ? undefined : `translate(${state.offset.x}px, ${state.offset.y}px)`,
+        cursor: cursorChanged && !disabled ? 'grab' : undefined,
         zIndex,
     }}
         onMouseDown={function (event) {

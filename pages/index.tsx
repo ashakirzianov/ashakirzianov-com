@@ -223,21 +223,22 @@ function TextPostCard({ post }: {
       }
       .post {
         overflow: hidden;
-        font-size: 5pt;
-        max-height: 200pt;
+        font-size: .4em;
+        max-height: 42em;
         padding: 3em 5%;
         width: 100%;
       }
       `}</style>
       <style>{`
       h1 {
-          margin-bottom: 12pt;
-          line-height: 12pt;
+          margin-top: .5em;
+          margin-bottom: 1em;
+          line-height: 1em;
       }
       p {
-          text-indent: 12pt;
-          line-height: 6pt;
-          margin-bottom: 6pt;
+          text-indent: 1em;
+          line-height: 1em;
+          margin-bottom: 1em;
       }
     `}</style>
     </div>

@@ -72,37 +72,37 @@ export default function Main({
       </Tile>
       <Tile shifted={grid} position={[5, -18]}
         link="/posters/0"
+        highlight={hl === 'posters'}
       >
         <SketchCard
           sketch={posters[0]!}
-          highlight={hl === 'posters'}
           pixelated={pixelated}
         />
       </Tile>
       <Tile shifted={grid} position={[-17, 7]}
         link="/posters/1"
+        highlight={hl === 'posters'}
       >
         <SketchCard
           sketch={posters[1]!}
-          highlight={hl === 'posters'}
           pixelated={pixelated}
         />
       </Tile>
       <Tile shifted={grid} position={[-10, 15]}
         link="/posters/2"
+        highlight={hl === 'posters'}
       >
         <SketchCard
           sketch={posters[2]!}
-          highlight={hl === 'posters'}
           pixelated={pixelated}
         />
       </Tile>
       <Tile shifted={grid} position={[23, 10]}
         link="/stories/thirty-four"
+        highlight={hl === 'stories'}
       >
         <TextPostCard
           post={posts[0]!}
-          highlight={hl === 'stories'}
         />
       </Tile>
     </div>
@@ -136,13 +136,15 @@ export default function Main({
 }
 
 function Tile({
-  position: [left, top], shifted, children, front, link
+  position: [left, top], shifted,
+  children, front, link, highlight,
 }: {
   position: [number, number],
   shifted: boolean,
   children: ReactNode,
   link?: string,
   front?: boolean,
+  highlight?: boolean,
 }) {
   let navigable = true;
   function lock() { navigable = false; }
@@ -166,38 +168,26 @@ function Tile({
     top: shifted ? `${top}vh` : 0,
     left: shifted ? `${left}vw` : 0,
     gridArea: 'mid',
+    transform: highlight ? 'scale(1.2)' : undefined,
+    transition: 'transform .3s',
   }}>
     {content}
   </div>
 }
 
-type CardProps = {
-  highlight?: boolean,
-  children?: ReactNode,
-};
 function Card({
-  children, highlight
-}: CardProps) {
-  let scaled = highlight ? 'scaled' : '';
-  return <>
-    <div className="pixel-shadow">
-      <div className={`content card-frame pixel-corners ${scaled}`}>
-        {children}
-      </div>
+  children,
+}: {
+  children?: ReactNode,
+}) {
+  return <div className="pixel-shadow">
+    <div className="card-frame pixel-corners">
+      {children}
     </div>
-    <style jsx>{`
-    .scaled {
-      transform: scale(1.2);
-    }
-    .content {
-      transition: transform .3s;
-      display: flex;
-    }
-    `}</style>
-  </>;
+  </div>
 }
 
-function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
+function SketchCard({ sketch, pixelated }: {
   sketch: Scene<any>,
   pixelated: boolean,
 }) {
@@ -207,14 +197,14 @@ function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
     dimensions: pixelated ? [3 * u, 4 * u] : undefined,
   });
   return <div>
-    <Card {...rest}>{node}</Card>
+    <Card>{node}</Card>
   </div>;
 }
 
-function TextPostCard({ post, ...rest }: CardProps & {
+function TextPostCard({ post }: {
   post: TextPost,
 }) {
-  return <Card {...rest}>
+  return <Card>
     <div className="container">
       <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
       <style jsx>{`

@@ -64,36 +64,43 @@ export default function Main({
       />
     </div>
     <div className={grid ? 'grid' : 'flex'}>
-      <Tile shifted={grid} position={[0, 0]}>
+      <Tile shifted={grid} position={[0, 0]} front>
         <AboutCard
           hue={hue}
           onHover={setHl}
         />
       </Tile>
-      <Tile shifted={grid} position={[5, -18]}>
-        <PosterCard
-          index={0}
+      <Tile shifted={grid} position={[5, -18]}
+        link="/posters/0"
+      >
+        <SketchCard
+          sketch={posters[0]!}
           highlight={hl === 'posters'}
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[-17, 7]}>
-        <PosterCard
-          index={1}
+      <Tile shifted={grid} position={[-17, 7]}
+        link="/posters/1"
+      >
+        <SketchCard
+          sketch={posters[1]!}
           highlight={hl === 'posters'}
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[-10, 15]}>
-        <PosterCard
-          index={2}
+      <Tile shifted={grid} position={[-10, 15]}
+        link="/posters/2"
+      >
+        <SketchCard
+          sketch={posters[2]!}
           highlight={hl === 'posters'}
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[23, 10]}>
+      <Tile shifted={grid} position={[23, 10]}
+        link="/stories/thirty-four"
+      >
         <TextPostCard
-          link="/stories/thirty-four"
           post={posts[0]!}
           highlight={hl === 'stories'}
         />
@@ -129,45 +136,55 @@ export default function Main({
 }
 
 function Tile({
-  position: [left, top], shifted, children
+  position: [left, top], shifted, children, front, link
 }: {
   position: [number, number],
   shifted: boolean,
   children: ReactNode,
+  link?: string,
+  front?: boolean,
 }) {
-  return <div className="card" style={{
+  let navigable = true;
+  function lock() { navigable = false; }
+  function unlock() { setTimeout(() => { navigable = true; }) }
+  let content = link
+    ? <Link href={link}
+      onClick={event => {
+        if (!navigable)
+          event.preventDefault();
+      }}
+    ><Draggable
+      onDrag={lock}
+      onStop={unlock}
+      top={front}
+    >
+        {children}
+      </Draggable></Link>
+    : <Draggable top={front}>{children}</Draggable>
+  return <div style={{
     position: shifted ? 'relative' : 'static',
     top: shifted ? `${top}vh` : 0,
     left: shifted ? `${left}vw` : 0,
     gridArea: 'mid',
   }}>
-    {children}
+    {content}
   </div>
 }
 
 type CardProps = {
   highlight?: boolean,
   children?: ReactNode,
-  onDrag?: () => void,
-  onStop?: () => void,
-  top?: boolean,
 };
 function Card({
-  children, onDrag, onStop, highlight, top,
+  children, highlight
 }: CardProps) {
   let scaled = highlight ? 'scaled' : '';
   return <>
-    <Draggable
-      onDrag={onDrag}
-      onStop={onStop}
-      top={top}
-    >
-      <div className="pixel-shadow">
-        <div className={`content card-frame pixel-corners ${scaled}`}>
-          {children}
-        </div>
+    <div className="pixel-shadow">
+      <div className={`content card-frame pixel-corners ${scaled}`}>
+        {children}
       </div>
-    </Draggable>
+    </div>
     <style jsx>{`
     .scaled {
       transform: scale(1.2);
@@ -180,46 +197,8 @@ function Card({
   </>;
 }
 
-function LinkCard({ link, children, ...rest }: CardProps & {
-  link: string,
-}) {
-  let navigable = true;
-  function lock() { navigable = false; }
-  function unlock() { setTimeout(() => { navigable = true; }) }
-  return <>
-    <Link draggable={false} href={link}
-      onClick={event => {
-        if (!navigable)
-          event.preventDefault();
-      }}
-    >
-      <Card
-        onDrag={lock}
-        onStop={unlock}
-        {...rest}
-      >
-        {children}
-      </Card>
-    </Link>
-  </>;
-}
-
-function PosterCard({ index, pixelated, highlight }: {
-  index: number,
-  pixelated: boolean,
-  highlight: boolean,
-}) {
-  return <SketchCard
-    link={`/posters/${index}`}
-    sketch={posters[index]!}
-    highlight={highlight}
-    pixelated={pixelated}
-  />;
-}
-
 function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
   sketch: Scene<any>,
-  link: string,
   pixelated: boolean,
 }) {
   let u = 20;
@@ -228,15 +207,14 @@ function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
     dimensions: pixelated ? [3 * u, 4 * u] : undefined,
   });
   return <div>
-    <LinkCard {...rest}>{node}</LinkCard>
+    <Card {...rest}>{node}</Card>
   </div>;
 }
 
 function TextPostCard({ post, ...rest }: CardProps & {
   post: TextPost,
-  link: string,
 }) {
-  return <LinkCard {...rest}>
+  return <Card {...rest}>
     <div className="container">
       <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
       <style jsx>{`
@@ -270,14 +248,14 @@ function TextPostCard({ post, ...rest }: CardProps & {
       }
     `}</style>
     </div>
-  </LinkCard>;
+  </Card>;
 }
 
 function AboutCard({ hue, onHover }: {
   hue: number,
   onHover?: (target?: HighlightKind) => void,
 }) {
-  return <Card top>
+  return <Card>
     <div className="content noselect" unselectable="on">
       —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>постеры</TextLink>.
       <p>&nbsp;</p>

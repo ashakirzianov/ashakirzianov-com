@@ -5,13 +5,12 @@ import {
 let globalZ = 1;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop, front, top,
+    children, onDrag, onStop, front,
 }: {
     front?: boolean,
     children?: ReactNode,
     onDrag?: () => void,
     onStop?: () => void,
-    top?: boolean,
 }) {
     let divRef = useRef<HTMLDivElement>(null);
     let [dragging, setDragging] = useState(false);
@@ -19,7 +18,7 @@ export function Draggable({
         offset: { x: 0, y: 0 },
         touchStart: { x: 0, y: 0 },
     });
-    let [zIndex, setZIndex] = useState(top ? 1 : 0);
+    let [zIndex, setZIndex] = useState(front ? 1 : 0);
     let [cursorChanged, setCursorChanged] = useState(false);
 
     function handleStartDragging({ x, y }: Position) {
@@ -132,8 +131,8 @@ export function Draggable({
     return <div ref={divRef} style={{
         position: 'relative',
         transform: `translate(${state.offset.x}px, ${state.offset.y}px)`,
-        zIndex: front ? globalZ + 1 : zIndex,
         cursor: cursorChanged ? 'grab' : undefined,
+        zIndex,
     }}
         onMouseDown={function (event) {
             handleStartDragging(getMousePosition(event));

@@ -150,7 +150,7 @@ function Tile({
   function lock() { navigable = false; }
   function unlock() { setTimeout(() => { navigable = true; }) }
   let content = link
-    ? <Link href={link}
+    ? <Link draggable={false} href={link}
       onClick={event => {
         if (!navigable)
           event.preventDefault();
@@ -158,11 +158,11 @@ function Tile({
     ><Draggable
       onDrag={lock}
       onStop={unlock}
-      top={front}
+      front={front}
     >
         {children}
       </Draggable></Link>
-    : <Draggable top={front}>{children}</Draggable>
+    : <Draggable front={front}>{children}</Draggable>
   return <div style={{
     position: shifted ? 'relative' : 'static',
     top: shifted ? `${top}vh` : 0,

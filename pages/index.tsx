@@ -11,6 +11,7 @@ import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/hooks/query";
 import { useRouter } from "next/router";
 import { PixelButton } from "@/components/Buttons";
+import { getViewportDimensions } from "@/hooks/misc";
 
 // @refresh reset
 
@@ -26,6 +27,10 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
   };
 }
 
+function isNarrowScreen() {
+  return getViewportDimensions().width < 470;
+}
+
 type HighlightKind = 'stories' | 'posters';
 export default function Main({
   posts,
@@ -34,7 +39,7 @@ export default function Main({
   let router = useRouter();
 
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  let [grid, setGrid] = useState(true);
+  let [grid, setGrid] = useState(isNarrowScreen());
   let [pixelated, setPixelated] = useState(false);
   function nextHue() {
     let hues = [40, 210, 340, 360];

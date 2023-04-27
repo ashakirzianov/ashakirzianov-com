@@ -258,7 +258,7 @@ function AboutCard({ hue, onHover }: {
 }) {
   return <Card>
     <div className="content noselect" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>постеры</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
 

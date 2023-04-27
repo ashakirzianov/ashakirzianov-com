@@ -16,7 +16,7 @@ export default function AboutPage() {
                 <TextBlock font="var(--font-pixel)">
                     <h1>Кто ты такой и что это за буква җ?</h1>
                     <p>{`Ладно, вообще меня зовут Антон Шакирзянов. Буква "җ" взята из татарской версии кирилицы, вот отсюда: "Шөкер Җан".`}</p>
-                    <p>Я пишу <Link href='/stories'>рассказы</Link>, выдуманные и не совсем. А еще я делаю <Link href='/wip'>генаративные формы</Link> и <Link href={`/posters?hue=${hue}`}>постеры</Link> из них.</p>
+                    <p>Я пишу <Link href='/stories'>рассказы</Link>, выдуманные и не совсем. А еще я увлекаюсь генеративным искусством: создаю <Link href={`/posters?hue=${hue}`}>формы и плакаты</Link> из них.</p>
                     <p>У меня есть <Link href='https://instagram.com/ashakirzianov'>инстаграмм</Link> и <Link href='https://t.me/ashakirzianov_live'>телеграмм</Link>.</p>
                 </TextBlock>
             </div>

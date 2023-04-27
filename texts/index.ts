@@ -2,9 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { promisify } from 'util';
-import { remark } from 'remark';
-import html from 'remark-html';
-import { parseISO } from 'date-fns';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
 
 export type TextPost = {
     id: string,
@@ -32,13 +33,15 @@ export async function getAllTextIds() {
 async function getText(fileName: string): Promise<TextPost | undefined> {
     try {
         let id = path.basename(fileName).replace('.md', '');
-        let fileContents = await promisify(fs.readFile)(fileName, 'utf8');
-        let matterResult = matter(fileContents);
-        let htmlData = await remark()
-            .use(html, {
+        let file = await promisify(fs.readFile)(fileName, 'utf8');
+        let matterFile = matter(file);
+
+        const htmlFile = await unified()
+            .use(remarkParse)
+            .use(remarkRehype, {
                 handlers: {
                     heading(state, node) {
-                        if (node.depth !== 1) {
+                        if (node.depth === 1) {
                             return {
                                 type: 'element',
                                 tagName: 'h1',
@@ -46,22 +49,19 @@ async function getText(fileName: string): Promise<TextPost | undefined> {
                                 children: state.all(node),
                             };
                         } else {
-                            return {
-                                type: 'element',
-                                tagName: `h${node.depth}`,
-                                children: state.all(node),
-                            };
+                            return node;
                         }
                     }
                 }
             })
-            .process(matterResult.content);
+            .use(rehypeStringify)
+            .process(matterFile.content);
 
         return {
             id,
-            html: htmlData.toString(),
-            date: matterResult.data.date,
-            title: matterResult.data.title,
+            html: String(htmlFile),
+            date: matterFile.data.date,
+            title: matterFile.data.title,
         };
     } catch {
         return undefined;

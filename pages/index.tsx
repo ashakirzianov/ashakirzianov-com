@@ -1,17 +1,17 @@
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
-import { useSketcher } from "@/hooks/sketcher";
+import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
 import { posters } from "@/sketches/posters";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
-import { useQuery } from "@/hooks/query";
+import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
 import { PixelButton } from "@/components/Buttons";
-import { getViewportDimensions } from "@/hooks/misc";
+import { getViewportDimensions } from "@/utils/misc";
 
 // @refresh reset
 

@@ -1,6 +1,6 @@
 import { PixelPage } from "@/components/PixelPage";
-import { useQuery } from "@/hooks/query";
-import { useSketcher } from "@/hooks/sketcher";
+import { useQuery } from "@/utils/query";
+import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
 import { posters } from "@/sketches/posters";
 import Head from "next/head";

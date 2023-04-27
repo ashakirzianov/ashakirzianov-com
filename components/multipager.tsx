@@ -1,6 +1,6 @@
 import { Scene, randomInt } from "@/sketcher";
 import { PosterPage } from "@/components/PosterPage";
-import { useSketcher } from "@/hooks/sketcher";
+import { useSketcher } from "@/utils/sketcher";
 import { GetServerSideProps } from "next";
 
 export function multipager({

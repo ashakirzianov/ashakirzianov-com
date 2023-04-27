@@ -1,6 +1,6 @@
 import { PixelPage } from "@/components/PixelPage";
 import { TextBlock } from "@/components/TextBlock";
-import { useQuery } from "@/hooks/query";
+import { useQuery } from "@/utils/query";
 import Head from "next/head";
 import Link from "next/link";
 

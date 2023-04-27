@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next"
-import { useSketcher } from "@/hooks/sketcher";
+import { useSketcher } from "@/utils/sketcher";
 import { PosterPage } from "@/components/PosterPage";
 import { posters } from "@/sketches/posters";
 

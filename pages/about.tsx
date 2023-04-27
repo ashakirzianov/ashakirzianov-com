@@ -23,11 +23,15 @@ export default function AboutPage() {
         </div>
         <style jsx>{`
         .container {
-            margin: 10pt;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .content {
+            margin: 10pt;
             background-color: var(--paper-light);
             color: var(--foreground-light);
+            max-width: min(540pt, 100%);
         }
         `}</style>
     </PixelPage>

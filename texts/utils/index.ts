@@ -18,13 +18,15 @@ export type TextPost = {
 
 export async function getAllTexts() {
     let ids = await getAllTextIds();
-    let objects = await Promise.all(ids.map(getTextForId));
+    let objects = await Promise.all(ids.map(id => getTextForId({ id })));
     return objects.filter((o): o is TextPost => o !== undefined);
 }
 
-export async function getTextForId(id: string) {
+export async function getTextForId({ id, maxChars }: {
+    id: string, maxChars?: number
+}) {
     let fileName = path.join(getTextsDirectory(), `${id}.md`);
-    return getText(fileName);
+    return getText(fileName, maxChars);
 }
 
 export async function getAllTextIds() {

@@ -23,3 +23,7 @@ export function getViewportDimensions() {
         height: viewportHeightInPoints,
     };
 }
+
+export function filterUndefined<T>(arr: Array<T | undefined>): T[] {
+    return arr.filter((v): v is T => v !== undefined);
+}

@@ -4,22 +4,34 @@ import { GetStaticProps } from "next";
 import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
 import { finished } from "@/sketches/finished";
-import { TextPost, getAllTexts } from "@/texts/utils";
+import { TextPost, getAllTexts, getTextForId } from "@/texts/utils";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
 import { PixelButton } from "@/components/Buttons";
-import { getViewportDimensions } from "@/utils/misc";
+import { filterUndefined, getViewportDimensions } from "@/utils/misc";
 
 // @refresh reset
 
+type Posts = {
+  [key: string]: TextPost,
+};
 type Props = {
-  posts: TextPost[];
+  posts: Posts,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
-  let posts = await getAllTexts();
+  let ids = [
+    'thirty-four',
+  ];
+  let posts: Posts = {};
+  for (let id of ids) {
+    let post = await getTextForId({ id, maxChars: 1000 });
+    if (post) {
+      posts[id] = post;
+    }
+  }
   return {
     props: {
       posts,
@@ -109,7 +121,7 @@ export default function Main({
         highlight={hl === 'stories'}
       >
         <TextPostCard
-          post={posts[0]!}
+          post={posts['thirty-four']!}
         />
       </Tile>
     </div>

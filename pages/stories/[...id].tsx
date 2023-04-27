@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps<Props> = async function ({ params })
     if (id === undefined) {
         return { notFound: true };
     }
-    let post = await getTextForId(id);
+    let post = await getTextForId({ id });
     if (post === undefined) {
         return { notFound: true };
     }

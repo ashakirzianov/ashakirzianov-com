@@ -6,6 +6,8 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
+import { rehypeTruncate } from './truncate';
+import { rehypeAddIdToH1 } from './addIdToH1';
 
 export type TextPost = {
     id: string,
@@ -30,7 +32,7 @@ export async function getAllTextIds() {
     return files.map(fileName => path.basename(fileName).replace('.md', ''))
 }
 
-async function getText(fileName: string): Promise<TextPost | undefined> {
+async function getText(fileName: string, maxChars?: number): Promise<TextPost | undefined> {
     try {
         let id = path.basename(fileName).replace('.md', '');
         let file = await promisify(fs.readFile)(fileName, 'utf8');
@@ -38,22 +40,9 @@ async function getText(fileName: string): Promise<TextPost | undefined> {
 
         const htmlFile = await unified()
             .use(remarkParse)
-            .use(remarkRehype, {
-                handlers: {
-                    heading(state, node) {
-                        if (node.depth === 1) {
-                            return {
-                                type: 'element',
-                                tagName: 'h1',
-                                properties: { id },
-                                children: state.all(node),
-                            };
-                        } else {
-                            return node;
-                        }
-                    }
-                }
-            })
+            .use(remarkRehype)
+            .use(rehypeTruncate, { maxChars })
+            .use(rehypeAddIdToH1, { id })
             .use(rehypeStringify)
             .process(matterFile.content);
 

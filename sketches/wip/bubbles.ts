@@ -1,11 +1,8 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     randomRange, rainbow, modItem, vals,
-    concentringCircles, clearCanvas, scene,
+    concentringCircles, clearCanvas, scene, enchanceWithSetI, xSets, randomObject, zoomToBoundingBox,
 } from '@/sketcher';
-import {
-    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
-} from './utils';
 
 export function bubbles() {
     let batchRange = { min: 10, max: 10 };
@@ -32,7 +29,9 @@ export function bubbles() {
             render({ canvas, state, frame }) {
                 canvas.context.save();
                 clearCanvas(canvas);
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.5
+                });
                 state.forEach(set => set.forEach(
                     object => {
                         let offset = object.seti * 30 + frame;
@@ -78,7 +77,9 @@ export function bubblesFlat() {
             render({ canvas, state, frame }) {
                 canvas.context.save();
                 clearCanvas(canvas);
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.5
+                });
                 state.forEach(set => set.forEach(
                     object => {
                         let offset = object.seti * 30 + frame;

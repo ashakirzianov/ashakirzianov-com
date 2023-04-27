@@ -1,10 +1,9 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     randomRange, rainbow, modItem, vals, concentringCircles, scene,
-} from '@/sketcher';
-import {
     randomObject, xSets, zoomToBoundingBox,
-} from './utils';
+} from '@/sketcher';
+
 
 export function rave() {
     let batchRange = { min: 10, max: 10 };
@@ -31,7 +30,9 @@ export function rave() {
         layers: [{}, {
             render({ canvas, state, frame }) {
                 canvas.context.save();
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.5
+                });
                 state.forEach((set, seti) => set.forEach(
                     object => {
                         let offset = seti * 30 + frame;

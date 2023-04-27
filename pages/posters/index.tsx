@@ -2,7 +2,7 @@ import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
-import { posters } from "@/sketches/posters";
+import { finished } from "@/sketches/finished";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -16,7 +16,7 @@ export default function AllPosters({ }: Props) {
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
         <div className="container">
-            {posters.map((poster, idx) =>
+            {finished.map((poster, idx) =>
                 <Link key={idx} href={`/posters/${idx}`}>
                     <PosterCard scene={poster} />
                 </Link>

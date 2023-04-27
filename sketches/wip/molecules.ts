@@ -1,9 +1,6 @@
 import {
-    arrayAnimator, clearCanvas, concentringCircles, getGravity, gravity, modItem, rainbow, randomRange, reduceAnimators, resultingBody, scene, vals, vector, velocityStep,
+    arrayAnimator, clearCanvas, concentringCircles, enchanceWithSetI, getGravity, gravity, modItem, rainbow, randomObject, randomRange, reduceAnimators, resultingBody, scene, vals, vector, velocityStep, xSets, zoomToBoundingBox,
 } from "@/sketcher";
-import {
-    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
-} from "./utils";
 
 export function molecules() {
     let batchRange = { min: 10, max: 10 };
@@ -51,7 +48,9 @@ export function molecules() {
             render({ canvas, state, frame }) {
                 canvas.context.save();
                 clearCanvas(canvas);
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.2
+                });
                 state.forEach(set => set.forEach(
                     object => {
                         let offset = object.seti * 30 + frame;

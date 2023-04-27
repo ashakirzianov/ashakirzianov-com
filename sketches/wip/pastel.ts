@@ -1,10 +1,7 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, rainbow, modItem, vals, combineScenes, fromLayers, clearFrame, scene,
+    randomRange, rainbow, modItem, vals, combineScenes, fromLayers, clearFrame, scene, enchanceWithSetI, xSets, randomObject, zoomToBoundingBox,
 } from '@/sketcher';
-import {
-    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
-} from './utils';
 
 export function example() {
     let back = rainbow({ count: 120, s: 40, l: 70 });
@@ -45,7 +42,9 @@ export function pastelCircles() {
         )),
         layers: [{}, {
             prepare({ canvas, state }) {
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.5
+                });
             },
             render({ canvas, state, frame }) {
                 state.forEach(set => set.forEach(

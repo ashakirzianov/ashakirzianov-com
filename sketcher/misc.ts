@@ -1,3 +1,8 @@
+import { Box, boundingBox, cornerBoxes, multBox } from "./box";
+import { WithPosition, WithVelocity } from "./object";
+import { Canvas, zoomToFit } from "./render";
+import { Vector, vector } from "./vector";
+
 export function removeUndefined<T>(array: Array<T | undefined>): T[] {
     let result: T[] = [];
     for (let element of array) {
@@ -53,4 +58,43 @@ export function breakIntoLines(text: string, lineLength: number): string[] {
         lines.push(current);
     }
     return lines;
+}
+
+export function enchanceWithSetI<T>(sets: T[][]) {
+    return sets.map(
+        (set, seti) => set.map(obj => ({ ...obj, seti }))
+    );
+}
+
+export function xSets<O extends WithVelocity>({
+    size, velocity, creareObjects,
+}: {
+    size: number,
+    velocity: number,
+    creareObjects: (box: Box) => O[],
+}) {
+    let vels: Vector[] = [
+        vector.fromTuple([velocity, velocity, 0]),
+        vector.fromTuple([-velocity, velocity, 0]),
+        vector.fromTuple([velocity, -velocity, 0]),
+        vector.fromTuple([-velocity, -velocity, 0]),
+    ];
+    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size });
+    return boxes.map((box, bi) => {
+        let objects = creareObjects(box);
+        return objects.map(object => ({
+            ...object,
+            velocity: vector.add(object.velocity, vels[bi]!),
+        }));
+    });
+}
+
+export function zoomToBoundingBox({ objects, scale, canvas }: {
+    canvas: Canvas,
+    objects: WithPosition[],
+    scale: number,
+}) {
+    let points = objects.map(o => o.position);
+    let box = multBox(boundingBox(points), scale);
+    zoomToFit({ box, canvas });
 }

@@ -1,10 +1,7 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, cubicBox, vals, scene,
+    randomRange, cubicBox, vals, scene, randomObject, zoomToBoundingBox,
 } from '@/sketcher';
-import {
-    randomObject, zoomToBoundingBox,
-} from './utils';
 
 export function knot() {
     let box = cubicBox(200);
@@ -25,7 +22,9 @@ export function knot() {
         )),
         layers: [{}, {
             prepare({ canvas, state }) {
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.2
+                });
             },
             render({ canvas, state }) {
                 state.forEach(set => set.forEach(

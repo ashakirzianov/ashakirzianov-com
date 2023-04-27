@@ -3,7 +3,7 @@ import Link from "next/link";
 import { GetStaticProps } from "next";
 import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
-import { posters } from "@/sketches/posters";
+import { finished } from "@/sketches/finished";
 import { TextPost, getAllTexts } from "@/texts";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
@@ -82,7 +82,7 @@ export default function Main({
         highlight={hl === 'posters'}
       >
         <SketchCard
-          sketch={posters[0]!}
+          sketch={finished[0]!}
           pixelated={pixelated}
         />
       </Tile>
@@ -91,7 +91,7 @@ export default function Main({
         highlight={hl === 'posters'}
       >
         <SketchCard
-          sketch={posters[1]!}
+          sketch={finished[1]!}
           pixelated={pixelated}
         />
       </Tile>
@@ -100,7 +100,7 @@ export default function Main({
         highlight={hl === 'posters'}
       >
         <SketchCard
-          sketch={posters[2]!}
+          sketch={finished[2]!}
           pixelated={pixelated}
         />
       </Tile>

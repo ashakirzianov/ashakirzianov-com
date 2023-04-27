@@ -4,7 +4,7 @@ import { GetStaticProps } from "next";
 import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
 import { finished } from "@/sketches/finished";
-import { TextPost, getAllTexts } from "@/texts";
+import { TextPost, getAllTexts } from "@/texts/utils";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";

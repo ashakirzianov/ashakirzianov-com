@@ -1,5 +1,5 @@
 import { TextBlock } from "@/components/TextBlock";
-import { TextPost, getAllTexts } from "@/texts";
+import { TextPost, getAllTexts } from "@/texts/utils";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 

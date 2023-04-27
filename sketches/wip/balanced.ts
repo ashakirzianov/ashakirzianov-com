@@ -1,9 +1,16 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, Color, cubicBox, modItem, randomBoxes, scene, NumRange, randomObject, zoomToBoundingBox
+    randomRange, Color, cubicBox, modItem, randomBoxes, scene, NumRange, randomObject, zoomToBoundingBox, combineScenes, fromLayers, colorLayer, gray
 } from '@/sketcher';
 
-export function balanced(batches?: number) {
+export function balanced() {
+    return combineScenes(
+        fromLayers(colorLayer(gray(230))),
+        form(),
+    );
+}
+
+function form(batches?: number) {
     let batchRange = { min: 5, max: 20 };
     let maxVelocity = 5;
     let massRange = { min: 0.1, max: 4 };

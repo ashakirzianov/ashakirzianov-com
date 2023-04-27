@@ -1,10 +1,10 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
-    randomRange, rainbow, modItem, vals, concentringCircles, scene,
-    randomObject, xSets, zoomToBoundingBox, combineScenes, colorLayer, fromLayers,
+    randomRange, rainbow, modItem, vals,
+    concentringCircles, clearCanvas, scene, enchanceWithSetI, xSets, randomObject, zoomToBoundingBox, combineScenes, fromLayers, colorLayer,
 } from '@/sketcher';
 
-export function rave() {
+export function bubblesFlat() {
     return combineScenes(
         fromLayers(colorLayer('black')),
         form(),
@@ -13,11 +13,11 @@ export function rave() {
 
 function form() {
     let batchRange = { min: 10, max: 10 };
-    let maxVelocity = 1;
+    let maxVelocity = 0.1;
     let massRange = { min: 1, max: 20 };
-    let palette = rainbow({ count: 120, s: 100, l: 70 });
-    let sets = xSets({
-        size: 1, velocity: 1,
+    let palette = rainbow({ count: 100, s: 100, l: 70 });
+    let sets = enchanceWithSetI(xSets({
+        size: 10, velocity: 0.1,
         creareObjects(box) {
             let batch = Math.floor(randomRange(batchRange));
             return vals(batch).map(() => randomObject({
@@ -25,23 +25,23 @@ function form() {
                 rToM: 2,
             }));
         },
-    });
+    }));
     return scene({
-        state: sets,
+        state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
-            gravity({ gravity: 0.2, power: 2 }),
-            gravity({ gravity: -0.002, power: 4 }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {
             render({ canvas, state, frame }) {
                 canvas.context.save();
+                clearCanvas(canvas);
                 zoomToBoundingBox({
                     canvas, objects: state.flat(), scale: 1.5
                 });
-                state.forEach((set, seti) => set.forEach(
+                state.forEach(set => set.forEach(
                     object => {
-                        let offset = seti * 30 + frame;
+                        let offset = object.seti * 30 + frame;
                         let fills = vals(5).map(
                             (_, i) => modItem(palette, offset - 3 * i)
                         );
@@ -51,7 +51,7 @@ function form() {
                             radius: object.radius,
                             fills,
                         });
-                    }
+                    },
                 ));
                 canvas.context.restore();
             }

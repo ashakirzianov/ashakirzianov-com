@@ -1,11 +1,51 @@
 import {
-    arrayAnimator, clearCanvas, colorLayer, combineScenes, concentringCircles, enchanceWithSetI, fromLayers, getGravity, gravity, modItem, rainbow, randomObject, randomRange, reduceAnimators, resultingBody, scene, vals, vector, velocityStep, xSets, zoomToBoundingBox,
-} from "@/sketcher";
+    clearFrame, renderMask, renderPositionedElement, layoutOnCanvas,
+    colorLayer, combineScenes, arrayAnimator, clearCanvas, concentringCircles,
+    enchanceWithSetI, fromLayers, getGravity, gravity, modItem, rainbow,
+    randomObject, randomRange, reduceAnimators, resultingBody, scene, vals,
+    vector, velocityStep, xSets, zoomToBoundingBox,
+} from '@/sketcher';
 
-export function molecules() {
+export function styleIsTheAnswer() {
     return combineScenes(
         fromLayers(colorLayer('black')),
         form(),
+        fromLayers({
+            prepare({ canvas }) {
+                let font = {
+                    fontSize: 15,
+                    smallCaps: true,
+                    bold: true,
+                    color: 'white',
+                };
+                let layout = layoutOnCanvas(canvas, {
+                    grow: 1,
+                    direction: 'column',
+                    justify: 'space-between',
+                    crossJustify: 'center',
+                    padding: {
+                        top: 30,
+                    },
+                    content: [{
+                        text: 'Style',
+                        ...font,
+                    }, {
+                        text: 'is the',
+                        ...font,
+                    }, {
+                        text: 'answer',
+                        ...font,
+                    }],
+                });
+
+                clearFrame({ canvas, color: 'black' });
+                renderMask(canvas.context, context => {
+                    for (let positioned of layout) {
+                        renderPositionedElement({ canvas, positioned });
+                    }
+                });
+            },
+        }),
     );
 }
 

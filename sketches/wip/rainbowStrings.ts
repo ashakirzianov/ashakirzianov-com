@@ -1,10 +1,13 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, rainbow, modItem, vals, combineScenes, fromLayers, clearFrame, scene, enchanceWithSetI, xSets, randomObject, zoomToBoundingBox,
+    randomRange, rainbow, modItem, vals,
+    scene, enchanceWithSetI, randomObject, xSets, zoomToBoundingBox, pulsating, combineScenes, fromLayers, clearFrame,
 } from '@/sketcher';
 
-export function pastel() {
-    let back = rainbow({ count: 120, s: 40, l: 70 });
+export function rainbowStrings() {
+    let back = pulsating(rainbow({
+        count: 200, s: 50, l: 90,
+    }));
     return combineScenes(
         fromLayers({
             render({ canvas, frame }) {
@@ -21,8 +24,7 @@ export function pastel() {
 function form() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
-    let massRange = { min: 1, max: 20 };
-    let palette = rainbow({ count: 120, s: 80, l: 70 });
+    let massRange = { min: 0.1, max: 4 };
     let sets = enchanceWithSetI(xSets({
         size: 1, velocity: 1,
         creareObjects(box) {
@@ -33,6 +35,7 @@ function form() {
             }));
         }
     }));
+    let palette = rainbow({ count: 120 });
     return scene({
         state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
@@ -49,20 +52,15 @@ function form() {
             render({ canvas, state, frame }) {
                 state.forEach(set => set.forEach(
                     object => {
-                        let n = 5;
-                        for (let i = 0; i < n; i++) {
-                            let offset = frame + object.seti * 100 + i * 20;
-                            let fill = modItem(palette, offset);
-                            let next = modItem(palette, offset + 10);
-                            circle({
-                                lineWidth: 5,
-                                fill: fill,
-                                stroke: next,
-                                position: object.position,
-                                radius: object.radius * i,
-                                context: canvas.context,
-                            });
-                        }
+                        let fill = modItem(palette, object.seti * 100 + frame);
+                        circle({
+                            lineWidth: 0.5,
+                            fill,
+                            stroke: 'black',
+                            position: object.position,
+                            radius: object.radius,
+                            context: canvas.context,
+                        });
                     }
                 ))
             }

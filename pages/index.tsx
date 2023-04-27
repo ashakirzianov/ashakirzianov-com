@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
 import { useSketcher } from "@/hooks/sketcher";
@@ -27,10 +27,6 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
   };
 }
 
-function isNarrowScreen() {
-  return getViewportDimensions().width < 470;
-}
-
 type HighlightKind = 'stories' | 'posters';
 export default function Main({
   posts,
@@ -39,7 +35,7 @@ export default function Main({
   let router = useRouter();
 
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  let [grid, setGrid] = useState(isNarrowScreen());
+  let [free, setFree] = useState(true);
   let [pixelated, setPixelated] = useState(false);
   function nextHue() {
     let hues = [40, 210, 340, 360];
@@ -47,6 +43,12 @@ export default function Main({
     let nextHue = idx >= 0 ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
+  useEffect(() => {
+    let { width } = getViewportDimensions();
+    if (width < 250) {
+      setFree(false);
+    }
+  }, []);
   return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>
@@ -55,27 +57,27 @@ export default function Main({
     <div className="buttons">
       <PixelButton
         color="red"
-        onClick={() => setGrid(v => !v)}
-        toggle
+        onClick={() => setFree(v => !v)}
+        pressed={!free}
       />
       <PixelButton
         color="yellow"
-        onClick={() => setPixelated(v => !v)}
-        toggle once
+        onClick={() => setPixelated(true)}
+        pressed={pixelated}
       />
       <PixelButton
         color="green"
         onClick={nextHue}
       />
     </div>
-    <div className={grid ? 'grid' : 'flex'}>
-      <Tile shifted={grid} position={[0, 0]} front>
+    <div className={free ? 'grid' : 'flex'}>
+      <Tile shifted={free} position={[0, 0]} front>
         <AboutCard
           hue={hue}
           onHover={setHl}
         />
       </Tile>
-      <Tile shifted={grid} position={[5, -18]}
+      <Tile shifted={free} position={[5, -18]}
         link="/posters/0"
         highlight={hl === 'posters'}
       >
@@ -84,7 +86,7 @@ export default function Main({
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[-17, 7]}
+      <Tile shifted={free} position={[-17, 7]}
         link="/posters/1"
         highlight={hl === 'posters'}
       >
@@ -93,7 +95,7 @@ export default function Main({
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[-10, 15]}
+      <Tile shifted={free} position={[-10, 15]}
         link="/posters/2"
         highlight={hl === 'posters'}
       >
@@ -102,7 +104,7 @@ export default function Main({
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[23, 10]}
+      <Tile shifted={free} position={[23, 10]}
         link="/stories/thirty-four"
         highlight={hl === 'stories'}
       >

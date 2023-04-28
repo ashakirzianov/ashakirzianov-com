@@ -61,6 +61,27 @@ export default function Main({
       setFree(false);
     }
   }, []);
+  function sketchTile(index: number, position: [number, number]) {
+    return <Tile shifted={free} position={position}
+      link={`/posters/${index}`}
+      highlight={hl === 'posters'}
+    >
+      <SketchCard
+        sketch={finished[index]!}
+        pixelated={pixelated}
+      />
+    </Tile>
+  }
+  function storyTile(id: string, position: [number, number]) {
+    return <Tile shifted={free} position={position}
+      link={`/stories/${id}`}
+      highlight={hl === 'stories'}
+    >
+      <TextPostCard
+        post={posts[id]!}
+      />
+    </Tile>;
+  }
   return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>
@@ -89,41 +110,12 @@ export default function Main({
           onHover={setHl}
         />
       </Tile>
-      <Tile shifted={free} position={[5, -18]}
-        link="/posters/0"
-        highlight={hl === 'posters'}
-      >
-        <SketchCard
-          sketch={finished[0]!}
-          pixelated={pixelated}
-        />
-      </Tile>
-      <Tile shifted={free} position={[-17, 7]}
-        link="/posters/1"
-        highlight={hl === 'posters'}
-      >
-        <SketchCard
-          sketch={finished[1]!}
-          pixelated={pixelated}
-        />
-      </Tile>
-      <Tile shifted={free} position={[-10, 15]}
-        link="/posters/2"
-        highlight={hl === 'posters'}
-      >
-        <SketchCard
-          sketch={finished[2]!}
-          pixelated={pixelated}
-        />
-      </Tile>
-      <Tile shifted={free} position={[23, 10]}
-        link="/stories/thirty-four"
-        highlight={hl === 'stories'}
-      >
-        <TextPostCard
-          post={posts['thirty-four']!}
-        />
-      </Tile>
+      {[
+        sketchTile(0, [5, -18]),
+        sketchTile(1, [-17, 7]),
+        sketchTile(2, [-10, 15]),
+        storyTile('thirty-four', [23, 10]),
+      ]}
     </div>
     <style jsx>{`
       .buttons {
@@ -144,11 +136,16 @@ export default function Main({
         display: flex;
         flex-flow: row wrap;
         align-content: flex-start;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 10pt;
         padding: 10pt;
         width: 100%;
         height: 100%;
+      }
+      @media (max-width: 470pt) {
+        .flex {
+          justify-content: center;
+        }
       }
       `}</style>
   </PixelPage>

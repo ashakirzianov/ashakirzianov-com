@@ -1,3 +1,4 @@
+import { PixelButton } from "@/components/Buttons";
 import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTextIds, getTextForId } from "@/texts/utils";
@@ -35,14 +36,18 @@ export default function TextPostPage({ post }: Props) {
         </Head>
         <TextBlock>
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
-            <footer style={{
+            <nav style={{
                 display: 'flex',
-                justifyContent: 'space-around',
-                margin: '10pt',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10pt',
+                justifyContent: 'space-between',
+                marginTop: '20pt',
+                marginBottom: '20pt',
             }}>
-                <Link href='/stories'>Все рассказы</Link>
-                <Link href='/'>Главная</Link>
-            </footer>
+                <Link href='/stories'><PixelButton color="skyblue" text="Все рассказы" /></Link>
+                <Link href='/'><PixelButton color="skyblue" text="Главная" /></Link>
+            </nav>
         </TextBlock>
     </>;
 }

@@ -1,3 +1,4 @@
+import { PixelButton } from "@/components/Buttons";
 import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTexts } from "@/texts/utils";
@@ -28,13 +29,17 @@ export default function AllStorites({ stories }: Props) {
             {stories.map((story, idx) =>
                 <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
             )}
-            <footer style={{
+            <nav style={{
                 display: 'flex',
-                justifyContent: 'space-around',
-                margin: '10pt',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10pt',
+                justifyContent: 'space-between',
+                marginTop: '20pt',
+                marginBottom: '20pt',
             }}>
-                <Link href='/'>Главная</Link>
-            </footer>
+                <Link href='/'><PixelButton color="skyblue" text="Главная" /></Link>
+            </nav>
         </TextBlock>
     </>
 }

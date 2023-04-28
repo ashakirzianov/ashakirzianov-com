@@ -38,6 +38,7 @@ export function PixelButton({
         align-items: center;
         color: ${textColor ?? 'white'};
         background-color: ${color};
+        font-family: var(--font-pixel), serif;
       }
       `}</style>
   </div>
@@ -76,6 +77,7 @@ export function PixelToggle({ color, onClick, pressed }: {
         width: ${size};
         height: ${size};
         background-color: ${color};
+        font-family: var(--font-pixel), serif;
       }
       `}</style>
   </div>

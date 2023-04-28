@@ -1,7 +1,9 @@
+import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTexts } from "@/texts/utils";
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 
 type Props = {
     stories: TextPost[],
@@ -26,6 +28,14 @@ export default function AllStorites({ stories }: Props) {
             {stories.map((story, idx) =>
                 <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
             )}
+            <Divider />
+            <footer style={{
+                display: 'flex',
+                justifyContent: 'space-around',
+                margin: '10pt',
+            }}>
+                <Link href='/'>Главная</Link>
+            </footer>
         </TextBlock>
     </>
 }

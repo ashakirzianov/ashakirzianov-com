@@ -1,7 +1,9 @@
+import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
 import { TextPost, getAllTextIds, getTextForId } from "@/texts/utils";
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head";
+import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = async function () {
     let ids = await getAllTextIds();
@@ -33,6 +35,15 @@ export default function TextPostPage({ post }: Props) {
         </Head>
         <TextBlock>
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
+            <Divider />
+            <footer style={{
+                display: 'flex',
+                justifyContent: 'space-around',
+                margin: '10pt',
+            }}>
+                <Link href='/stories'>Все рассказы</Link>
+                <Link href='/'>Главная</Link>
+            </footer>
         </TextBlock>
     </>;
 }

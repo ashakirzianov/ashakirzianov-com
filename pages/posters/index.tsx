@@ -25,8 +25,8 @@ export default function AllPosters({ }: Props) {
                 )}
             </div>
             <nav className="navigation">
-                <Link href='/'>
-                    <PixelButton color="skyblue" text="Главная" />
+                <Link href={`/?hue=${hue}`}>
+                    <PixelButton color={`hsl(${hue},100%,80%)`} text="Главная" />
                 </Link>
             </nav>
         </div>

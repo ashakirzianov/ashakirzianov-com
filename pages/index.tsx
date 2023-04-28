@@ -73,7 +73,7 @@ export default function Main({
         pressed={!free}
       />
       <PixelToggle
-        color="yellow"
+        color={pixelated ? "black" : "yellow"}
         onClick={() => setPixelated(true)}
         pressed={pixelated}
       />

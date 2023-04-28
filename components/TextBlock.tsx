@@ -26,12 +26,13 @@ export function TextBlock({ font, children }: {
         <style>{`
             h1 {
                 font-size: 1.5em;
+                font-weight: bold;
                 margin-bottom: 1em;
             }
             p {
                 text-indent: 2em;
                 line-height: 1.2em;   /* within paragraph */
-                margin-bottom: 1em; /* between paragraphs */
+                margin-bottom: .4em; /* between paragraphs */
             }
             `}</style>
     </div>;

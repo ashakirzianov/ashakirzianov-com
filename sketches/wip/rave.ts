@@ -1,12 +1,17 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     randomRange, rainbow, modItem, vals, concentringCircles, scene,
+    randomObject, xSets, zoomToBoundingBox, combineScenes, colorLayer, fromLayers,
 } from '@/sketcher';
-import {
-    randomObject, xSets, zoomToBoundingBox,
-} from './utils';
 
 export function rave() {
+    return combineScenes(
+        fromLayers(colorLayer('black')),
+        form(),
+    );
+}
+
+function form() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 1;
     let massRange = { min: 1, max: 20 };
@@ -31,7 +36,9 @@ export function rave() {
         layers: [{}, {
             render({ canvas, state, frame }) {
                 canvas.context.save();
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.5 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.5
+                });
                 state.forEach((set, seti) => set.forEach(
                     object => {
                         let offset = seti * 30 + frame;

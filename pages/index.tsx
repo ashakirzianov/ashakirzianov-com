@@ -1,24 +1,37 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
-import { useSketcher } from "@/hooks/sketcher";
+import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
-import { posters } from "@/sketches/posters";
-import { TextPost, getAllTexts } from "@/texts";
+import { finished } from "@/sketches/finished";
+import { TextPost, getAllTexts, getTextForId } from "@/texts/utils";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
-import { useQuery } from "@/hooks/query";
+import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
-import { PixelButton } from "@/components/Buttons";
+import { PixelToggle } from "@/components/Buttons";
+import { filterUndefined, getViewportDimensions } from "@/utils/misc";
 
 // @refresh reset
 
+type Posts = {
+  [key: string]: TextPost,
+};
 type Props = {
-  posts: TextPost[];
+  posts: Posts,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
-  let posts = await getAllTexts();
+  let ids = [
+    'thirty-four',
+  ];
+  let posts: Posts = {};
+  for (let id of ids) {
+    let post = await getTextForId({ id, maxChars: 1000 });
+    if (post) {
+      posts[id] = post;
+    }
+  }
   return {
     props: {
       posts,
@@ -34,7 +47,7 @@ export default function Main({
   let router = useRouter();
 
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  let [grid, setGrid] = useState(true);
+  let [free, setFree] = useState(true);
   let [pixelated, setPixelated] = useState(false);
   function nextHue() {
     let hues = [40, 210, 340, 360];
@@ -42,60 +55,73 @@ export default function Main({
     let nextHue = idx >= 0 ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
+  useEffect(() => {
+    let { width } = getViewportDimensions();
+    if (width < 250) {
+      setFree(false);
+    }
+  }, []);
   return <PixelPage hue={hue}>
     <Head>
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
     <div className="buttons">
-      <PixelButton
+      <PixelToggle
         color="red"
-        onClick={() => setGrid(v => !v)}
-        toggle
+        onClick={() => setFree(v => !v)}
+        pressed={!free}
       />
-      <PixelButton
-        color="yellow"
-        onClick={() => setPixelated(v => !v)}
-        toggle once
+      <PixelToggle
+        color={pixelated ? "black" : "yellow"}
+        onClick={() => setPixelated(true)}
+        pressed={pixelated}
       />
-      <PixelButton
+      <PixelToggle
         color="green"
         onClick={nextHue}
       />
     </div>
-    <div className={grid ? 'grid' : 'flex'}>
-      <Tile shifted={grid} position={[0, 0]}>
+    <div className={free ? 'grid' : 'flex'}>
+      <Tile shifted={free} position={[0, 0]} front>
         <AboutCard
           hue={hue}
           onHover={setHl}
         />
       </Tile>
-      <Tile shifted={grid} position={[5, -18]}>
-        <PosterCard
-          index={0}
-          highlight={hl === 'posters'}
+      <Tile shifted={free} position={[5, -18]}
+        link="/posters/0"
+        highlight={hl === 'posters'}
+      >
+        <SketchCard
+          sketch={finished[0]!}
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[-17, 7]}>
-        <PosterCard
-          index={1}
-          highlight={hl === 'posters'}
+      <Tile shifted={free} position={[-17, 7]}
+        link="/posters/1"
+        highlight={hl === 'posters'}
+      >
+        <SketchCard
+          sketch={finished[1]!}
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[-10, 15]}>
-        <PosterCard
-          index={2}
-          highlight={hl === 'posters'}
+      <Tile shifted={free} position={[-10, 15]}
+        link="/posters/2"
+        highlight={hl === 'posters'}
+      >
+        <SketchCard
+          sketch={finished[2]!}
           pixelated={pixelated}
         />
       </Tile>
-      <Tile shifted={grid} position={[23, 10]}>
+      <Tile shifted={free} position={[23, 10]}
+        link="/stories/thirty-four"
+        highlight={hl === 'stories'}
+      >
         <TextPostCard
-          link="/stories/thirty-four"
-          post={posts[0]!}
-          highlight={hl === 'stories'}
+          post={posts['thirty-four']!}
         />
       </Tile>
     </div>
@@ -129,97 +155,62 @@ export default function Main({
 }
 
 function Tile({
-  position: [left, top], shifted, children
+  position: [left, top], shifted,
+  children, front, link, highlight,
 }: {
   position: [number, number],
   shifted: boolean,
   children: ReactNode,
-}) {
-  return <div className="card" style={{
-    position: shifted ? 'relative' : 'static',
-    top: shifted ? `${top}vh` : 0,
-    left: shifted ? `${left}vw` : 0,
-    gridArea: 'mid',
-  }}>
-    {children}
-  </div>
-}
-
-type CardProps = {
+  link?: string,
+  front?: boolean,
   highlight?: boolean,
-  children?: ReactNode,
-  onDrag?: () => void,
-  onStop?: () => void,
-  top?: boolean,
-};
-function Card({
-  children, onDrag, onStop, highlight, top,
-}: CardProps) {
-  let scaled = highlight ? 'scaled' : '';
-  return <>
-    <Draggable
-      onDrag={onDrag}
-      onStop={onStop}
-      top={top}
-    >
-      <div className="pixel-shadow">
-        <div className={`content card-frame pixel-corners ${scaled}`}>
-          {children}
-        </div>
-      </div>
-    </Draggable>
-    <style jsx>{`
-    .scaled {
-      transform: scale(1.2);
-    }
-    .content {
-      transition: transform .3s;
-      display: flex;
-    }
-    `}</style>
-  </>;
-}
-
-function LinkCard({ link, children, ...rest }: CardProps & {
-  link: string,
 }) {
   let navigable = true;
   function lock() { navigable = false; }
   function unlock() { setTimeout(() => { navigable = true; }) }
-  return <>
-    <Link draggable={false} href={link}
+  let content = link
+    ? <Link draggable={false} href={link}
       onClick={event => {
         if (!navigable)
           event.preventDefault();
       }}
+    ><Draggable
+      onDrag={lock}
+      onStop={unlock}
+      front={front}
+      disabled={!shifted}
     >
-      <Card
-        onDrag={lock}
-        onStop={unlock}
-        {...rest}
-      >
         {children}
-      </Card>
-    </Link>
-  </>;
+      </Draggable></Link>
+    : <Draggable front={front} disabled={!shifted}>
+      {children}
+    </Draggable>
+  return <div style={{
+    position: shifted ? 'relative' : 'static',
+    top: shifted ? `${top}vh` : 0,
+    left: shifted ? `${left}vw` : 0,
+    gridArea: 'mid',
+    transform: highlight ? 'scale(1.2)' : undefined,
+    transition: 'transform .3s',
+  }}>
+    {content}
+  </div>
 }
 
-function PosterCard({ index, pixelated, highlight }: {
-  index: number,
-  pixelated: boolean,
-  highlight: boolean,
+function Card({
+  children,
+}: {
+  children?: ReactNode,
 }) {
-  return <SketchCard
-    link={`/posters/${index}`}
-    sketch={posters[index]!}
-    highlight={highlight}
-    pixelated={pixelated}
-  />;
+  return <div className="pixel-shadow">
+    <div className="card-frame pixel-corners">
+      {children}
+    </div>
+  </div>
 }
 
-function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
+function SketchCard({ sketch, pixelated }: {
   sketch: Scene<any>,
-  link: string,
   pixelated: boolean,
 }) {
   let u = 20;
@@ -228,15 +219,14 @@ function SketchCard({ sketch, pixelated, ...rest }: CardProps & {
     dimensions: pixelated ? [3 * u, 4 * u] : undefined,
   });
   return <div>
-    <LinkCard {...rest}>{node}</LinkCard>
+    <Card>{node}</Card>
   </div>;
 }
 
-function TextPostCard({ post, ...rest }: CardProps & {
+function TextPostCard({ post }: {
   post: TextPost,
-  link: string,
 }) {
-  return <LinkCard {...rest}>
+  return <Card>
     <div className="container">
       <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
       <style jsx>{`
@@ -252,34 +242,35 @@ function TextPostCard({ post, ...rest }: CardProps & {
       }
       .post {
         overflow: hidden;
-        font-size: 5pt;
-        max-height: 200pt;
+        font-size: .4em;
+        max-height: 42em;
         padding: 3em 5%;
         width: 100%;
       }
       `}</style>
       <style>{`
       h1 {
-          margin-bottom: 12pt;
-          line-height: 12pt;
+          margin-top: .5em;
+          margin-bottom: 1em;
+          line-height: 1em;
       }
       p {
-          text-indent: 12pt;
-          line-height: 6pt;
-          margin-bottom: 6pt;
+          text-indent: 1em;
+          line-height: 1em;
+          margin-bottom: 1em;
       }
     `}</style>
     </div>
-  </LinkCard>;
+  </Card>;
 }
 
 function AboutCard({ hue, onHover }: {
   hue: number,
   onHover?: (target?: HighlightKind) => void,
 }) {
-  return <Card top>
+  return <Card>
     <div className="content noselect" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и делаю <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>постеры</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
 

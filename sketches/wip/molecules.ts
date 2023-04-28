@@ -1,11 +1,15 @@
 import {
-    arrayAnimator, clearCanvas, concentringCircles, getGravity, gravity, modItem, rainbow, randomRange, reduceAnimators, resultingBody, scene, vals, vector, velocityStep,
+    arrayAnimator, clearCanvas, colorLayer, combineScenes, concentringCircles, enchanceWithSetI, fromLayers, getGravity, gravity, modItem, rainbow, randomObject, randomRange, reduceAnimators, resultingBody, scene, vals, vector, velocityStep, xSets, zoomToBoundingBox,
 } from "@/sketcher";
-import {
-    enchanceWithSetI, randomObject, xSets, zoomToBoundingBox,
-} from "./utils";
 
 export function molecules() {
+    return combineScenes(
+        fromLayers(colorLayer('black')),
+        form(),
+    );
+}
+
+function form() {
     let batchRange = { min: 10, max: 10 };
     let maxVelocity = 10;
     let massRange = { min: 1, max: 20 };
@@ -51,7 +55,9 @@ export function molecules() {
             render({ canvas, state, frame }) {
                 canvas.context.save();
                 clearCanvas(canvas);
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.2
+                });
                 state.forEach(set => set.forEach(
                     object => {
                         let offset = object.seti * 30 + frame;

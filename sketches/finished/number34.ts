@@ -1,12 +1,17 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, Color, cubicBox, modItem, randomBoxes, scene, NumRange
+    randomRange, Color, cubicBox, modItem, randomBoxes, scene,
+    colorLayer, combineScenes, fromLayers, gray, randomObject, zoomToBoundingBox,
 } from '@/sketcher';
-import {
-    randomObject, zoomToBoundingBox,
-} from './utils';
 
-export function balanced(batches?: number) {
+export function number34() {
+    return combineScenes(
+        fromLayers(colorLayer(gray(230))),
+        form(),
+    );
+}
+
+function form(batches?: number) {
     let batchRange = { min: 5, max: 20 };
     let maxVelocity = 5;
     let massRange = { min: 0.1, max: 4 };
@@ -35,7 +40,11 @@ export function balanced(batches?: number) {
         )),
         layers: [{}, {
             prepare({ canvas, state }) {
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+                zoomToBoundingBox({
+                    canvas,
+                    objects: state.flat(),
+                    scale: 1.2,
+                });
             },
             render({ canvas, state }) {
                 state.forEach((set, seti) => set.forEach(

@@ -1,7 +1,10 @@
+import { PixelButton } from "@/components/Buttons";
+import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
-import { TextPost, getAllTexts } from "@/texts";
+import { TextPost, getAllTexts } from "@/texts/utils";
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 
 type Props = {
     stories: TextPost[],
@@ -26,6 +29,17 @@ export default function AllStorites({ stories }: Props) {
             {stories.map((story, idx) =>
                 <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
             )}
+            <nav style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10pt',
+                justifyContent: 'space-between',
+                marginTop: '20pt',
+                marginBottom: '20pt',
+            }}>
+                <Link href='/'><PixelButton color="skyblue" text="Главная" /></Link>
+            </nav>
         </TextBlock>
     </>
 }

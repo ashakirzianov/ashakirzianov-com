@@ -108,6 +108,13 @@ a {
   font-size: 12pt;
 }
 
+@media (max-width: 470pt) {
+  .card-frame {
+    width: 140px;
+    font-size: 8pt;
+  }
+}
+
 .noselect {
   -webkit-user-select: none;
   -ms-user-select: none;

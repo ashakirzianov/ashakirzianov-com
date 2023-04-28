@@ -5,13 +5,13 @@ import {
 let globalZ = 1;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop, front, top,
+    children, onDrag, onStop, front, disabled,
 }: {
+    disabled?: boolean,
     front?: boolean,
     children?: ReactNode,
     onDrag?: () => void,
     onStop?: () => void,
-    top?: boolean,
 }) {
     let divRef = useRef<HTMLDivElement>(null);
     let [dragging, setDragging] = useState(false);
@@ -19,23 +19,25 @@ export function Draggable({
         offset: { x: 0, y: 0 },
         touchStart: { x: 0, y: 0 },
     });
-    let [zIndex, setZIndex] = useState(top ? 1 : 0);
+    let [zIndex, setZIndex] = useState(front ? 1 : 0);
     let [cursorChanged, setCursorChanged] = useState(false);
 
-    function handleStartDragging({ x, y }: Position) {
-        setDragging(true);
-        setZIndex(globalZ++);
-        setCursorChanged(true);
-        setState(state => ({
-            ...state,
-            touchStart: {
-                x: state.offset.x - x,
-                y: state.offset.y - y,
-            }
-        }));
-    }
+    let handleStartDragging = useCallback(function handleStartDragging({ x, y }: Position) {
+        if (!disabled) {
+            setDragging(true);
+            setZIndex(globalZ++);
+            setCursorChanged(true);
+            setState(state => ({
+                ...state,
+                touchStart: {
+                    x: state.offset.x - x,
+                    y: state.offset.y - y,
+                }
+            }));
+        }
+    }, [disabled]);
     let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
-        if (dragging) {
+        if (dragging && !disabled) {
             setState(state => {
                 let MIN_STEP = 200;
                 let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
@@ -56,7 +58,7 @@ export function Draggable({
                 }
             });
         }
-    }, [dragging, onDrag]);
+    }, [dragging, disabled, onDrag]);
     let handleEndDragging = useCallback(function handleEndDragging() {
         if (onStop) {
             onStop();
@@ -131,9 +133,10 @@ export function Draggable({
 
     return <div ref={divRef} style={{
         position: 'relative',
-        transform: `translate(${state.offset.x}px, ${state.offset.y}px)`,
-        zIndex: front ? globalZ + 1 : zIndex,
-        cursor: cursorChanged ? 'grab' : undefined,
+        transform: disabled
+            ? undefined : `translate(${state.offset.x}px, ${state.offset.y}px)`,
+        cursor: cursorChanged && !disabled ? 'grab' : undefined,
+        zIndex,
     }}
         onMouseDown={function (event) {
             handleStartDragging(getMousePosition(event));

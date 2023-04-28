@@ -1,4 +1,5 @@
 import { Animator } from './animator';
+import { Box, randomVectorInBox } from './box';
 import { Color } from './color';
 import { randomRange } from './random';
 import { NumRange } from './range';
@@ -16,6 +17,26 @@ export type WithAnchor = { anchor: GravityObject };
 type Objects<ObjectT> = ObjectT[];
 type ObjectAnimator<ObjectT> = Animator<Objects<ObjectT>>;
 type FullObject = WithPosition & WithVelocity & WithMass & WithRadius;
+
+export function randomObject({
+    massRange, maxVelocity, box, rToM,
+}: {
+    box: Box,
+    massRange: NumRange,
+    maxVelocity: number,
+    rToM: number,
+}) {
+    let mass = randomRange(massRange);
+    let velocityRange = {
+        min: -maxVelocity, max: maxVelocity,
+    };
+    return {
+        position: randomVectorInBox(box),
+        velocity: vector.random(velocityRange),
+        mass,
+        radius: mass * (rToM ?? 4),
+    };
+}
 
 type ObjectMap<Keys extends keyof FullObject, T> = {
     [k in Keys]: T;

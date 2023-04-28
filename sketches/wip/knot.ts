@@ -1,12 +1,23 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
-    randomRange, cubicBox, vals, scene,
+    randomRange, cubicBox, vals, scene, randomObject, zoomToBoundingBox, combineScenes, fromLayers, colorLayer, makeStops, gray, fromRGBA,
 } from '@/sketcher';
-import {
-    randomObject, zoomToBoundingBox,
-} from './utils';
 
 export function knot() {
+    return combineScenes(
+        fromLayers(colorLayer({
+            kind: 'gradient',
+            start: [0, 0], end: [0, 1],
+            stops: makeStops({
+                0: gray(180),
+                0.2: fromRGBA({ r: 230, g: 230, b: 230 }),
+            }),
+        })),
+        form(),
+    );
+}
+
+function form() {
     let box = cubicBox(200);
     let batchRange = { min: 20, max: 20 };
     let maxVelocity = 0.4;
@@ -25,7 +36,9 @@ export function knot() {
         )),
         layers: [{}, {
             prepare({ canvas, state }) {
-                zoomToBoundingBox({ canvas, sets: state, scale: 1.2 });
+                zoomToBoundingBox({
+                    canvas, objects: state.flat(), scale: 1.2
+                });
             },
             render({ canvas, state }) {
                 state.forEach(set => set.forEach(

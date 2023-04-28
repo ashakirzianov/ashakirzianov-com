@@ -1,7 +1,10 @@
+import { PixelButton } from "@/components/Buttons";
+import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
-import { TextPost, getAllTextIds, getTextForId } from "@/texts";
+import { TextPost, getAllTextIds, getTextForId } from "@/texts/utils";
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head";
+import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = async function () {
     let ids = await getAllTextIds();
@@ -17,7 +20,7 @@ export const getStaticProps: GetStaticProps<Props> = async function ({ params })
     if (id === undefined) {
         return { notFound: true };
     }
-    let post = await getTextForId(id);
+    let post = await getTextForId({ id });
     if (post === undefined) {
         return { notFound: true };
     }
@@ -33,6 +36,18 @@ export default function TextPostPage({ post }: Props) {
         </Head>
         <TextBlock>
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
+            <nav style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10pt',
+                justifyContent: 'space-between',
+                marginTop: '20pt',
+                marginBottom: '20pt',
+            }}>
+                <Link href='/stories'><PixelButton color="skyblue" text="Все рассказы" /></Link>
+                <Link href='/'><PixelButton color="skyblue" text="Главная" /></Link>
+            </nav>
         </TextBlock>
     </>;
 }

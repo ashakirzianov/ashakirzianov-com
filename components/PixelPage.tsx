@@ -15,7 +15,7 @@ export function PixelPage({ hue, children }: {
           grid-template-areas: "mid";
           place-items: center center;
           width: 100%;
-          height: 100vh;
+          min-height: 100vh;
           -webkit-user-select: none; /* Safari */
           -ms-user-select: none; /* IE 10 and IE 11 */
           user-select: none; /* Standard syntax */
@@ -32,7 +32,7 @@ export function PixelPage({ hue, children }: {
           display: flex;
           flex-direction: column;
           width: 100%;
-          height: 100vh;
+          min-height: 100vh;
         }
       `}</style>
     <style jsx global>{`

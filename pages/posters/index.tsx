@@ -5,6 +5,7 @@ import { Scene } from "@/sketcher";
 import { finished } from "@/sketches/finished";
 import Head from "next/head";
 import Link from "next/link";
+import { PixelButton } from "@/components/Buttons";
 
 type Props = {};
 
@@ -15,23 +16,40 @@ export default function AllPosters({ }: Props) {
             <title>All Posters</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <div className="container">
-            {finished.map((poster, idx) =>
-                <Link key={idx} href={`/posters/${idx}`}>
-                    <PosterCard scene={poster} />
+        <div className="outer">
+            <div className="container">
+                {finished.map((poster, idx) =>
+                    <Link key={idx} href={`/posters/${idx}`}>
+                        <PosterCard scene={poster} />
+                    </Link>
+                )}
+            </div>
+            <nav className="navigation">
+                <Link href='/'>
+                    <PixelButton color="skyblue" text="Главная" />
                 </Link>
-            )}
-            <style jsx>{`
+            </nav>
+        </div>
+        <style jsx>{`
+        .outer {
+            dispaly:flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+        }
         .container {
             display: flex;
             flex-flow: row wrap;
             align-content: flex-start;
-            min-height: 100vh;
             gap: 10pt;
             padding: 10pt;
         }
+        .navigation {
+            display: flex;
+            justify-content: space-around;
+            padding: 10pt;
+        }
         `}</style>
-        </div>
     </PixelPage>
 }
 

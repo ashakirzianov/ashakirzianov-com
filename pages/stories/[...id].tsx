@@ -35,7 +35,6 @@ export default function TextPostPage({ post }: Props) {
         </Head>
         <TextBlock>
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
-            <Divider />
             <footer style={{
                 display: 'flex',
                 justifyContent: 'space-around',

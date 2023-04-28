@@ -28,7 +28,6 @@ export default function AllStorites({ stories }: Props) {
             {stories.map((story, idx) =>
                 <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
             )}
-            <Divider />
             <footer style={{
                 display: 'flex',
                 justifyContent: 'space-around',

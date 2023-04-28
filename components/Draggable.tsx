@@ -22,7 +22,7 @@ export function Draggable({
     let [zIndex, setZIndex] = useState(front ? 1 : 0);
     let [cursorChanged, setCursorChanged] = useState(false);
 
-    function handleStartDragging({ x, y }: Position) {
+    let handleStartDragging = useCallback(function handleStartDragging({ x, y }: Position) {
         if (!disabled) {
             setDragging(true);
             setZIndex(globalZ++);
@@ -35,9 +35,9 @@ export function Draggable({
                 }
             }));
         }
-    }
+    }, [disabled]);
     let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
-        if (dragging) {
+        if (dragging && !disabled) {
             setState(state => {
                 let MIN_STEP = 200;
                 let dx = Math.abs(x - (state.touchStart.x - state.offset.x));
@@ -58,7 +58,7 @@ export function Draggable({
                 }
             });
         }
-    }, [dragging, onDrag]);
+    }, [dragging, disabled, onDrag]);
     let handleEndDragging = useCallback(function handleEndDragging() {
         if (onStop) {
             onStop();

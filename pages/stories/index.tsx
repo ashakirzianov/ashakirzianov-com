@@ -26,9 +26,15 @@ export default function AllStorites({ stories }: Props) {
         </Head>
         <TextBlock>
             <h1>Все рассказы</h1>
-            {stories.map((story, idx) =>
-                <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
-            )}
+            {stories
+                .sort(
+                    (a, b) => (a.date ?? '') > (b.date ?? '') ? -1 : 1
+                ).map((story, idx) =>
+                    <>
+                        {idx === 0 ? null : <Divider />}
+                        <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
+                    </>
+                )}
             <nav style={{
                 display: 'flex',
                 flexDirection: 'column',

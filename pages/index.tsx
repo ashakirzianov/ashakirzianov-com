@@ -10,7 +10,7 @@ import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
-import { PixelButton } from "@/components/Buttons";
+import { PixelToggle } from "@/components/Buttons";
 import { filterUndefined, getViewportDimensions } from "@/utils/misc";
 
 // @refresh reset
@@ -67,17 +67,17 @@ export default function Main({
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
     <div className="buttons">
-      <PixelButton
+      <PixelToggle
         color="red"
         onClick={() => setFree(v => !v)}
         pressed={!free}
       />
-      <PixelButton
+      <PixelToggle
         color="yellow"
         onClick={() => setPixelated(true)}
         pressed={pixelated}
       />
-      <PixelButton
+      <PixelToggle
         color="green"
         onClick={nextHue}
       />

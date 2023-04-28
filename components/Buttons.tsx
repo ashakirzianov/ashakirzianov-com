@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function PixelButton({ color, onClick, pressed }: {
+export function PixelToggle({ color, onClick, pressed }: {
   color: string,
   onClick?: () => void,
   pressed?: boolean,

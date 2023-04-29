@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 export function PixelButton({
-  text, color, textColor, onClick,
+  children, color, textColor, onClick, width
 }: {
-  text: string,
   color: string,
+  children?: ReactNode,
+  width?: string,
   textColor?: string
   onClick?: () => void,
 }) {
@@ -23,19 +24,21 @@ export function PixelButton({
       onMouseLeave={() => setPushed(false)}
       onTouchCancel={() => setPushed(false)}
       onClick={onClick}
-    >{text}</div>
+    >{children}</div>
     <style jsx>{`
       .outer {
         filter: ${filter};
+        ${width ? `width: ${width}` : ''}
       }
       .inner {
         display: flex;
         position: relative;
         top: ${top};
         left: ${left};
-        height: 2em;
         padding: 10pt;
+        vertical-align: center;
         align-items: center;
+        justify-content: center;
         color: ${textColor ?? 'white'};
         background-color: ${color};
         font-family: var(--font-pixel), serif;

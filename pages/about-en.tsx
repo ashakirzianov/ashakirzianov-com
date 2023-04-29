@@ -14,7 +14,7 @@ export default function AboutPage() {
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
         <AboutCard>
-            <h1>{`I don't speak the language, help me!`}</h1>
+            <h1>{`Help me, I don't speak the language!`}</h1>
             <p>{`Relax, this is just my personal page. My name is Anton Shakirzianov, but I use a pen name "Andjan" (or "Анҗан" in Cyrillics).`}</p>
             <p>I do <Link href={href('art', { hue })}>generative art</Link>. I also write <Link href={href('text', { hue })}>short stories</Link>, fiction and not quite fiction, though they are all in my native Russian.</p>
             <p>I have <Link href='https://instagram.com/ashakirzianov'>instagram</Link> and <Link href='https://t.me/ashakirzianov_live'>telegram</Link>.</p>

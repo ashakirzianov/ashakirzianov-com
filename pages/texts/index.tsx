@@ -38,7 +38,7 @@ export default function AllStorites({ previews }: Props) {
             </div>
             <nav className="navigation">
                 <Link href={href('home', { hue })}>
-                    <PixelButton color={`hsl(${hue},100%,80%)`} text="Главная" />
+                    <PixelButton color={`hsl(${hue},100%,80%)`} >Главная</PixelButton>
                 </Link>
             </nav>
         </div>

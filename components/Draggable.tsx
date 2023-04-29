@@ -5,10 +5,11 @@ import {
 let globalZ = 1;
 export type Position = { x: number, y: number };
 export function Draggable({
-    children, onDrag, onStop, front, disabled,
+    children, onDrag, onStop, front, back, disabled,
 }: {
     disabled?: boolean,
     front?: boolean,
+    back?: boolean
     children?: ReactNode,
     onDrag?: () => void,
     onStop?: () => void,
@@ -19,7 +20,10 @@ export function Draggable({
         offset: { x: 0, y: 0 },
         touchStart: { x: 0, y: 0 },
     });
-    let [zIndex, setZIndex] = useState(front ? 1 : 0);
+    let [zIndex, setZIndex] = useState(
+        front ? 1
+            : back ? -1 : 0
+    );
     let [cursorChanged, setCursorChanged] = useState(false);
 
     let handleStartDragging = useCallback(function handleStartDragging({ x, y }: Position) {

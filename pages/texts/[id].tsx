@@ -46,8 +46,12 @@ export default function TextPostPage({ post }: Props) {
                 marginTop: '20pt',
                 marginBottom: '20pt',
             }}>
-                <Link href={href('text')}><PixelButton color="skyblue" text="Все рассказы" /></Link>
-                <Link href={href('home')}><PixelButton color="skyblue" text="Главная" /></Link>
+                <Link href={href('text')}>
+                    <PixelButton color="skyblue">Все рассказы</PixelButton>
+                </Link>
+                <Link href={href('home')}>
+                    <PixelButton color="skyblue" >Главная</PixelButton>
+                </Link>
             </nav>
         </TextBlock>
     </>;

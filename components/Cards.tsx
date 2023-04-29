@@ -37,7 +37,7 @@ export function TextCard({ text }: {
       .post {
         overflow: hidden;
         font-size: .4em;
-        max-height: 41.7em;
+        max-height: var(--card-text-height);
         padding: 3em 5%;
         width: 100%;
       }
@@ -56,39 +56,6 @@ export function TextCard({ text }: {
     `}</style>
         </div>
     </Card>;
-}
-
-function HelpCard({ hue }: {
-    hue: number,
-}) {
-    return <Card>
-        <div className="content noselect" unselectable="on">
-            <p>
-                <Link className="help" href={href('about-en', { hue })} style={{
-                    color: 'red',
-                    wordBreak: 'keep-all',
-                    wordWrap: 'normal'
-                }}>Help me please!</Link>
-            </p>
-            <style jsx>{`
-    .content {
-      display: flex;
-      align-items: center;
-      color: var(--foreground-light);
-      background-color: var(--paper-light);
-      text-indent: 1em;
-      line-height: 1.2em;
-      font-size: 2em;
-      padding: 10%;
-      width: 100%;
-      height: 100%;
-    }
-    span {
-      color: var(--foreground-light);
-    }
-    `}</style>
-        </div>
-    </Card >;
 }
 
 export type HighlightKind = 'stories' | 'posters';
@@ -127,23 +94,26 @@ function AboutLink({ children, href, highlight, onHover }: {
     highlight?: HighlightKind,
     onHover?: (target?: HighlightKind) => void,
 }) {
-    return <Link href={href} legacyBehavior>
-        <a
-            onMouseOver={function () {
-                if (onHover && highlight) {
-                    onHover(highlight)
-                }
-            }}
-            onMouseLeave={function () {
-                if (onHover) {
-                    onHover(undefined);
-                }
-            }}
-            onMouseOut={function () {
-                if (onHover) {
-                    onHover(undefined);
-                }
-            }}>{children}</a>
+    return <Link href={href} style={{
+        color: 'skyblue',
+    }}
+        onMouseOver={function () {
+            if (onHover && highlight) {
+                onHover(highlight)
+            }
+        }}
+        onMouseLeave={function () {
+            if (onHover) {
+                onHover(undefined);
+            }
+        }}
+        onMouseOut={function () {
+            if (onHover) {
+                onHover(undefined);
+            }
+        }}
+    >
+        {children}
     </Link>;
 }
 

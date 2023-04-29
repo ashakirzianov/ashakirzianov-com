@@ -8,7 +8,7 @@ import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
-import { PixelToggle } from "@/components/Buttons";
+import { PixelButton, PixelToggle } from "@/components/Buttons";
 import { href } from "@/utils/refs";
 import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards";
 
@@ -73,22 +73,27 @@ export default function Main({
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
-    <div className="buttons">
-      <PixelToggle
-        color="red"
-        onClick={() => setFree(v => !v)}
-        pressed={!free}
-      />
-      <PixelToggle
-        color={pixelated ? "black" : "yellow"}
-        onClick={() => setPixelated(true)}
-        pressed={pixelated}
-      />
-      <PixelToggle
-        color="green"
-        onClick={nextHue}
-      />
-    </div>
+    <header>
+      <div className="help">
+        {/* <HelpButton hue={hue} /> */}
+      </div>
+      <div className="buttons">
+        <PixelToggle
+          color="red"
+          onClick={() => setFree(v => !v)}
+          pressed={!free}
+        />
+        <PixelToggle
+          color={pixelated ? "black" : "yellow"}
+          onClick={() => setPixelated(true)}
+          pressed={pixelated}
+        />
+        <PixelToggle
+          color="green"
+          onClick={nextHue}
+        />
+      </div>
+    </header>
     <div className={free ? 'grid' : 'flex'}>
       <Tile shifted={free} position={[0, 0]} front>
         <AboutCard
@@ -107,8 +112,22 @@ export default function Main({
         sketchTile('slinky', [-5, 8]),
         storyTile('seattle', [-15, -10]),
       ]}
+      <Tile
+        shifted={free} position={[20, -15]} back
+      >
+        <Help hue={hue} />
+      </Tile>
     </div>
     <style jsx>{`
+      header {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .help {
+        padding: 10pt;
+      }
       .buttons {
         display: flex;
         flex-flow: row wrap;
@@ -144,13 +163,14 @@ export default function Main({
 
 function Tile({
   position: [left, top], shifted,
-  children, front, link, highlight,
+  children, front, back, link, highlight,
 }: {
   position: [number, number],
   shifted: boolean,
   children: ReactNode,
   link?: string,
   front?: boolean,
+  back?: boolean,
   highlight?: boolean,
 }) {
   let navigable = true;
@@ -167,12 +187,13 @@ function Tile({
         onDrag={lock}
         onStop={unlock}
         front={front}
+        back={back}
         disabled={!shifted}
       >
         {children}
       </Draggable>
     </Link>
-    : <Draggable front={front} disabled={!shifted}>
+    : <Draggable front={front} back={back} disabled={!shifted}>
       {children}
     </Draggable>
   return <div style={{
@@ -185,4 +206,23 @@ function Tile({
   }}>
     {content}
   </div>
+}
+
+function Help({ hue }: {
+  hue: number,
+}) {
+  return <>
+    <div className="container pixel-shadow">
+      <div className="content pixel-corners" style={{
+        backgroundColor: 'white',
+        padding: '10pt',
+        color: 'red',
+      }}>
+        <Link href={href('about-en', { hue })} style={{
+        }}>
+          Help!
+        </Link>
+      </div>
+    </div>
+  </>
 }

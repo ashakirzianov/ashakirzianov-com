@@ -108,6 +108,7 @@ export function AboutCard({ hue, onHover }: {
       background-color: var(--paper-light);
       text-indent: 1em;
       line-height: 1.2em;
+      font-size: 0.95em;
       padding: 10%;
       width: 100%;
       height: 100%;

@@ -1,6 +1,7 @@
 import { PixelPage } from "@/components/PixelPage";
 import { TextBlock } from "@/components/TextBlock";
 import { useQuery } from "@/utils/query";
+import { href } from "@/utils/refs";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -16,7 +17,7 @@ export default function AboutPage() {
                 <TextBlock font="var(--font-pixel)">
                     <h1>Кто ты такой и что это за буква җ?</h1>
                     <p>{`Ладно, вообще меня зовут Антон Шакирзянов. Буква "җ" взята из татарской версии кирилицы, вот отсюда: "Шөкер Җан".`}</p>
-                    <p>Я пишу <Link href='/stories'>рассказы</Link>, выдуманные и не совсем. А еще я увлекаюсь генеративным искусством: создаю <Link href={`/gen?hue=${hue}`}>формы и плакаты</Link> из них.</p>
+                    <p>Я пишу <Link href={href('text', { hue })}>рассказы</Link>, выдуманные и не совсем. А еще я увлекаюсь генеративным искусством: создаю <Link href={href('art', { hue })}>формы и плакаты</Link> из них.</p>
                     <p>У меня есть <Link href='https://instagram.com/ashakirzianov'>инстаграмм</Link> и <Link href='https://t.me/ashakirzianov_live'>телеграмм</Link>.</p>
                 </TextBlock>
             </div>

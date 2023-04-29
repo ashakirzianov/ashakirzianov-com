@@ -1,6 +1,7 @@
 import { PixelButton } from "@/components/Buttons";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
+import { href } from "@/utils/refs";
 import { TextPost, TextPostMap, getAllPreviews } from "@/utils/text";
 import { GetStaticProps } from "next";
 import Head from "next/head";
@@ -29,13 +30,13 @@ export default function AllStorites({ previews }: Props) {
         <div className="outer">
             <div className="container">
                 {Object.entries(previews).map(([id, story], idx) =>
-                    <Link key={idx} href={`/stories/${id}`}>
+                    <Link key={idx} href={href('text', { id })}>
                         <TextPostCard post={story} />
                     </Link>
                 )}
             </div>
             <nav className="navigation">
-                <Link href={`/?hue=${hue}`}>
+                <Link href={href('home', { hue })}>
                     <PixelButton color={`hsl(${hue},100%,80%)`} text="Главная" />
                 </Link>
             </nav>

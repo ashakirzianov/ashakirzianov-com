@@ -6,6 +6,7 @@ import { finished } from "@/sketches/finished";
 import Head from "next/head";
 import Link from "next/link";
 import { PixelButton } from "@/components/Buttons";
+import { href } from "@/utils/refs";
 
 type Props = {};
 
@@ -19,13 +20,13 @@ export default function AllPosters({ }: Props) {
         <div className="outer">
             <div className="container">
                 {Object.entries(finished).map(([id, scene], idx) =>
-                    <Link key={idx} href={`/gen/${id}`}>
+                    <Link key={idx} href={href('art', { id })}>
                         <PosterCard scene={scene} />
                     </Link>
                 )}
             </div>
             <nav className="navigation">
-                <Link href={`/?hue=${hue}`}>
+                <Link href={href('home', { hue })}>
                     <PixelButton color={`hsl(${hue},100%,80%)`} text="Главная" />
                 </Link>
             </nav>

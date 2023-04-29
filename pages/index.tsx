@@ -4,13 +4,14 @@ import { GetStaticProps } from "next";
 import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
 import { finished } from "@/sketches/finished";
-import { TextPost, getAllPreviews, getTextForId } from "@/utils/text";
+import { TextPost, getAllPreviews } from "@/utils/text";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
 import { PixelToggle } from "@/components/Buttons";
+import { href } from "@/utils/refs";
 
 // @refresh reset
 
@@ -50,7 +51,7 @@ export default function Main({
       key={'gen-' + id}
       shifted={free}
       position={position}
-      link={`/gen/${id}`}
+      link={href('art', { id })}
       highlight={hl === 'posters'}
     >
       <SketchCard
@@ -61,7 +62,7 @@ export default function Main({
   }
   function storyTile(id: string, position: [number, number]) {
     return <Tile shifted={free} position={position} key={id}
-      link={`/stories/${id}`}
+      link={href('text', { id })}
       highlight={hl === 'stories'}
     >
       <TextPostCard
@@ -260,7 +261,7 @@ function HelpCard({ hue }: {
   return <Card>
     <div className="content noselect" unselectable="on">
       <p>
-        <Link className="help" href={`/about-en?${hue}`} style={{
+        <Link className="help" href={href('about-en', { hue })} style={{
           color: 'red',
           wordBreak: 'keep-all',
           wordWrap: 'normal'
@@ -293,9 +294,9 @@ function AboutCard({ hue, onHover }: {
 }) {
   return <Card>
     <div className="content noselect" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={`/gen?hue=${hue}`} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href={href('text', { hue })} highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={href('art', { hue })} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
       <p>&nbsp;</p>
-      — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
+      — Что? Кто ты такой и <TextLink href={href('about', { hue })}>что это за буква җ?</TextLink>
 
       <style jsx>{`
     .content {

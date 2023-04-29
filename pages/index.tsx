@@ -101,7 +101,7 @@ export default function Main({
         sketchTile('lmtt', [5, -18]),
         sketchTile('bwway', [-22, 7]),
         sketchTile('number34', [-10, 15]),
-        storyTile('thirty-four', [13, 20]),
+        storyTile('start-wearing-purple', [13, 20]),
         sketchTile('typography', [-12, -5]),
         sketchTile('rave', [10, -6]),
         sketchTile('slinky', [7, 8]),

@@ -37,7 +37,7 @@ export function TextCard({ text }: {
       .post {
         overflow: hidden;
         font-size: .4em;
-        max-height: 42em;
+        max-height: 41.7em;
         padding: 3em 5%;
         width: 100%;
       }

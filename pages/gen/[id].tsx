@@ -7,24 +7,25 @@ import { finished } from "@/sketches/finished";
 
 export const getStaticPaths: GetStaticPaths = async function () {
     return {
-        paths: finished.map((_, idx) => ({ params: { id: [idx.toString()] } })),
+        paths: Object.keys(finished).map(
+            id => ({ params: { id } })
+        ),
         fallback: 'blocking',
     };
 }
 
-type Props = { index: number };
+type Props = { id: keyof typeof finished };
 export const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
-    let id = params?.id?.[0] ?? '0';
-    let index = parseInt(id, 10);
-    if (0 <= index && index < finished.length) {
-        return { props: { index } };
+    let id = typeof params?.id === 'string' ? params.id : '';
+    if (id in finished) {
+        return { props: { id: id as keyof typeof finished } };
     } else {
         return { notFound: true };
     }
 }
 
-export default function SketchComponent({ index }: Props) {
-    let scene = finished[index]!;
+export default function SketchComponent({ id }: Props) {
+    let scene = finished[id];
     let { node } = useSketcher({
         scene,
         period: 40,

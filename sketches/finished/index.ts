@@ -6,12 +6,12 @@ import { bwway } from "./bwway";
 import { loveMeTwoTimes } from "./loveMeTwoTimes";
 import { number34 } from "./number34";
 
-export const finished = [
-    loveMeTwoTimes(),
-    bwway(),
-    number34(),
-    typography(),
-    rave(),
-    slinky(),
-    molecules(),
-];
+export const finished = {
+    'lmtt': loveMeTwoTimes(),
+    'bwway': bwway(),
+    'number34': number34(),
+    'typography': typography(),
+    'rave': rave(),
+    'slinky': slinky(),
+    'molecules': molecules(),
+};

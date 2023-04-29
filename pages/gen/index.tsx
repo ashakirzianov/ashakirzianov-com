@@ -18,8 +18,8 @@ export default function AllPosters({ }: Props) {
         </Head>
         <div className="outer">
             <div className="container">
-                {finished.map((poster, idx) =>
-                    <Link key={idx} href={`/posters/${idx}`}>
+                {Object.values(finished).map((poster, idx) =>
+                    <Link key={idx} href={`/gen/${idx}`}>
                         <PosterCard scene={poster} />
                     </Link>
                 )}

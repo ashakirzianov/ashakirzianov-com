@@ -55,13 +55,16 @@ export default function Main({
     let nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
-  function sketchTile(index: number, position: [number, number]) {
-    return <Tile shifted={free} position={position} key={index}
-      link={`/posters/${index}`}
+  function sketchTile(id: string, position: [number, number]) {
+    return <Tile
+      key={'gen-' + id}
+      shifted={free}
+      position={position}
+      link={`/gen/${id}`}
       highlight={hl === 'posters'}
     >
       <SketchCard
-        sketch={finished[index]!}
+        sketch={finished[id as keyof typeof finished]!}
         pixelated={pixelated}
       />
     </Tile>
@@ -106,15 +109,15 @@ export default function Main({
       </Tile>
       {[
         storyTile('thirty-four', [25, 10]),
-        sketchTile(0, [5, -18]),
-        sketchTile(1, [-22, 7]),
-        sketchTile(2, [-10, 15]),
+        sketchTile('lmtt', [5, -18]),
+        sketchTile('bwway', [-22, 7]),
+        sketchTile('number34', [-10, 15]),
         storyTile('thirty-four', [13, 20]),
-        sketchTile(3, [-12, -5]),
-        sketchTile(4, [10, -6]),
-        sketchTile(5, [7, 8]),
+        sketchTile('typography', [-12, -5]),
+        sketchTile('rave', [10, -6]),
+        sketchTile('slinky', [7, 8]),
         storyTile('seattle', [-15, -10]),
-        sketchTile(6, [13, -1]),
+        sketchTile('molecules', [13, -1]),
       ]}
     </div>
     <style jsx>{`
@@ -300,7 +303,7 @@ function AboutCard({ hue, onHover }: {
 }) {
   return <Card>
     <div className="content noselect" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={`/posters?hue=${hue}`} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
+      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href='/stories' highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={`/gen?hue=${hue}`} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
       <p>&nbsp;</p>
       — Что? Кто ты такой и <TextLink href={`/about?hue=${hue}`}>что это за буква җ?</TextLink>
 

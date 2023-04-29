@@ -1,4 +1,4 @@
-type RefKind = 'home' | 'text' | 'art' | 'about' | 'about-en';
+type RefKind = 'home' | 'text' | 'art' | 'about' | 'about-en' | 'wip';
 export function href(kind: RefKind, options?: {
     id?: string,
     hue?: number,
@@ -18,6 +18,8 @@ function hrefPrefix(kind: RefKind, id?: string) {
     switch (kind) {
         case 'art':
             return '/art';
+        case 'wip':
+            return '/wip';
         case 'text':
             return '/texts';
         case 'about':

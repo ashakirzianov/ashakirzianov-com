@@ -93,10 +93,12 @@ export function Draggable({
             }
         }
         function handleTouchMove(event: globalThis.TouchEvent) {
-            let position = getTouchPosition(event);
-            if (position) {
-                event.preventDefault();
-                handleDragging(position);
+            if (dragging) {
+                let position = getTouchPosition(event);
+                if (position) {
+                    event.preventDefault();
+                    handleDragging(position);
+                }
             }
         }
         function handleTouchEnd() {

@@ -1,51 +1,117 @@
 import { PixelButton } from "@/components/Buttons";
-import { Divider } from "@/components/Divider";
-import { TextBlock } from "@/components/TextBlock";
-import { TextPost, getAllTexts } from "@/utils/text";
+import { PixelPage } from "@/components/PixelPage";
+import { useQuery } from "@/utils/query";
+import { TextPost, TextPostMap, getAllPreviews } from "@/utils/text";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { ReactNode } from "react";
 
 type Props = {
-    stories: TextPost[],
+    previews: TextPostMap,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
-    let stories = await getAllTexts();
+    let previews = await getAllPreviews();
     return {
         props: {
-            stories,
+            previews,
         }
     };
 }
 
-export default function AllStorites({ stories }: Props) {
-    return <>
+export default function AllStorites({ previews }: Props) {
+    let { hue } = useQuery();
+    return <PixelPage hue={hue}>
         <Head>
-            <title>Все рассказы</title>
+            <title>All Posters</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
-        <TextBlock>
-            <h1>Все рассказы</h1>
-            {stories
-                .sort(
-                    (a, b) => (a.date ?? '') > (b.date ?? '') ? -1 : 1
-                ).map((story, idx) =>
-                    <>
-                        {idx === 0 ? null : <Divider />}
-                        <div key={story.title ?? idx.toString()} dangerouslySetInnerHTML={{ __html: story.html }} />
-                    </>
+        <div className="outer">
+            <div className="container">
+                {Object.entries(previews).map(([id, story], idx) =>
+                    <Link key={idx} href={`/stories/${id}`}>
+                        <TextPostCard post={story} />
+                    </Link>
                 )}
-            <nav style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '10pt',
-                justifyContent: 'space-between',
-                marginTop: '20pt',
-                marginBottom: '20pt',
-            }}>
-                <Link href='/'><PixelButton color="skyblue" text="Главная" /></Link>
+            </div>
+            <nav className="navigation">
+                <Link href={`/?hue=${hue}`}>
+                    <PixelButton color={`hsl(${hue},100%,80%)`} text="Главная" />
+                </Link>
             </nav>
-        </TextBlock>
-    </>
+        </div>
+        <style jsx>{`
+        .outer {
+            dispaly:flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            flex-flow: row wrap;
+            align-content: flex-start;
+            gap: 10pt;
+            padding: 10pt;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-around;
+            padding: 10pt;
+        }
+        `}</style>
+    </PixelPage>
+}
+
+function TextPostCard({ post }: {
+    post: TextPost,
+}) {
+    return <Card>
+        <div className="container">
+            <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
+            <style jsx>{`
+        .container {
+          display: flex;
+          justify-content: center;
+          align-items: start;
+          height: 100%;
+          width: 100%;
+          background-color: var(--paper-light);
+          color: var(--foreground-light);
+          word-break: break-word;
+        }
+        .post {
+          overflow: hidden;
+          font-size: .4em;
+          max-height: 42em;
+          padding: 3em 5%;
+          width: 100%;
+        }
+        `}</style>
+            <style>{`
+        h1 {
+            margin-top: .5em;
+            margin-bottom: 1em;
+            line-height: 1em;
+        }
+        p {
+            text-indent: 1em;
+            line-height: 1em;
+            margin-bottom: 1em;
+        }
+      `}</style>
+        </div>
+    </Card>;
+}
+
+function Card({
+    children,
+}: {
+    children?: ReactNode,
+}) {
+    return <div className="pixel-shadow">
+        <div className="card-frame pixel-corners">
+            {children}
+        </div>
+    </div>
 }

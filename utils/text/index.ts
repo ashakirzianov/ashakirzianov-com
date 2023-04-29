@@ -15,11 +15,20 @@ export type TextPost = {
     title?: string,
     date?: string,
 };
+export type TextPostMap = {
+    [id: string]: TextPost,
+};
 
-export async function getAllTexts() {
+export async function getAllPreviews(): Promise<TextPostMap> {
+    let result: TextPostMap = {};
     let ids = await getAllTextIds();
-    let objects = await Promise.all(ids.map(id => getTextForId({ id })));
-    return objects.filter((o): o is TextPost => o !== undefined);
+    for (let id of ids) {
+        let preview = await getTextForId({ id, maxChars: 1000 });
+        if (preview) {
+            result[id] = preview;
+        }
+    }
+    return result;
 }
 
 export async function getTextForId({ id, maxChars }: {

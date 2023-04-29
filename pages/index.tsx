@@ -152,7 +152,7 @@ export default function Main({
         width: 100%;
         height: 100%;
       }
-      @media (max-width: 470pt) {
+      @media (max-width: 700pt) {
         .flex {
           justify-content: center;
         }

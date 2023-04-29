@@ -2,7 +2,7 @@ import {
     MouseEvent, ReactNode, useCallback, useEffect, useRef, useState,
 } from "react";
 
-let globalZ = 1;
+let globalZ = 2;
 export type Position = { x: number, y: number };
 export function Draggable({
     children, onDrag, onStop, front, back, disabled,
@@ -21,8 +21,8 @@ export function Draggable({
         touchStart: { x: 0, y: 0 },
     });
     let [zIndex, setZIndex] = useState(
-        front ? 1
-            : back ? -1 : 0
+        front ? 2
+            : back ? 0 : 1
     );
     let [cursorChanged, setCursorChanged] = useState(false);
 

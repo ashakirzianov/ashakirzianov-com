@@ -17,9 +17,9 @@ export function href(kind: RefKind, options?: {
 function hrefPrefix(kind: RefKind, id?: string) {
     switch (kind) {
         case 'art':
-            return '/gen';
+            return '/art';
         case 'text':
-            return '/stories';
+            return '/texts';
         case 'about':
             return '/about';
         case 'about-en':

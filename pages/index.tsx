@@ -99,14 +99,13 @@ export default function Main({
       {[
         storyTile('thirty-four', [25, 10]),
         sketchTile('lmtt', [5, -18]),
-        sketchTile('bwway', [-22, 7]),
         sketchTile('number34', [-10, 15]),
+        sketchTile('molecules', [-22, 7]),
         storyTile('start-wearing-purple', [13, 20]),
         sketchTile('typography', [-12, -5]),
         sketchTile('rave', [10, -6]),
-        sketchTile('slinky', [7, 8]),
+        sketchTile('slinky', [-5, 8]),
         storyTile('seattle', [-15, -10]),
-        sketchTile('molecules', [13, -1]),
       ]}
     </div>
     <style jsx>{`

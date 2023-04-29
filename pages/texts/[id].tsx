@@ -10,14 +10,14 @@ import Link from "next/link";
 export const getStaticPaths: GetStaticPaths = async function () {
     let ids = await getAllTextIds();
     return {
-        paths: ids.map(id => ({ params: { id: [id] } })),
+        paths: ids.map(id => ({ params: { id } })),
         fallback: 'blocking',
     };
 }
 
 type Props = { post: TextPost };
 export const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
-    let id = params?.id?.[0];
+    let id = params?.id as string;
     if (id === undefined) {
         return { notFound: true };
     }

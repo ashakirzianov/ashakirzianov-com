@@ -16,7 +16,7 @@ export const getStaticPaths: GetStaticPaths = async function () {
 
 type Props = { id: keyof typeof finished };
 export const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
-    let id = typeof params?.id === 'string' ? params.id : '';
+    let id = params?.id as string;
     if (id in finished) {
         return { props: { id: id as keyof typeof finished } };
     } else {

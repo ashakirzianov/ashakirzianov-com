@@ -1,7 +1,7 @@
 import { PixelButton } from "@/components/Buttons";
 import { Divider } from "@/components/Divider";
 import { TextBlock } from "@/components/TextBlock";
-import { TextPost, getAllTextIds, getTextForId } from "@/texts/utils";
+import { TextPost, getAllTextIds, getTextForId } from "@/utils/text";
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head";
 import Link from "next/link";

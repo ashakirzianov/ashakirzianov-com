@@ -1,17 +1,16 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
 import { useSketcher } from "@/utils/sketcher";
 import { Scene } from "@/sketcher";
 import { finished } from "@/sketches/finished";
-import { TextPost, getAllTexts, getTextForId } from "@/texts/utils";
+import { TextPost, getTextForId } from "@/utils/text";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
 import { PixelToggle } from "@/components/Buttons";
-import { filterUndefined, getViewportDimensions } from "@/utils/misc";
 
 // @refresh reset
 
@@ -24,6 +23,7 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async function () {
   let ids = [
     'thirty-four',
+    'seattle',
   ];
   let posts: Posts = {};
   for (let id of ids) {
@@ -50,19 +50,13 @@ export default function Main({
   let [free, setFree] = useState(true);
   let [pixelated, setPixelated] = useState(false);
   function nextHue() {
-    let hues = [40, 210, 340, 360];
-    let idx = hues.findIndex(h => h > hue);
-    let nextHue = idx >= 0 ? hues[idx]! : hues[0]!;
+    let hues = [40, 210, 340, 100];
+    let idx = hues.findIndex(h => h === hue) + 1;
+    let nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
-  useEffect(() => {
-    let { width } = getViewportDimensions();
-    if (width < 250) {
-      setFree(false);
-    }
-  }, []);
   function sketchTile(index: number, position: [number, number]) {
-    return <Tile shifted={free} position={position}
+    return <Tile shifted={free} position={position} key={index}
       link={`/posters/${index}`}
       highlight={hl === 'posters'}
     >
@@ -73,7 +67,7 @@ export default function Main({
     </Tile>
   }
   function storyTile(id: string, position: [number, number]) {
-    return <Tile shifted={free} position={position}
+    return <Tile shifted={free} position={position} key={id}
       link={`/stories/${id}`}
       highlight={hl === 'stories'}
     >
@@ -111,10 +105,16 @@ export default function Main({
         />
       </Tile>
       {[
+        storyTile('thirty-four', [25, 10]),
         sketchTile(0, [5, -18]),
-        sketchTile(1, [-17, 7]),
+        sketchTile(1, [-22, 7]),
         sketchTile(2, [-10, 15]),
-        storyTile('thirty-four', [23, 10]),
+        storyTile('thirty-four', [13, 20]),
+        sketchTile(3, [-12, -5]),
+        sketchTile(4, [10, -6]),
+        sketchTile(5, [7, 8]),
+        storyTile('seattle', [-15, -10]),
+        sketchTile(6, [13, -1]),
       ]}
     </div>
     <style jsx>{`
@@ -184,7 +184,7 @@ function Tile({
     </Draggable>
   return <div style={{
     position: shifted ? 'relative' : 'static',
-    top: shifted ? `${top}vh` : 0,
+    top: shifted ? `${top - 10}vh` : 0,
     left: shifted ? `${left}vw` : 0,
     gridArea: 'mid',
     transform: highlight ? 'scale(1.2)' : undefined,
@@ -259,6 +259,39 @@ function TextPostCard({ post }: {
     `}</style>
     </div>
   </Card>;
+}
+
+function HelpCard({ hue }: {
+  hue: number,
+}) {
+  return <Card>
+    <div className="content noselect" unselectable="on">
+      <p>
+        <Link className="help" href={`/about-en?${hue}`} style={{
+          color: 'red',
+          wordBreak: 'keep-all',
+          wordWrap: 'normal'
+        }}>Help me please!</Link>
+      </p>
+      <style jsx>{`
+    .content {
+      display: flex;
+      align-items: center;
+      color: var(--foreground-light);
+      background-color: var(--paper-light);
+      text-indent: 1em;
+      line-height: 1.2em;
+      font-size: 2em;
+      padding: 10%;
+      width: 100%;
+      height: 100%;
+    }
+    span {
+      color: var(--foreground-light);
+    }
+    `}</style>
+    </div>
+  </Card >;
 }
 
 function AboutCard({ hue, onHover }: {

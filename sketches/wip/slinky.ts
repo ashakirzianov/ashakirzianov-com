@@ -10,10 +10,10 @@ export function slinky() {
     }));
     return combineScenes(
         fromLayers({
-            render({ canvas, frame }) {
+            prepare({ canvas, frame }) {
                 clearFrame({
                     canvas,
-                    color: modItem(back, frame),
+                    color: 'white',
                 });
             },
         }),

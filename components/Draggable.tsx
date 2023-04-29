@@ -117,7 +117,7 @@ export function Draggable({
                 ref.removeEventListener('touchcancel', handleTouchEnd);
             }
         }
-    }, [divRef, handleDragging, handleEndDragging])
+    }, [divRef, handleDragging, handleStartDragging, handleEndDragging])
 
     useEffect(() => {
         window.addEventListener('mouseup', handleEndDragging);

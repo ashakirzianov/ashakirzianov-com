@@ -1,4 +1,5 @@
 import { PixelButton } from "@/components/Buttons";
+import { TextCard } from "@/components/Cards";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { href } from "@/utils/refs";
@@ -31,7 +32,7 @@ export default function AllStorites({ previews }: Props) {
             <div className="container">
                 {Object.entries(previews).map(([id, story], idx) =>
                     <Link key={idx} href={href('text', { id })}>
-                        <TextPostCard post={story} />
+                        <TextCard text={story} />
                     </Link>
                 )}
             </div>
@@ -62,57 +63,4 @@ export default function AllStorites({ previews }: Props) {
         }
         `}</style>
     </PixelPage>
-}
-
-function TextPostCard({ post }: {
-    post: TextPost,
-}) {
-    return <Card>
-        <div className="container">
-            <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
-            <style jsx>{`
-        .container {
-          display: flex;
-          justify-content: center;
-          align-items: start;
-          height: 100%;
-          width: 100%;
-          background-color: var(--paper-light);
-          color: var(--foreground-light);
-          word-break: break-word;
-        }
-        .post {
-          overflow: hidden;
-          font-size: .4em;
-          max-height: 42em;
-          padding: 3em 5%;
-          width: 100%;
-        }
-        `}</style>
-            <style>{`
-        h1 {
-            margin-top: .5em;
-            margin-bottom: 1em;
-            line-height: 1em;
-        }
-        p {
-            text-indent: 1em;
-            line-height: 1em;
-            margin-bottom: 1em;
-        }
-      `}</style>
-        </div>
-    </Card>;
-}
-
-function Card({
-    children,
-}: {
-    children?: ReactNode,
-}) {
-    return <div className="pixel-shadow">
-        <div className="card-frame pixel-corners">
-            {children}
-        </div>
-    </div>
 }

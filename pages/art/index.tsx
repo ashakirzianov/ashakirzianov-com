@@ -7,6 +7,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { PixelButton } from "@/components/Buttons";
 import { href } from "@/utils/refs";
+import { SketchCard } from "@/components/Cards";
 
 type Props = {};
 
@@ -21,7 +22,7 @@ export default function AllPosters({ }: Props) {
             <div className="container">
                 {Object.entries(finished).map(([id, scene], idx) =>
                     <Link key={idx} href={href('art', { id })}>
-                        <PosterCard scene={scene} />
+                        <SketchCard sketch={scene} pixelated={false} />
                     </Link>
                 )}
             </div>
@@ -52,17 +53,4 @@ export default function AllPosters({ }: Props) {
         }
         `}</style>
     </PixelPage>
-}
-
-function PosterCard({ scene }: {
-    scene: Scene,
-}) {
-    let { node } = useSketcher({
-        scene, period: 40,
-    });
-    return <div className="pixel-shadow">
-        <div className="card-frame pixel-corners">
-            {node}
-        </div>
-    </div>
 }

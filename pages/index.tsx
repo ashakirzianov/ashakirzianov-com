@@ -1,8 +1,6 @@
 import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
-import { useSketcher } from "@/utils/sketcher";
-import { Scene } from "@/sketcher";
 import { finished } from "@/sketches/finished";
 import { TextPost, getAllPreviews } from "@/utils/text";
 import { Draggable } from "@/components/Draggable";
@@ -12,6 +10,7 @@ import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
 import { PixelToggle } from "@/components/Buttons";
 import { href } from "@/utils/refs";
+import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards";
 
 // @refresh reset
 
@@ -30,7 +29,6 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
   };
 }
 
-type HighlightKind = 'stories' | 'posters';
 export default function Main({
   previews,
 }: Props) {
@@ -65,8 +63,8 @@ export default function Main({
       link={href('text', { id })}
       highlight={hl === 'stories'}
     >
-      <TextPostCard
-        post={previews[id]!}
+      <TextCard
+        text={previews[id]!}
       />
     </Tile>;
   }
@@ -165,14 +163,16 @@ function Tile({
         if (!navigable)
           event.preventDefault();
       }}
-    ><Draggable
-      onDrag={lock}
-      onStop={unlock}
-      front={front}
-      disabled={!shifted}
     >
+      <Draggable
+        onDrag={lock}
+        onStop={unlock}
+        front={front}
+        disabled={!shifted}
+      >
         {children}
-      </Draggable></Link>
+      </Draggable>
+    </Link>
     : <Draggable front={front} disabled={!shifted}>
       {children}
     </Draggable>
@@ -186,158 +186,4 @@ function Tile({
   }}>
     {content}
   </div>
-}
-
-function Card({
-  children,
-}: {
-  children?: ReactNode,
-}) {
-  return <div className="pixel-shadow">
-    <div className="card-frame pixel-corners">
-      {children}
-    </div>
-  </div>
-}
-
-function SketchCard({ sketch, pixelated }: {
-  sketch: Scene<any>,
-  pixelated: boolean,
-}) {
-  let u = 20;
-  let { node } = useSketcher({
-    scene: sketch, period: 40,
-    dimensions: pixelated ? [3 * u, 4 * u] : undefined,
-  });
-  return <div>
-    <Card>{node}</Card>
-  </div>;
-}
-
-function TextPostCard({ post }: {
-  post: TextPost,
-}) {
-  return <Card>
-    <div className="container">
-      <div className="post noselect" dangerouslySetInnerHTML={{ __html: post.html }} />
-      <style jsx>{`
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: start;
-        height: 100%;
-        width: 100%;
-        background-color: var(--paper-light);
-        color: var(--foreground-light);
-        word-break: break-word;
-      }
-      .post {
-        overflow: hidden;
-        font-size: .4em;
-        max-height: 42em;
-        padding: 3em 5%;
-        width: 100%;
-      }
-      `}</style>
-      <style>{`
-      h1 {
-          margin-top: .5em;
-          margin-bottom: 1em;
-          line-height: 1em;
-      }
-      p {
-          text-indent: 1em;
-          line-height: 1em;
-          margin-bottom: 1em;
-      }
-    `}</style>
-    </div>
-  </Card>;
-}
-
-function HelpCard({ hue }: {
-  hue: number,
-}) {
-  return <Card>
-    <div className="content noselect" unselectable="on">
-      <p>
-        <Link className="help" href={href('about-en', { hue })} style={{
-          color: 'red',
-          wordBreak: 'keep-all',
-          wordWrap: 'normal'
-        }}>Help me please!</Link>
-      </p>
-      <style jsx>{`
-    .content {
-      display: flex;
-      align-items: center;
-      color: var(--foreground-light);
-      background-color: var(--paper-light);
-      text-indent: 1em;
-      line-height: 1.2em;
-      font-size: 2em;
-      padding: 10%;
-      width: 100%;
-      height: 100%;
-    }
-    span {
-      color: var(--foreground-light);
-    }
-    `}</style>
-    </div>
-  </Card >;
-}
-
-function AboutCard({ hue, onHover }: {
-  hue: number,
-  onHover?: (target?: HighlightKind) => void,
-}) {
-  return <Card>
-    <div className="content noselect" unselectable="on">
-      —Привет! Меня зовут <span>Анҗан</span>. Я пишу <TextLink href={href('text', { hue })} highlight="stories" onHover={onHover}>рассказы</TextLink> и генерирую <TextLink href={href('art', { hue })} highlight="posters" onHover={onHover}>плакаты и формы</TextLink>.
-      <p>&nbsp;</p>
-      — Что? Кто ты такой и <TextLink href={href('about', { hue })}>что это за буква җ?</TextLink>
-
-      <style jsx>{`
-    .content {
-      color: var(--foreground-light);
-      background-color: var(--paper-light);
-      text-indent: 1em;
-      line-height: 1.2em;
-      padding: 10%;
-      width: 100%;
-      height: 100%;
-    }
-    span {
-      color: var(--foreground-light);
-    }
-    `}</style>
-    </div>
-  </Card >;
-}
-
-function TextLink({ children, href, highlight, onHover }: {
-  href: string,
-  children?: ReactNode,
-  highlight?: HighlightKind,
-  onHover?: (target?: HighlightKind) => void,
-}) {
-  return <Link href={href} legacyBehavior>
-    <a
-      onMouseOver={function () {
-        if (onHover && highlight) {
-          onHover(highlight)
-        }
-      }}
-      onMouseLeave={function () {
-        if (onHover) {
-          onHover(undefined);
-        }
-      }}
-      onMouseOut={function () {
-        if (onHover) {
-          onHover(undefined);
-        }
-      }}>{children}</a>
-  </Link>;
 }

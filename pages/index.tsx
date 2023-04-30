@@ -16,6 +16,7 @@ import { number34 } from "@/sketches/misc/number34";
 import { molecules } from "@/sketches/atoms/molecules";
 import { typography } from "@/sketches/misc/typography";
 import { rave } from "@/sketches/misc/rave";
+import { currentRythm } from "@/sketches/rythm";
 
 // @refresh reset
 
@@ -64,6 +65,11 @@ const sketchCards = {
     id: 'rave',
     collection: 'misc',
     sketch: rave(),
+  },
+  rythm: {
+    id: undefined,
+    collection: 'rythm',
+    sketch: currentRythm(),
   },
 }
 
@@ -151,7 +157,7 @@ export default function Main({
         storyTile('start-wearing-purple', [13, 20]),
         sketchTile('typography', [-12, -5]),
         sketchTile('rave', [10, -6]),
-        // sketchTile('slinky', [-5, 8]),
+        sketchTile('rythm', [-5, 8]),
         storyTile('seattle', [-15, -10]),
       ]}
       <Tile

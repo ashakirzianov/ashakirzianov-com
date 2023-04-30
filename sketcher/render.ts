@@ -56,16 +56,28 @@ export function rect({
     if (fill) {
         context.fillStyle = resolveColor(fill, context);
         context.fillRect(
-            x, y, width, height,
+            x - width / 2, y - width / 2,
+            width, height,
         );
     }
     if (stroke) {
         context.strokeStyle = resolveColor(stroke, context);
         context.strokeRect(
-            x, y, width, height,
+            x - width / 2, y - width / 2,
+            width, height,
         );
     }
     context.restore();
+}
+
+export function square({ radius, ...rest }: ShapeProps & {
+    radius: number,
+}) {
+    rect({
+        width: radius,
+        height: radius,
+        ...rest,
+    })
 }
 
 export function circle({

@@ -6,7 +6,7 @@ import {
 
 export function rythm() {
     return combineScenes(
-        form(),
+        variation14(),
     )
 }
 
@@ -151,7 +151,7 @@ function variation14() {
                             lineWidth: .1,
                             stroke,
                             position: object.position,
-                            radius: object.radius / Math.sqrt(frame + 3),
+                            radius: object.radius / Math.sqrt(frame + 3) * (Math.sin(frame / 20) + 2),
                             context: canvas.context,
                         });
                     }

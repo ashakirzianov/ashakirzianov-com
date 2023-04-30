@@ -4,6 +4,26 @@ import {
     gravity, hslaRange, modItem, multBox, rainbow, rect, reduceAnimators, scene, square, traceAnimator, vals, vector, velocityStep, zoomToFit
 } from '@/sketcher';
 
+export const rytmVariations = [
+    variation0(),
+    variation1(),
+    variation2(),
+    variation3(),
+    variation4(),
+    variation5(),
+    variation6(),
+    variation7(),
+    variation8(),
+    variation9(),
+    variation10(),
+    variation11(),
+    variation12(),
+    variation13(),
+    variation14(),
+    variationMeh(),
+    variationWhite(),
+];
+
 export function rythm() {
     return combineScenes(
         variation14(),

@@ -13,7 +13,7 @@ import { href } from "@/utils/refs";
 export function sketchCollection({
     variations, path, title, description,
 }: {
-    variations: Scene[],
+    variations: Scene<any>[],
     path: string,
     title?: string,
     titlePlaceholder?: string,

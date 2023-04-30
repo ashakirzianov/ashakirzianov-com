@@ -5,6 +5,7 @@ import { randomRange } from './random';
 import { NumRange } from './range';
 import { Vector, vector } from './vector';
 
+export type FullObject = WithPosition & WithVelocity & WithMass & WithRadius;
 export type GravityObject = WithPosition & WithMass;
 export type WithPosition = { position: Vector };
 export type WithVelocity = { velocity: Vector };
@@ -16,7 +17,7 @@ export type WithAnchor = { anchor: GravityObject };
 
 type Objects<ObjectT> = ObjectT[];
 type ObjectAnimator<ObjectT> = Animator<Objects<ObjectT>>;
-type FullObject = WithPosition & WithVelocity & WithMass & WithRadius;
+
 
 export function randomObject({
     massRange, maxVelocity, box, rToM,

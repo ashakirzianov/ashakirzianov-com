@@ -91,7 +91,7 @@ export function fromRGBA({ r, g, b, a }: RGBAColor): StringColor {
 }
 
 export function fromHSLA({ h, s, l, a }: HSLAColor): StringColor {
-    return `hsla(${h ?? 0},${s ?? 0},${l ?? 0},${a ?? 1})`;
+    return `hsla(${h ?? 0},${s ?? 0}%,${l ?? 0}%,${a ?? 1})`;
 }
 
 export function fromTupleColor([r, g, b, a]: TupleColor): StringColor {

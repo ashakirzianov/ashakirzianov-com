@@ -33,17 +33,47 @@ export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, 
     };
 }
 
-export function circle({
-    lineWidth, fill, stroke,
-    position: { x, y }, radius,
-    context,
-}: {
+export type ShapeProps = {
     lineWidth?: number,
     fill?: Color,
     stroke?: Color,
     position: Vector,
-    radius: number,
     context: Canvas2DContext,
+};
+
+export function rect({
+    lineWidth, fill, stroke,
+    position: { x, y }, width, height,
+    context,
+}: ShapeProps & {
+    width: number,
+    height: number,
+}) {
+    context.save();
+    if (lineWidth) {
+        context.lineWidth = lineWidth;
+    }
+    if (fill) {
+        context.fillStyle = resolveColor(fill, context);
+        context.fillRect(
+            x, y, width, height,
+        );
+    }
+    if (stroke) {
+        context.strokeStyle = resolveColor(stroke, context);
+        context.strokeRect(
+            x, y, width, height,
+        );
+    }
+    context.restore();
+}
+
+export function circle({
+    lineWidth, fill, stroke,
+    position: { x, y }, radius,
+    context,
+}: ShapeProps & {
+    radius: number,
 }) {
     context.save();
     if (lineWidth) {

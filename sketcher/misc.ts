@@ -98,3 +98,7 @@ export function zoomToBoundingBox({ objects, scale, canvas }: {
     let box = multBox(boundingBox(points), scale);
     zoomToFit({ box, canvas });
 }
+
+export function filterUndefined<T>(arr: Array<T | undefined>): T[] {
+    return arr.filter((x): x is T => x !== undefined);
+}

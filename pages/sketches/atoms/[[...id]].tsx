@@ -1,9 +1,9 @@
 import { sketchCollection } from "@/components/collection";
-import { wipSketches } from "@/sketches/wip";
+import { atoms } from "@/sketches/atoms";
+import { href } from "@/utils/refs";
 
 export let { getStaticPaths, getStaticProps, SketchPage } = sketchCollection({
-    collection: wipSketches,
-    // TODO: use 'href'
-    path: '/wip/misc'
+    collection: atoms,
+    path: href('sketch', { collection: 'atoms' }),
 });
 export default SketchPage;

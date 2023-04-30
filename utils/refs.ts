@@ -1,10 +1,14 @@
-type RefKind = 'home' | 'text' | 'art' | 'about' | 'about-en' | 'wip';
+type RefKind = 'home' | 'text' | 'sketch' | 'about' | 'about-en' | 'wip';
 export function href(kind: RefKind, options?: {
     id?: string,
+    collection?: string,
     hue?: number,
 }) {
-    let { id, hue } = options ?? {};
+    let { id, collection, hue } = options ?? {};
     let result = hrefPrefix(kind);
+    if (collection !== undefined) {
+        result = `${result}/${collection}`;
+    }
     if (id !== undefined) {
         result = `${result}/${id}`;
     }
@@ -14,10 +18,10 @@ export function href(kind: RefKind, options?: {
     return result;
 }
 
-function hrefPrefix(kind: RefKind, id?: string) {
+function hrefPrefix(kind: RefKind) {
     switch (kind) {
-        case 'art':
-            return '/art';
+        case 'sketch':
+            return '/sketches';
         case 'wip':
             return '/wip';
         case 'text':

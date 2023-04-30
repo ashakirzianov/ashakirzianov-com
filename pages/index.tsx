@@ -1,7 +1,6 @@
 import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { GetStaticProps } from "next";
-import { finished } from "@/sketches/finished";
 import { TextPost, getAllPreviews } from "@/utils/text";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
@@ -11,6 +10,12 @@ import { useRouter } from "next/router";
 import { PixelToggle } from "@/components/Buttons";
 import { href } from "@/utils/refs";
 import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards";
+import { Scene } from "@/sketcher";
+import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes";
+import { number34 } from "@/sketches/misc/number34";
+import { molecules } from "@/sketches/atoms/molecules";
+import { typography } from "@/sketches/misc/typography";
+import { rave } from "@/sketches/misc/rave";
 
 // @refresh reset
 
@@ -29,6 +34,39 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
   };
 }
 
+type SketchCardProps = {
+  sketch: Scene,
+  id?: string,
+  collection?: string,
+};
+const sketchCards = {
+  posters: {
+    id: undefined,
+    collection: 'posters',
+    sketch: loveMeTwoTimes(),
+  },
+  number34: {
+    id: 'thirty-four',
+    collection: 'misc',
+    sketch: number34(),
+  },
+  atoms: {
+    id: undefined,
+    collection: 'atoms',
+    sketch: molecules(),
+  },
+  typography: {
+    id: 'typography',
+    collection: 'misc',
+    sketch: typography(),
+  },
+  rave: {
+    id: 'rave',
+    collection: 'misc',
+    sketch: rave(),
+  },
+}
+
 export default function Main({
   previews,
 }: Props) {
@@ -44,16 +82,20 @@ export default function Main({
     let nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!;
     router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
   }
-  function sketchTile(id: string, position: [number, number]) {
+  function sketchTile(
+    key: keyof typeof sketchCards,
+    position: [number, number],
+  ) {
+    let { id, collection, sketch } = sketchCards[key];
     return <Tile
-      key={'gen-' + id}
+      key={'sketch-' + key}
       shifted={free}
       position={position}
-      link={href('art', { id })}
+      link={href('sketch', { id, collection })}
       highlight={hl === 'posters'}
     >
       <SketchCard
-        sketch={finished[id as keyof typeof finished]!}
+        sketch={sketch}
         pixelated={pixelated}
       />
     </Tile>
@@ -103,13 +145,13 @@ export default function Main({
       </Tile>
       {[
         storyTile('thirty-four', [25, 10]),
-        sketchTile('lmtt', [5, -18]),
+        sketchTile('posters', [5, -18]),
         sketchTile('number34', [-10, 15]),
-        sketchTile('molecules', [-22, 7]),
+        sketchTile('atoms', [-22, 7]),
         storyTile('start-wearing-purple', [13, 20]),
         sketchTile('typography', [-12, -5]),
         sketchTile('rave', [10, -6]),
-        sketchTile('slinky', [-5, 8]),
+        // sketchTile('slinky', [-5, 8]),
         storyTile('seattle', [-15, -10]),
       ]}
       <Tile

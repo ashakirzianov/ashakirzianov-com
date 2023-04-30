@@ -1,9 +1,9 @@
 import { sketchCollection } from "@/components/collection";
-import { rytmVariations } from "@/sketches/wip/rythm";
+import { rythm } from "@/sketches/wip/rythm";
 
-export let { getStaticProps, getStaticPaths, SketchPage } = sketchCollection({
-    variations: rytmVariations,
-    path: '/wip/rythm',
+export let { getStaticPaths, getStaticProps, SketchPage } = sketchCollection({
+    collection: rythm,
+    // TODO: use 'href'
+    path: '/wip/rythm'
 });
-
 export default SketchPage;

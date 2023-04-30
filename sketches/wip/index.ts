@@ -7,7 +7,7 @@ import { strokedSlinky } from './strokedSlinky';
 import { rainbowStrings } from './rainbowStrings';
 import { styleIsTheAnswer } from './sita';
 import { helloWorld } from './helloWorld';
-import { rythm } from './rythm';
+import { currentRythm } from './rythm';
 
 export const wip = [
     molecules(),
@@ -19,5 +19,5 @@ export const wip = [
     knot(),
     styleIsTheAnswer(),
     helloWorld(),
-    rythm(),
+    currentRythm(),
 ];

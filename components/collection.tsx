@@ -1,39 +1,27 @@
-import Head from "next/head";
-import Link from "next/link";
-import { Scene } from "@/sketcher";
+import { SketchCollection } from "@/sketcher";
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/utils/sketcher";
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
-import { PixelPage } from "./PixelPage";
-import { useQuery } from "@/utils/query";
-import { SketchCard } from "./Cards";
-import { PixelButton } from "./Buttons";
-import { href } from "@/utils/refs";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { SketchCollectionPage } from "./SketchCollection";
 
 export function sketchCollection({
-    variations, path, title, description,
+    collection, path,
 }: {
-    variations: Scene<any>[],
+    collection: SketchCollection,
     path: string,
-    title?: string,
-    titlePlaceholder?: string,
-    description?: string,
 }) {
     type Props = {
-        index: number | null,
+        id: string | null,
     };
     const getStaticPaths: GetStaticPaths = async function () {
-        let dynamic = variations.map(
-            (_, idx) => ({
-                params: {
-                    id: [idx.toString()],
-                }
+        let dynamic = Object.keys(collection.sketches).map(
+            id => ({
+                params: { id: [id] }
             })
         );
         return {
             paths: [
                 { params: { id: ['index'] } },
-                { params: { id: [''] } },
                 ...dynamic,
             ],
             fallback: 'blocking',
@@ -41,79 +29,29 @@ export function sketchCollection({
     }
     const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
         let id = params?.id?.[0] ?? 'index';
-        switch (id) {
-            case 'index':
-            case '':
-                return {
-                    props: { index: null },
-                };
-            default:
-                let index = parseInt(id, 10);
-                if (0 <= index && index < variations.length) {
-                    return { props: { index } };
-                } else {
-                    return { notFound: true };
-                }
+        if (id === 'index') {
+            return { props: { id: null } };
+        } else if (id in collection.sketches) {
+            return {
+                props: { id }
+            }
+        } else {
+            return { notFound: true };
         }
     }
 
-    function SketchCollection() {
-        let { hue } = useQuery();
-        return <PixelPage hue={hue}>
-            <Head>
-                <title>{title || "Sketches"}</title>
-                <meta name="description" content={description || 'Sketch collection'} />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-            </Head>
-            <div className="outer">
-                <div className="container">
-                    {variations.map((scene, idx) =>
-                        <a key={idx} href={`${path}/${idx}`}>
-                            <SketchCard sketch={scene} pixelated={false} />
-                        </a>
-                    )}
-                </div>
-                <nav className="navigation">
-                    <Link href={href('home', { hue })} replace={false} shallow={false}>
-                        <PixelButton color={`hsl(${hue},100%,80%)`}>Главная</PixelButton>
-                    </Link>
-                </nav>
-            </div>
-            <style jsx>{`
-            .outer {
-                dispaly:flex;
-                flex-flow: column;
-                align-items: center;
-                justify-content: center;
-            }
-            .container {
-                display: flex;
-                flex-flow: row wrap;
-                align-content: flex-start;
-                gap: 10pt;
-                padding: 10pt;
-            }
-            .navigation {
-                display: flex;
-                justify-content: space-around;
-                padding: 10pt;
-            }
-            `}</style>
-        </PixelPage>
-    }
-
-    function SingleSketch({ index }: {
-        index: number,
+    function SingleSketch({ id }: {
+        id: string,
     }) {
-        let scene = variations[index ?? 0]!;
+        let scene = collection.sketches[id]!;
         let { node } = useSketcher({
             scene,
             period: 40,
         });
 
         return <PosterPage
-            title={scene.title || 'Poster'}
-            description={scene.description || 'Dynamic poster'}
+            title={scene.title || collection.meta.title}
+            description={scene.description || collection.meta.description || 'Dynamic poster'}
         >
             <div>
                 {node}
@@ -121,11 +59,14 @@ export function sketchCollection({
         </PosterPage>
     }
 
-    function SketchPage({ index }: Props) {
-        if (index !== null) {
-            return <SingleSketch index={index} />
+    function SketchPage({ id }: Props) {
+        if (id !== null) {
+            return <SingleSketch id={id} />
         } else {
-            return <SketchCollection />
+            return <SketchCollectionPage
+                collection={collection}
+                hrefForId={id => `${path}/${id}`}
+            />
         }
     }
 

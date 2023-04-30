@@ -8,6 +8,7 @@ export type Sketches = {
     [id: string]: Scene<any>,
 }
 export type SketchCollection = {
+    id: string,
     meta: SketchMeta,
     sketches: Sketches,
 }

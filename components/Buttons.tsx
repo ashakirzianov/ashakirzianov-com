@@ -1,4 +1,14 @@
+import { href } from "@/utils/refs";
+import Link from "next/link";
 import { ReactNode, useState } from "react";
+
+export function HomeButton() {
+  // TODO: use everywhere
+  // TODO: respect hue
+  return <Link href={href('home')} draggable={false}>
+    <PixelButton color="skyblue">Главная</PixelButton>
+  </Link>
+}
 
 export function PixelButton({
   children, color, textColor, onClick, width

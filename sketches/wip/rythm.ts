@@ -1,8 +1,20 @@
 import {
+    SketchCollection,
     arrayAnimator,
     circle, clearFrame, combineScenes, filterUndefined, fromHSLA,
     gravity, hslaRange, modItem, multBox, rainbow, rect, reduceAnimators, scene, square, traceAnimator, vals, vector, velocityStep, zoomToFit
 } from '@/sketcher';
+
+export const rythm: SketchCollection = {
+    id: 'rythm',
+    meta: {
+        title: 'Ритм / Rythm',
+    },
+    sketches: {
+        '0': variation0(),
+        '1': variation1(),
+    },
+}
 
 export const rytmVariations = [
     variation0(),
@@ -24,7 +36,7 @@ export const rytmVariations = [
     variationWhite(),
 ];
 
-export function rythm() {
+export function currentRythm() {
     return combineScenes(
         variation14(),
     )

@@ -13,6 +13,21 @@ export const rythm: SketchCollection = {
     sketches: {
         '0': variation0(),
         '1': variation1(),
+        '2': variation2(),
+        '3': variation3(),
+        '4': variation4(),
+        '5': variation5(),
+        '6': variation6(),
+        '7': variation7(),
+        '8': variation8(),
+        '9': variation9(),
+        '10': variation10(),
+        '11': variation11(),
+        '12': variation12(),
+        '13': variation13(),
+        '14': variation14(),
+        'meh': variationMeh(),
+        'white': variationWhite(),
     },
 }
 

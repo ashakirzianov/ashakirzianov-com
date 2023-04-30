@@ -1,5 +1,5 @@
 import { sketchCollection } from "@/components/collection";
-import { rythm } from "@/sketches/wip/rythm";
+import { rythm } from "@/sketches/rythm";
 
 export let { getStaticPaths, getStaticProps, SketchPage } = sketchCollection({
     collection: rythm,

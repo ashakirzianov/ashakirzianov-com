@@ -1,11 +1,10 @@
-import { molecules } from "../wip/molecules";
-import { rave } from "./rave";
-import { slinky } from "./slinky";
-import { typography } from "./typography";
-import { loveMeTwoTimes } from "./loveMeTwoTimes";
-import { number34 } from "./number34";
-import { bubbles } from "../wip/bubbles";
-import { bubblesFlat } from "../wip/bubblesFlat";
+import { rave } from "../misc/rave";
+import { slinky } from "../wip/slinky";
+import { typography } from "../misc/typography";
+import { loveMeTwoTimes } from "../posters/loveMeTwoTimes";
+import { number34 } from "../misc/number34";
+import { molecules } from "../atoms/molecules";
+
 
 export const finished = {
     'lmtt': loveMeTwoTimes(),

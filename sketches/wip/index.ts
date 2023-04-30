@@ -1,23 +1,20 @@
-import { molecules } from './molecules';
-import { bubbles } from './bubbles';
-import { pastel } from './pastel';
-import { knot } from './knot';
-import { bubblesFlat } from './bubblesFlat';
-import { strokedSlinky } from './strokedSlinky';
-import { rainbowStrings } from './rainbowStrings';
-import { styleIsTheAnswer } from './sita';
-import { helloWorld } from './helloWorld';
-import { currentRythm } from './rythm';
+import { SketchCollection } from "@/sketcher";
+import { knot } from "./knot";
+import { pastel } from "./pastel";
+import { rainbowStrings } from "./rainbowStrings";
+import { slinky } from "./slinky";
+import { strokedSlinky } from "./strokedSlinky";
 
-export const wip = [
-    molecules(),
-    bubbles(),
-    bubblesFlat(),
-    strokedSlinky(),
-    pastel(),
-    rainbowStrings(),
-    knot(),
-    styleIsTheAnswer(),
-    helloWorld(),
-    currentRythm(),
-];
+export const wipSketches: SketchCollection = {
+    id: 'wip',
+    meta: {
+        title: 'Неоконченное / Unfinished',
+    },
+    sketches: {
+        'knot': knot(),
+        'pastel': pastel(),
+        'rainbow-strings': rainbowStrings(),
+        'slinky': slinky(),
+        'stroked-slinky': strokedSlinky(),
+    },
+}

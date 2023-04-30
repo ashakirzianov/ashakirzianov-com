@@ -8,7 +8,7 @@ import Head from "next/head";
 import { PixelPage } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
-import { PixelButton, PixelToggle } from "@/components/Buttons";
+import { PixelToggle } from "@/components/Buttons";
 import { href } from "@/utils/refs";
 import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards";
 

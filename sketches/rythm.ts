@@ -1,8 +1,8 @@
 import {
-    SketchCollection,
-    arrayAnimator,
-    circle, clearFrame, combineScenes, filterUndefined, fromHSLA,
-    gravity, hslaRange, modItem, multBox, rainbow, rect, reduceAnimators, scene, square, traceAnimator, vals, vector, velocityStep, zoomToFit
+    SketchCollection, arrayAnimator, circle, clearFrame, combineScenes,
+    filterUndefined, fromHSLA, gravity, hslaRange, modItem, multBox, rainbow,
+    rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
+    zoomToFit
 } from '@/sketcher';
 
 export const rythm: SketchCollection = {

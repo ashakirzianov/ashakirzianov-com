@@ -57,6 +57,7 @@ export function SketchMulticollection({
             {
                 collections.map((collection, idx) =>
                     <SketchCollectionBlock
+                        key={`${collection.id}-${idx}`}
                         collection={collection}
                         hrefForId={id => hrefForIds(collection.id, id)}
                     />

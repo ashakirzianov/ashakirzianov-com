@@ -6,8 +6,6 @@ import {
     xSets, zoomToBoundingBox
 } from '@/sketcher';
 
-import { molecules } from './molecules';
-
 export function alina() {
     return combineScenes(
         fromLayers(colorLayer(gray(30))),

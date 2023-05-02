@@ -1,17 +1,29 @@
 import { SketchCollection } from "@/sketcher";
 import { SketchCard } from "./Cards";
+import Link from "next/link";
 
 export function SketchCollectionBlock({
     collection: { meta, sketches },
     hrefForId,
+    href,
 }: {
     collection: SketchCollection,
     hrefForId: (id: string) => string,
+    href?: string,
 }) {
+    let titleNode = <span style={{
+        display: 'flex',
+        color: 'white',
+        padding: 'var(--padding)',
+    }}>
+        {meta.title}
+    </span>
     return <>
         <div className="outer">
-            {/* TODO: make a link */}
-            <span className="title">{meta.title}</span>
+            {href
+                ? <Link href={href}>{titleNode}</Link>
+                : titleNode
+            }
             <div className="container">
                 {Object.entries(sketches).map(([id, scene], idx) =>
                     <a key={idx} href={hrefForId(id)}>
@@ -49,7 +61,7 @@ export function SketchMulticollection({
     collections, hrefForIds,
 }: {
     collections: SketchCollection[],
-    hrefForIds: (collectionId: string, id: string) => string,
+    hrefForIds: (collectionId: string, id?: string) => string,
 }) {
     return <>
         <div className="collections">
@@ -58,6 +70,8 @@ export function SketchMulticollection({
                     <SketchCollectionBlock
                         key={`${collection.id}-${idx}`}
                         collection={collection}
+                        href={hrefForIds(collection.id
+                        )}
                         hrefForId={id => hrefForIds(collection.id, id)}
                     />
                 )

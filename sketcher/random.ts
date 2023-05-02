@@ -1,4 +1,3 @@
-// TODO: remove this file
 import { mapRange, NumRange } from "./range";
 
 export function randomRange(range: Partial<NumRange>) {

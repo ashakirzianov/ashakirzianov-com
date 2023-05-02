@@ -3,7 +3,7 @@ import {
 } from '@/sketcher';
 
 export function helloWorld() {
-    return fromLayers({/* TODO: why do we need this emply layer? */ }, {
+    return fromLayers({}, {
         render({ canvas, frame }) {
             clearFrame({ canvas, color: 'black' });
             let root: TextLayout = {

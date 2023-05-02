@@ -38,9 +38,11 @@ export function SketchCollectionBlock({
             display: flex;
             flex-flow: row wrap;
             align-content: flex-start;
+            justify-content: center;
             gap: 10pt;
             padding: 10pt;
             width: 100%;
+            max-width: 720pt;
         }
         `}</style>
     </>

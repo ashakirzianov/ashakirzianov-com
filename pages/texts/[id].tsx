@@ -1,11 +1,8 @@
-import { PixelButton } from "@/components/Buttons";
-import { Divider } from "@/components/Divider";
+import { AllSketchesButton, HomeButton } from "@/components/Buttons";
 import { TextBlock } from "@/components/TextBlock";
-import { href } from "@/utils/refs";
 import { TextPost, getAllTextIds, getTextForId } from "@/utils/text";
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head";
-import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = async function () {
     let ids = await getAllTextIds();
@@ -46,12 +43,8 @@ export default function TextPostPage({ post }: Props) {
                 marginTop: '20pt',
                 marginBottom: '20pt',
             }}>
-                <Link href={href('text')}>
-                    <PixelButton color="skyblue">Все рассказы</PixelButton>
-                </Link>
-                <Link href={href('home')}>
-                    <PixelButton color="skyblue" >Главная</PixelButton>
-                </Link>
+                <AllSketchesButton />
+                <HomeButton />
             </nav>
         </TextBlock>
     </>;

@@ -17,6 +17,12 @@ export function AllSketchesButton() {
   </Link>
 }
 
+export function AllStoriesButton() {
+  return <Link href={href('text')}>
+    <PixelButton color="skyblue">Все рассказы</PixelButton>
+  </Link>
+}
+
 export function PixelButton({
   children, color, textColor, onClick, width
 }: {

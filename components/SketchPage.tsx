@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { PageHead } from "./PageHead";
 
-export function PosterPage({
+export function SketchPage({
     title, description, children,
 }: {
     title?: string,

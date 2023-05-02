@@ -1,8 +1,8 @@
 import { SketchCollection } from "@/sketcher";
-import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/utils/sketcher";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { SketchCollectionPage } from "./SketchCollectionPage";
+import { SketchPage } from "./SketchPage";
 
 export function sketchCollection({
     collection, path,
@@ -49,17 +49,17 @@ export function sketchCollection({
             period: 40,
         });
 
-        return <PosterPage
+        return <SketchPage
             title={scene.title || collection.meta.title}
             description={scene.description || collection.meta.description || 'Dynamic poster'}
         >
             <div>
                 {node}
             </div>
-        </PosterPage>
+        </SketchPage>
     }
 
-    function SketchPage({ id }: Props) {
+    function Page({ id }: Props) {
         if (id !== null) {
             return <SingleSketch id={id} />
         } else {
@@ -73,6 +73,6 @@ export function sketchCollection({
     return {
         getStaticPaths,
         getStaticProps,
-        SketchPage,
+        Page,
     };
 }

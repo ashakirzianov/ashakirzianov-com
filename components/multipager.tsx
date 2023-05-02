@@ -1,5 +1,5 @@
 import { Scene, randomInt } from "@/sketcher";
-import { PosterPage } from "@/components/PosterPage";
+import { SketchPage } from "@/components/SketchPage";
 import { useSketcher } from "@/utils/sketcher";
 import { GetServerSideProps } from "next";
 
@@ -47,14 +47,14 @@ export function multipager({
             chunk,
         });
 
-        return <PosterPage
+        return <SketchPage
             title={title ?? scene.title ?? titlePlaceholder}
             description={description ?? scene.description ?? descriptionPlaceholder}
         >
             <div>
                 {node}
             </div>
-        </PosterPage>;
+        </SketchPage>;
     }
 
     return {

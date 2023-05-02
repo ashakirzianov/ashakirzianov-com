@@ -20,11 +20,10 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
 }
 
 export default function AllStorites({ previews }: Props) {
-    return <PixelPage>
-        <Head>
-            <title>All Posters</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
+    return <PixelPage
+        title="Все рассказы"
+        description="Страница со всеми рассказами"
+    >
         <div className="outer">
             <div className="container">
                 {Object.entries(previews).map(([id, story], idx) =>

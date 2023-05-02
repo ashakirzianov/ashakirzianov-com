@@ -3,7 +3,6 @@ import Link from "next/link";
 import { GetStaticProps } from "next";
 import { TextPost, getAllPreviews } from "@/utils/text";
 import { Draggable } from "@/components/Draggable";
-import Head from "next/head";
 import { PixelPageImpl } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
@@ -116,11 +115,11 @@ export default function Main({
       />
     </Tile>;
   }
-  return <PixelPageImpl hue={hue}>
-    <Head>
-      <title>Анҗан</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-    </Head>
+  return <PixelPageImpl
+    hue={hue}
+    title="Анҗан"
+    description="Сайт с буквами и картинками"
+  >
     <header>
       <div className="help">
         {/* <HelpButton hue={hue} /> */}

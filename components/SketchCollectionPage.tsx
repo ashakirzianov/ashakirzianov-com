@@ -3,8 +3,11 @@ import { SketchCollectionBlock } from "./SketchCollection";
 import { PixelPage } from "./PixelPage";
 
 export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollectionBlock>[0]) {
-    // TODO: add title and description
-    return <PixelPage>
+    let { collection: { meta } } = rest;
+    return <PixelPage
+        title={meta.title}
+        description={meta.description ?? `Серия скетчей: ${meta.title}`}
+    >
         <div style={{
             display: 'flex',
             flexDirection: 'column',

@@ -1,5 +1,5 @@
-import Head from "next/head";
 import { ReactNode } from "react";
+import { PageHead } from "./PageHead";
 
 export function PosterPage({
     title, description, children,
@@ -10,11 +10,10 @@ export function PosterPage({
 }) {
     return (
         <>
-            <Head>
-                <title>{title ?? 'Poster'}</title>
-                {description ? <meta name="description" content={description} /> : null}
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-            </Head>
+            <PageHead
+                title={title ?? 'Sketch'}
+                description={description ?? title ?? 'Generative sketch'}
+            />
             <main>
                 <div className="page">
                     <div className="container">

@@ -6,7 +6,10 @@ import { useQuery } from "@/utils/query";
 
 export default function AboutPage() {
     let { hue } = useQuery();
-    return <PixelPage>
+    return <PixelPage
+        title="Who is Andjan?"
+        description="I am Anton Shakirzianov and this is my personal page"
+    >
         <Head>
             <title>Who is Andjan?</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -8,11 +8,10 @@ import { ReactNode } from "react";
 
 export default function AboutPage() {
     let { hue } = useQuery();
-    return <PixelPage>
-        <Head>
-            <title>Who is Andjan?</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
+    return <PixelPage
+        title="Who is Andjan?"
+        description="I am Anton Shakirzianov and this is my personal page"
+    >
         <AboutCard>
             <h1>Кто ты такой и что это за буква җ?</h1>
             <p>{`Ладно, вообще меня зовут Антон Шакирзянов. Буква "җ" взята из татарской версии кирилицы, вот отсюда: "Шөкер Җан".`}</p>

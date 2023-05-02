@@ -9,11 +9,10 @@ import { misc } from "@/sketches/misc";
 
 type Props = {};
 export default function AllSketchCollections({ }: Props) {
-    return <PixelPage>
-        <Head>
-            <title>Все скетчи</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
+    return <PixelPage
+        title="Все скетчи"
+        description="Страница со всеми картинками"
+    >
         <SketchMulticollection
             collections={[
                 rythm,

@@ -6,6 +6,7 @@ import { rythm } from "@/sketches/rythm";
 import { atoms } from "@/sketches/atoms";
 import { posters } from "@/sketches/posters";
 import { misc } from "@/sketches/misc";
+import { HomeButton } from "@/components/Buttons";
 
 type Props = {};
 export default function AllSketchCollections({ }: Props) {
@@ -13,14 +14,24 @@ export default function AllSketchCollections({ }: Props) {
         title="Все скетчи"
         description="Страница со всеми картинками"
     >
-        <SketchMulticollection
-            collections={[
-                rythm,
-                atoms,
-                posters,
-                misc,
-            ]}
-            hrefForIds={(collection, id) => href('sketch', { id, collection })}
-        />
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: 'var(--padding)'
+        }}>
+            <SketchMulticollection
+                collections={[
+                    rythm,
+                    atoms,
+                    posters,
+                    misc,
+                ]}
+                hrefForIds={(collection, id) => href('sketch', { id, collection })}
+            />
+            <footer>
+                <HomeButton />
+            </footer>
+        </div>
     </PixelPage>
 }

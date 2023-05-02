@@ -13,10 +13,19 @@ export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollec
             flexDirection: 'column',
             alignItems: 'center',
             gap: 'var(--padding)',
+            padding: 'var(--padding)',
         }}>
             <SketchCollectionBlock {...rest} />
-            <AllSketchesButton />
-            <HomeButton />
+            <footer style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 'var(--padding)',
+                padding: 'var(--padding)',
+            }}>
+                <AllSketchesButton />
+                <HomeButton />
+            </footer >
         </div>
     </PixelPage>
 }

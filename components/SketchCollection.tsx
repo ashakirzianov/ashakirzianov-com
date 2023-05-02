@@ -27,7 +27,7 @@ export function SketchCollectionBlock({
         .title {
             display: flex;
             color: white;
-            padding: 10pt;
+            padding: var(--padding);
         }
         .outer {
             display: flex;
@@ -39,8 +39,8 @@ export function SketchCollectionBlock({
             flex-flow: row wrap;
             align-content: flex-start;
             justify-content: center;
-            gap: 10pt;
-            padding: 10pt;
+            gap: var(--padding);
+            padding: var(--padding);
             width: 100%;
             max-width: 720pt;
         }
@@ -85,7 +85,7 @@ export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollec
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '10pt',
+            gap: 'var(--padding)',
         }}>
             <SketchCollectionBlock {...rest} />
             <HomeButton />

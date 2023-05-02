@@ -51,7 +51,7 @@ export function AboutCard({ children }: {
             align-items: center;
             justify-content: center;
             width: 100vw;
-            padding: 10pt;
+            padding: var(--padding);
         }
         .content {
             background-color: var(--paper-light);

@@ -41,7 +41,7 @@ export default function TextPostPage({ post }: Props) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '10pt',
+                gap: 'var(--padding)',
                 justifyContent: 'space-between',
                 marginTop: '20pt',
                 marginBottom: '20pt',

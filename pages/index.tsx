@@ -174,14 +174,14 @@ export default function Main({
         align-items: center;
       }
       .help {
-        padding: 10pt;
+        padding: var(--padding);
       }
       .buttons {
         display: flex;
         flex-flow: row wrap;
         justify-content: flex-end;
-        gap: 10pt;
-        padding: 10pt;
+        gap: var(--padding);
+        padding: var(--padding);
       }
       .grid {
         display: grid;
@@ -195,8 +195,8 @@ export default function Main({
         flex-flow: row wrap;
         align-content: flex-start;
         justify-content: flex-start;
-        gap: 10pt;
-        padding: 10pt;
+        gap: var(--padding);
+        padding: var(--padding);
         width: 100%;
         height: 100%;
       }
@@ -263,7 +263,7 @@ function Help({ hue }: {
     <div className="container pixel-shadow">
       <div className="content pixel-corners" style={{
         backgroundColor: 'white',
-        padding: '10pt',
+        padding: 'var(--padding)',
         color: 'red',
       }}>
         <Link href={href('about-en', { hue })} style={{

@@ -17,7 +17,7 @@ export function TextBlock({ font, children }: {
                 width: 100%;
             }
             .post {
-                padding: 10pt;
+                padding: var(--padding);
                 max-width: min(540pt, 100%);
                 font-size: 140%;
                 font-family: ${family};

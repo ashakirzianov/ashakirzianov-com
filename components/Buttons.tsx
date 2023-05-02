@@ -45,7 +45,7 @@ export function PixelButton({
         position: relative;
         top: ${top};
         left: ${left};
-        padding: 10pt;
+        padding: var(--padding);
         vertical-align: center;
         align-items: center;
         justify-content: center;

@@ -53,13 +53,13 @@ export default function AllStorites({ previews }: Props) {
             display: flex;
             flex-flow: row wrap;
             align-content: flex-start;
-            gap: 10pt;
-            padding: 10pt;
+            gap: var(--padding);
+            padding: var(--padding);
         }
         .navigation {
             display: flex;
             justify-content: space-around;
-            padding: 10pt;
+            padding: var(--padding);
         }
         `}</style>
     </PixelPage>

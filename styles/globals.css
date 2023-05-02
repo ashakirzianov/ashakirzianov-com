@@ -47,6 +47,7 @@ html {
   --card-width: 160pt;
   --card-font-size: 12pt;
   --card-text-height: 41.7em;
+  --padding: 10pt;
 }
 
 @media (prefers-color-scheme: dark) {

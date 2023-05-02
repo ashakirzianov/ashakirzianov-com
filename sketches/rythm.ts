@@ -282,7 +282,7 @@ function variation13() {
                             position: position,
                             // width: object.radius / Math.log(frame),
                             // height: object.radius / Math.log(frame),
-                            radius: object.radius * (Math.sin(f / 20) + 2) / Math.sqrt(f),
+                            radius: object.radius / Math.sqrt(f),
                             context: canvas.context,
                         });
                     }

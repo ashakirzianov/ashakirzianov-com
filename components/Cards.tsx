@@ -1,9 +1,9 @@
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Scene } from "@/sketcher";
 import { href } from "@/utils/refs";
 import { useSketcherPlayer } from "@/utils/sketcher";
 import { TextPost } from "@/utils/text";
 import Link from "next/link";
-import { ReactNode, useCallback, useEffect, useRef } from "react";
 
 export function SketchCard({ sketch, pixelated }: {
     sketch: Scene<any>,
@@ -14,8 +14,9 @@ export function SketchCard({ sketch, pixelated }: {
         scene: sketch, period: 40,
         dimensions: pixelated ? [3 * u, 4 * u] : undefined,
     });
+    let [onVisibilityChanged] = useState(() => setPlay);
     return <Card
-        onVisibilityChanged={setPlay}
+        onVisibilityChanged={onVisibilityChanged}
     >
         {node}
     </Card>

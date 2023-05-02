@@ -2,7 +2,7 @@ import { SketchCollection } from "@/sketcher";
 import { PosterPage } from "@/components/PosterPage";
 import { useSketcher } from "@/utils/sketcher";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { SketchCollectionPage } from "./SketchCollection";
+import { SketchCollectionPage } from "./SketchCollectionPage";
 
 export function sketchCollection({
     collection, path,

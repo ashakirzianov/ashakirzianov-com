@@ -75,21 +75,3 @@ export function SketchMulticollection({
         `}</style>
     </>
 }
-
-// TODO: move?
-export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollectionBlock>[0]) {
-    let { hue } = useQuery();
-    // TODO: add title and description
-    return <PixelPage hue={hue}>
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 'var(--padding)',
-        }}>
-            <SketchCollectionBlock {...rest} />
-            <AllSketchesButton />
-            <HomeButton />
-        </div>
-    </PixelPage>
-}

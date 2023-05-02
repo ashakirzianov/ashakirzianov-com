@@ -16,10 +16,21 @@ export default function AboutPage() {
         <AboutCard>
             <h1>Кто ты такой и что это за буква җ?</h1>
             <p>{`Ладно, вообще меня зовут Антон Шакирзянов. Буква "җ" взята из татарской версии кирилицы, вот отсюда: "Шөкер Җан".`}</p>
-            <p>Я пишу <Link href={href('text', { hue })}>рассказы</Link>, выдуманные и не совсем. А еще я увлекаюсь генеративным искусством: создаю <Link href={href('sketch', { hue })}>формы и плакаты</Link> из них.</p>
-            <p>У меня есть <Link href='https://instagram.com/ashakirzianov'>инстаграмм</Link> и <Link href='https://t.me/ashakirzianov_live'>телеграмм</Link>.</p>
+            <p>Я пишу <AboutLink href={href('text', { hue })}>рассказы</AboutLink>, выдуманные и не совсем. А еще я увлекаюсь генеративным искусством: создаю <AboutLink href={href('sketch', { hue })}>формы и плакаты</AboutLink> из них.</p>
+            <p>У меня есть <AboutLink href='https://instagram.com/ashakirzianov'>инстаграмм</AboutLink> и <AboutLink href='https://t.me/ashakirzianov_live'>телеграмм</AboutLink>.</p>
         </AboutCard>
     </PixelPage>
+}
+
+export function AboutLink({ href, children }: {
+    href: string,
+    children: ReactNode,
+}) {
+    return <Link href={href} style={{
+        color: 'skyblue',
+    }}>
+        {children}
+    </Link>
 }
 
 export function AboutCard({ children }: {

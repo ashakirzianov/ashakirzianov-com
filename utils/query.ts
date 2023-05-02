@@ -13,6 +13,6 @@ function getNumber(s: string | string[] | undefined) {
 export function useQuery() {
     let { hue } = useRouter().query;
     return {
-        hue: getNumber(hue) ?? 40,
+        hue: getNumber(hue),
     };
 }

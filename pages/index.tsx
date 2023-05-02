@@ -4,7 +4,7 @@ import { GetStaticProps } from "next";
 import { TextPost, getAllPreviews } from "@/utils/text";
 import { Draggable } from "@/components/Draggable";
 import Head from "next/head";
-import { PixelPage } from "@/components/PixelPage";
+import { PixelPageImpl } from "@/components/PixelPage";
 import { useQuery } from "@/utils/query";
 import { useRouter } from "next/router";
 import { PixelToggle } from "@/components/Buttons";
@@ -76,7 +76,7 @@ const sketchCards = {
 export default function Main({
   previews,
 }: Props) {
-  let { hue } = useQuery();
+  let { hue = 40 } = useQuery();
   let router = useRouter();
 
   let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
@@ -116,7 +116,7 @@ export default function Main({
       />
     </Tile>;
   }
-  return <PixelPage hue={hue}>
+  return <PixelPageImpl hue={hue}>
     <Head>
       <title>Анҗан</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -206,7 +206,7 @@ export default function Main({
         }
       }
       `}</style>
-  </PixelPage>
+  </PixelPageImpl>
 }
 
 function Tile({

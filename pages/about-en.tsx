@@ -1,12 +1,10 @@
 import { PixelPage } from "@/components/PixelPage";
-import { useQuery } from "@/utils/query";
 import { href } from "@/utils/refs";
 import Head from "next/head";
 import { AboutCard, AboutLink } from "./about";
 
 export default function AboutPage() {
-    let { hue } = useQuery();
-    return <PixelPage hue={hue}>
+    return <PixelPage>
         <Head>
             <title>Who is Andjan?</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />

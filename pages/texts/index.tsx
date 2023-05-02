@@ -1,13 +1,11 @@
-import { PixelButton } from "@/components/Buttons";
+import { HomeButton } from "@/components/Buttons";
 import { TextCard } from "@/components/Cards";
 import { PixelPage } from "@/components/PixelPage";
-import { useQuery } from "@/utils/query";
 import { href } from "@/utils/refs";
-import { TextPost, TextPostMap, getAllPreviews } from "@/utils/text";
+import { TextPostMap, getAllPreviews } from "@/utils/text";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { ReactNode } from "react";
 
 type Props = {
     previews: TextPostMap,
@@ -22,8 +20,7 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
 }
 
 export default function AllStorites({ previews }: Props) {
-    let { hue } = useQuery();
-    return <PixelPage hue={hue}>
+    return <PixelPage>
         <Head>
             <title>All Posters</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -37,9 +34,7 @@ export default function AllStorites({ previews }: Props) {
                 )}
             </div>
             <nav className="navigation">
-                <Link href={href('home', { hue })}>
-                    <PixelButton color={`hsl(${hue},100%,80%)`} >Главная</PixelButton>
-                </Link>
+                <HomeButton />
             </nav>
         </div>
         <style jsx>{`

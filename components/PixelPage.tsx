@@ -1,6 +1,16 @@
+import { useQuery } from "@/utils/query";
 import { ReactNode } from "react";
 
-export function PixelPage({ hue, children }: {
+export function PixelPage({ children }: {
+  children: ReactNode,
+}) {
+  let { hue } = useQuery();
+  return <PixelPageImpl hue={hue ?? 40}>
+    {children}
+  </PixelPageImpl>
+}
+
+export function PixelPageImpl({ hue, children }: {
   hue: number,
   children: ReactNode,
 }) {

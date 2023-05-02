@@ -1,5 +1,4 @@
 import { PixelPage } from "@/components/PixelPage";
-import { useQuery } from "@/utils/query";
 import Head from "next/head";
 import { href } from "@/utils/refs";
 import { SketchMulticollection } from "@/components/SketchCollection";
@@ -10,8 +9,7 @@ import { misc } from "@/sketches/misc";
 
 type Props = {};
 export default function AllSketchCollections({ }: Props) {
-    let { hue } = useQuery();
-    return <PixelPage hue={hue}>
+    return <PixelPage>
         <Head>
             <title>Все скетчи</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />

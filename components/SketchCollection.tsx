@@ -1,8 +1,5 @@
 import { SketchCollection } from "@/sketcher";
 import { SketchCard } from "./Cards";
-import { PixelPage } from "./PixelPage";
-import { useQuery } from "@/utils/query";
-import { AllSketchesButton, HomeButton } from "./Buttons";
 
 export function SketchCollectionBlock({
     collection: { meta, sketches },

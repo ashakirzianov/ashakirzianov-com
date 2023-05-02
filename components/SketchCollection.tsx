@@ -2,7 +2,7 @@ import { SketchCollection } from "@/sketcher";
 import { SketchCard } from "./Cards";
 import { PixelPage } from "./PixelPage";
 import { useQuery } from "@/utils/query";
-import { HomeButton } from "./Buttons";
+import { AllSketchesButton, HomeButton } from "./Buttons";
 
 export function SketchCollectionBlock({
     collection: { meta, sketches },
@@ -88,6 +88,7 @@ export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollec
             gap: 'var(--padding)',
         }}>
             <SketchCollectionBlock {...rest} />
+            <AllSketchesButton />
             <HomeButton />
         </div>
     </PixelPage>

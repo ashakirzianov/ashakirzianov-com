@@ -10,6 +10,13 @@ export function HomeButton() {
   </Link>
 }
 
+export function AllSketchesButton() {
+  // TODO: respect hue
+  return <Link href={href('sketch')} draggable={false}>
+    <PixelButton color="skyblue">Все скетчи</PixelButton>
+  </Link>
+}
+
 export function PixelButton({
   children, color, textColor, onClick, width
 }: {

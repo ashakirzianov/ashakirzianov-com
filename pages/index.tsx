@@ -150,15 +150,15 @@ export default function Main({
         />
       </Tile>
       {[
-        storyTile('thirty-four', [25, 10]),
         sketchTile('posters', [5, -18]),
         sketchTile('number34', [-10, 15]),
         sketchTile('atoms', [-22, 7]),
-        storyTile('start-wearing-purple', [13, 20]),
-        sketchTile('typography', [-12, -5]),
+        storyTile('thirty-four', [25, 10]),
+        storyTile('seattle', [13, 20]),
+        sketchTile('typography', [7, 5]),
         sketchTile('rave', [10, -6]),
         sketchTile('rythm', [-5, 8]),
-        storyTile('seattle', [-15, -10]),
+        storyTile('start-wearing-purple', [-15, -10]),
       ]}
       <Tile
         shifted={free} position={[20, -15]} back

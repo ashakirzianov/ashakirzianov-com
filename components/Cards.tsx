@@ -14,11 +14,8 @@ export function SketchCard({ sketch, pixelated }: {
         scene: sketch, period: 40,
         dimensions: pixelated ? [3 * u, 4 * u] : undefined,
     });
-    let onVisibilityChanged = useCallback((visible: boolean) => {
-        setPlay(visible);
-    }, []);
     return <Card
-        onVisibilityChanged={onVisibilityChanged}
+        onVisibilityChanged={setPlay}
     >
         {node}
     </Card>
@@ -137,6 +134,7 @@ function Card({
 
     useEffect(() => {
         if (!onVisibilityChanged || !cardRef.current) return;
+        let ref = cardRef.current;
 
         let lastVisibility: boolean | null = null;
 
@@ -153,10 +151,10 @@ function Card({
             { threshold: THRESHOLD }
         );
 
-        observer.observe(cardRef.current);
+        observer.observe(ref);
 
         // Call the onVisibilityChanged function immediately after setting up the observer
-        const rect = cardRef.current.getBoundingClientRect();
+        const rect = ref.getBoundingClientRect();
         const isVisible =
             (rect.top <= window.innerHeight && rect.top + rect.height * THRESHOLD >= 0) ||
             (rect.bottom >= 0 && rect.bottom - rect.height * THRESHOLD <= window.innerHeight);
@@ -166,9 +164,7 @@ function Card({
         }
 
         return () => {
-            if (cardRef.current) {
-                observer.unobserve(cardRef.current);
-            }
+            observer.unobserve(ref);
         };
     }, [onVisibilityChanged]);
 

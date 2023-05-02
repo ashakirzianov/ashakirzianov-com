@@ -4,7 +4,6 @@ import { PixelPage } from "@/components/PixelPage";
 import { href } from "@/utils/refs";
 import { TextPostMap, getAllPreviews } from "@/utils/text";
 import { GetStaticProps } from "next";
-import Head from "next/head";
 import Link from "next/link";
 
 type Props = {

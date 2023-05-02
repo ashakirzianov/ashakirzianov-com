@@ -1,18 +1,18 @@
+import { useQuery } from "@/utils/query";
 import { href } from "@/utils/refs";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
 
 export function HomeButton() {
-  // TODO: use everywhere
-  // TODO: respect hue
-  return <Link href={href('home')} draggable={false}>
+  let { hue } = useQuery();
+  return <Link href={href('home', { hue })} draggable={false}>
     <PixelButton color="skyblue">Главная</PixelButton>
   </Link>
 }
 
 export function AllSketchesButton() {
-  // TODO: respect hue
-  return <Link href={href('sketch')} draggable={false}>
+  let { hue } = useQuery();
+  return <Link href={href('sketch', { hue })} draggable={false}>
     <PixelButton color="skyblue">Все скетчи</PixelButton>
   </Link>
 }

@@ -1,20 +1,27 @@
 import { Scene } from "@/sketcher";
 import { href } from "@/utils/refs";
-import { useSketcher } from "@/utils/sketcher";
+import { useSketcherPlayer } from "@/utils/sketcher";
 import { TextPost } from "@/utils/text";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useCallback, useEffect, useRef } from "react";
 
 export function SketchCard({ sketch, pixelated }: {
     sketch: Scene<any>,
     pixelated: boolean,
 }) {
     let u = 20;
-    let { node } = useSketcher({
+    let { node, setPlay } = useSketcherPlayer({
         scene: sketch, period: 40,
         dimensions: pixelated ? [3 * u, 4 * u] : undefined,
     });
-    return <Card>{node}</Card>
+    let onVisibilityChanged = useCallback((visible: boolean) => {
+        setPlay(visible);
+    }, []);
+    return <Card
+        onVisibilityChanged={onVisibilityChanged}
+    >
+        {node}
+    </Card>
 }
 
 export function TextCard({ text }: {
@@ -117,14 +124,57 @@ function AboutLink({ children, href, highlight, onHover }: {
     </Link>;
 }
 
+
 function Card({
     children,
+    onVisibilityChanged,
 }: {
-    children?: ReactNode,
+    children?: ReactNode;
+    onVisibilityChanged?: (isVisible: boolean) => void;
 }) {
-    return <div className="pixel-shadow">
-        <div className="card-frame pixel-corners">
-            {children}
+    const THRESHOLD = 0.1;
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!onVisibilityChanged || !cardRef.current) return;
+
+        let lastVisibility: boolean | null = null;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    const isVisible = entry.intersectionRatio >= THRESHOLD;
+                    if (isVisible !== lastVisibility) {
+                        onVisibilityChanged(isVisible);
+                        lastVisibility = isVisible;
+                    }
+                });
+            },
+            { threshold: THRESHOLD }
+        );
+
+        observer.observe(cardRef.current);
+
+        // Call the onVisibilityChanged function immediately after setting up the observer
+        const rect = cardRef.current.getBoundingClientRect();
+        const isVisible =
+            (rect.top <= window.innerHeight && rect.top + rect.height * THRESHOLD >= 0) ||
+            (rect.bottom >= 0 && rect.bottom - rect.height * THRESHOLD <= window.innerHeight);
+        if (isVisible !== lastVisibility) {
+            onVisibilityChanged(isVisible);
+            lastVisibility = isVisible;
+        }
+
+        return () => {
+            if (cardRef.current) {
+                observer.unobserve(cardRef.current);
+            }
+        };
+    }, [onVisibilityChanged]);
+
+    return (
+        <div className="pixel-shadow" ref={cardRef}>
+            <div className="card-frame pixel-corners">{children}</div>
         </div>
-    </div>
+    );
 }

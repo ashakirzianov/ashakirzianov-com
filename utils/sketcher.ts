@@ -19,3 +19,22 @@ export function useSketcher<State>(props: UseSketcherProps<State> & {
     }, []);
     return { node };
 }
+
+export function useSketcherPlayer<State>(props: UseSketcherProps<State> & {
+    dimensions?: [width: number, height: number],
+}) {
+    let dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined]);
+    let { node, refs } = useCanvases(dims);
+    let { start, pause, isPaused, cleanup } = launcher({
+        ...props,
+        getCanvas: idx => getCanvasFromRef(refs[idx]),
+    });
+    function setPlay(play: boolean) {
+        if (isPaused() && play) {
+            start();
+        } else if (!isPaused() && !play) {
+            pause();
+        }
+    }
+    return { node, setPlay, cleanup };
+}

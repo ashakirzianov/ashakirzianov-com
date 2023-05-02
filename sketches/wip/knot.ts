@@ -1,7 +1,7 @@
 import {
     velocityStep, gravity, circle, reduceAnimators, arrayAnimator,
     randomRange, cubicBox, vals, scene, randomObject, zoomToBoundingBox, combineScenes, fromLayers, colorLayer, makeStops, gray, fromRGBA,
-} from '@/sketcher';
+} from '@/sketcher'
 
 export function knot() {
     return combineScenes(
@@ -14,19 +14,19 @@ export function knot() {
             }),
         })),
         form(),
-    );
+    )
 }
 
 function form() {
-    let box = cubicBox(200);
-    let batchRange = { min: 20, max: 20 };
-    let maxVelocity = 0.4;
-    let massRange = { min: 0.5, max: 5 };
-    let batch = Math.floor(randomRange(batchRange));
+    let box = cubicBox(200)
+    let batchRange = { min: 20, max: 20 }
+    let maxVelocity = 0.4
+    let massRange = { min: 0.5, max: 5 }
+    let batch = Math.floor(randomRange(batchRange))
     let set = vals(batch).map(() => randomObject({
         massRange, maxVelocity, box,
         rToM: 1,
-    }));
+    }))
     return scene({
         state: [set],
         animator: arrayAnimator(reduceAnimators(
@@ -38,7 +38,7 @@ function form() {
             prepare({ canvas, state }) {
                 zoomToBoundingBox({
                     canvas, objects: state.flat(), scale: 1.2
-                });
+                })
             },
             render({ canvas, state }) {
                 state.forEach(set => set.forEach(
@@ -50,10 +50,10 @@ function form() {
                             position: object.position,
                             radius: object.radius,
                             context: canvas.context,
-                        });
+                        })
                     }
                 ))
             }
         }],
-    });
+    })
 }

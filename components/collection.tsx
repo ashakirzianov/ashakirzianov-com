@@ -1,8 +1,8 @@
-import { SketchCollection } from "@/sketcher";
-import { useSketcher } from "@/utils/sketcher";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { SketchCollectionPage } from "./SketchCollectionPage";
-import { SketchPage } from "./SketchPage";
+import { SketchCollection } from "@/sketcher"
+import { useSketcher } from "@/utils/sketcher"
+import { GetStaticPaths, GetStaticProps } from "next"
+import { SketchCollectionPage } from "./SketchCollectionPage"
+import { SketchPage } from "./SketchPage"
 
 export function sketchCollection({
     collection, path,
@@ -18,7 +18,7 @@ export function sketchCollection({
             id => ({
                 params: { id: [id] }
             })
-        );
+        )
         return {
             paths: [
                 { params: { id: ['index'] } },
@@ -28,26 +28,26 @@ export function sketchCollection({
         }
     }
     const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
-        let id = params?.id?.[0] ?? 'index';
+        let id = params?.id?.[0] ?? 'index'
         if (id === 'index') {
-            return { props: { id: null } };
+            return { props: { id: null } }
         } else if (id in collection.sketches) {
             return {
                 props: { id }
             }
         } else {
-            return { notFound: true };
+            return { notFound: true }
         }
     }
 
     function SingleSketch({ id }: {
         id: string,
     }) {
-        let scene = collection.sketches[id]!;
+        let scene = collection.sketches[id]!
         let { node } = useSketcher({
             scene,
             period: 40,
-        });
+        })
 
         return <SketchPage
             title={scene.title || collection.meta.title}
@@ -74,5 +74,5 @@ export function sketchCollection({
         getStaticPaths,
         getStaticProps,
         Page,
-    };
+    }
 }

@@ -1,17 +1,17 @@
-import { useQuery } from "@/utils/query";
-import { href } from "@/utils/refs";
-import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { useQuery } from "@/utils/query"
+import { href } from "@/utils/refs"
+import Link from "next/link"
+import { ReactNode, useState } from "react"
 
 export function HomeButton() {
-  let { hue } = useQuery();
+  let { hue } = useQuery()
   return <Link href={href('home', { hue })} draggable={false}>
     <PixelButton color="skyblue">Главная</PixelButton>
   </Link>
 }
 
 export function AllSketchesButton() {
-  let { hue } = useQuery();
+  let { hue } = useQuery()
   return <Link href={href('sketch', { hue })} draggable={false}>
     <PixelButton color="skyblue">Все скетчи</PixelButton>
   </Link>
@@ -32,12 +32,12 @@ export function PixelButton({
   textColor?: string
   onClick?: () => void,
 }) {
-  let drop = '8px';
-  let [pushed, setPushed] = useState(false);
-  let down = pushed;
-  let left = down ? drop : '0px';
-  let top = down ? drop : '0px';
-  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`;
+  let drop = '8px'
+  let [pushed, setPushed] = useState(false)
+  let down = pushed
+  let left = down ? drop : '0px'
+  let top = down ? drop : '0px'
+  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
   return <div className="outer" draggable={false}>
     <div className="inner pixel-corners" draggable={false}
       onMouseDown={() => setPushed(true)}
@@ -75,13 +75,13 @@ export function PixelToggle({ color, onClick, pressed }: {
   onClick?: () => void,
   pressed?: boolean,
 }) {
-  let size = '30px';
-  let drop = '8px';
-  let [pushed, setPushed] = useState(false);
-  let down = pushed || pressed;
-  let left = down ? drop : '0px';
-  let top = down ? drop : '0px';
-  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`;
+  let size = '30px'
+  let drop = '8px'
+  let [pushed, setPushed] = useState(false)
+  let down = pushed || pressed
+  let left = down ? drop : '0px'
+  let top = down ? drop : '0px'
+  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
   return <div className="outer" draggable={false}>
     <div className="inner pixel-corners" draggable={false}
       onMouseDown={() => setPushed(true)}

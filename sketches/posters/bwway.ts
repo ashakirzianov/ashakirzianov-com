@@ -2,11 +2,11 @@ import {
     alternateAnimators, arrayAnimator, clearFrame, colorLayer, combineScenes, concentringCircles, fromLayers,
     gravity, modItem, rainbow, randomRange, reduceAnimators,
     renderPositionedLayout, scene, sceneMeta, sidesTextLayout, TextLayout, vals, velocityStep, randomObject, xSets, zoomToBoundingBox,
-} from "@/sketcher";
+} from "@/sketcher"
 
 export function bwway() {
-    let deg = 10;
-    let duration = 20;
+    let deg = 10
+    let duration = 20
     let initialState = {
         cross: [0, -5, -33, -40, -35],
         main: [0, 0, 0, 0, 0],
@@ -26,7 +26,7 @@ export function bwway() {
                     return {
                         cross: cross.map((c, i) => c - (c - initialState.cross[i]!) / 2),
                         main: main.map((c, i) => c - (c - initialState.main[i]!) / duration),
-                    };
+                    }
                 },
             }, {
                 duration: 1,
@@ -37,7 +37,7 @@ export function bwway() {
                     return {
                         cross: cross.map(c => c + (Math.random() - .5) * deg),
                         main: main.map(c => c + (Math.random() - .5) * deg),
-                    };
+                    }
                 },
             }]),
             layers: [{
@@ -61,7 +61,7 @@ export function bwway() {
                                 offset: main[n]!,
                                 compositeOperation: 'destination-out',
                             })),
-                    };
+                    }
                     let sides = sidesTextLayout({
                         canvas,
                         texts: {
@@ -92,34 +92,34 @@ export function bwway() {
                             useFontBoundingBox: true,
                         },
                         inside,
-                    });
+                    })
 
-                    clearFrame({ canvas, color: 'black' });
+                    clearFrame({ canvas, color: 'black' })
                     renderPositionedLayout({
                         canvas,
                         layout: sides,
-                    });
+                    })
                 }
             }]
         }),
-    );
+    )
 }
 
 function rave() {
-    let batchRange = { min: 10, max: 10 };
-    let maxVelocity = 1;
-    let massRange = { min: 1, max: 20 };
-    let palette = rainbow({ count: 120, s: 100, l: 70 });
+    let batchRange = { min: 10, max: 10 }
+    let maxVelocity = 1
+    let massRange = { min: 1, max: 20 }
+    let palette = rainbow({ count: 120, s: 100, l: 70 })
     let sets = xSets({
         size: 1, velocity: 1,
         creareObjects(box) {
-            let batch = Math.floor(randomRange(batchRange));
+            let batch = Math.floor(randomRange(batchRange))
             return vals(batch).map(() => randomObject({
                 massRange, maxVelocity, box,
                 rToM: 2,
-            }));
+            }))
         },
-    });
+    })
     return scene({
         state: sets,
         animator: arrayAnimator(reduceAnimators(
@@ -129,26 +129,26 @@ function rave() {
         )),
         layers: [{}, {
             render({ canvas, state, frame }) {
-                canvas.context.save();
+                canvas.context.save()
                 zoomToBoundingBox({
                     canvas, objects: state.flat(), scale: 1.5,
-                });
+                })
                 state.forEach((set, seti) => set.forEach(
                     object => {
-                        let offset = seti * 30 + frame;
+                        let offset = seti * 30 + frame
                         let fills = vals(5).map(
                             (_, i) => modItem(palette, offset - 3 * i)
-                        );
+                        )
                         concentringCircles({
                             context: canvas.context,
                             position: object.position,
                             radius: object.radius,
                             fills,
-                        });
+                        })
                     }
-                ));
-                canvas.context.restore();
+                ))
+                canvas.context.restore()
             }
         }],
-    });
+    })
 }

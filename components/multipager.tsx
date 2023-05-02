@@ -1,7 +1,7 @@
-import { Scene, randomInt } from "@/sketcher";
-import { SketchPage } from "@/components/SketchPage";
-import { useSketcher } from "@/utils/sketcher";
-import { GetServerSideProps } from "next";
+import { Scene, randomInt } from "@/sketcher"
+import { SketchPage } from "@/components/SketchPage"
+import { useSketcher } from "@/utils/sketcher"
+import { GetServerSideProps } from "next"
 
 export function multipager({
     variations,
@@ -21,31 +21,31 @@ export function multipager({
         index: number,
     };
     const getServerSideProps: GetServerSideProps<Props> = async function ({ params }) {
-        let id = params?.id?.[0] ?? 'index';
+        let id = params?.id?.[0] ?? 'index'
         switch (id) {
             case 'index':
             case 'random':
                 return {
                     props: { index: randomInt(variations.length), },
-                };
+                }
             default:
-                let index = parseInt(id, 10);
+                let index = parseInt(id, 10)
                 if (0 <= index && index < variations.length) {
-                    return { props: { index } };
+                    return { props: { index } }
                 } else {
-                    return { notFound: true };
+                    return { notFound: true }
                 }
         }
     }
 
     function SketchComponent({ index }: Props) {
-        let scene = variations[index]!;
+        let scene = variations[index]!
         let { node } = useSketcher({
             scene,
             period: period ?? 40,
             skip,
             chunk,
-        });
+        })
 
         return <SketchPage
             title={title ?? scene.title ?? titlePlaceholder}
@@ -54,11 +54,11 @@ export function multipager({
             <div>
                 {node}
             </div>
-        </SketchPage>;
+        </SketchPage>
     }
 
     return {
         getServerSideProps,
         SketchComponent,
-    };
+    }
 }

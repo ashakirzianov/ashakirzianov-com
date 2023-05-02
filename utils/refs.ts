@@ -4,34 +4,34 @@ export function href(kind: RefKind, options?: {
     collection?: string,
     hue?: number,
 }) {
-    let { id, collection, hue } = options ?? {};
-    let result = hrefPrefix(kind);
+    let { id, collection, hue } = options ?? {}
+    let result = hrefPrefix(kind)
     if (collection !== undefined) {
-        result = `${result}/${collection}`;
+        result = `${result}/${collection}`
     }
     if (id !== undefined) {
-        result = `${result}/${id}`;
+        result = `${result}/${id}`
     }
     if (hue !== undefined) {
         result = `${result}?hue=${hue}`
     }
-    return result;
+    return result
 }
 
 function hrefPrefix(kind: RefKind) {
     switch (kind) {
         case 'sketch':
-            return '/sketches';
+            return '/sketches'
         case 'wip':
-            return '/wip';
+            return '/wip'
         case 'text':
-            return '/texts';
+            return '/texts'
         case 'about':
-            return '/about';
+            return '/about'
         case 'about-en':
-            return '/about-en';
+            return '/about-en'
         case 'home':
         default:
-            return '/';
+            return '/'
     }
 }

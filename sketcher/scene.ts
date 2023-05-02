@@ -1,6 +1,6 @@
-import { Animator } from "./animator";
-import { Layer } from "./layer";
-import { Dimensions } from "./layout";
+import { Animator } from "./animator"
+import { Layer } from "./layer"
+import { Dimensions } from "./layout"
 
 export type SceneMeta = {
     dimensions?: [width: number, height: number],
@@ -14,7 +14,7 @@ export type Scene<State = unknown> = {
 } & SceneMeta;
 
 export function scene<T>(scene: Scene<T>): Scene<T> {
-    return scene;
+    return scene
 }
 
 export function sceneMeta(meta: SceneMeta): Scene {
@@ -22,7 +22,7 @@ export function sceneMeta(meta: SceneMeta): Scene {
         state: null,
         layers: [],
         ...meta,
-    };
+    }
 }
 
 export function combineScenes(...scenes: Scene<any>[]): Scene {
@@ -30,9 +30,9 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
         state: scenes.map(s => s.state),
         animator(states: any[], frame) {
             return states.map((state, idx) => {
-                let animator = scenes[idx]?.animator;
-                return animator ? animator(state, frame) : state;
-            });
+                let animator = scenes[idx]?.animator
+                return animator ? animator(state, frame) : state
+            })
         },
         layers: scenes.map((scene, idx) => {
             return scene.layers.map((layer): Layer<unknown[]> => {
@@ -43,7 +43,7 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
                             layer.prepare({
                                 canvas, frame,
                                 state: state[idx]!,
-                            });
+                            })
                         }
                     },
                     render({ canvas, frame, state }) {
@@ -51,11 +51,11 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
                             layer.render({
                                 canvas, frame,
                                 state: state[idx]!,
-                            });
+                            })
                         }
                     },
-                };
-            });
+                }
+            })
         }).flat(),
         // Combine meta:
         dimensions: scenes.reduce<[number, number] | undefined>(
@@ -64,11 +64,11 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
                     return [
                         Math.max(curr.dimensions[0], prev[0]),
                         Math.max(curr.dimensions[1], prev[1]),
-                    ];
+                    ]
                 } else if (curr.dimensions) {
-                    return curr.dimensions;
+                    return curr.dimensions
                 } else {
-                    return prev;
+                    return prev
                 }
             },
             undefined,
@@ -81,13 +81,13 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
             .map(s => s.title)
             .filter(title => title)
             .join(' '),
-    };
-    return result as Scene;
+    }
+    return result as Scene
 }
 
 export function fromLayers(...layers: Layer<unknown>[]): Scene<unknown> {
     return {
         state: undefined,
         layers,
-    };
+    }
 }

@@ -1,21 +1,21 @@
-import { ReactNode, useState } from "react";
-import Link from "next/link";
-import { GetStaticProps } from "next";
-import { TextPost, getAllPreviews } from "@/utils/text";
-import { Draggable } from "@/components/Draggable";
-import { PixelPageImpl } from "@/components/PixelPage";
-import { useQuery } from "@/utils/query";
-import { useRouter } from "next/router";
-import { PixelToggle } from "@/components/Buttons";
-import { href } from "@/utils/refs";
-import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards";
-import { Scene } from "@/sketcher";
-import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes";
-import { number34 } from "@/sketches/misc/number34";
-import { molecules } from "@/sketches/atoms/molecules";
-import { typography } from "@/sketches/misc/typography";
-import { rave } from "@/sketches/misc/rave";
-import { currentRythm } from "@/sketches/rythm";
+import { ReactNode, useState } from "react"
+import Link from "next/link"
+import { GetStaticProps } from "next"
+import { TextPost, getAllPreviews } from "@/utils/text"
+import { Draggable } from "@/components/Draggable"
+import { PixelPageImpl } from "@/components/PixelPage"
+import { useQuery } from "@/utils/query"
+import { useRouter } from "next/router"
+import { PixelToggle } from "@/components/Buttons"
+import { href } from "@/utils/refs"
+import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards"
+import { Scene } from "@/sketcher"
+import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
+import { number34 } from "@/sketches/misc/number34"
+import { molecules } from "@/sketches/atoms/molecules"
+import { typography } from "@/sketches/misc/typography"
+import { rave } from "@/sketches/misc/rave"
+import { currentRythm } from "@/sketches/rythm"
 
 // @refresh reset
 
@@ -26,12 +26,12 @@ type Props = {
   previews: Posts,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
-  let previews = await getAllPreviews();
+  let previews = await getAllPreviews()
   return {
     props: {
       previews,
     }
-  };
+  }
 }
 
 type SketchCardProps = {
@@ -75,23 +75,23 @@ const sketchCards = {
 export default function Main({
   previews,
 }: Props) {
-  let { hue = 40 } = useQuery();
-  let router = useRouter();
+  let { hue = 40 } = useQuery()
+  let router = useRouter()
 
-  let [hl, setHl] = useState<HighlightKind | undefined>(undefined);
-  let [free, setFree] = useState(true);
-  let [pixelated, setPixelated] = useState(false);
+  let [hl, setHl] = useState<HighlightKind | undefined>(undefined)
+  let [free, setFree] = useState(true)
+  let [pixelated, setPixelated] = useState(false)
   function nextHue() {
-    let hues = [40, 210, 340, 100];
-    let idx = hues.findIndex(h => h === hue) + 1;
-    let nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!;
-    router.push(`/?hue=${nextHue}`, undefined, { shallow: true });
+    let hues = [40, 210, 340, 100]
+    let idx = hues.findIndex(h => h === hue) + 1
+    let nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!
+    router.push(`/?hue=${nextHue}`, undefined, { shallow: true })
   }
   function sketchTile(
     key: keyof typeof sketchCards,
     position: [number, number],
   ) {
-    let { id, collection, sketch } = sketchCards[key];
+    let { id, collection, sketch } = sketchCards[key]
     return <Tile
       key={'sketch-' + key}
       shifted={free}
@@ -113,7 +113,7 @@ export default function Main({
       <TextCard
         text={previews[id]!}
       />
-    </Tile>;
+    </Tile>
   }
   return <PixelPageImpl
     hue={hue}
@@ -220,14 +220,14 @@ function Tile({
   back?: boolean,
   highlight?: boolean,
 }) {
-  let navigable = true;
-  function lock() { navigable = false; }
-  function unlock() { setTimeout(() => { navigable = true; }) }
+  let navigable = true
+  function lock() { navigable = false }
+  function unlock() { setTimeout(() => { navigable = true }) }
   let content = link
     ? <Link draggable={false} href={link}
       onClick={event => {
         if (!navigable)
-          event.preventDefault();
+          event.preventDefault()
       }}
     >
       <Draggable

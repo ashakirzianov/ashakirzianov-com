@@ -1,7 +1,7 @@
-import { SketchCollection } from "@/sketcher";
-import { bubbles } from "./bubbles";
-import { bubblesFlat } from "./bubblesFlat";
-import { molecules } from "./molecules";
+import { SketchCollection } from "@/sketcher"
+import { bubbles } from "./bubbles"
+import { bubblesFlat } from "./bubblesFlat"
+import { molecules } from "./molecules"
 
 export const atoms: SketchCollection = {
     id: 'atoms',

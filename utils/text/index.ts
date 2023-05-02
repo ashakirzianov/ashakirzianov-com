@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import { promisify } from 'util';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import rehypeStringify from 'rehype-stringify';
-import { rehypeTruncate } from './truncate';
-import { rehypeAddIdToH1 } from './addIdToH1';
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { promisify } from 'util'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeStringify from 'rehype-stringify'
+import { rehypeTruncate } from './truncate'
+import { rehypeAddIdToH1 } from './addIdToH1'
 
 export type TextPost = {
     id: string,
@@ -20,34 +20,34 @@ export type TextPostMap = {
 };
 
 export async function getAllPreviews(): Promise<TextPostMap> {
-    let result: TextPostMap = {};
-    let ids = await getAllTextIds();
+    let result: TextPostMap = {}
+    let ids = await getAllTextIds()
     for (let id of ids) {
-        let preview = await getTextForId({ id, maxChars: 1000 });
+        let preview = await getTextForId({ id, maxChars: 1000 })
         if (preview) {
-            result[id] = preview;
+            result[id] = preview
         }
     }
-    return result;
+    return result
 }
 
 export async function getTextForId({ id, maxChars }: {
     id: string, maxChars?: number
 }) {
-    let fileName = path.join(getTextsDirectory(), `${id}.md`);
-    return getText(fileName, maxChars);
+    let fileName = path.join(getTextsDirectory(), `${id}.md`)
+    return getText(fileName, maxChars)
 }
 
 export async function getAllTextIds() {
-    let files = await getTextFiles(getTextsDirectory());
+    let files = await getTextFiles(getTextsDirectory())
     return files.map(fileName => path.basename(fileName).replace('.md', ''))
 }
 
 async function getText(fileName: string, maxChars?: number): Promise<TextPost | undefined> {
     try {
-        let id = path.basename(fileName).replace('.md', '');
-        let file = await promisify(fs.readFile)(fileName, 'utf8');
-        let matterFile = matter(file);
+        let id = path.basename(fileName).replace('.md', '')
+        let file = await promisify(fs.readFile)(fileName, 'utf8')
+        let matterFile = matter(file)
 
         const htmlFile = await unified()
             .use(remarkParse)
@@ -55,26 +55,26 @@ async function getText(fileName: string, maxChars?: number): Promise<TextPost | 
             .use(rehypeTruncate, { maxChars })
             .use(rehypeAddIdToH1, { id })
             .use(rehypeStringify)
-            .process(matterFile.content);
+            .process(matterFile.content)
 
         return {
             id,
             html: String(htmlFile),
             date: matterFile.data.date,
             title: matterFile.data.title,
-        };
+        }
     } catch {
-        return undefined;
+        return undefined
     }
 }
 
 async function getTextFiles(textsDirectory: string) {
-    const fileNames = await promisify(fs.readdir)(textsDirectory);
+    const fileNames = await promisify(fs.readdir)(textsDirectory)
     return fileNames
         .filter(fn => fn.endsWith('.md'))
-        .map(fn => path.join(textsDirectory, fn));
+        .map(fn => path.join(textsDirectory, fn))
 }
 
 function getTextsDirectory() {
-    return path.join(process.cwd(), 'texts');
+    return path.join(process.cwd(), 'texts')
 }

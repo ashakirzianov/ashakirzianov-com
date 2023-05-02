@@ -1,5 +1,5 @@
-import { Transformer } from 'unified';
-import { Node, Parent, Text } from 'hast';
+import { Transformer } from 'unified'
+import { Node, Parent, Text } from 'hast'
 
 interface TruncateOptions {
     maxChars: number;
@@ -10,11 +10,11 @@ interface CurrentChars {
 }
 
 function isTextNode(node: Node): node is Text {
-    return node.type === 'text';
+    return node.type === 'text'
 }
 
 function isParentNode(node: Node): node is Parent {
-    return 'children' in node;
+    return 'children' in node
 }
 
 function truncateHTMLTree(
@@ -23,41 +23,41 @@ function truncateHTMLTree(
     currentChars: CurrentChars = { count: 0 }
 ): Node | null {
     if (currentChars.count >= maxChars) {
-        return null;
+        return null
     }
 
     if (isTextNode(node)) {
-        const remainingChars = maxChars - currentChars.count;
-        const truncatedText = node.value.slice(0, remainingChars);
-        currentChars.count += truncatedText.length;
+        const remainingChars = maxChars - currentChars.count
+        const truncatedText = node.value.slice(0, remainingChars)
+        currentChars.count += truncatedText.length
 
         return {
             ...node,
             value: truncatedText,
-        } as Text;
+        } as Text
     }
 
     if (isParentNode(node)) {
-        const truncatedChildren: Node[] = [];
+        const truncatedChildren: Node[] = []
 
         for (const child of node.children) {
-            const truncatedChild = truncateHTMLTree(child, maxChars, currentChars);
+            const truncatedChild = truncateHTMLTree(child, maxChars, currentChars)
             if (truncatedChild) {
-                truncatedChildren.push(truncatedChild);
+                truncatedChildren.push(truncatedChild)
             }
 
             if (currentChars.count >= maxChars) {
-                break;
+                break
             }
         }
 
         return {
             ...node,
             children: truncatedChildren,
-        } as Parent;
+        } as Parent
     }
 
-    return node;
+    return node
 }
 
 export function rehypeTruncate({ maxChars }: {
@@ -65,9 +65,9 @@ export function rehypeTruncate({ maxChars }: {
 }): Transformer<Node> {
     return (tree: Node): Node => {
         if (maxChars === undefined) {
-            return tree;
+            return tree
         }
-        const truncatedTree = truncateHTMLTree(tree, maxChars);
-        return truncatedTree ?? tree;
-    };
+        const truncatedTree = truncateHTMLTree(tree, maxChars)
+        return truncatedTree ?? tree
+    }
 }

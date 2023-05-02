@@ -5,5 +5,5 @@ export function Divider() {
         margin: 'auto',
         marginTop: '20pt',
         marginBottom: '20pt',
-    }} />;
+    }} />
 }

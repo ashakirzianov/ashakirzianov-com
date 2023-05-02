@@ -1,12 +1,12 @@
-import { useQuery } from "@/utils/query";
-import { ReactNode } from "react";
-import { PageHead, PageHeaderProps } from "./PageHead";
+import { useQuery } from "@/utils/query"
+import { ReactNode } from "react"
+import { PageHead, PageHeaderProps } from "./PageHead"
 
 type PixelPageProps = PageHeaderProps & {
   children: ReactNode,
 };
 export function PixelPage({ children, ...rest }: PixelPageProps) {
-  let { hue } = useQuery();
+  let { hue } = useQuery()
   return <PixelPageImpl hue={hue ?? 40} {...rest}>
     {children}
   </PixelPageImpl>

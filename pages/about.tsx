@@ -1,12 +1,12 @@
-import { PixelPage } from "@/components/PixelPage";
-import { TextBlock } from "@/components/TextBlock";
-import { useQuery } from "@/utils/query";
-import { href } from "@/utils/refs";
-import Link from "next/link";
-import { ReactNode } from "react";
+import { PixelPage } from "@/components/PixelPage"
+import { TextBlock } from "@/components/TextBlock"
+import { useQuery } from "@/utils/query"
+import { href } from "@/utils/refs"
+import Link from "next/link"
+import { ReactNode } from "react"
 
 export default function AboutPage() {
-    let { hue } = useQuery();
+    let { hue } = useQuery()
     return <PixelPage
         title="Who is Andjan?"
         description="I am Anton Shakirzianov and this is my personal page"

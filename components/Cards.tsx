@@ -1,20 +1,20 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { Scene } from "@/sketcher";
-import { href } from "@/utils/refs";
-import { useSketcherPlayer } from "@/utils/sketcher";
-import { TextPost } from "@/utils/text";
-import Link from "next/link";
+import { ReactNode, useEffect, useRef, useState } from "react"
+import { Scene } from "@/sketcher"
+import { href } from "@/utils/refs"
+import { useSketcherPlayer } from "@/utils/sketcher"
+import { TextPost } from "@/utils/text"
+import Link from "next/link"
 
 export function SketchCard({ sketch, pixelated }: {
     sketch: Scene<any>,
     pixelated: boolean,
 }) {
-    let u = 20;
+    let u = 20
     let { node, setPlay } = useSketcherPlayer({
         scene: sketch, period: 40,
         dimensions: pixelated ? [3 * u, 4 * u] : undefined,
-    });
-    let [onVisibilityChanged] = useState(() => setPlay);
+    })
+    let [onVisibilityChanged] = useState(() => setPlay)
     return <Card
         onVisibilityChanged={onVisibilityChanged}
     >
@@ -60,7 +60,7 @@ export function TextCard({ text }: {
       }
     `}</style>
         </div>
-    </Card>;
+    </Card>
 }
 
 export type HighlightKind = 'stories' | 'posters';
@@ -90,7 +90,7 @@ export function AboutCard({ hue, onHover }: {
     }
     `}</style>
         </div>
-    </Card >;
+    </Card >
 }
 
 function AboutLink({ children, href, highlight, onHover }: {
@@ -109,17 +109,17 @@ function AboutLink({ children, href, highlight, onHover }: {
         }}
         onMouseLeave={function () {
             if (onHover) {
-                onHover(undefined);
+                onHover(undefined)
             }
         }}
         onMouseOut={function () {
             if (onHover) {
-                onHover(undefined);
+                onHover(undefined)
             }
         }}
     >
         {children}
-    </Link>;
+    </Link>
 }
 
 
@@ -130,48 +130,48 @@ function Card({
     children?: ReactNode;
     onVisibilityChanged?: (isVisible: boolean) => void;
 }) {
-    const THRESHOLD = 0.1;
-    const cardRef = useRef<HTMLDivElement>(null);
+    const THRESHOLD = 0.1
+    const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        if (!onVisibilityChanged || !cardRef.current) return;
-        let ref = cardRef.current;
+        if (!onVisibilityChanged || !cardRef.current) return
+        let ref = cardRef.current
 
-        let lastVisibility: boolean | null = null;
+        let lastVisibility: boolean | null = null
 
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
-                    const isVisible = entry.intersectionRatio >= THRESHOLD;
+                    const isVisible = entry.intersectionRatio >= THRESHOLD
                     if (isVisible !== lastVisibility) {
-                        onVisibilityChanged(isVisible);
-                        lastVisibility = isVisible;
+                        onVisibilityChanged(isVisible)
+                        lastVisibility = isVisible
                     }
-                });
+                })
             },
             { threshold: THRESHOLD }
-        );
+        )
 
-        observer.observe(ref);
+        observer.observe(ref)
 
         // Call the onVisibilityChanged function immediately after setting up the observer
-        const rect = ref.getBoundingClientRect();
+        const rect = ref.getBoundingClientRect()
         const isVisible =
             (rect.top <= window.innerHeight && rect.top + rect.height * THRESHOLD >= 0) ||
-            (rect.bottom >= 0 && rect.bottom - rect.height * THRESHOLD <= window.innerHeight);
+            (rect.bottom >= 0 && rect.bottom - rect.height * THRESHOLD <= window.innerHeight)
         if (isVisible !== lastVisibility) {
-            onVisibilityChanged(isVisible);
-            lastVisibility = isVisible;
+            onVisibilityChanged(isVisible)
+            lastVisibility = isVisible
         }
 
         return () => {
-            observer.unobserve(ref);
-        };
-    }, [onVisibilityChanged]);
+            observer.unobserve(ref)
+        }
+    }, [onVisibilityChanged])
 
     return (
         <div className="pixel-shadow" ref={cardRef}>
             <div className="card-frame pixel-corners">{children}</div>
         </div>
-    );
+    )
 }

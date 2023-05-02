@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode } from "react"
 
 export function TextBlock({ font, children }: {
     font?: string,
     children?: ReactNode,
 }) {
-    let family = font ?? 'var(--font-text), serif';
+    let family = font ?? 'var(--font-text), serif'
     return <div className="container">
         <div className="post">
             {children}
@@ -35,5 +35,5 @@ export function TextBlock({ font, children }: {
                 margin-bottom: .4em; /* between paragraphs */
             }
             `}</style>
-    </div>;
+    </div>
 }

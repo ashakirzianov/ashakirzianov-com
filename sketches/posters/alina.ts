@@ -4,7 +4,7 @@ import {
     arrayAnimator, circle, enchanceWithSetI, gravity, modItem, rainbow,
     randomObject, randomRange, reduceAnimators, scene, velocityStep,
     xSets, zoomToBoundingBox
-} from '@/sketcher';
+} from '@/sketcher'
 
 export function alina() {
     return combineScenes(
@@ -12,7 +12,7 @@ export function alina() {
         form(),
         fromLayers({
             prepare({ canvas }) {
-                let delta = 10;
+                let delta = 10
                 let layout = layoutOnCanvas(canvas, {
                     grow: 1,
                     direction: 'column',
@@ -27,34 +27,34 @@ export function alina() {
                         color: 'white',
                         offset: -3 / 2 * delta + n * delta,
                     })),
-                });
+                })
 
-                clearFrame({ canvas, color: 'pink' });
+                clearFrame({ canvas, color: 'pink' })
                 renderMask(canvas.context, context => {
                     for (let positioned of layout) {
-                        renderPositionedElement({ canvas, positioned });
+                        renderPositionedElement({ canvas, positioned })
                     }
-                });
+                })
             },
         }),
-    );
+    )
 }
 
 function form() {
-    let batchRange = { min: 10, max: 10 };
-    let maxVelocity = 1;
-    let massRange = { min: 1, max: 20 };
+    let batchRange = { min: 10, max: 10 }
+    let maxVelocity = 1
+    let massRange = { min: 1, max: 20 }
     let sets = enchanceWithSetI(xSets({
         size: 1, velocity: 1,
         creareObjects(box) {
-            let batch = Math.floor(randomRange(batchRange));
+            let batch = Math.floor(randomRange(batchRange))
             return vals(batch).map(() => randomObject({
                 massRange, maxVelocity, box,
                 rToM: 2,
-            }));
+            }))
         }
-    }));
-    let palette = rainbow({ count: 120 });
+    }))
+    let palette = rainbow({ count: 120 })
     return scene({
         state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
@@ -66,23 +66,23 @@ function form() {
             prepare({ canvas, state }) {
                 zoomToBoundingBox({
                     canvas, objects: state.flat(), scale: 1.5
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach(set => set.forEach(
                     object => {
-                        let offset = object.seti * 100 + frame;
-                        let stroke = modItem(palette, offset + 4);
+                        let offset = object.seti * 100 + frame
+                        let stroke = modItem(palette, offset + 4)
                         circle({
                             lineWidth: 3,
                             stroke,
                             position: object.position,
                             radius: object.radius,
                             context: canvas.context,
-                        });
+                        })
                     }
                 ))
             }
         }]
-    });
+    })
 }

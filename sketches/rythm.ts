@@ -3,7 +3,7 @@ import {
     filterUndefined, fromHSLA, gravity, hslaRange, modItem, multBox, rainbow,
     rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
     zoomToFit
-} from '@/sketcher';
+} from '@/sketcher'
 
 export const rythm: SketchCollection = {
     id: 'rythm',
@@ -49,7 +49,7 @@ export const rytmVariations = [
     variation14(),
     variationMeh(),
     variationWhite(),
-];
+]
 
 export function currentRythm() {
     return combineScenes(
@@ -58,25 +58,25 @@ export function currentRythm() {
 }
 
 function form() {
-    let n = 7;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 7
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 2 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 2 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -85,7 +85,7 @@ function form() {
                 }
             }
         )
-    ).flat());
+    ).flat())
     return scene({
         state,
         animator: (reduceAnimators(
@@ -94,22 +94,22 @@ function form() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
                     {
-                        let count = 15;
-                        let hue = 20 + idx * 50;
-                        let s = 90;
-                        hue = 200;
+                        let count = 15
+                        let hue = 20 + idx * 50
+                        let s = 90
+                        hue = 200
                         let colors = [
                             hslaRange({
                                 from: { h: hue, s, l: 40 },
@@ -124,35 +124,35 @@ function form() {
                             position: object.position,
                             radius: object.radius / Math.sqrt(frame + 3),
                             context: canvas.context,
-                        });
+                        })
                     }
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation14() {
-    let n = 7;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 7
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 2 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 2 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -161,7 +161,7 @@ function variation14() {
                 }
             }
         )
-    ).flat());
+    ).flat())
     return scene({
         state,
         animator: (reduceAnimators(
@@ -170,22 +170,22 @@ function variation14() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
                     {
-                        let count = 15;
-                        let hue = 20 + idx * 50;
-                        let s = 90;
-                        hue = 200;
+                        let count = 15
+                        let hue = 20 + idx * 50
+                        let s = 90
+                        hue = 200
                         let colors = [
                             hslaRange({
                                 from: { h: hue, s, l: 40 },
@@ -200,35 +200,35 @@ function variation14() {
                             position: object.position,
                             radius: object.radius / Math.sqrt(frame + 3) * (Math.sin(frame / 20) + 2),
                             context: canvas.context,
-                        });
+                        })
                     }
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation13() {
-    let n = 7;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 7
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 2 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 2 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -240,7 +240,7 @@ function variation13() {
                 }
             }
         )
-    ).flat());
+    ).flat())
     return scene({
         state,
         animator: (reduceAnimators(
@@ -250,23 +250,23 @@ function variation13() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 // clearFrame({ color: '#000', canvas });
                 state.forEach((object, idx) => {
                     for (let position of object.trace.position) {
-                        let count = 15;
-                        let hue = 20 + idx * 50;
-                        let s = 90;
-                        hue = 200;
+                        let count = 15
+                        let hue = 20 + idx * 50
+                        let s = 90
+                        hue = 200
                         let colors = [
                             hslaRange({
                                 from: { h: hue, s, l: 40 },
@@ -284,35 +284,35 @@ function variation13() {
                             // height: object.radius / Math.log(frame),
                             radius: object.radius / Math.sqrt(f),
                             context: canvas.context,
-                        });
+                        })
                     }
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation12() {
-    let n = 13;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 13
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 2 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 2 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -321,8 +321,8 @@ function variation12() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -331,24 +331,24 @@ function variation12() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 15;
-                    let hue = 20 + idx * 50;
-                    let s = 50;
-                    hue = 50;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 15
+                    let hue = 20 + idx * 50
+                    let s = 50
+                    hue = 50
                     let colors = [
                         hslaRange({
                             from: { h: hue, s, l: 50 },
@@ -365,34 +365,34 @@ function variation12() {
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation11() {
-    let n = 13;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 13
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -401,8 +401,8 @@ function variation11() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -411,23 +411,23 @@ function variation11() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 5;
-                    let hue = 20 + idx * 50;
-                    hue = 210;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 5
+                    let hue = 20 + idx * 50
+                    hue = 210
                     let colors = [
                         hslaRange({
                             from: { h: hue, s: 100, l: 60 },
@@ -444,34 +444,34 @@ function variation11() {
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation10() {
-    let n = 13;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 13
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -480,8 +480,8 @@ function variation10() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -490,23 +490,23 @@ function variation10() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 5;
-                    let hue = 20 + idx * 50;
-                    hue = 210;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 5
+                    let hue = 20 + idx * 50
+                    hue = 210
                     let colors = [
                         hslaRange({
                             from: { h: hue, s: 100, l: 60 },
@@ -523,34 +523,34 @@ function variation10() {
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation9() {
-    let n = 13;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 13
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -559,8 +559,8 @@ function variation9() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -569,22 +569,22 @@ function variation9() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 5;
-                    let hue = 20 + idx * 50;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 5
+                    let hue = 20 + idx * 50
                     let colors = [
                         hslaRange({
                             from: { h: hue, s: 100, l: 60 },
@@ -601,34 +601,34 @@ function variation9() {
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 100 + 2),
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation8() {
-    let n = 13;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 13
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -637,8 +637,8 @@ function variation8() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -647,22 +647,22 @@ function variation8() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 5;
-                    let hue = 20 + idx * 50;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 5
+                    let hue = 20 + idx * 50
                     let colors = [
                         hslaRange({
                             from: { h: hue, s: 100, l: 60 },
@@ -679,34 +679,34 @@ function variation8() {
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 10),
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation7() {
-    let n = 13;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 13
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -715,8 +715,8 @@ function variation7() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -725,21 +725,21 @@ function variation7() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 5;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 5
                     let colors = [
                         hslaRange({
                             from: { h: 90, s: 100, l: 0 },
@@ -761,34 +761,34 @@ function variation7() {
                         height: object.radius * Math.random(),
                         // radius: object.radius * Math.random(),
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation6() {
-    let n = 7;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 7
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
                 // }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 3;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 3
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -797,8 +797,8 @@ function variation6() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -807,21 +807,21 @@ function variation6() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
-                    let count = 5;
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    let count = 5
                     let colors = [
                         hslaRange({
                             from: { h: 90, s: 100, l: 0 },
@@ -841,24 +841,24 @@ function variation6() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation5() {
-    let n = 7;
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let n = 7
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
@@ -866,9 +866,9 @@ function variation5() {
                 // if (Math.random() > 0.7) {
                 //     return undefined;
                 // }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * 0 + 2;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * 0 + 2
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -877,8 +877,8 @@ function variation5() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -887,20 +887,20 @@ function variation5() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 360, s: 100, l: 60 },
                         to: { h: 360, s: 100, l: 100 },
@@ -913,25 +913,25 @@ function variation5() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variationMeh() {
-    let n = 15;
+    let n = 15
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.abs(i - j) <= 1) {
                 //     return undefined;
@@ -939,11 +939,11 @@ function variationMeh() {
                 // if (Math.random() > 0.7) {
                 //     return undefined;
                 // }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = ((i) % 2) == 0 ? .2 : .4;
-                mass = 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = ((i) % 2) == 0 ? .2 : .4
+                mass = 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -952,8 +952,8 @@ function variationMeh() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -962,20 +962,20 @@ function variationMeh() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 210, s: 100, l: 60 },
                         to: { h: 210, s: 100, l: 100 },
@@ -988,37 +988,37 @@ function variationMeh() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation4() {
-    let n = 15;
+    let n = 15
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.abs(i - j) <= 1) {
-                    return undefined;
+                    return undefined
                 }
                 // if (Math.random() > 0.7) {
                 //     return undefined;
                 // }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = ((i) % 2) == 0 ? .2 : .4;
-                mass = 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = ((i) % 2) == 0 ? .2 : .4
+                mass = 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -1027,8 +1027,8 @@ function variation4() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1037,20 +1037,20 @@ function variation4() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 210, s: 100, l: 60 },
                         to: { h: 210, s: 100, l: 100 },
@@ -1063,37 +1063,37 @@ function variation4() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation3() {
-    let n = 10;
+    let n = 10
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.abs(i - j) <= -1) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = ((i) % 2) == 0 ? .2 : .4;
-                mass = 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = ((i) % 2) == 0 ? .2 : .4
+                mass = 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -1102,8 +1102,8 @@ function variation3() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1112,20 +1112,20 @@ function variation3() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 260, s: 100, l: 60 },
                         to: { h: 260, s: 100, l: 100 },
@@ -1138,37 +1138,37 @@ function variation3() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation2() {
-    let n = 25;
+    let n = 25
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.abs(i - j) <= 3) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = ((i) % 2) == 0 ? .2 : .4;
-                mass = 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = ((i) % 2) == 0 ? .2 : .4
+                mass = 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -1177,8 +1177,8 @@ function variation2() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1187,27 +1187,27 @@ function variation2() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     // stroke = modItem(['black', '#333', '#666'], idx)
-                    let h = 40;
-                    let s = 800;
-                    let n = 10;
-                    let lbase = 60;
-                    let lend = 100;
-                    let lstep = (lend - lbase) / n;
+                    let h = 40
+                    let s = 800
+                    let n = 10
+                    let lbase = 60
+                    let lend = 100
+                    let lstep = (lend - lbase) / n
                     let colors = vals(n).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
@@ -1218,37 +1218,37 @@ function variation2() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation1() {
-    let n = 25;
+    let n = 25
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.abs(i - j) <= 3) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = ((i) % 2) == 0 ? .2 : .4;
-                mass = 1;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = ((i) % 2) == 0 ? .2 : .4
+                mass = 1
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -1257,8 +1257,8 @@ function variation1() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1267,25 +1267,25 @@ function variation1() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     // stroke = modItem(['black', '#333', '#666'], idx)
-                    let h = 40;
-                    let s = 0;
-                    let lbase = 60;
-                    let lstep = 10;
+                    let h = 40
+                    let s = 0
+                    let lbase = 60
+                    let lstep = 10
                     let colors = vals(4).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
@@ -1296,36 +1296,36 @@ function variation1() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variation0() {
-    let n = 15;
+    let n = 15
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
                 if (i === j) {
-                    return undefined;
+                    return undefined
                 }
                 if (Math.random() > 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = (i + j) % 2 == 0 ? 2 : 4;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = (i + j) % 2 == 0 ? 2 : 4
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -1334,8 +1334,8 @@ function variation0() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1344,25 +1344,25 @@ function variation0() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas });
+                clearFrame({ color: '#000', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame;
-                    offset -= frame;
-                    let stroke = modItem(palette, offset + 4);
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
                     // stroke = modItem(['black', '#333', '#666'], idx)
-                    let h = 40;
-                    let s = 0;
-                    let lbase = 60;
-                    let lstep = 10;
+                    let h = 40
+                    let s = 0
+                    let lbase = 60
+                    let lstep = 10
                     let colors = vals(4).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
@@ -1373,30 +1373,30 @@ function variation0() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }
 
 function variationWhite() {
-    let n = 15;
+    let n = 15
     let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2];
-    let stepx = 30;
-    let stepy = 40;
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
     let state = filterUndefined(vals(n).map(
         (_, i) => vals(n).map(
             (_, j) => {
                 if ((i + j) % 2 == 1) {
-                    return undefined;
+                    return undefined
                 }
-                let x = j * stepx - (n - 1) * stepx / 2;
-                let y = i * stepy - (n - 1) * stepy / 2;
-                let mass = Math.random() * a + b;
-                mass = (i + j) % 2 == 0 ? 2 : 4;
+                let x = j * stepx - (n - 1) * stepx / 2
+                let y = i * stepy - (n - 1) * stepy / 2
+                let mass = Math.random() * a + b
+                mass = (i + j) % 2 == 0 ? 2 : 4
                 return {
                     position: { x, y, z: 0 },
                     velocity: vector.value(0),
@@ -1405,8 +1405,8 @@ function variationWhite() {
                 }
             }
         )
-    ).flat());
-    let palette = rainbow({ count: 120 });
+    ).flat())
+    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1415,14 +1415,14 @@ function variationWhite() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#eee', canvas });
+                clearFrame({ color: '#eee', canvas })
                 zoomToFit({
                     canvas,
                     box: multBox({
                         start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
                         end: vector.fromTuple([n * stepx, n * stepy, 0]),
                     }, 0.5)
-                });
+                })
             },
             render({ canvas, state }) {
                 state.forEach((object, idx) => {
@@ -1440,10 +1440,10 @@ function variationWhite() {
                         position: object.position,
                         radius: object.radius,
                         context: canvas.context,
-                    });
+                    })
                 }
                 )
             }
         }]
-    });
+    })
 }

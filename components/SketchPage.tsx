@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { PageHead } from "./PageHead";
+import { ReactNode } from "react"
+import { PageHead } from "./PageHead"
 
 export function SketchPage({
     title, description, children,

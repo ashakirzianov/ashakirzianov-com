@@ -1,9 +1,9 @@
-import { SketchCollection } from "@/sketcher";
-import { knot } from "./knot";
-import { pastel } from "./pastel";
-import { rainbowStrings } from "./rainbowStrings";
-import { slinky } from "./slinky";
-import { strokedSlinky } from "./strokedSlinky";
+import { SketchCollection } from "@/sketcher"
+import { knot } from "./knot"
+import { pastel } from "./pastel"
+import { rainbowStrings } from "./rainbowStrings"
+import { slinky } from "./slinky"
+import { strokedSlinky } from "./strokedSlinky"
 
 export const wipSketches: SketchCollection = {
     id: 'wip',

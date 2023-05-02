@@ -1,11 +1,11 @@
 import {
     clearFrame, fromLayers, layoutAndRender, TextLayout,
-} from '@/sketcher';
+} from '@/sketcher'
 
 export function helloWorld() {
     return fromLayers({}, {
         render({ canvas, frame }) {
-            clearFrame({ canvas, color: 'black' });
+            clearFrame({ canvas, color: 'black' })
             let root: TextLayout = {
                 content: [
                     {
@@ -48,15 +48,15 @@ export function helloWorld() {
                         ],
                     }
                 ],
-            };
-            canvas.context.lineWidth = 5;
+            }
+            canvas.context.lineWidth = 5
             layoutAndRender({
                 canvas, root, style: {
                     fontSize: 5,
                     fontFamily: 'serif',
                     color: 'red',
                 }
-            });
+            })
         },
-    });
+    })
 }

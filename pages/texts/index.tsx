@@ -1,21 +1,21 @@
-import { HomeButton } from "@/components/Buttons";
-import { TextCard } from "@/components/Cards";
-import { PixelPage } from "@/components/PixelPage";
-import { href } from "@/utils/refs";
-import { TextPostMap, getAllPreviews } from "@/utils/text";
-import { GetStaticProps } from "next";
-import Link from "next/link";
+import { HomeButton } from "@/components/Buttons"
+import { TextCard } from "@/components/Cards"
+import { PixelPage } from "@/components/PixelPage"
+import { href } from "@/utils/refs"
+import { TextPostMap, getAllPreviews } from "@/utils/text"
+import { GetStaticProps } from "next"
+import Link from "next/link"
 
 type Props = {
     previews: TextPostMap,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
-    let previews = await getAllPreviews();
+    let previews = await getAllPreviews()
     return {
         props: {
             previews,
         }
-    };
+    }
 }
 
 export default function AllStorites({ previews }: Props) {

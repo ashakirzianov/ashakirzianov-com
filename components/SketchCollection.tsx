@@ -1,6 +1,6 @@
-import { SketchCollection } from "@/sketcher";
-import { SketchCard } from "./Cards";
-import Link from "next/link";
+import { SketchCollection } from "@/sketcher"
+import { SketchCard } from "./Cards"
+import Link from "next/link"
 
 export function SketchCollectionBlock({
     collection: { meta, sketches },

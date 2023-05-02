@@ -1,10 +1,10 @@
-import { SketchCollection } from "@/sketcher";
-import { loveMeTwoTimes } from "./loveMeTwoTimes";
-import { alina } from "./alina";
-import { bwway } from "./bwway";
-import { helloWorld } from "./helloWorld";
-import { styleIsTheAnswer } from "./sita";
-import { pink } from "./pink";
+import { SketchCollection } from "@/sketcher"
+import { loveMeTwoTimes } from "./loveMeTwoTimes"
+import { alina } from "./alina"
+import { bwway } from "./bwway"
+import { helloWorld } from "./helloWorld"
+import { styleIsTheAnswer } from "./sita"
+import { pink } from "./pink"
 
 export const posters: SketchCollection = {
     id: 'posters',

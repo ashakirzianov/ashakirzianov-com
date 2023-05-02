@@ -1,9 +1,9 @@
-import { AllSketchesButton, HomeButton } from "./Buttons";
-import { SketchCollectionBlock } from "./SketchCollection";
-import { PixelPage } from "./PixelPage";
+import { AllSketchesButton, HomeButton } from "./Buttons"
+import { SketchCollectionBlock } from "./SketchCollection"
+import { PixelPage } from "./PixelPage"
 
 export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollectionBlock>[0]) {
-    let { collection: { meta } } = rest;
+    let { collection: { meta } } = rest
     return <PixelPage
         title={meta.title}
         description={meta.description ?? `Серия скетчей: ${meta.title}`}

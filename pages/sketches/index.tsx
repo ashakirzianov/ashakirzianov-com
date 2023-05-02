@@ -1,12 +1,12 @@
-import { PixelPage } from "@/components/PixelPage";
-import Head from "next/head";
-import { href } from "@/utils/refs";
-import { SketchMulticollection } from "@/components/SketchCollection";
-import { rythm } from "@/sketches/rythm";
-import { atoms } from "@/sketches/atoms";
-import { posters } from "@/sketches/posters";
-import { misc } from "@/sketches/misc";
-import { HomeButton } from "@/components/Buttons";
+import { PixelPage } from "@/components/PixelPage"
+import Head from "next/head"
+import { href } from "@/utils/refs"
+import { SketchMulticollection } from "@/components/SketchCollection"
+import { rythm } from "@/sketches/rythm"
+import { atoms } from "@/sketches/atoms"
+import { posters } from "@/sketches/posters"
+import { misc } from "@/sketches/misc"
+import { HomeButton } from "@/components/Buttons"
 
 type Props = {};
 export default function AllSketchCollections({ }: Props) {

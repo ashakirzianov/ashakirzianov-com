@@ -75,6 +75,17 @@ export function multBox({ start, end }: Box, value: number) {
     }
 }
 
+// inflateBox returns box with same center but inflated by given value.
+export function inflateBox(box: Box, value: number): Box {
+    let dx = value * (box.end.x - box.start.x) / 2
+    let dy = value * (box.end.y - box.start.y) / 2
+    let dz = value * (box.end.z - box.start.z) / 2
+    return {
+        start: vector.add(box.start, { x: -dx, y: -dy, z: -dz }),
+        end: vector.add(box.end, { x: dx, y: dy, z: dz }),
+    }
+}
+
 export function cubicBox(size: number): Box {
     return rectBox(size, size)
 }

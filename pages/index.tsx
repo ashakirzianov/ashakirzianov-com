@@ -15,7 +15,7 @@ import { number34 } from "@/sketches/misc/number34"
 import { molecules } from "@/sketches/atoms/molecules"
 import { typography } from "@/sketches/misc/typography"
 import { rave } from "@/sketches/misc/rave"
-import { currentRythm } from "@/sketches/rythm"
+import { titleVariation } from "@/sketches/rythm"
 
 // @refresh reset
 
@@ -68,7 +68,7 @@ const sketchCards = {
   rythm: {
     id: undefined,
     collection: 'rythm',
-    sketch: currentRythm(),
+    sketch: titleVariation(),
   },
 }
 

@@ -1,16 +1,42 @@
 import {
     SketchCollection, arrayAnimator, boundingBox, circle, clearFrame,
+    collection,
     filterUndefined, fromHSLA, gravity, hslaRange,
     modItem, multBox, rainbow,
-    rect, reduceAnimators, scene, square, traceAnimator, vals, vector, velocityStep,
+    rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
     zoomToFit
 } from '@/sketcher'
 
-export function currentRythm() {
+export function titleVariation() {
     return variation14()
 }
 
-export const rythm: SketchCollection = {
+export const rythm = collection({
+    id: 'rythm',
+    meta: {
+        title: 'Ритм / Rythm',
+    },
+    sketches: {
+        '0': variation0(),
+        '2': variation2(),
+        '4': variation4(),
+        '5': variation5(),
+        '8': variation8(),
+        '12': variation12(),
+        '14': variation14(),
+        'meh': variationMeh(),
+        'white': variationWhite(),
+        'sunflower': sunflower(),
+    },
+    order: [
+        '0', '2', '4',
+        '5', '8',
+        '12', '14', 'meh',
+        'white', 'sunflower',
+    ],
+})
+
+export const allRythm: SketchCollection = {
     id: 'rythm',
     meta: {
         title: 'Ритм / Rythm',
@@ -50,9 +76,6 @@ function form() {
     })
 
     let state = filterUndefined(positions.map((position, idx) => {
-        if (Math.random() > 0.9) {
-            return undefined
-        }
         return {
             position: {
                 x: position.x * stepx,
@@ -236,7 +259,11 @@ function sunflower() {
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
-                clearFrame({ color: '#000', canvas })
+                clearFrame({
+                    color: fromHSLA({
+                        s: 0, l: 0,
+                    }), canvas
+                })
                 let box = boundingBox(state.map(o => o.position))
                 zoomToFit({
                     canvas,
@@ -900,7 +927,7 @@ function variation8() {
                     let hue = 20 + idx * 50
                     let colors = [
                         hslaRange({
-                            from: { h: hue, s: 100, l: 60 },
+                            from: { h: hue, s: 100, l: 40 },
                             to: { h: hue, s: 100, l: 70 },
                             count,
                         })
@@ -910,9 +937,7 @@ function variation8() {
                         lineWidth: .1,
                         stroke,
                         center: object.position,
-                        // width: object.radius / Math.log(frame),
-                        // height: object.radius / Math.log(frame),
-                        radius: object.radius / Math.log10(frame / 10 + 10),
+                        radius: 2 * object.radius / Math.sqrt((frame + 20) / 100),
                         context: canvas.context,
                     })
                 }

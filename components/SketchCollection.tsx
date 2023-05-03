@@ -3,7 +3,7 @@ import { SketchCard } from "./Cards"
 import Link from "next/link"
 
 export function SketchCollectionBlock({
-    collection: { meta, sketches },
+    collection: { meta, sketches, order },
     hrefForId,
     href,
 }: {
@@ -25,9 +25,9 @@ export function SketchCollectionBlock({
                 : titleNode
             }
             <div className="container">
-                {Object.entries(sketches).map(([id, scene], idx) =>
+                {(order ?? Object.keys(sketches)).map((id, idx) =>
                     <a key={idx} href={hrefForId(id)}>
-                        <SketchCard sketch={scene} pixelated={false} />
+                        <SketchCard sketch={sketches[id]!} pixelated={false} />
                     </a>
                 )}
             </div>

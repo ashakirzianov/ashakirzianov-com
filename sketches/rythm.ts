@@ -1,12 +1,14 @@
 import {
     SketchCollection, arrayAnimator, boundingBox, circle, clearFrame, filterUndefined, fromHSLA, gravity, hslaRange,
+    inflateBox,
     modItem, multBox,
+    pullToAnchor,
     rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
     zoomToFit
 } from '@/sketcher'
 
 export function titleVariation() {
-    return variation14()
+    return rythm.sketches[0]!
 }
 
 export const rythm: SketchCollection = {
@@ -15,16 +17,15 @@ export const rythm: SketchCollection = {
         title: 'Ритм / Rythm',
     },
     sketches: [
-        variation0(),
-        variation2(),
+        blackAndWhite(),
+        waffle(),
+        wormholes(),
+        menacing(),
+        flower(),
+        web(),
         water(),
-        variation5(),
-        variation12(),
-        variation14(),
-        variationMeh(),
-        variationWhite(),
-        sunflower(),
-        // rainbow(),
+        rythmRed(),
+        whiteAndBlack(),
     ],
 }
 
@@ -35,23 +36,23 @@ export const allRythm: SketchCollection = {
     },
     sketches: [
         form(),
-        variation0(),
+        whiteAndBlack(),
         variation1(),
-        variation2(),
+        waffle(),
         variation3(),
         water(),
-        variation5(),
+        menacing(),
         variation6(),
         variation7(),
         rainbow(),
         variation9(),
         variation10(),
         variation11(),
-        variation12(),
+        web(),
         variation13(),
-        variation14(),
-        variationMeh(),
-        variationWhite(),
+        wormholes(),
+        rythmRed(),
+        blackAndWhite(),
         sunflower(),
     ],
 }
@@ -137,7 +138,7 @@ function form() {
     })
 }
 
-function flower() {
+function flower2() {
     let [g, power] = [0.02, 2]
     let stepx = 15
     let stepy = 15
@@ -218,44 +219,38 @@ function flower() {
     })
 }
 
-function sunflower() {
-    let [g, power] = [0.02, 2]
+function flower() {
     let stepx = 15
     let stepy = 15
-    let positions = circles({
-        circles: 10,
-        count: 5,
-        shift: Math.PI * 0.1,
-        step: 1,
-    })
 
-    let state = positions.map((position, idx) => {
-        return {
-            position: {
-                x: position.x * stepx,
-                y: position.y * stepy,
-                z: position.z,
-            },
-            velocity: vector.value(0),
-            mass: 1,
-            // radius: 10 + idx * .2,
-            radius: 20,
-        }
-    })
     let k = 1
     return scene({
-        title: 'Sunflower',
-        state,
+        title: 'Flower',
+        state: circles({
+            circles: 10,
+            count: 5,
+            shift: Math.PI * 0.1,
+            step: 1,
+        }).map((position, idx) => {
+            return {
+                position: {
+                    x: position.x * stepx,
+                    y: position.y * stepy,
+                    z: position.z,
+                },
+                velocity: vector.value(0),
+                mass: 1,
+                radius: 20,
+            }
+        }),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
-            prepare({ canvas }) {
+            prepare({ canvas, state }) {
                 clearFrame({
-                    color: fromHSLA({
-                        s: 0, l: 0,
-                    }), canvas
+                    color: '#000', canvas
                 })
                 let box = boundingBox(state.map(o => o.position))
                 zoomToFit({
@@ -263,35 +258,93 @@ function sunflower() {
                     box: multBox(box, 1)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
                 k = k * (1 + (Math.random() - .3) * 0.01)
+                let count = 10
+                let colors = [
+                    ...hslaRange({
+                        from: { h: 49, s: 100, l: 30 },
+                        to: { l: 90 },
+                        count,
+                    }),
+                    ...hslaRange({
+                        from: { h: 214, s: 100, l: 30 },
+                        to: { l: 90 },
+                        count,
+                    }),
+                ]
                 state.forEach((object, idx) => {
-                    let h = 60
-                    let s = 80
-                    let count = 10
-                    let colors = [
-                        // ...hslaRange({
-                        //     from: { h, s, l: 20 },
-                        //     to: { h, s, l: 40 },
-                        //     count,
-                        // }),
-                        ...hslaRange({
-                            from: { h, s, l: 30 },
-                            to: { h, s, l: 90 },
-                            count,
-                        }),
-                        // ...hslaRange({
-                        //     from: { h: 110, s: 0, l: 30 },
-                        //     to: { h: 110, s: 0, l: 90 },
-                        //     count,
-                        // }),
-                        ...hslaRange({
-                            from: { h: 210, s, l: 30 },
-                            to: { h: 210, s, l: 90 },
-                            count,
-                        }),
-                    ].flat()
+                    let stroke = modItem(colors, idx)
+                    circle({
+                        lineWidth: .1,
+                        stroke,
+                        center: object.position,
+                        radius: object.radius * k,
+                        context: canvas.context,
+                    })
+                }
+                )
+            }
+        }]
+    })
+}
 
+function sunflower() {
+    let stepx = 15
+    let stepy = 15
+
+    let k = 1
+    return scene({
+        title: 'Sunlower',
+        state: circles({
+            circles: 10,
+            count: 5,
+            shift: Math.PI * 0.1,
+            step: 1,
+        }).map((position, idx) => {
+            return {
+                position: {
+                    x: position.x * stepx,
+                    y: position.y * stepy,
+                    z: position.z,
+                },
+                velocity: vector.value(0),
+                mass: 1,
+                radius: 20,
+            }
+        }),
+        animator: (reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            velocityStep(),
+        )),
+        layers: [{}, {}, {
+            prepare({ canvas, state }) {
+                clearFrame({
+                    color: '#000', canvas
+                })
+                let box = boundingBox(state.map(o => o.position))
+                zoomToFit({
+                    canvas,
+                    box: multBox(box, 1)
+                })
+            },
+            render({ canvas, state }) {
+                k = k * (1 + (Math.random() - .3) * 0.01)
+                let s = 100
+                let count = 10
+                let colors = [
+                    ...hslaRange({
+                        from: { h: 49, s, l: 30 },
+                        to: { h: 49, s, l: 90 },
+                        count,
+                    }),
+                    ...hslaRange({
+                        from: { h: 214, s, l: 30 },
+                        to: { h: 214, s, l: 90 },
+                        count,
+                    }),
+                ]
+                state.forEach((object, idx) => {
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -383,40 +436,38 @@ function variation15() {
     })
 }
 
-function variation14() {
+function wormholes() {
     let n = 7
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                // if (Math.abs(i - j) <= 1) {
-                //     return undefined;
-                // }
-                if (Math.random() > 1) {
-                    return undefined
-                }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * 2 + 1
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: 20 * mass,
-                }
-            }
-        )
-    ).flat())
     return scene({
-        state,
+        title: 'Wormholes',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = Math.random() * 2 + 1
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: 20 * mass,
+                        k: 1,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
+            arrayAnimator(o => ({
+                ...o,
+                k: o.k * (1 + (0.47 - Math.random()) / 20),
+            }))
         )),
         layers: [{}, {}, {
             prepare({ canvas }) {
@@ -430,19 +481,24 @@ function variation14() {
                 })
             },
             render({ canvas, state, frame }) {
+                let count = 15
+                let h = 200
+                let s = 90
+                function dim(min: number) {
+                    return min + (1 - min) / (1 + frame / 400)
+                }
+                let a = dim(0.25)
+                let l = 40
+                let le = l + 30
+                let colors = [
+                    hslaRange({
+                        from: { h, s, l, a },
+                        to: { h, s, l: le, a },
+                        count,
+                    })
+                ].flat()
                 state.forEach((object, idx) => {
                     {
-                        let count = 15
-                        let hue = 20 + idx * 50
-                        let s = 90
-                        hue = 200
-                        let colors = [
-                            hslaRange({
-                                from: { h: hue, s, l: 40 },
-                                to: { h: hue, s, l: 70 },
-                                count,
-                            })
-                        ].flat()
                         let stroke = modItem(colors, idx)
                         circle({
                             lineWidth: .1,
@@ -543,6 +599,72 @@ function variation13() {
     })
 }
 
+function web() {
+    let n = 13
+    let stepx = 30
+    let stepy = 40
+    return scene({
+        title: 'Web',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 0) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = Math.random() * 2 + 1
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: 20 * Math.random() * mass,
+                    }
+                }
+            )
+        ).flat()),
+        animator: (reduceAnimators(
+            gravity({ gravity: 0.02, power: 2 }),
+            velocityStep(),
+        )),
+        layers: [{}, {}, {
+            prepare({ canvas }) {
+                clearFrame({ color: '#000', canvas })
+                zoomToFit({
+                    canvas,
+                    box: multBox({
+                        start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
+                        end: vector.fromTuple([n * stepx, n * stepy, 0]),
+                    }, 0.5)
+                })
+            },
+            render({ canvas, state, frame }) {
+                state.forEach((object, idx) => {
+                    let h = 40
+                    let s = 80
+                    let a = 1 / (frame / 100 + 1)
+                    let colors = [
+                        hslaRange({
+                            from: { h, s, l: 50, a },
+                            to: { h, s, l: 80, a },
+                            count: 15,
+                        })
+                    ].flat()
+                    let stroke = modItem(colors, idx)
+                    circle({
+                        lineWidth: .1,
+                        stroke,
+                        center: object.position,
+                        radius: object.radius / Math.log10(frame / 10 + 1),
+                        context: canvas.context,
+                    })
+                }
+                )
+            }
+        }]
+    })
+}
+
 function variation12() {
     let n = 13
     let [g, power] = [0.02, 2]
@@ -616,6 +738,7 @@ function variation12() {
         }]
     })
 }
+
 
 function variation11() {
     let n = 13
@@ -839,7 +962,6 @@ function variation9() {
 
 function rainbow() {
     let n = 13
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
     return scene({
@@ -860,13 +982,18 @@ function rainbow() {
                         position: { x, y, z: 0 },
                         velocity: vector.value(0),
                         mass,
-                        radius: 20 * Math.random() * mass * 0 + 10,
+                        radius: 10,
+                        anchor: {
+                            position: vector.value(0),
+                            mass: 100,
+                        },
                     }
                 }
             )
         ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
+            // arrayAnimator(pullToAnchor({ power: 2, gravity: 0.2 })),
             velocityStep(),
         )),
         layers: [{}, {}, {
@@ -884,13 +1011,14 @@ function rainbow() {
                 state.forEach((object, idx) => {
                     let count = 5
                     let hue = 20 + idx * 50
+                    let a = .8
                     let colors = [
-                        hslaRange({
-                            from: { h: hue, s: 100, l: 40 },
-                            to: { h: hue, s: 100, l: 70 },
+                        ...hslaRange({
+                            from: { h: hue, s: 100, l: 40, a },
+                            to: { l: 70 },
                             count,
                         })
-                    ].flat()
+                    ]
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1062,39 +1190,32 @@ function variation6() {
     })
 }
 
-function variation5() {
+function menacing() {
     let n = 7
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                // if (Math.abs(i - j) <= 1) {
-                //     return undefined;
-                // }
-                // if (Math.random() > 0.7) {
-                //     return undefined;
-                // }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * 0 + 2
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: 10,
-                }
-            }
-        )
-    ).flat())
     return scene({
-        state,
+        title: 'Menacing Rythm',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = 2
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: 10,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
@@ -1130,42 +1251,32 @@ function variation5() {
     })
 }
 
-function variationMeh() {
+function rythmRed() {
     let n = 15
-    let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                // if (Math.abs(i - j) <= 1) {
-                //     return undefined;
-                // }
-                // if (Math.random() > 0.7) {
-                //     return undefined;
-                // }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * a + b
-                mass = ((i) % 2) == 0 ? .2 : .4
-                mass = 1
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: mass * ((i + j) % 7 + 1) * 4 + Math.random() * 0,
-                }
-            }
-        )
-    ).flat())
     return scene({
-        state,
+        title: 'Rythm Red',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = 1
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: mass * ((i + j) % 7 + 1) * 4 + Math.random() * 0,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
@@ -1179,13 +1290,13 @@ function variationMeh() {
                     }, 0.5)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
+                let colors = hslaRange({
+                    from: { h: 0, s: 100, l: 60 },
+                    to: { h: 0, s: 100, l: 100 },
+                    count: 10,
+                })
                 state.forEach((object, idx) => {
-                    let colors = hslaRange({
-                        from: { h: 210, s: 100, l: 60 },
-                        to: { h: 210, s: 100, l: 100 },
-                        count: 10,
-                    })
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1335,66 +1446,55 @@ function variation3() {
     })
 }
 
-function variation2() {
+function waffle() {
     let n = 25
-    let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                if (Math.abs(i - j) <= 3) {
-                    return undefined
-                }
-                if (Math.random() > 1) {
-                    return undefined
-                }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * a + b
-                mass = ((i) % 2) == 0 ? .2 : .4
-                mass = 1
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: mass * 40,
-                }
-            }
-        )
-    ).flat())
     return scene({
-        state,
+        title: 'Waffle',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    if (Math.abs(i - (n - 1 - j)) <= 3) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = 1
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        radius: 40,
+                        mass,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
-            prepare({ canvas }) {
+            prepare({ canvas, state }) {
                 clearFrame({ color: '#000', canvas })
+                let box = boundingBox(state.map(object => object.position))
                 zoomToFit({
                     canvas,
-                    box: multBox({
-                        start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
-                        end: vector.fromTuple([n * stepx, n * stepy, 0]),
-                    }, 0.5)
+                    box: inflateBox(box, 0.2)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
                 state.forEach((object, idx) => {
                     let h = 40
-                    let s = 800
-                    let n = 10
-                    let lbase = 60
-                    let lend = 100
-                    let lstep = (lend - lbase) / n
-                    let colors = vals(n).map(
-                        (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
-                    )
+                    let s = 100
+                    let colors = hslaRange({
+                        from: { h, s, l: 60 },
+                        to: { h, s, l: 100 },
+                        count: 10,
+                    })
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1483,39 +1583,37 @@ function variation1() {
     })
 }
 
-function variation0() {
+function whiteAndBlack() {
     let n = 15
-    let [a, b] = [0, 2]
     let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                if (i === j) {
-                    return undefined
-                }
-                if (Math.random() > 1) {
-                    return undefined
-                }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * a + b
-                mass = (i + j) % 2 == 0 ? 2 : 4
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: mass * 4,
-                }
-            }
-        )
-    ).flat())
     return scene({
-        state,
+        title: 'White And Black',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    if (i === j) {
+                        return undefined
+                    }
+                    if (Math.random() > 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = 2
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: mass * 4,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
             gravity({ gravity: g, power }),
             velocityStep(),
@@ -1535,11 +1633,13 @@ function variation0() {
                 state.forEach((object, idx) => {
                     let h = 40
                     let s = 0
-                    let lbase = 60
-                    let lstep = 10
-                    let colors = vals(4).map(
-                        (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
-                    )
+                    let colors = [
+                        ...hslaRange({
+                            from: { h, s, l: 30 },
+                            to: { h, s, l: 100 },
+                            count: 5,
+                        }),
+                    ]
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1555,35 +1655,32 @@ function variation0() {
     })
 }
 
-function variationWhite() {
+function blackAndWhite() {
     let n = 15
-    let [a, b] = [0, 2]
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * a + b
-                mass = (i + j) % 2 == 0 ? 2 : 4
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: mass * 4,
-                }
-            }
-        )
-    ).flat())
     return scene({
-        state,
+        title: 'Black And White',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = 2
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: mass * 4,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
@@ -1630,9 +1727,9 @@ function makeBoolMap(stringMap: string[], char: string) {
         str => {
             let result = []
             for (let ch of str) {
-                result.push(ch === char);
+                result.push(ch === char)
             }
-            return result;
+            return result
         }
     )
 }
@@ -1651,7 +1748,7 @@ function makePositions(map: boolean[][]) {
             }
         }
     }
-    return positions;
+    return positions
 }
 
 function circles({ circles, count, shift, step }: {

@@ -2,8 +2,11 @@ import { sketchCollection } from "@/components/collection"
 import { posters } from "@/sketches/posters"
 import { href } from "@/utils/refs"
 
-export let { getStaticPaths, getStaticProps, Page } = sketchCollection({
+let { getStaticPaths, getStaticProps, Page } = sketchCollection({
     collection: posters,
     path: href('sketch', { collection: 'posters' }),
 })
+export {
+    getStaticPaths, getStaticProps
+}
 export default Page

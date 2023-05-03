@@ -8,7 +8,7 @@ import {
 } from '@/sketcher'
 
 export function titleVariation() {
-    return rythm.sketches[0]!
+    return web()
 }
 
 export const rythm: SketchCollection = {
@@ -481,22 +481,18 @@ function wormholes() {
                 })
             },
             render({ canvas, state, frame }) {
-                let count = 15
-                let h = 200
-                let s = 90
                 function dim(min: number) {
                     return min + (1 - min) / (1 + frame / 400)
                 }
+                let count = 15
                 let a = dim(0.25)
-                let l = 40
-                let le = l + 30
                 let colors = [
-                    hslaRange({
-                        from: { h, s, l, a },
-                        to: { h, s, l: le, a },
+                    ...hslaRange({
+                        from: { h: 200, s: 90, l: 40, a },
+                        to: { l: 70, a },
                         count,
                     })
-                ].flat()
+                ]
                 state.forEach((object, idx) => {
                     {
                         let stroke = modItem(colors, idx)
@@ -639,17 +635,15 @@ function web() {
                 })
             },
             render({ canvas, state, frame }) {
+                let a = 1 / (frame / 100 + 1)
+                let colors = [
+                    ...hslaRange({
+                        from: { h: 40, s: 80, l: 50, a },
+                        to: { l: 80, a },
+                        count: 15,
+                    })
+                ]
                 state.forEach((object, idx) => {
-                    let h = 40
-                    let s = 80
-                    let a = 1 / (frame / 100 + 1)
-                    let colors = [
-                        hslaRange({
-                            from: { h, s, l: 50, a },
-                            to: { h, s, l: 80, a },
-                            count: 15,
-                        })
-                    ].flat()
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1229,13 +1223,13 @@ function menacing() {
                     }, 0.5)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
+                let colors = hslaRange({
+                    from: { h: 0, s: 100, l: 60 },
+                    to: { l: 100 },
+                    count: 10,
+                })
                 state.forEach((object, idx) => {
-                    let colors = hslaRange({
-                        from: { h: 360, s: 100, l: 60 },
-                        to: { h: 360, s: 100, l: 100 },
-                        count: 10,
-                    })
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1293,7 +1287,7 @@ function rythmRed() {
             render({ canvas, state }) {
                 let colors = hslaRange({
                     from: { h: 0, s: 100, l: 60 },
-                    to: { h: 0, s: 100, l: 100 },
+                    to: { l: 100 },
                     count: 10,
                 })
                 state.forEach((object, idx) => {
@@ -1314,7 +1308,6 @@ function rythmRed() {
 
 function water() {
     let n = 15
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
     return scene({
@@ -1339,7 +1332,7 @@ function water() {
             )
         ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
@@ -1353,13 +1346,13 @@ function water() {
                     }, 0.5)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
+                let colors = hslaRange({
+                    from: { h: 210, s: 100, l: 60 },
+                    to: { l: 100 },
+                    count: 10,
+                })
                 state.forEach((object, idx) => {
-                    let colors = hslaRange({
-                        from: { h: 210, s: 100, l: 60 },
-                        to: { h: 210, s: 100, l: 100 },
-                        count: 10,
-                    })
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1487,14 +1480,12 @@ function waffle() {
                 })
             },
             render({ canvas, state }) {
+                let colors = hslaRange({
+                    from: { h: 40, s: 100, l: 60 },
+                    to: { l: 100 },
+                    count: 10,
+                })
                 state.forEach((object, idx) => {
-                    let h = 40
-                    let s = 100
-                    let colors = hslaRange({
-                        from: { h, s, l: 60 },
-                        to: { h, s, l: 100 },
-                        count: 10,
-                    })
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1585,7 +1576,6 @@ function variation1() {
 
 function whiteAndBlack() {
     let n = 15
-    let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
     return scene({
@@ -1615,7 +1605,7 @@ function whiteAndBlack() {
             )
         ).flat()),
         animator: (reduceAnimators(
-            gravity({ gravity: g, power }),
+            gravity({ gravity: 0.02, power: 2 }),
             velocityStep(),
         )),
         layers: [{}, {}, {
@@ -1629,17 +1619,15 @@ function whiteAndBlack() {
                     }, 0.5)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
+                let colors = [
+                    ...hslaRange({
+                        from: { h: 40, s: 0, l: 30 },
+                        to: { l: 100 },
+                        count: 5,
+                    }),
+                ]
                 state.forEach((object, idx) => {
-                    let h = 40
-                    let s = 0
-                    let colors = [
-                        ...hslaRange({
-                            from: { h, s, l: 30 },
-                            to: { h, s, l: 100 },
-                            count: 5,
-                        }),
-                    ]
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
@@ -1695,14 +1683,14 @@ function blackAndWhite() {
                 })
             },
             render({ canvas, state }) {
+                let colors = [
+                    ...hslaRange({
+                        from: { h: 90, s: 0, l: 0 },
+                        to: { h: 90, s: 0, l: 40 },
+                        count: 5,
+                    }),
+                ]
                 state.forEach((object, idx) => {
-                    let colors = [
-                        hslaRange({
-                            from: { h: 90, s: 0, l: 0 },
-                            to: { h: 90, s: 0, l: 40 },
-                            count: 5,
-                        }),
-                    ].flat()
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,

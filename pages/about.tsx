@@ -1,4 +1,4 @@
-import { PixelPage } from "@/components/PixelPage"
+import { PixelPage } from "@/components/Pages"
 import { TextBlock } from "@/components/TextBlock"
 import { useQuery } from "@/utils/query"
 import { href } from "@/utils/refs"

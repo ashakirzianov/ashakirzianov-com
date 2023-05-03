@@ -1,7 +1,7 @@
 import { Scene, randomInt } from "@/sketcher"
-import { SketchPage } from "@/components/SketchPage"
 import { useSketcher } from "@/utils/sketcher"
 import { GetServerSideProps } from "next"
+import { SketchPage } from "./Pages"
 
 export function multipager({
     variations,

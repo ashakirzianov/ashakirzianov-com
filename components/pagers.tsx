@@ -4,7 +4,7 @@ import { GetStaticPaths, GetStaticProps } from "next"
 import { SketchCollectionPage } from "./SketchCollectionPage"
 import { SketchPage } from "./SketchPage"
 
-export function sketchCollection({
+export function sketchCollectionPager({
     collection, path,
 }: {
     collection: SketchCollection,

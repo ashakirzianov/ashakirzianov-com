@@ -66,7 +66,7 @@ export function sketchCollectionPager({
     }
 
     function Page({ idx }: Props) {
-        if (idx) {
+        if (typeof idx === 'number') {
             return <SingleSketch idx={idx} />
         } else {
             return <SketchCollectionPage

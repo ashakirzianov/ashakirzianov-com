@@ -120,57 +120,65 @@ export default function Main({
     title="Анҗан"
     description="Сайт с буквами и картинками"
   >
-    <header>
-      <div className="help">
-        {/* <HelpButton hue={hue} /> */}
+    <div className="outer">
+      <header>
+        <div className="help">
+          {/* <HelpButton hue={hue} /> */}
+        </div>
+        <div className="buttons">
+          <PixelToggle
+            color="red"
+            onClick={() => setFree(v => !v)}
+            pressed={!free}
+          />
+          <PixelToggle
+            color={pixelated ? "black" : "yellow"}
+            onClick={() => setPixelated(true)}
+            pressed={pixelated}
+          />
+          <PixelToggle
+            color="green"
+            onClick={nextHue}
+          />
+        </div>
+      </header>
+      <div className={free ? 'grid' : 'flex'}>
+        <Tile shifted={free} position={[0, 0]} front>
+          <AboutCard
+            hue={hue}
+            onHover={setHl}
+          />
+        </Tile>
+        {[
+          sketchTile('posters', [5, -18]),
+          sketchTile('number34', [-10, 15]),
+          sketchTile('atoms', [-22, 7]),
+          storyTile('thirty-four', [25, 10]),
+          storyTile('apartunist', [13, 20]),
+          sketchTile('typography', [7, 5]),
+          sketchTile('rave', [10, -6]),
+          sketchTile('rythm', [-5, 8]),
+          storyTile('start-wearing-purple', [-15, -10]),
+        ]}
+        <Tile
+          shifted={free} position={[20, -15]} back
+        >
+          <Help hue={hue} />
+        </Tile>
       </div>
-      <div className="buttons">
-        <PixelToggle
-          color="red"
-          onClick={() => setFree(v => !v)}
-          pressed={!free}
-        />
-        <PixelToggle
-          color={pixelated ? "black" : "yellow"}
-          onClick={() => setPixelated(true)}
-          pressed={pixelated}
-        />
-        <PixelToggle
-          color="green"
-          onClick={nextHue}
-        />
-      </div>
-    </header>
-    <div className={free ? 'grid' : 'flex'}>
-      <Tile shifted={free} position={[0, 0]} front>
-        <AboutCard
-          hue={hue}
-          onHover={setHl}
-        />
-      </Tile>
-      {[
-        sketchTile('posters', [5, -18]),
-        sketchTile('number34', [-10, 15]),
-        sketchTile('atoms', [-22, 7]),
-        storyTile('thirty-four', [25, 10]),
-        storyTile('apartunist', [13, 20]),
-        sketchTile('typography', [7, 5]),
-        sketchTile('rave', [10, -6]),
-        sketchTile('rythm', [-5, 8]),
-        storyTile('start-wearing-purple', [-15, -10]),
-      ]}
-      <Tile
-        shifted={free} position={[20, -15]} back
-      >
-        <Help hue={hue} />
-      </Tile>
     </div>
     <style jsx>{`
+      .outer {
+        display: flex;
+        flex-flow: column nowrap;
+        min-height: 100vh;
+      }
       header {
         display: flex;
         flex-flow: row wrap;
         justify-content: space-between;
         align-items: center;
+        flex-grow: 0;
       }
       .help {
         padding: var(--padding);
@@ -187,7 +195,7 @@ export default function Main({
         grid-template-areas: "mid";
         place-items: center center;
         width: 100%;
-        height: 100%;
+        flex-grow: 1;
       }
       .flex {
         display: flex;
@@ -244,6 +252,7 @@ function Tile({
       {children}
     </Draggable>
   return <div style={{
+    display: 'flex',
     position: shifted ? 'relative' : 'static',
     top: shifted ? `${top - 10}vh` : 0,
     left: shifted ? `${left}vw` : 0,

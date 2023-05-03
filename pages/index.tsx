@@ -3,7 +3,6 @@ import Link from "next/link"
 import { GetStaticProps } from "next"
 import { TextPost, getAllPreviews } from "@/utils/text"
 import { Draggable } from "@/components/Draggable"
-import { PixelPageImpl } from "@/components/PixelPage"
 import { useQuery } from "@/utils/query"
 import { useRouter } from "next/router"
 import { PixelToggle } from "@/components/Buttons"
@@ -16,6 +15,7 @@ import { molecules } from "@/sketches/atoms/molecules"
 import { typography } from "@/sketches/misc/typography"
 import { rave } from "@/sketches/misc/rave"
 import { titleVariation } from "@/sketches/rythm"
+import { PixelPageImpl } from "@/components/Pages"
 
 // @refresh reset
 

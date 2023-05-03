@@ -1,8 +1,7 @@
 import { SketchCollection, sceneId } from "@/sketcher"
 import { useSketcher } from "@/utils/sketcher"
 import { GetStaticPaths, GetStaticProps } from "next"
-import { SketchCollectionPage } from "./SketchCollectionPage"
-import { SketchPage } from "./SketchPage"
+import { SketchCollectionPage, SketchPage } from "./Pages";
 
 export function sketchCollectionPager({
     collection, path,

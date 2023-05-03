@@ -1,6 +1,6 @@
 import {
     SketchCollection, arrayAnimator, boundingBox, circle, clearFrame, filterUndefined, fromHSLA, gravity, hslaRange,
-    modItem, multBox, rainbow,
+    modItem, multBox,
     rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
     zoomToFit
 } from '@/sketcher'
@@ -17,14 +17,14 @@ export const rythm: SketchCollection = {
     sketches: [
         variation0(),
         variation2(),
-        variation4(),
+        water(),
         variation5(),
-        variation8(),
         variation12(),
         variation14(),
         variationMeh(),
         variationWhite(),
         sunflower(),
+        // rainbow(),
     ],
 }
 
@@ -39,11 +39,11 @@ export const allRythm: SketchCollection = {
         variation1(),
         variation2(),
         variation3(),
-        variation4(),
+        water(),
         variation5(),
         variation6(),
         variation7(),
-        variation8(),
+        rainbow(),
         variation9(),
         variation10(),
         variation11(),
@@ -244,6 +244,7 @@ function sunflower() {
     })
     let k = 1
     return scene({
+        title: 'Sunflower',
         state,
         animator: (reduceAnimators(
             gravity({ gravity: g, power }),
@@ -341,7 +342,6 @@ function variation15() {
             radius: 20, // 20 * Math.random(),
         }
     })
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -357,12 +357,8 @@ function variation15() {
                     box: multBox(box, 1)
                 })
             },
-            render({ canvas, state, frame }) {
+            render({ canvas, state }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
-                    // stroke = modItem(['black', '#333', '#666'], idx)
                     let h = 0
                     let s = 800
                     let n = 10
@@ -372,7 +368,7 @@ function variation15() {
                     let colors = vals(n).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -576,7 +572,6 @@ function variation12() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -596,9 +591,6 @@ function variation12() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 15
                     let hue = 20 + idx * 50
                     let s = 50
@@ -610,13 +602,11 @@ function variation12() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
                         center: object.position,
-                        // width: object.radius / Math.log(frame),
-                        // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
                         context: canvas.context,
                     })
@@ -656,7 +646,6 @@ function variation11() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -676,9 +665,6 @@ function variation11() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 5
                     let hue = 20 + idx * 50
                     hue = 210
@@ -689,13 +675,11 @@ function variation11() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
                         center: object.position,
-                        // width: object.radius / Math.log(frame),
-                        // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
                         context: canvas.context,
                     })
@@ -735,7 +719,6 @@ function variation10() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -755,9 +738,6 @@ function variation10() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 5
                     let hue = 20 + idx * 50
                     hue = 210
@@ -768,13 +748,11 @@ function variation10() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
                         center: object.position,
-                        // width: object.radius / Math.log(frame),
-                        // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
                         context: canvas.context,
                     })
@@ -814,7 +792,6 @@ function variation9() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -834,9 +811,6 @@ function variation9() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 5
                     let hue = 20 + idx * 50
                     let colors = [
@@ -846,7 +820,7 @@ function variation9() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -863,38 +837,34 @@ function variation9() {
     })
 }
 
-function variation8() {
+function rainbow() {
     let n = 13
     let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                // if (Math.abs(i - j) <= 1) {
-                //     return undefined;
-                // }
-                if (Math.random() > 1) {
-                    return undefined
-                }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * 0 + 1
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: 20 * Math.random() * mass * 0 + 10,
-                }
-            }
-        )
-    ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
-        state,
+        title: 'rainbow',
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    if (Math.random() > 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    let mass = Math.random() * 0 + 1
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass,
+                        radius: 20 * Math.random() * mass * 0 + 10,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
             gravity({ gravity: g, power }),
             velocityStep(),
@@ -912,9 +882,6 @@ function variation8() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 5
                     let hue = 20 + idx * 50
                     let colors = [
@@ -924,7 +891,7 @@ function variation8() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -968,7 +935,6 @@ function variation7() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -988,9 +954,6 @@ function variation7() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 5
                     let colors = [
                         hslaRange({
@@ -1004,7 +967,7 @@ function variation7() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     rect({
                         lineWidth: .1,
                         stroke,
@@ -1050,7 +1013,6 @@ function variation6() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1072,7 +1034,6 @@ function variation6() {
                 state.forEach((object, idx) => {
                     let offset = idx * 100 + frame
                     offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let count = 5
                     let colors = [
                         hslaRange({
@@ -1086,7 +1047,7 @@ function variation6() {
                             count,
                         })
                     ].flat()
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1130,7 +1091,6 @@ function variation5() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1150,15 +1110,12 @@ function variation5() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 360, s: 100, l: 60 },
                         to: { h: 360, s: 100, l: 100 },
                         count: 10,
                     })
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1205,7 +1162,6 @@ function variationMeh() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1225,15 +1181,12 @@ function variationMeh() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 210, s: 100, l: 60 },
                         to: { h: 210, s: 100, l: 100 },
                         count: 10,
                     })
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1248,41 +1201,32 @@ function variationMeh() {
     })
 }
 
-function variation4() {
+function water() {
     let n = 15
-    let [a, b] = [0, 2]
     let [g, power] = [0.02, 2]
     let stepx = 30
     let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                if (Math.abs(i - j) <= 1) {
-                    return undefined
-                }
-                // if (Math.random() > 0.7) {
-                //     return undefined;
-                // }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * a + b
-                mass = ((i) % 2) == 0 ? .2 : .4
-                mass = 1
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: mass * ((i + j) % 7 + 1) * 20,
-                }
-            }
-        )
-    ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
-        state,
+        state: filterUndefined(vals(n).map(
+            (_, i) => vals(n).map(
+                (_, j) => {
+                    if ((i + j) % 2 == 1) {
+                        return undefined
+                    }
+                    if (Math.abs(i - j) <= 1) {
+                        return undefined
+                    }
+                    let x = j * stepx - (n - 1) * stepx / 2
+                    let y = i * stepy - (n - 1) * stepy / 2
+                    return {
+                        position: { x, y, z: 0 },
+                        velocity: vector.value(0),
+                        mass: 1,
+                        radius: ((i + j) % 7 + 1) * 20,
+                    }
+                }
+            )
+        ).flat()),
         animator: (reduceAnimators(
             gravity({ gravity: g, power }),
             velocityStep(),
@@ -1300,15 +1244,12 @@ function variation4() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 210, s: 100, l: 60 },
                         to: { h: 210, s: 100, l: 100 },
                         count: 10,
                     })
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1355,7 +1296,6 @@ function variation3() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1375,15 +1315,12 @@ function variation3() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
                     let colors = hslaRange({
                         from: { h: 260, s: 100, l: 60 },
                         to: { h: 260, s: 100, l: 100 },
                         count: 10,
                     })
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1430,7 +1367,6 @@ function variation2() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1450,10 +1386,6 @@ function variation2() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
-                    // stroke = modItem(['black', '#333', '#666'], idx)
                     let h = 40
                     let s = 800
                     let n = 10
@@ -1463,7 +1395,7 @@ function variation2() {
                     let colors = vals(n).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1510,7 +1442,6 @@ function variation1() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1530,10 +1461,6 @@ function variation1() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
-                    // stroke = modItem(['black', '#333', '#666'], idx)
                     let h = 40
                     let s = 0
                     let lbase = 60
@@ -1541,7 +1468,7 @@ function variation1() {
                     let colors = vals(4).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1587,7 +1514,6 @@ function variation0() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(
@@ -1607,10 +1533,6 @@ function variation0() {
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    let offset = idx * 100 + frame
-                    offset -= frame
-                    let stroke = modItem(palette, offset + 4)
-                    // stroke = modItem(['black', '#333', '#666'], idx)
                     let h = 40
                     let s = 0
                     let lbase = 60
@@ -1618,7 +1540,7 @@ function variation0() {
                     let colors = vals(4).map(
                         (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
                     )
-                    stroke = modItem(colors, idx)
+                    let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
@@ -1658,7 +1580,6 @@ function variationWhite() {
             }
         )
     ).flat())
-    let palette = rainbow({ count: 120 })
     return scene({
         state,
         animator: (reduceAnimators(

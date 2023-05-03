@@ -44,6 +44,10 @@ html {
   --foreground: var(--foreground-light);
   --shadow: var(--shadow-light);
   --radius: 7px;
+  --card-width: 160pt;
+  --card-font-size: 12pt;
+  --card-text-height: 41.7em;
+  --padding: 10pt;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,10 +62,6 @@ html {
 body {
   background-color: var(--background);
   color: var(--foreground);
-}
-
-a {
-  color: skyblue;
 }
 
 .pixel-corners {
@@ -104,14 +104,15 @@ a {
   display: flex;
   overflow: hidden;
   aspect-ratio: 3/4;
-  width: 160pt;
-  font-size: 12pt;
+  width: var(--card-width);
+  font-size: var(--card-font-size);
 }
 
-@media (max-width: 470pt) {
-  .card-frame {
-    width: 140px;
-    font-size: 8pt;
+@media (max-width: 350pt) {
+  html {
+    --card-width: 100pt;
+    --card-font-size: 7.8pt;
+    --card-text-height: 40.7em;
   }
 }
 

@@ -1,7 +1,7 @@
 // @refresh reset
 import {
     RefObject, useEffect, useRef,
-} from "react";
+} from "react"
 
 export type RenderFrameProps = {
     context: CanvasRenderingContext2D,
@@ -19,54 +19,54 @@ export function Canvas({
 }: CanvasProps) {
     function getRenderFrameProps(ref: RefObject<HTMLCanvasElement>): RenderFrameProps | undefined {
         if (ref.current) {
-            let context = ref.current.getContext('2d');
+            let context = ref.current.getContext('2d')
             if (context) {
                 return {
                     context,
                     width: ref.current.width,
                     height: ref.current.height,
-                };
+                }
             } else {
-                return undefined;
+                return undefined
             }
         }
-        return undefined;
+        return undefined
     }
-    let canvasRef = useCanvasRef();
+    let canvasRef = useCanvasRef()
     function draw(next?: () => void) {
         return requestAnimationFrame(() => {
-            let props = getRenderFrameProps(canvasRef);
+            let props = getRenderFrameProps(canvasRef)
             if (!props) {
-                return;
+                return
             }
-            renderFrame(props);
+            renderFrame(props)
             if (next) {
-                next();
+                next()
             }
-        });
+        })
     }
     useEffect(() => {
         if (setup) {
-            let props = getRenderFrameProps(canvasRef);
+            let props = getRenderFrameProps(canvasRef)
             if (props) {
-                setup(props);
+                setup(props)
             }
         }
-        let frameHandle = 0;
+        let frameHandle = 0
         if (animated) {
             let loop = function () {
-                frameHandle = draw(loop);
+                frameHandle = draw(loop)
             }
-            loop();
+            loop()
         } else {
-            frameHandle = draw();
+            frameHandle = draw()
         }
         return function cleanup() {
             if (frameHandle) {
-                cancelAnimationFrame(frameHandle);
+                cancelAnimationFrame(frameHandle)
             }
         }
-    });
+    })
     return <>
         <canvas
             className="canvas"
@@ -78,27 +78,27 @@ export function Canvas({
             height: 100%;
         }
         `}</style>
-    </>;
+    </>
 }
 
 function useCanvasRef() {
     function setupCanvas(canvas: HTMLCanvasElement) {
-        let dpi = window.devicePixelRatio || 1;
-        let style = getComputedStyle(canvas);
-        let styleWidth = style.getPropertyValue('width');
-        let styleHeight = style.getPropertyValue('height');
-        let width = parseInt(styleWidth, 10) * dpi;
-        let height = parseInt(styleHeight, 10) * dpi;
-        canvas.setAttribute('width', width.toString());
-        canvas.setAttribute('height', height.toString());
+        let dpi = window.devicePixelRatio || 1
+        let style = getComputedStyle(canvas)
+        let styleWidth = style.getPropertyValue('width')
+        let styleHeight = style.getPropertyValue('height')
+        let width = parseInt(styleWidth, 10) * dpi
+        let height = parseInt(styleHeight, 10) * dpi
+        canvas.setAttribute('width', width.toString())
+        canvas.setAttribute('height', height.toString())
     }
 
-    let canvasRef = useRef<HTMLCanvasElement>(null);
+    let canvasRef = useRef<HTMLCanvasElement>(null)
     useEffect(() => {
         if (canvasRef.current) {
-            setupCanvas(canvasRef.current);
+            setupCanvas(canvasRef.current)
         }
-    }, []);
+    }, [])
 
-    return canvasRef;
+    return canvasRef
 }

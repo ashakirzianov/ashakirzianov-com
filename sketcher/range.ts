@@ -1,4 +1,4 @@
-import { Vector } from "./vector";
+import { Vector } from "./vector"
 
 export type NumRange = { min: number, max: number };
 
@@ -7,13 +7,13 @@ export function mapRange({ from, to, value }: {
     to: NumRange,
     value: number,
 }) {
-    let perc = (value - from.min) / (from.max - from.min);
+    let perc = (value - from.min) / (from.max - from.min)
     let result = to.min + perc * (to.max - to.min)
-    return result;
+    return result
 }
 
 export function rangeLength({ min, max }: NumRange) {
-    return max - min;
+    return max - min
 }
 
 export function withinRange({
@@ -22,7 +22,7 @@ export function withinRange({
     range: NumRange,
     value: number,
 }) {
-    return min < value && value < max;
+    return min < value && value < max
 }
 
 export function withinDimensions({ dimensions, point: { x, y, z } }: {
@@ -34,13 +34,13 @@ export function withinDimensions({ dimensions, point: { x, y, z } }: {
     return withinRange({ range: dimensions.x, value: x })
         && withinRange({ range: dimensions.y, value: y })
         && withinRange({ range: dimensions.z, value: z ?? 0 })
-        ;
+        
 }
 
 export function rangeArray({ min, max }: NumRange) {
-    let result = [];
+    let result = []
     for (let idx = min; idx < max; idx++) {
-        result.push(idx);
+        result.push(idx)
     }
-    return result;
+    return result
 }

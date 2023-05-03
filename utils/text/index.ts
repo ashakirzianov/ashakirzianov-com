@@ -14,6 +14,7 @@ export type TextPost = {
     html: string,
     title?: string,
     date?: string,
+    description?: string,
 };
 export type TextPostMap = {
     [id: string]: TextPost,

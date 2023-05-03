@@ -1,10 +1,14 @@
 import { useQuery } from "@/utils/query"
 import { ReactNode } from "react"
-import { SketchCollectionBlock, SketchMulticollection } from "./SketchCollection";
-import Head from "next/head";
-import { AllSketchesButton, HomeButton } from "./Buttons";
-import { SketchCollection } from "@/sketcher";
-import { href } from "@/utils/refs";
+import { SketchCollectionBlock, SketchMulticollection } from "./SketchCollection"
+import Head from "next/head"
+import { AllSketchesButton, HomeButton } from "./Buttons"
+import { SketchCollection } from "@/sketcher"
+import { href } from "@/utils/refs"
+import { TextPost, TextPostMap } from "@/utils/text"
+import Link from "next/link"
+import { TextCard } from "./Cards"
+import { TextBlock } from "./TextBlock"
 
 export type PageHeaderProps = {
     title: string,
@@ -173,5 +177,73 @@ export function AllSketchesPage({ collections }: {
                 <HomeButton />
             </footer>
         </div>
+    </PixelPage>
+}
+
+export function TextPostPage({ post }: {
+    post: TextPost,
+}) {
+    return <>
+        <PageHead
+            title={post.title ?? 'Рассказ'}
+            description={post.description ?? post.title ?? 'Рассказ'}
+        />
+        <TextBlock>
+            <div dangerouslySetInnerHTML={{ __html: post.html }} />
+            <nav style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 'var(--padding)',
+                justifyContent: 'space-between',
+                marginTop: 'calc(4 * var(--padding))',
+                marginBottom: 'var(--padding)',
+            }}>
+                <AllSketchesButton />
+                <HomeButton />
+            </nav>
+        </TextBlock>
+    </>
+}
+
+export function AllStoritesPage({ previews }: {
+    previews: TextPostMap,
+}) {
+    return <PixelPage
+        title="Все рассказы"
+        description="Страница со всеми рассказами"
+    >
+        <div className="outer">
+            <div className="container">
+                {Object.entries(previews).map(([id, story], idx) =>
+                    <Link key={idx} href={href('text', { id })}>
+                        <TextCard text={story} />
+                    </Link>
+                )}
+            </div>
+            <nav className="navigation">
+                <HomeButton />
+            </nav>
+        </div>
+        <style jsx>{`
+        .outer {
+            dispaly:flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            flex-flow: row wrap;
+            align-content: flex-start;
+            gap: var(--padding);
+            padding: var(--padding);
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-around;
+            padding: var(--padding);
+        }
+        `}</style>
     </PixelPage>
 }

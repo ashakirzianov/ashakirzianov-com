@@ -1,4 +1,5 @@
 import { AllSketchesButton, HomeButton } from "@/components/Buttons"
+import { TextPostPage } from "@/components/Pages"
 import { TextBlock } from "@/components/TextBlock"
 import { TextPost, getAllTextIds, getTextForId } from "@/utils/text"
 import { GetStaticPaths, GetStaticProps } from "next"
@@ -26,26 +27,6 @@ export const getStaticProps: GetStaticProps<Props> = async function ({ params })
     return { props: { post } }
 }
 
-export default function TextPostPage({ post }: Props) {
-    return <>
-        <Head>
-            <title>{post.title ?? 'Post'}</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
-        <TextBlock>
-            <div dangerouslySetInnerHTML={{ __html: post.html }} />
-            <nav style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 'var(--padding)',
-                justifyContent: 'space-between',
-                marginTop: '20pt',
-                marginBottom: '20pt',
-            }}>
-                <AllSketchesButton />
-                <HomeButton />
-            </nav>
-        </TextBlock>
-    </>
+export default function Page({ post }: Props) {
+    return <TextPostPage post={post} />
 }

@@ -84,6 +84,8 @@ export function setupCanvas(canvas: HTMLCanvasElement) {
         canvas.dataset['autoheight'] = 'true'
     }
     let dpi = window.devicePixelRatio || 1
+    // Hack: support safari on old screens
+    dpi = Math.max(dpi, 2)
     let style = getComputedStyle(canvas)
     let styleWidth = style.getPropertyValue('width')
     let styleHeight = style.getPropertyValue('height')

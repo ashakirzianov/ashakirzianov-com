@@ -70,7 +70,7 @@ export function AboutCard({ hue, onHover }: {
 }) {
     return <Card>
         <div className="content noselect" unselectable="on">
-            —Привет! Меня зовут <span>Анҗан</span>. Я пишу <AboutLink href={href('text', { hue })} highlight="stories" onHover={onHover}>рассказы</AboutLink> и генерирую <AboutLink href={href('sketch', { hue })} highlight="posters" onHover={onHover}>плакаты и формы</AboutLink>.
+            —Привет! Меня зовут <span>Анҗан</span>. Я пишу <AboutLink href={href('text', { hue })} highlight="stories" onHover={onHover}>рассказы</AboutLink> и <AboutLink href={href('sketch', { hue })} highlight="posters" onHover={onHover}>генерирую формы</AboutLink>.
             <p>&nbsp;</p>
             — Что? Кто ты такой и <AboutLink href={href('about', { hue })}>что это за буква җ?</AboutLink>
 

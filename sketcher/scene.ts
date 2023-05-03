@@ -3,6 +3,7 @@ import { Layer } from "./layer"
 import { Dimensions } from "./layout"
 
 export type SceneMeta = {
+    id?: string,
     dimensions?: [width: number, height: number],
     description?: string,
     title?: string,
@@ -90,4 +91,17 @@ export function fromLayers(...layers: Layer<unknown>[]): Scene<unknown> {
         state: undefined,
         layers,
     }
+}
+
+export function sceneId(scene: Scene) {
+    return scene.id ?? (
+        scene.title ? titleToId(scene.title) : undefined
+    )
+}
+
+export function titleToId(title: string) {
+    return title.toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[#]/g, 'number')
+        .replace(/[^a-z0-9-]/g, '')
 }

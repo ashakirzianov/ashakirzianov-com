@@ -1,4 +1,4 @@
-import { SketchCollection } from "@/sketcher"
+import { SketchCollection, sceneId } from "@/sketcher"
 import { useSketcher } from "@/utils/sketcher"
 import { GetStaticPaths, GetStaticProps } from "next"
 import { SketchCollectionPage } from "./SketchCollectionPage"
@@ -11,14 +11,16 @@ export function sketchCollection({
     path: string,
 }) {
     type Props = {
-        id: string | null,
+        idx: number | null,
     };
     const getStaticPaths: GetStaticPaths = async function () {
-        let dynamic = Object.keys(collection.sketches).map(
-            id => ({
-                params: { id: [id] }
-            })
-        )
+        let dynamic = collection.sketches.map((sketch, idx) => {
+            if (sketch.id === undefined) {
+                return { params: { id: [idx.toString()] } }
+            } else {
+                return { params: { id: [sketch.id] } }
+            }
+        })
         return {
             paths: [
                 { params: { id: ['index'] } },
@@ -30,20 +32,25 @@ export function sketchCollection({
     const getStaticProps: GetStaticProps<Props> = async function ({ params }) {
         let id = params?.id?.[0] ?? 'index'
         if (id === 'index') {
-            return { props: { id: null } }
-        } else if (id in collection.sketches) {
-            return {
-                props: { id }
-            }
-        } else {
-            return { notFound: true }
+            return { props: { idx: null } }
         }
+        let sketchIdx = collection.sketches.findIndex(
+            sketch => sceneId(sketch) === id
+        )
+        if (sketchIdx !== -1) {
+            return { props: { idx: sketchIdx } }
+        }
+        let idx = parseInt(id, 10)
+        if (idx >= 0 && idx <= collection.sketches.length) {
+            return { props: { idx } }
+        }
+        return { notFound: true }
     }
 
-    function SingleSketch({ id }: {
-        id: string,
+    function SingleSketch({ idx }: {
+        idx: number,
     }) {
-        let scene = collection.sketches[id]!
+        let scene = collection.sketches[idx]!
         let { node } = useSketcher({
             scene,
             period: 40,
@@ -59,9 +66,9 @@ export function sketchCollection({
         </SketchPage>
     }
 
-    function Page({ id }: Props) {
-        if (id) {
-            return <SingleSketch id={id} />
+    function Page({ idx }: Props) {
+        if (idx) {
+            return <SingleSketch idx={idx} />
         } else {
             return <SketchCollectionPage
                 collection={collection}

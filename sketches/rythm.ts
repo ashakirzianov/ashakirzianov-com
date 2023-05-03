@@ -1,7 +1,5 @@
 import {
-    SketchCollection, arrayAnimator, boundingBox, circle, clearFrame,
-    collection,
-    filterUndefined, fromHSLA, gravity, hslaRange,
+    SketchCollection, arrayAnimator, boundingBox, circle, clearFrame, filterUndefined, fromHSLA, gravity, hslaRange,
     modItem, multBox, rainbow,
     rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
     zoomToFit
@@ -11,57 +9,51 @@ export function titleVariation() {
     return variation14()
 }
 
-export const rythm = collection({
+export const rythm: SketchCollection = {
     id: 'rythm',
     meta: {
         title: 'Ритм / Rythm',
     },
-    sketches: {
-        '0': variation0(),
-        '2': variation2(),
-        '4': variation4(),
-        '5': variation5(),
-        '8': variation8(),
-        '12': variation12(),
-        '14': variation14(),
-        'meh': variationMeh(),
-        'white': variationWhite(),
-        'sunflower': sunflower(),
-    },
-    order: [
-        '0', '2', '4',
-        '5', '8',
-        '12', '14', 'meh',
-        'white', 'sunflower',
+    sketches: [
+        variation0(),
+        variation2(),
+        variation4(),
+        variation5(),
+        variation8(),
+        variation12(),
+        variation14(),
+        variationMeh(),
+        variationWhite(),
+        sunflower(),
     ],
-})
+}
 
 export const allRythm: SketchCollection = {
     id: 'rythm',
     meta: {
         title: 'Ритм / Rythm',
     },
-    sketches: {
-        'current': form(),
-        '0': variation0(),
-        '1': variation1(),
-        '2': variation2(),
-        '3': variation3(),
-        '4': variation4(),
-        '5': variation5(),
-        '6': variation6(),
-        '7': variation7(),
-        '8': variation8(),
-        '9': variation9(),
-        '10': variation10(),
-        '11': variation11(),
-        '12': variation12(),
-        '13': variation13(),
-        '14': variation14(),
-        'meh': variationMeh(),
-        'white': variationWhite(),
-        'sunflower': sunflower(),
-    },
+    sketches: [
+        form(),
+        variation0(),
+        variation1(),
+        variation2(),
+        variation3(),
+        variation4(),
+        variation5(),
+        variation6(),
+        variation7(),
+        variation8(),
+        variation9(),
+        variation10(),
+        variation11(),
+        variation12(),
+        variation13(),
+        variation14(),
+        variationMeh(),
+        variationWhite(),
+        sunflower(),
+    ],
 }
 
 function form() {

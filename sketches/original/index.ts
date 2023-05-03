@@ -11,12 +11,12 @@ export const original: SketchCollection = {
     meta: {
         title: 'Первая серия / The First One',
     },
-    sketches: {
-        'knot': knot(),
-        'balanced': balanced(),
-        'pastel': pastel(),
-        'rainbow-strings': rainbowStrings(),
-        'slinky': slinky(),
-        'stroked-slinky': strokedSlinky(),
-    },
+    sketches: [
+        knot(),
+        balanced(),
+        pastel(),
+        rainbowStrings(),
+        slinky(),
+        strokedSlinky(),
+    ],
 }

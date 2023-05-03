@@ -11,11 +11,11 @@ export const posters: SketchCollection = {
     meta: {
         title: 'Плакаты / Posters',
     },
-    sketches: {
-        'love-me-two-times': loveMeTwoTimes(),
-        'beautiful-wold-where-are-you': bwway(),
-        'hello-world': helloWorld(),
-    },
+    sketches: [
+        loveMeTwoTimes(),
+        bwway(),
+        helloWorld(),
+    ],
 }
 
 export const postersWip: SketchCollection = {
@@ -23,8 +23,8 @@ export const postersWip: SketchCollection = {
     meta: {
         title: 'Unfinished Posters',
     },
-    sketches: {
-        'style-is-the-answer': styleIsTheAnswer(),
-        'pink': pink(),
-    },
+    sketches: [
+        styleIsTheAnswer(),
+        pink(),
+    ],
 }

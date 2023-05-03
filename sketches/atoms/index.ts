@@ -8,9 +8,9 @@ export const atoms: SketchCollection = {
     meta: {
         title: 'Атомы / Atoms',
     },
-    sketches: {
-        'bubbles': bubbles(),
-        'bubbles-flat': bubblesFlat(),
-        'molecultes': molecules(),
-    },
+    sketches: [
+        bubbles(),
+        bubblesFlat(),
+        molecules(),
+    ],
 }

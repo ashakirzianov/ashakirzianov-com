@@ -8,9 +8,9 @@ export const misc: SketchCollection = {
     meta: {
         title: '...',
     },
-    sketches: {
-        'thirty-four': number34(),
-        'rave': rave(),
-        'typography': typography(),
-    },
+    sketches: [
+        number34(),
+        rave(),
+        typography(),
+    ],
 }

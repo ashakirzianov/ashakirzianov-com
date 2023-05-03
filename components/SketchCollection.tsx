@@ -51,7 +51,7 @@ export function SketchCollectionBlock({
             gap: var(--padding);
             padding: var(--padding);
             width: 100%;
-            max-width: 720pt;
+            max-width: calc(3 * var(--card-width) + 4 * var(--padding));
         }
         `}</style>
     </>

@@ -60,7 +60,7 @@ export function sketchCollection({
     }
 
     function Page({ id }: Props) {
-        if (id !== null) {
+        if (id) {
             return <SingleSketch id={id} />
         } else {
             return <SketchCollectionPage

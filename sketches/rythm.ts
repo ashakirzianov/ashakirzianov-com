@@ -1,9 +1,14 @@
 import {
-    SketchCollection, arrayAnimator, circle, clearFrame, combineScenes,
-    filterUndefined, fromHSLA, gravity, hslaRange, modItem, multBox, rainbow,
-    rect, reduceAnimators, scene, traceAnimator, vals, vector, velocityStep,
+    SketchCollection, arrayAnimator, boundingBox, circle, clearFrame,
+    filterUndefined, fromHSLA, gravity, hslaRange,
+    modItem, multBox, rainbow,
+    rect, reduceAnimators, scene, square, traceAnimator, vals, vector, velocityStep,
     zoomToFit
 } from '@/sketcher'
+
+export function currentRythm() {
+    return variation14()
+}
 
 export const rythm: SketchCollection = {
     id: 'rythm',
@@ -11,6 +16,7 @@ export const rythm: SketchCollection = {
         title: 'Ритм / Rythm',
     },
     sketches: {
+        'current': form(),
         '0': variation0(),
         '1': variation1(),
         '2': variation2(),
@@ -28,64 +34,121 @@ export const rythm: SketchCollection = {
         '14': variation14(),
         'meh': variationMeh(),
         'white': variationWhite(),
+        'sunflower': sunflower(),
     },
 }
 
-export const rytmVariations = [
-    variation0(),
-    variation1(),
-    variation2(),
-    variation3(),
-    variation4(),
-    variation5(),
-    variation6(),
-    variation7(),
-    variation8(),
-    variation9(),
-    variation10(),
-    variation11(),
-    variation12(),
-    variation13(),
-    variation14(),
-    variationMeh(),
-    variationWhite(),
-]
+function form() {
+    let [g, power] = [0.02, 2]
+    let stepx = 15
+    let stepy = 15
+    let positions = circles({
+        circles: 20,
+        count: 3,
+        shift: Math.PI * 0.1,
+        step: 1,
+    })
 
-export function currentRythm() {
-    return combineScenes(
-        variation14(),
-    )
+    let state = filterUndefined(positions.map((position, idx) => {
+        if (Math.random() > 0.9) {
+            return undefined
+        }
+        return {
+            position: {
+                x: position.x * stepx,
+                y: position.y * stepy,
+                z: position.z,
+            },
+            velocity: vector.value(0),
+            mass: 1,
+            radius: 40,
+            kk: 1,
+        }
+    }))
+    let k = 1
+    return scene({
+        state,
+        animator: (reduceAnimators(
+            gravity({ gravity: g, power }),
+            velocityStep(),
+            arrayAnimator(o => ({
+                ...o,
+                kk: o.kk * (1 + (Math.random() - .47) * 0.05),
+            }))
+        )),
+        layers: [{}, {}, {
+            prepare({ canvas }) {
+                clearFrame({ color: '#000', canvas })
+                let box = boundingBox(state.map(o => o.position))
+                zoomToFit({
+                    canvas,
+                    box: multBox(box, 1)
+                })
+            },
+            render({ canvas, state, frame }) {
+                k = k * (1 + (Math.random() - .47) * .05)
+                // k = 1
+                state.forEach((object, idx) => {
+                    let h = 60
+                    let s = 80
+                    let count = 10
+                    let colors = [
+                        ...hslaRange({
+                            from: { h: 60, s, l: 30 },
+                            to: { h: 60, s, l: 70 },
+                            count,
+                        }),
+                        ...hslaRange({
+                            from: { h: 210, s, l: 30 },
+                            to: { h: 210, s, l: 70 },
+                            count,
+                        }),
+                    ].flat()
+
+                    let stroke = modItem(colors, idx)
+                    circle({
+                        lineWidth: .1,
+                        stroke,
+                        center: object.position,
+                        radius: object.radius * object.kk,
+                        context: canvas.context,
+                        // rotation: (idx + frame / 20) * 0.1,
+                        // rotation: Math.PI / 4 + frame / 120,
+                    })
+                }
+                )
+            }
+        }]
+    })
 }
 
-function form() {
-    let n = 7
+function flower() {
     let [g, power] = [0.02, 2]
-    let stepx = 30
-    let stepy = 40
-    let state = filterUndefined(vals(n).map(
-        (_, i) => vals(n).map(
-            (_, j) => {
-                if ((i + j) % 2 == 1) {
-                    return undefined
-                }
-                // if (Math.abs(i - j) <= 1) {
-                //     return undefined;
-                // }
-                if (Math.random() > 1) {
-                    return undefined
-                }
-                let x = j * stepx - (n - 1) * stepx / 2
-                let y = i * stepy - (n - 1) * stepy / 2
-                let mass = Math.random() * 2 + 1
-                return {
-                    position: { x, y, z: 0 },
-                    velocity: vector.value(0),
-                    mass,
-                    radius: 20 * mass,
-                }
-            }
-        )
-    ).flat())
+    let stepx = 15
+    let stepy = 15
+    let positions = circles({
+        circles: 20,
+        count: 3,
+        shift: Math.PI * 0.1,
+        step: 1,
+    })
+
+    let state = filterUndefined(positions.map((position, idx) => {
+        if (Math.random() > 0.9) {
+            return undefined
+        }
+        return {
+            position: {
+                x: position.x * stepx,
+                y: position.y * stepy,
+                z: position.z,
+            },
+            velocity: vector.value(0),
+            mass: 1,
+            radius: 40,
+        }
+    }))
+    let k = 1
     return scene({
         state,
         animator: (reduceAnimators(
@@ -95,37 +158,209 @@ function form() {
         layers: [{}, {}, {
             prepare({ canvas }) {
                 clearFrame({ color: '#000', canvas })
+                let box = boundingBox(state.map(o => o.position))
                 zoomToFit({
                     canvas,
-                    box: multBox({
-                        start: vector.fromTuple([-n * stepx, -n * stepy, 0]),
-                        end: vector.fromTuple([n * stepx, n * stepy, 0]),
-                    }, 0.5)
+                    box: multBox(box, 1)
+                })
+            },
+            render({ canvas, state, frame }) {
+                k = k * (1 + (Math.random() - .35) * 0.01)
+                state.forEach((object, idx) => {
+                    let h = 60
+                    let s = 80
+                    let count = 10
+                    let colors = [
+                        ...hslaRange({
+                            from: { h: 60, s, l: 50 },
+                            to: { h: 60, s, l: 70 },
+                            count,
+                        }),
+                        ...hslaRange({
+                            from: { h: 0, s, l: 50 },
+                            to: { h: 0, s, l: 70 },
+                            count,
+                        }),
+                        ...hslaRange({
+                            from: { h: 110, s, l: 50 },
+                            to: { h: 110, s, l: 70 },
+                            count,
+                        }),
+                    ].flat()
+
+                    let stroke = modItem(colors, idx)
+                    circle({
+                        lineWidth: .1,
+                        stroke,
+                        center: object.position,
+                        radius: object.radius * k,
+                        context: canvas.context,
+                    })
+                }
+                )
+            }
+        }]
+    })
+}
+
+function sunflower() {
+    let [g, power] = [0.02, 2]
+    let stepx = 15
+    let stepy = 15
+    let positions = circles({
+        circles: 10,
+        count: 5,
+        shift: Math.PI * 0.1,
+        step: 1,
+    })
+
+    let state = positions.map((position, idx) => {
+        return {
+            position: {
+                x: position.x * stepx,
+                y: position.y * stepy,
+                z: position.z,
+            },
+            velocity: vector.value(0),
+            mass: 1,
+            // radius: 10 + idx * .2,
+            radius: 20,
+        }
+    })
+    let k = 1
+    return scene({
+        state,
+        animator: (reduceAnimators(
+            gravity({ gravity: g, power }),
+            velocityStep(),
+        )),
+        layers: [{}, {}, {
+            prepare({ canvas }) {
+                clearFrame({ color: '#000', canvas })
+                let box = boundingBox(state.map(o => o.position))
+                zoomToFit({
+                    canvas,
+                    box: multBox(box, 1)
+                })
+            },
+            render({ canvas, state, frame }) {
+                k = k * (1 + (Math.random() - .3) * 0.01)
+                state.forEach((object, idx) => {
+                    let h = 60
+                    let s = 80
+                    let count = 10
+                    let colors = [
+                        // ...hslaRange({
+                        //     from: { h, s, l: 20 },
+                        //     to: { h, s, l: 40 },
+                        //     count,
+                        // }),
+                        ...hslaRange({
+                            from: { h, s, l: 30 },
+                            to: { h, s, l: 90 },
+                            count,
+                        }),
+                        // ...hslaRange({
+                        //     from: { h: 110, s: 0, l: 30 },
+                        //     to: { h: 110, s: 0, l: 90 },
+                        //     count,
+                        // }),
+                        ...hslaRange({
+                            from: { h: 210, s, l: 30 },
+                            to: { h: 210, s, l: 90 },
+                            count,
+                        }),
+                    ].flat()
+
+                    let stroke = modItem(colors, idx)
+                    circle({
+                        lineWidth: .1,
+                        stroke,
+                        center: object.position,
+                        radius: object.radius * k,
+                        context: canvas.context,
+                    })
+                }
+                )
+            }
+        }]
+    })
+}
+
+function variation15() {
+    let n = 100
+    let [a, b] = [0, 2]
+    let [g, power] = [0.02, 2]
+    let stepx = 30
+    let stepy = 40
+    let state = fromMap([
+        '    ....    ',
+        '     ..     ',
+        '     ..     ',
+        '     ..     ',
+        '.    ..    .',
+        '............',
+        '............',
+        '.    ..    .',
+        '     ..     ',
+        '     ..     ',
+        '     ..     ',
+        '     ..     ',
+        '     ..     ',
+        '     ..     ',
+        '     ..     ',
+        '    ....    ',
+    ]).map(position => {
+        return {
+            position: {
+                x: position.x * stepx,
+                y: position.y * stepy,
+                z: position.z,
+            },
+            velocity: vector.value(0),
+            mass: 2,
+            radius: 20, // 20 * Math.random(),
+        }
+    })
+    let palette = rainbow({ count: 120 })
+    return scene({
+        state,
+        animator: (reduceAnimators(
+            gravity({ gravity: g, power }),
+            velocityStep(),
+        )),
+        layers: [{}, {}, {
+            prepare({ canvas }) {
+                clearFrame({ color: '#000', canvas })
+                let box = boundingBox(state.map(o => o.position))
+                zoomToFit({
+                    canvas,
+                    box: multBox(box, 1)
                 })
             },
             render({ canvas, state, frame }) {
                 state.forEach((object, idx) => {
-                    {
-                        let count = 15
-                        let hue = 20 + idx * 50
-                        let s = 90
-                        hue = 200
-                        let colors = [
-                            hslaRange({
-                                from: { h: hue, s, l: 40 },
-                                to: { h: hue, s, l: 70 },
-                                count,
-                            })
-                        ].flat()
-                        let stroke = modItem(colors, idx)
-                        circle({
-                            lineWidth: .1,
-                            stroke,
-                            position: object.position,
-                            radius: object.radius / Math.sqrt(frame + 3),
-                            context: canvas.context,
-                        })
-                    }
+                    let offset = idx * 100 + frame
+                    offset -= frame
+                    let stroke = modItem(palette, offset + 4)
+                    // stroke = modItem(['black', '#333', '#666'], idx)
+                    let h = 0
+                    let s = 800
+                    let n = 10
+                    let lbase = 60
+                    let lend = 100
+                    let lstep = (lend - lbase) / n
+                    let colors = vals(n).map(
+                        (_, idx) => fromHSLA({ h, s, l: lbase + lstep * idx })
+                    )
+                    stroke = modItem(colors, idx)
+                    circle({
+                        lineWidth: .1,
+                        stroke,
+                        center: object.position,
+                        radius: object.radius,
+                        context: canvas.context,
+                    })
                 }
                 )
             }
@@ -197,7 +432,7 @@ function variation14() {
                         circle({
                             lineWidth: .1,
                             stroke,
-                            position: object.position,
+                            center: object.position,
                             radius: object.radius / Math.sqrt(frame + 3) * (Math.sin(frame / 20) + 2),
                             context: canvas.context,
                         })
@@ -279,7 +514,7 @@ function variation13() {
                         circle({
                             lineWidth: .1,
                             stroke,
-                            position: position,
+                            center: position,
                             // width: object.radius / Math.log(frame),
                             // height: object.radius / Math.log(frame),
                             radius: object.radius / Math.sqrt(f),
@@ -360,7 +595,7 @@ function variation12() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         // width: object.radius / Math.log(frame),
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
@@ -439,7 +674,7 @@ function variation11() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         // width: object.radius / Math.log(frame),
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
@@ -518,7 +753,7 @@ function variation10() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         // width: object.radius / Math.log(frame),
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 1),
@@ -596,7 +831,7 @@ function variation9() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         // width: object.radius / Math.log(frame),
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 100 + 2),
@@ -674,7 +909,7 @@ function variation8() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         // width: object.radius / Math.log(frame),
                         // height: object.radius / Math.log(frame),
                         radius: object.radius / Math.log10(frame / 10 + 10),
@@ -756,7 +991,7 @@ function variation7() {
                     rect({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         width: object.radius * Math.random(),
                         height: object.radius * Math.random(),
                         // radius: object.radius * Math.random(),
@@ -838,7 +1073,7 @@ function variation6() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -910,7 +1145,7 @@ function variation5() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -985,7 +1220,7 @@ function variationMeh() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1060,7 +1295,7 @@ function variation4() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1135,7 +1370,7 @@ function variation3() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1215,7 +1450,7 @@ function variation2() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1293,7 +1528,7 @@ function variation1() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1370,7 +1605,7 @@ function variation0() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1437,7 +1672,7 @@ function variationWhite() {
                     circle({
                         lineWidth: .1,
                         stroke,
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })
@@ -1446,4 +1681,67 @@ function variationWhite() {
             }
         }]
     })
+}
+
+function fromMap(stringMap: string[]) {
+    return makePositions(makeBoolMap(stringMap, '.'))
+}
+
+function makeBoolMap(stringMap: string[], char: string) {
+    return stringMap.map(
+        str => {
+            let result = []
+            for (let ch of str) {
+                result.push(ch === char);
+            }
+            return result;
+        }
+    )
+}
+
+function makePositions(map: boolean[][]) {
+    let positions = []
+    for (let ridx = 0; ridx < map.length; ridx++) {
+        let row = map[ridx]!
+        for (let cidx = 0; cidx < row.length; cidx++) {
+            if (row[cidx]) {
+                positions.push({
+                    x: cidx,
+                    y: ridx,
+                    z: 0,
+                })
+            }
+        }
+    }
+    return positions;
+}
+
+function circles({ circles, count, shift, step }: {
+    circles: number,
+    count: number,
+    shift: number,
+    step: number,
+}) {
+    let result = []
+    let start = 0
+    for (let i = 0; i < circles; i++) {
+        let ps = circlePositions(count, start).map(
+            p => vector.mults(p, step * (i + 1))
+        )
+        result.push(...ps)
+        start += shift
+    }
+    return result
+}
+
+function circlePositions(count: number, start: number) {
+    let positions = []
+    for (let i = 0; i < count; i++) {
+        let angle = Math.PI * 2 / count * i + start
+        let x = Math.cos(angle)
+        let y = Math.sin(angle)
+        let z = 0
+        positions.push({ x, y, z })
+    }
+    return positions
 }

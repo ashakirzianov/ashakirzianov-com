@@ -4,14 +4,16 @@ import { pastel } from "./pastel"
 import { rainbowStrings } from "./rainbowStrings"
 import { slinky } from "./slinky"
 import { strokedSlinky } from "./strokedSlinky"
+import { balanced } from "./balanced"
 
-export const wipSketches: SketchCollection = {
-    id: 'wip',
+export const original: SketchCollection = {
+    id: 'original',
     meta: {
-        title: 'Неоконченное / Unfinished',
+        title: 'Первая серия / The First One',
     },
     sketches: {
         'knot': knot(),
+        'balanced': balanced(),
         'pastel': pastel(),
         'rainbow-strings': rainbowStrings(),
         'slinky': slinky(),

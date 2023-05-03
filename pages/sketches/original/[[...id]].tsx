@@ -1,10 +1,10 @@
 import { sketchCollection } from "@/components/collection"
-import { wipSketches } from "@/sketches/wip"
+import { original } from "@/sketches/original"
 import { href } from "@/utils/refs"
 
 let { getStaticPaths, getStaticProps, Page } = sketchCollection({
-    collection: wipSketches,
-    path: href('sketch', { collection: 'wip' }),
+    collection: original,
+    path: href('sketch', { collection: 'original' }),
 })
 export {
     getStaticPaths, getStaticProps

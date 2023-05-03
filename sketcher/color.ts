@@ -171,11 +171,12 @@ export function hslaRange({ from, to, count }: {
         l: to.l ?? rfrom.l,
         a: to.a ?? rfrom.a,
     }
+    let divisor = Math.max(1, count - 1)
     let delta = {
-        h: (rto.h - rfrom.h) / count,
-        s: (rto.s - rfrom.s) / count,
-        l: (rto.l - rfrom.l) / count,
-        a: (rto.a - rfrom.a) / count,
+        h: (rto.h - rfrom.h) / divisor,
+        s: (rto.s - rfrom.s) / divisor,
+        l: (rto.l - rfrom.l) / divisor,
+        a: (rto.a - rfrom.a) / divisor,
     }
     return Array(count).fill(undefined).map(
         (_, idx) => `hsla(${rfrom.h + delta.h * idx},${rfrom.s + delta.s * idx}%,${rfrom.l + delta.l * idx}%,${rfrom.a + delta.a * idx})`,

@@ -13,8 +13,8 @@ export function bwway() {
     }
     return combineScenes(
         sceneMeta({
-            title: 'Beuatiful World, Where Are You',
-            description: `Poster for Sally Rooney's book "Beautiful World, Where Are You"`,
+            title: 'Beuatiful World, Where Are You?',
+            description: `Poster for Sally Rooney's book "Beautiful World, Where Are You?"`,
         }),
         fromLayers(colorLayer('white')),
         rave(),
@@ -42,6 +42,7 @@ export function bwway() {
             }]),
             layers: [{
                 render({ canvas, state: { cross, main } }) {
+                    console.log('why?')
                     let inside: TextLayout = {
                         grow: 1,
                         direction: 'column',

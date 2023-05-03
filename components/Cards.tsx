@@ -130,7 +130,7 @@ function Card({
     children?: ReactNode;
     onVisibilityChanged?: (isVisible: boolean) => void;
 }) {
-    const THRESHOLD = 0.1
+    const THRESHOLD = 0.01
     const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -153,16 +153,6 @@ function Card({
         )
 
         observer.observe(ref)
-
-        // Call the onVisibilityChanged function immediately after setting up the observer
-        const rect = ref.getBoundingClientRect()
-        const isVisible =
-            (rect.top <= window.innerHeight && rect.top + rect.height * THRESHOLD >= 0) ||
-            (rect.bottom >= 0 && rect.bottom - rect.height * THRESHOLD <= window.innerHeight)
-        if (isVisible !== lastVisibility) {
-            onVisibilityChanged(isVisible)
-            lastVisibility = isVisible
-        }
 
         return () => {
             observer.unobserve(ref)

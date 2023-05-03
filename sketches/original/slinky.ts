@@ -57,7 +57,7 @@ function form() {
                         circle({
                             lineWidth: 3,
                             stroke,
-                            position: object.position,
+                            center: object.position,
                             radius: object.radius,
                             context: canvas.context,
                         })

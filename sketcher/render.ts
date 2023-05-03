@@ -37,52 +37,62 @@ export type ShapeProps = {
     lineWidth?: number,
     fill?: Color,
     stroke?: Color,
-    position: Vector,
+    center: Vector,
     context: Canvas2DContext,
 };
 
 export function rect({
     lineWidth, fill, stroke,
-    position: { x, y }, width, height,
+    center: { x, y }, width, height,
+    rotation,
     context,
 }: ShapeProps & {
     width: number,
     height: number,
+    rotation?: number,
 }) {
     context.save()
+    context.translate(x - width / 2, y - width / 2)
+    if (rotation) {
+        context.rotate(rotation)
+    }
     if (lineWidth) {
         context.lineWidth = lineWidth
     }
     if (fill) {
         context.fillStyle = resolveColor(fill, context)
         context.fillRect(
-            x - width / 2, y - width / 2,
+            -width / 2, -height / 2,
             width, height,
         )
     }
     if (stroke) {
         context.strokeStyle = resolveColor(stroke, context)
         context.strokeRect(
-            x - width / 2, y - width / 2,
+            -width / 2, -height / 2,
             width, height,
         )
     }
     context.restore()
 }
 
-export function square({ radius, ...rest }: ShapeProps & {
+export function square({
+    radius, rotation, ...rest
+}: ShapeProps & {
     radius: number,
+    rotation?: number,
 }) {
     rect({
         width: radius,
         height: radius,
+        rotation,
         ...rest,
     })
 }
 
 export function circle({
     lineWidth, fill, stroke,
-    position: { x, y }, radius,
+    center: { x, y }, radius,
     context,
 }: ShapeProps & {
     radius: number,
@@ -116,7 +126,7 @@ export function concentringCircles({
     for (let i = 0; i < n; i++) {
         let fill = fills[i]!
         circle({
-            context, fill, position,
+            context, fill, center: position,
             radius: radius * (n - i + 1) / n,
         })
     }

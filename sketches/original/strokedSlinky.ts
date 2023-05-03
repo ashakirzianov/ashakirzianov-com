@@ -46,7 +46,7 @@ function form() {
                             lineWidth: 0.2,
                             fill: fill,
                             stroke: 'black',
-                            position: object.position,
+                            center: object.position,
                             radius: object.radius * 3,
                             context: canvas.context,
                         })

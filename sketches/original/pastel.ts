@@ -58,7 +58,7 @@ function form() {
                                 lineWidth: 5,
                                 fill: fill,
                                 stroke: next,
-                                position: object.position,
+                                center: object.position,
                                 radius: object.radius * i,
                                 context: canvas.context,
                             })

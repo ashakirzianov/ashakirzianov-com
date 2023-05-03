@@ -52,7 +52,7 @@ function form(batches?: number) {
                         lineWidth: 0.5,
                         fill: modItem(palette, seti),
                         stroke: 'black',
-                        position: object.position,
+                        center: object.position,
                         radius: object.radius,
                         context: canvas.context,
                     })

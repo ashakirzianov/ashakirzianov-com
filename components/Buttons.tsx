@@ -18,7 +18,8 @@ export function AllSketchesButton() {
 }
 
 export function AllStoriesButton() {
-  return <Link href={href('text')}>
+  let { hue } = useQuery()
+  return <Link href={href('text', { hue })}>
     <PixelButton color="skyblue">Все рассказы</PixelButton>
   </Link>
 }

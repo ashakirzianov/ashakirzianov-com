@@ -96,7 +96,7 @@ export default function Main({
       key={'sketch-' + key}
       shifted={free}
       position={position}
-      link={href('sketch', { id, collection })}
+      link={href('sketch', { id, collection, hue })}
       highlight={hl === 'posters'}
     >
       <SketchCard
@@ -107,7 +107,7 @@ export default function Main({
   }
   function storyTile(id: string, position: [number, number]) {
     return <Tile shifted={free} position={position} key={id}
-      link={href('text', { id })}
+      link={href('text', { id, hue })}
       highlight={hl === 'stories'}
     >
       <TextCard

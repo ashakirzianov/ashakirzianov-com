@@ -12,6 +12,7 @@ import { rehypeAddIdToH1 } from './addIdToH1'
 export type TextPost = {
     id: string,
     html: string,
+    textSnippet: string,
     title?: string,
     date?: string,
     description?: string,

@@ -32,6 +32,7 @@ function form(batches?: number) {
         '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
     ]
     return scene({
+        title: '#34',
         state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),

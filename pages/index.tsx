@@ -13,7 +13,7 @@ import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
 import { number34 } from "@/sketches/misc/number34"
 import { molecules } from "@/sketches/atoms/molecules"
 import { letters } from "@/sketches/misc/letters"
-import { rave } from "@/sketches/misc/rave"
+import { fourFlowers } from "@/sketches/misc/4flowers"
 import { titleVariation } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
 
@@ -46,7 +46,7 @@ const sketchCards = {
     sketch: loveMeTwoTimes(),
   },
   number34: {
-    id: 'thirty-four',
+    id: 'number34',
     collection: 'misc',
     sketch: number34(),
   },
@@ -56,14 +56,14 @@ const sketchCards = {
     sketch: molecules(),
   },
   typography: {
-    id: 'typography',
+    id: 'letters',
     collection: 'misc',
     sketch: letters(),
   },
   rave: {
-    id: 'rave',
+    id: 'four-flowers',
     collection: 'misc',
-    sketch: rave(),
+    sketch: fourFlowers(),
   },
   rythm: {
     id: undefined,

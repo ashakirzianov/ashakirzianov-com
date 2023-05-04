@@ -8,6 +8,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import { rehypeTruncate } from './truncate'
 import { rehypeAddIdToH1 } from './addIdToH1'
+import { toString } from 'mdast-util-to-string'
 
 export type TextPost = {
     id: string,
@@ -58,14 +59,22 @@ async function getText(fileName: string, maxChars?: number): Promise<TextPost | 
             .use(rehypeAddIdToH1, { id })
             .use(rehypeStringify)
             .process(matterFile.content)
+        let html = String(htmlFile)
+
+        let textSnippet = toString(await unified()
+            .use(remarkParse)
+            .parse(matterFile.content)).substring(0, 160)
+
 
         return {
             id,
-            html: String(htmlFile),
+            html,
             date: matterFile.data.date,
             title: matterFile.data.title,
+            textSnippet,
         }
-    } catch {
+    } catch (e) {
+        console.log(`Error reading text file ${fileName}: ${e}`)
         return undefined
     }
 }

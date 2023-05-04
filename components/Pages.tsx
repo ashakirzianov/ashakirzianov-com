@@ -189,7 +189,7 @@ export function TextPostPage({ post }: {
     return <>
         <PageHead
             title={post.title ?? 'Рассказ'}
-            description={post.description ?? `${post.title}` ?? 'Рассказ'}
+            description={post.description ?? `${post.textSnippet}...`}
         />
         <TextBlock>
             <div dangerouslySetInnerHTML={{ __html: post.html }} />

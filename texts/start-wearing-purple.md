@@ -1,6 +1,6 @@
 ---
 title: Start wearing purple
-date: 03-30-2023
+date: 30-03-2023
 ---
 
 # Start wearing purple

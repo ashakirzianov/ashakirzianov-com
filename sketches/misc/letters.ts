@@ -5,7 +5,7 @@ import {
 
 export function letters() {
     return combineScenes(
-        fromLayers(colorLayer('hsl(40, 100%, 50%)')),
+        fromLayers(colorLayer('hsl(40, 100%, 60%)')),
         form('For Whom the Bell Tolls?'),
     )
 }
@@ -23,7 +23,7 @@ function form(text: string) {
         )
     })
     return scene({
-        title: 'letters',
+        title: 'Letters',
         state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),

@@ -1,7 +1,7 @@
 import { SketchCollection } from "@/sketcher"
 import { number34 } from "./number34"
-import { rave } from "./rave"
-import { typography } from "./typography"
+import { fourFlowers } from "./4flowers"
+import { letters } from "./letters"
 
 export const misc: SketchCollection = {
     id: 'misc',
@@ -10,7 +10,7 @@ export const misc: SketchCollection = {
     },
     sketches: [
         number34(),
-        rave(),
-        typography(),
+        fourFlowers(),
+        letters(),
     ],
 }

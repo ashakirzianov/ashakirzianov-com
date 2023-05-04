@@ -4,7 +4,7 @@ import {
     randomObject, xSets, zoomToBoundingBox, combineScenes, colorLayer, fromLayers,
 } from '@/sketcher'
 
-export function rave() {
+export function fourFlowers() {
     return combineScenes(
         fromLayers(colorLayer('black')),
         form(),
@@ -27,6 +27,7 @@ function form() {
         },
     })
     return scene({
+        title: 'Four Flowers',
         state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),

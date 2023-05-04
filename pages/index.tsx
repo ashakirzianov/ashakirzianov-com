@@ -12,8 +12,8 @@ import { Scene } from "@/sketcher"
 import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
 import { number34 } from "@/sketches/misc/number34"
 import { molecules } from "@/sketches/atoms/molecules"
-import { typography } from "@/sketches/misc/typography"
-import { rave } from "@/sketches/misc/rave"
+import { letters } from "@/sketches/misc/letters"
+import { fourFlowers } from "@/sketches/misc/4flowers"
 import { titleVariation } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
 
@@ -46,7 +46,7 @@ const sketchCards = {
     sketch: loveMeTwoTimes(),
   },
   number34: {
-    id: 'thirty-four',
+    id: 'number34',
     collection: 'misc',
     sketch: number34(),
   },
@@ -56,14 +56,14 @@ const sketchCards = {
     sketch: molecules(),
   },
   typography: {
-    id: 'typography',
+    id: 'letters',
     collection: 'misc',
-    sketch: typography(),
+    sketch: letters(),
   },
   rave: {
-    id: 'rave',
+    id: 'four-flowers',
     collection: 'misc',
-    sketch: rave(),
+    sketch: fourFlowers(),
   },
   rythm: {
     id: undefined,
@@ -96,7 +96,7 @@ export default function Main({
       key={'sketch-' + key}
       shifted={free}
       position={position}
-      link={href('sketch', { id, collection })}
+      link={href('sketch', { id, collection, hue })}
       highlight={hl === 'posters'}
     >
       <SketchCard
@@ -107,7 +107,7 @@ export default function Main({
   }
   function storyTile(id: string, position: [number, number]) {
     return <Tile shifted={free} position={position} key={id}
-      link={href('text', { id })}
+      link={href('text', { id, hue })}
       highlight={hl === 'stories'}
     >
       <TextCard

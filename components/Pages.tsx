@@ -9,6 +9,7 @@ import { TextPost, TextPostMap } from "@/utils/text"
 import Link from "next/link"
 import { TextCard } from "./Cards"
 import { TextBlock } from "./TextBlock"
+import { AllStoriesButton } from "./Buttons"
 
 export type PageHeaderProps = {
     title: string,
@@ -199,7 +200,7 @@ export function TextPostPage({ post }: {
                 marginTop: 'calc(4 * var(--padding))',
                 marginBottom: 'var(--padding)',
             }}>
-                <AllSketchesButton />
+                <AllStoriesButton />
                 <HomeButton />
             </nav>
         </TextBlock>

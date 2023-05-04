@@ -18,13 +18,13 @@ export const rythm: SketchCollection = {
     },
     sketches: [
         blackAndWhite(),
-        waffle(),
         wormholes(),
-        menacing(),
+        rythmRed(),
+        water(),
         flower(),
         web(),
-        water(),
-        rythmRed(),
+        menacing(),
+        waffle(),
         whiteAndBlack(),
     ],
 }
@@ -227,7 +227,7 @@ function flower() {
     return scene({
         title: 'Flower',
         state: circles({
-            circles: 10,
+            circles: 8,
             count: 5,
             shift: Math.PI * 0.1,
             step: 1,
@@ -255,31 +255,45 @@ function flower() {
                 let box = boundingBox(state.map(o => o.position))
                 zoomToFit({
                     canvas,
-                    box: multBox(box, 1)
+                    box: inflateBox(box, 0.3)
                 })
             },
-            render({ canvas, state }) {
+            render({ canvas, state, frame }) {
                 k = k * (1 + (Math.random() - .3) * 0.01)
+                // k *= 1.001
                 let count = 10
                 let colors = [
+                    // ...hslaRange({
+                    //     from: { h: 40, s: 80, l: 30 },
+                    //     to: { l: 60 },
+                    //     count,
+                    // }),
                     ...hslaRange({
-                        from: { h: 49, s: 100, l: 30 },
-                        to: { l: 90 },
+                        from: { h: 40, s: 0, l: 0 },
+                        to: { l: 15 },
                         count,
                     }),
                     ...hslaRange({
-                        from: { h: 214, s: 100, l: 30 },
-                        to: { l: 90 },
+                        from: { h: 0, s: 100, l: 20 },
+                        to: { l: 30 },
+                        count,
+                    }),
+                    ...hslaRange({
+                        from: { h: 0, s: 100, l: 60 },
+                        to: { l: 70 },
                         count,
                     }),
                 ]
+                let mult = 1 + (1 + Math.sin(-Math.PI / 2 + Math.sqrt(frame / 300))) * 2
+                mult = 1 + (1 + Math.sin(-Math.PI / 2 + frame / 300)) * 2
+                // mult *= k
                 state.forEach((object, idx) => {
                     let stroke = modItem(colors, idx)
                     circle({
                         lineWidth: .1,
                         stroke,
                         center: object.position,
-                        radius: object.radius * k,
+                        radius: object.radius * mult,
                         context: canvas.context,
                     })
                 }

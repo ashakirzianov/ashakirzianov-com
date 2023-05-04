@@ -12,7 +12,7 @@ import { Scene } from "@/sketcher"
 import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
 import { number34 } from "@/sketches/misc/number34"
 import { molecules } from "@/sketches/atoms/molecules"
-import { typography } from "@/sketches/misc/typography"
+import { letters } from "@/sketches/misc/letters"
 import { rave } from "@/sketches/misc/rave"
 import { titleVariation } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
@@ -58,7 +58,7 @@ const sketchCards = {
   typography: {
     id: 'typography',
     collection: 'misc',
-    sketch: typography(),
+    sketch: letters(),
   },
   rave: {
     id: 'rave',

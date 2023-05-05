@@ -10,22 +10,23 @@ export const atoms: SketchCollection = {
         title: 'Атомы / Atoms',
     },
     sketches: [
-        bubbles(),
-        bubblesFlat(),
-        molecules(),
+        moleculesB(),
+        moleculesA(),
+        moleculesC(),
     ],
 }
 
 export function titleAtom() {
-    return molecules()
+    return moleculesA()
 }
 
-function molecules() {
+function moleculesA() {
     let batchRange = { min: 10, max: 10 }
     let maxVelocity = 10
     let massRange = { min: 1, max: 20 }
     let palette = rainbow({ count: 100, s: 100, l: 70 })
     return scene({
+        title: 'Molecules A',
         state: enchanceWithSetI(xSets({
             size: 10, velocity: 0,
             creareObjects(box) {
@@ -63,12 +64,12 @@ function molecules() {
             },
         ),
         layers: [{}, {
-            prepare({ canvas }) {
-                drawBlueprint({
-                    canvas,
-                    lineColor: '#222',
-                })
-            }
+            // prepare({ canvas }) {
+            //     drawBlueprint({
+            //         canvas,
+            //         lineColor: '#222',
+            //     })
+            // }
         }, {
             render({ canvas, state, frame }) {
                 canvas.context.save()
@@ -96,7 +97,7 @@ function molecules() {
     })
 }
 
-function bubblesFlat() {
+function moleculesC() {
     let batchRange = { min: 10, max: 10 }
     let maxVelocity = 0.1
     let massRange = { min: 10, max: 20 }
@@ -111,6 +112,7 @@ function bubblesFlat() {
         },
     }))
     return scene({
+        title: 'Molecules C',
         state: [sets.flat()],
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 1.8 }),
@@ -155,7 +157,7 @@ function bubblesFlat() {
     })
 }
 
-function bubbles() {
+function moleculesB() {
     let batchRange = { min: 10, max: 20 }
     let maxVelocity = 0.1
     let massRange = { min: 3, max: 20 }
@@ -171,6 +173,7 @@ function bubbles() {
         },
     }))
     return scene({
+        title: 'Molecules B',
         state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.02, power: 1.85 }),

@@ -39,7 +39,7 @@ export function fourFlowers() {
             gravity({ gravity: -0.002, power: 4 }),
             velocityStep(),
         )),
-        layers: [{
+        layers: [{}, {
             prepare({ canvas }) {
                 clearFrame({ canvas, color: 'black' })
             }
@@ -151,7 +151,7 @@ export function number34(batches?: number) {
             gravity({ gravity: -0.002, power: 5 }),
             velocityStep(),
         )),
-        layers: [{
+        layers: [{}, {
             prepare({ canvas }) {
                 clearFrame({ canvas, color: gray(230) })
             }

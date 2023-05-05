@@ -11,10 +11,10 @@ import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Car
 import { Scene } from "@/sketcher"
 import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
 import { number34 } from "@/sketches/misc/number34"
-import { molecules } from "@/sketches/atoms/molecules"
+import { titleAtom } from "@/sketches/atoms"
 import { letters } from "@/sketches/misc/letters"
 import { fourFlowers } from "@/sketches/misc/4flowers"
-import { titleVariation } from "@/sketches/rythm"
+import { titleRythm } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
 
 // @refresh reset
@@ -53,7 +53,7 @@ const sketchCards = {
   atoms: {
     id: undefined,
     collection: 'atoms',
-    sketch: molecules(),
+    sketch: titleAtom(),
   },
   typography: {
     id: 'letters',
@@ -68,7 +68,7 @@ const sketchCards = {
   rythm: {
     id: undefined,
     collection: 'rythm',
-    sketch: titleVariation(),
+    sketch: titleRythm(),
   },
 }
 

@@ -214,7 +214,7 @@ export function rgbaRange({ from, to, count }: {
     )
 }
 
-export function pulsating(palette: Color[]): Color[] {
+export function pulsating<T>(palette: T[]): T[] {
     let back = [...palette].reverse()
     return [...palette, ...back]
 }

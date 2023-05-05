@@ -88,6 +88,7 @@ export default function Main({
   function sketchTile(
     key: keyof typeof sketchCards,
     position: [number, number],
+    order?: number,
   ) {
     let { id, collection, sketch } = sketchCards[key]
     return <Tile
@@ -96,6 +97,7 @@ export default function Main({
       position={position}
       link={href('sketch', { id, collection, hue })}
       highlight={hl === 'posters'}
+      order={order}
     >
       <SketchCard
         sketch={sketch}
@@ -141,7 +143,7 @@ export default function Main({
         </div>
       </header>
       <div className={free ? 'grid' : 'flex'}>
-        <Tile shifted={free} position={[0, 0]} front>
+        <Tile shifted={free} position={[0, 0]} order={-2} front>
           <AboutCard
             hue={hue}
             onHover={setHl}
@@ -150,16 +152,16 @@ export default function Main({
         {[
           sketchTile('posters', [5, -18]),
           sketchTile('number34', [-10, 15]),
-          sketchTile('rythm', [-5, 8]),
-          sketchTile('typography', [7, 5]),
           sketchTile('atoms', [-22, 7]),
-          storyTile('thirty-four', [25, 10]),
-          storyTile('apartunist', [13, 20]),
-          sketchTile('rave', [10, -6]),
+          storyTile('apartunist', [-5, 8]),
+          sketchTile('typography', [13, 20]),
           storyTile('start-wearing-purple', [-15, -10]),
+          sketchTile('rythm', [25, 10], -1),
+          sketchTile('rave', [10, -6]),
+          storyTile('thirty-four', [7, 5]),
         ]}
         <Tile
-          shifted={free} position={[20, -15]} back
+          shifted={free} position={[20, -15]}
         >
           <Help hue={hue} />
         </Tile>
@@ -169,6 +171,7 @@ export default function Main({
       .outer {
         display: flex;
         flex-flow: column nowrap;
+        align-items: center;
         min-height: 100vh;
       }
       header {
@@ -176,6 +179,7 @@ export default function Main({
         flex-flow: row wrap;
         justify-content: space-between;
         align-items: center;
+        align-self: flex-end;
         flex-grow: 0;
       }
       .help {
@@ -198,11 +202,12 @@ export default function Main({
       .flex {
         display: flex;
         flex-flow: row wrap;
-        align-content: flex-start;
-        justify-content: flex-start;
+        align-content: center;
+        justify-content: center;
         gap: var(--padding);
         padding: var(--padding);
         width: 100%;
+        max-width: calc(3 * var(--card-width) + 4 * var(--padding));
         height: 100%;
       }
       @media (max-width: 700pt) {
@@ -217,6 +222,7 @@ export default function Main({
 function Tile({
   position: [left, top], shifted,
   children, front, back, link, highlight,
+  order,
 }: {
   position: [number, number],
   shifted: boolean,
@@ -225,6 +231,7 @@ function Tile({
   front?: boolean,
   back?: boolean,
   highlight?: boolean,
+  order?: number,
 }) {
   let navigable = true
   function lock() { navigable = false }
@@ -257,6 +264,7 @@ function Tile({
     gridArea: 'mid',
     transform: highlight ? 'scale(1.2)' : undefined,
     transition: 'transform .3s',
+    order: !shifted ? order : undefined,
   }}>
     {content}
   </div>

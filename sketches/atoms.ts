@@ -11,16 +11,16 @@ export const atoms: SketchCollection = {
     },
     sketches: [
         moleculesB(),
-        moleculesA(),
+        moleculesA(seriesBackground()),
         moleculesC(),
     ],
 }
 
 export function titleAtom() {
-    return moleculesA()
+    return moleculesA({})
 }
 
-function emptyBack(): Layer {
+function transparent(): Layer {
     return {}
 }
 function transparentGrid(): Layer {
@@ -40,6 +40,8 @@ function blueprint(): Layer {
                 canvas,
                 lineColor: '#999',
                 background: '#000',
+                // background: 'rgb(69,142,204)',
+                // background: 'skyblue',
             })
         }
     }
@@ -51,11 +53,11 @@ function black(): Layer {
         }
     }
 }
-function background() {
+function seriesBackground() {
     return blueprint()
 }
 
-function moleculesA() {
+function moleculesA(background: Layer<unknown>) {
     let batchRange = { min: 10, max: 10 }
     let maxVelocity = 10
     let massRange = { min: 1, max: 20 }
@@ -98,7 +100,7 @@ function moleculesA() {
                 return state
             },
         ),
-        layers: [{}, background(), {
+        layers: [{}, background, {
             render({ canvas, state, frame }) {
                 canvas.context.save()
                 clearCanvas(canvas)
@@ -146,7 +148,7 @@ function moleculesC() {
             gravity({ gravity: 0.02, power: 1.8 }),
             velocityStep(),
         )),
-        layers: [{}, background(), {
+        layers: [{}, seriesBackground(), {
             render({ canvas, state, frame }) {
                 canvas.context.save()
                 clearCanvas(canvas)
@@ -200,7 +202,7 @@ function moleculesB() {
             gravity({ gravity: 0.02, power: 1.85 }),
             velocityStep(),
         )),
-        layers: [{}, background(), {
+        layers: [{}, seriesBackground(), {
             render({ canvas, state, frame }) {
                 canvas.context.save()
                 // clearFrame({ canvas, color: 'black' })

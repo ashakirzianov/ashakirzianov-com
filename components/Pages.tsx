@@ -176,7 +176,10 @@ export function AllSketchesPage({ collections }: {
                 collections={collections}
                 hrefForIds={(collection, id) => href('sketch', { id, collection })}
             />
-            <footer>
+            <footer style={{
+                paddingTop: 'calc(4*var(--padding))',
+                paddingBottom: 'var(--padding)',
+            }}>
                 <HomeButton />
             </footer>
         </div>

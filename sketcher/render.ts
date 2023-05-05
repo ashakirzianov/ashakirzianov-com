@@ -333,3 +333,75 @@ export function renderMask(
     render(context)
     context.restore()
 }
+
+// Draws grid lines on the canvas
+export function drawGrid({
+    canvas, rows, columns,
+    lineWidth, color,
+}: {
+    canvas: Canvas,
+    rows: number,
+    columns: number,
+    lineWidth?: number,
+    color?: Color,
+}) {
+    // Draw grid
+    let { context, width, height } = canvas
+    context.save()
+    if (lineWidth) {
+        context.lineWidth = lineWidth
+    }
+    if (color) {
+        context.strokeStyle = resolveColor(color, context)
+    }
+    context.beginPath()
+    for (let i = 1; i < rows; i++) {
+        context.moveTo(0, i * height / rows)
+        context.lineTo(width, i * height / rows)
+    }
+    for (let i = 1; i < columns; i++) {
+        context.moveTo(i * width / columns, 0)
+        context.lineTo(i * width / columns, height)
+    }
+    context.stroke()
+    context.restore()
+}
+
+export function drawBlueprint({
+    canvas,
+    // background = 'rgb(69,142,204)',
+    background,
+    lineColor = 'rgb(155,239,248)',
+    rows = 4, columns = 3,
+}: {
+    canvas: Canvas,
+    lineColor?: Color,
+    background?: Color,
+    rows?: number,
+    columns?: number,
+}) {
+    if (background) {
+        clearFrame({ canvas, color: background })
+    }
+    drawGrid({
+        canvas,
+        lineWidth: 1,
+        rows: rows,
+        columns: columns,
+        color: lineColor,
+    })
+    drawGrid({
+        canvas,
+        lineWidth: .5,
+        rows: rows * 2,
+        columns: columns * 2,
+        color: lineColor,
+    })
+    drawGrid({
+        canvas,
+        lineWidth: .1,
+        rows: rows * 10,
+        columns: columns * 10,
+        color: lineColor,
+    })
+}

@@ -143,27 +143,28 @@ export default function Main({
         </div>
       </header>
       <div className={free ? 'grid' : 'flex'}>
+        <Tile
+          shifted={free} position={[20, -15]}
+          order={2}
+        >
+          <Help hue={hue} />
+        </Tile>
+        {[
+          sketchTile('posters', [5, -18]),
+          sketchTile('typography', [-10, 15]),
+          sketchTile('atoms', [-22, 7], 1),
+          sketchTile('number34', [13, 20]),
+          storyTile('apartunist', [-5, 8]),
+          storyTile('start-wearing-purple', [-15, -10]),
+          storyTile('thirty-four', [7, 5]),
+          sketchTile('rythm', [25, 10], -1),
+          sketchTile('rave', [10, -6]),
+        ]}
         <Tile shifted={free} position={[0, 0]} order={-2} front>
           <AboutCard
             hue={hue}
             onHover={setHl}
           />
-        </Tile>
-        {[
-          sketchTile('posters', [5, -18]),
-          sketchTile('number34', [-10, 15]),
-          sketchTile('atoms', [-22, 7]),
-          storyTile('apartunist', [-5, 8]),
-          sketchTile('typography', [13, 20]),
-          storyTile('start-wearing-purple', [-15, -10]),
-          sketchTile('rythm', [25, 10], -1),
-          sketchTile('rave', [10, -6]),
-          storyTile('thirty-four', [7, 5]),
-        ]}
-        <Tile
-          shifted={free} position={[20, -15]}
-        >
-          <Help hue={hue} />
         </Tile>
       </div>
     </div>

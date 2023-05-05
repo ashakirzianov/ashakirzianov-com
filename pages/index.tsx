@@ -151,14 +151,14 @@ export default function Main({
         </Tile>
         {[
           sketchTile('posters', [5, -18]),
-          sketchTile('number34', [-22, 7], 1),
+          sketchTile('number34', [-22, 7]),
           sketchTile('typography', [13, 17]),
           storyTile('apartunist', [-5, 12]),
           storyTile('start-wearing-purple', [-15, -10]),
           storyTile('thirty-four', [7, 5]),
           sketchTile('rythm', [25, 10], -1),
           sketchTile('rave', [10, -6]),
-          sketchTile('atoms', [-10, 15]),
+          sketchTile('atoms', [-10, 15], 1),
         ]}
         <Tile shifted={free} position={[0, 0]} order={-2} front>
           <AboutCard

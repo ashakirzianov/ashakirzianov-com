@@ -120,10 +120,12 @@ function moleculesC() {
         )),
         layers: [{}, {
             prepare({ canvas }) {
-                drawBlueprint({
-                    canvas,
-                    lineColor: '#222',
-                })
+                // drawBlueprint({
+                //     canvas,
+                //     lineColor: '#222',
+                //     background: '#fff',
+                // })
+                // clearFrame({ canvas, color: '#000' })
             }
         }, {
             render({ canvas, state, frame }) {
@@ -180,12 +182,12 @@ function moleculesB() {
             velocityStep(),
         )),
         layers: [{}, {
-            prepare({ canvas }) {
-                drawBlueprint({
-                    canvas,
-                    lineColor: '#222',
-                })
-            }
+            // prepare({ canvas }) {
+            //     drawBlueprint({
+            //         canvas,
+            //         lineColor: '#222',
+            //     })
+            // }
         }, {
             render({ canvas, state, frame }) {
                 canvas.context.save()

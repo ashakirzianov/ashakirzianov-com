@@ -1,6 +1,6 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator, cubicBox, vals,
-    resolvePrimitiveColor, gray, scene, randomObject, zoomToBoundingBox, combineScenes, fromLayers, colorLayer, hslaRange, modItem,
+    resolvePrimitiveColor, gray, scene, randomObject, zoomToBoundingBox, combineScenes, fromLayers, colorLayer, hslaRange, modItem, drawBlueprint,
 } from '@/sketcher'
 
 export function letters() {
@@ -31,6 +31,14 @@ function form(text: string) {
             velocityStep(),
         )),
         layers: [{}, {
+            prepare({ canvas }) {
+                drawBlueprint({
+                    canvas,
+                    background: '#fff',
+                    lineColor: '#000',
+                })
+            },
+        }, {
             prepare({ canvas, state }) {
                 zoomToBoundingBox({
                     canvas, objects: state.flat(), scale: 1.2

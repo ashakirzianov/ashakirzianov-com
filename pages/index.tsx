@@ -153,10 +153,10 @@ export default function Main({
           sketchTile('posters', [5, -18]),
           sketchTile('number34', [-10, 15]),
           sketchTile('rythm', [-5, 8]),
+          sketchTile('typography', [7, 5]),
           sketchTile('atoms', [-22, 7]),
           storyTile('thirty-four', [25, 10]),
           storyTile('apartunist', [13, 20]),
-          sketchTile('typography', [7, 5]),
           sketchTile('rave', [10, -6]),
           storyTile('start-wearing-purple', [-15, -10]),
         ]}

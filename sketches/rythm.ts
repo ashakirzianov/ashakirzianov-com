@@ -7,7 +7,7 @@ import {
     zoomToFit
 } from '@/sketcher'
 
-export function titleVariation() {
+export function titleRythm() {
     return web()
 }
 

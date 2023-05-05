@@ -10,12 +10,10 @@ import { href } from "@/utils/refs"
 import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards"
 import { Scene } from "@/sketcher"
 import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
-import { number34 } from "@/sketches/misc/number34"
-import { molecules } from "@/sketches/atoms/molecules"
-import { letters } from "@/sketches/misc/letters"
-import { fourFlowers } from "@/sketches/misc/4flowers"
-import { titleVariation } from "@/sketches/rythm"
+import { titleAtom } from "@/sketches/atoms"
+import { titleRythm } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
+import { fourFlowers, letters, number34 } from "@/sketches/misc"
 
 // @refresh reset
 
@@ -53,7 +51,7 @@ const sketchCards = {
   atoms: {
     id: undefined,
     collection: 'atoms',
-    sketch: molecules(),
+    sketch: titleAtom(),
   },
   typography: {
     id: 'letters',
@@ -68,7 +66,7 @@ const sketchCards = {
   rythm: {
     id: undefined,
     collection: 'rythm',
-    sketch: titleVariation(),
+    sketch: titleRythm(),
   },
 }
 
@@ -90,6 +88,7 @@ export default function Main({
   function sketchTile(
     key: keyof typeof sketchCards,
     position: [number, number],
+    order?: number,
   ) {
     let { id, collection, sketch } = sketchCards[key]
     return <Tile
@@ -98,6 +97,7 @@ export default function Main({
       position={position}
       link={href('sketch', { id, collection, hue })}
       highlight={hl === 'posters'}
+      order={order}
     >
       <SketchCard
         sketch={sketch}
@@ -143,27 +143,28 @@ export default function Main({
         </div>
       </header>
       <div className={free ? 'grid' : 'flex'}>
-        <Tile shifted={free} position={[0, 0]} front>
+        <Tile
+          shifted={free} position={[20, -15]}
+          order={2}
+        >
+          <Help hue={hue} />
+        </Tile>
+        {[
+          sketchTile('posters', [5, -18]),
+          sketchTile('typography', [-10, 15]),
+          sketchTile('atoms', [-22, 7], 1),
+          sketchTile('number34', [13, 20]),
+          storyTile('apartunist', [-5, 8]),
+          storyTile('start-wearing-purple', [-15, -10]),
+          storyTile('thirty-four', [7, 5]),
+          sketchTile('rythm', [25, 10], -1),
+          sketchTile('rave', [10, -6]),
+        ]}
+        <Tile shifted={free} position={[0, 0]} order={-2} front>
           <AboutCard
             hue={hue}
             onHover={setHl}
           />
-        </Tile>
-        {[
-          sketchTile('posters', [5, -18]),
-          sketchTile('number34', [-10, 15]),
-          sketchTile('rythm', [-5, 8]),
-          sketchTile('atoms', [-22, 7]),
-          storyTile('thirty-four', [25, 10]),
-          storyTile('apartunist', [13, 20]),
-          sketchTile('typography', [7, 5]),
-          sketchTile('rave', [10, -6]),
-          storyTile('start-wearing-purple', [-15, -10]),
-        ]}
-        <Tile
-          shifted={free} position={[20, -15]} back
-        >
-          <Help hue={hue} />
         </Tile>
       </div>
     </div>
@@ -171,6 +172,7 @@ export default function Main({
       .outer {
         display: flex;
         flex-flow: column nowrap;
+        align-items: center;
         min-height: 100vh;
       }
       header {
@@ -178,6 +180,7 @@ export default function Main({
         flex-flow: row wrap;
         justify-content: space-between;
         align-items: center;
+        align-self: flex-end;
         flex-grow: 0;
       }
       .help {
@@ -200,11 +203,12 @@ export default function Main({
       .flex {
         display: flex;
         flex-flow: row wrap;
-        align-content: flex-start;
-        justify-content: flex-start;
+        align-content: center;
+        justify-content: center;
         gap: var(--padding);
         padding: var(--padding);
         width: 100%;
+        max-width: calc(3 * var(--card-width) + 4 * var(--padding));
         height: 100%;
       }
       @media (max-width: 700pt) {
@@ -219,6 +223,7 @@ export default function Main({
 function Tile({
   position: [left, top], shifted,
   children, front, back, link, highlight,
+  order,
 }: {
   position: [number, number],
   shifted: boolean,
@@ -227,6 +232,7 @@ function Tile({
   front?: boolean,
   back?: boolean,
   highlight?: boolean,
+  order?: number,
 }) {
   let navigable = true
   function lock() { navigable = false }
@@ -259,6 +265,7 @@ function Tile({
     gridArea: 'mid',
     transform: highlight ? 'scale(1.2)' : undefined,
     transition: 'transform .3s',
+    order: !shifted ? order : undefined,
   }}>
     {content}
   </div>

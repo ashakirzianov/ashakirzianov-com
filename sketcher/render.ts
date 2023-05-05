@@ -385,14 +385,14 @@ export function drawBlueprint({
     }
     drawGrid({
         canvas,
-        lineWidth: 1,
+        lineWidth: .4,
         rows: rows,
         columns: columns,
         color: lineColor,
     })
     drawGrid({
         canvas,
-        lineWidth: .5,
+        lineWidth: .2,
         rows: rows * 2,
         columns: columns * 2,
         color: lineColor,

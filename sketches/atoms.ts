@@ -1,7 +1,7 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     randomRange, rainbow, modItem, vals,
-    concentringCircles, clearCanvas, scene, enchanceWithSetI, xSets, randomObject, zoomToBoundingBox, clearFrame, hslaRange, drawBlueprint, SketchCollection, getGravity, resultingBody, vector,
+    concentringCircles, clearCanvas, scene, enchanceWithSetI, xSets, randomObject, zoomToBoundingBox, clearFrame, hslaRange, drawBlueprint, SketchCollection, getGravity, resultingBody, vector, Layer,
 } from '@/sketcher'
 
 export const atoms: SketchCollection = {
@@ -18,6 +18,41 @@ export const atoms: SketchCollection = {
 
 export function titleAtom() {
     return moleculesA()
+}
+
+function emptyBack(): Layer {
+    return {}
+}
+function transparentGrid(): Layer {
+    return {
+        prepare({ canvas }) {
+            drawBlueprint({
+                canvas,
+                lineColor: '#222',
+            })
+        }
+    }
+}
+function blueprint(): Layer {
+    return {
+        prepare({ canvas }) {
+            drawBlueprint({
+                canvas,
+                lineColor: '#999',
+                background: '#000',
+            })
+        }
+    }
+}
+function black(): Layer {
+    return {
+        prepare({ canvas }) {
+            clearFrame({ canvas, color: '#000' })
+        }
+    }
+}
+function background() {
+    return blueprint()
 }
 
 function moleculesA() {
@@ -63,14 +98,7 @@ function moleculesA() {
                 return state
             },
         ),
-        layers: [{}, {
-            // prepare({ canvas }) {
-            //     drawBlueprint({
-            //         canvas,
-            //         lineColor: '#222',
-            //     })
-            // }
-        }, {
+        layers: [{}, background(), {
             render({ canvas, state, frame }) {
                 canvas.context.save()
                 clearCanvas(canvas)
@@ -118,16 +146,7 @@ function moleculesC() {
             gravity({ gravity: 0.02, power: 1.8 }),
             velocityStep(),
         )),
-        layers: [{}, {
-            prepare({ canvas }) {
-                // drawBlueprint({
-                //     canvas,
-                //     lineColor: '#222',
-                //     background: '#fff',
-                // })
-                // clearFrame({ canvas, color: '#000' })
-            }
-        }, {
+        layers: [{}, background(), {
             render({ canvas, state, frame }) {
                 canvas.context.save()
                 clearCanvas(canvas)
@@ -181,14 +200,7 @@ function moleculesB() {
             gravity({ gravity: 0.02, power: 1.85 }),
             velocityStep(),
         )),
-        layers: [{}, {
-            // prepare({ canvas }) {
-            //     drawBlueprint({
-            //         canvas,
-            //         lineColor: '#222',
-            //     })
-            // }
-        }, {
+        layers: [{}, background(), {
             render({ canvas, state, frame }) {
                 canvas.context.save()
                 // clearFrame({ canvas, color: 'black' })

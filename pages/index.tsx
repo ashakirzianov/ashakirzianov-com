@@ -10,12 +10,10 @@ import { href } from "@/utils/refs"
 import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards"
 import { Scene } from "@/sketcher"
 import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
-import { number34 } from "@/sketches/misc/number34"
 import { titleAtom } from "@/sketches/atoms"
-import { letters } from "@/sketches/misc/letters"
-import { fourFlowers } from "@/sketches/misc/4flowers"
 import { titleRythm } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
+import { fourFlowers, letters, number34 } from "@/sketches/misc"
 
 // @refresh reset
 

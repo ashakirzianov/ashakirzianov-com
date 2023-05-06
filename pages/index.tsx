@@ -156,7 +156,7 @@ export default function Main({
         ]}
         <Tile
           shifted={free} position={[20, -15]}
-          order={-2}
+          order={2}
         >
           <Help hue={hue} />
         </Tile>

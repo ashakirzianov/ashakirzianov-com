@@ -153,7 +153,7 @@ export default function Main({
           sketchTile('posters', [5, -18]),
           sketchTile('number34', [-22, 7]),
           sketchTile('typography', [13, 17]),
-          storyTile('apartunist', [-5, 12]),
+          storyTile('salmon', [-5, 12]),
           storyTile('start-wearing-purple', [-15, -10]),
           storyTile('thirty-four', [7, 5]),
           sketchTile('rythm', [25, 10], -1),

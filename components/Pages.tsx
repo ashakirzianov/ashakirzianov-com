@@ -215,13 +215,15 @@ export function TextPostPage({ post }: {
 export function AllStoritesPage({ previews }: {
     previews: TextPostMap,
 }) {
+    let pairs = Object.entries(previews)
+        .sort(([, a], [, b]) => b?.date?.localeCompare(a?.date ?? '') ?? 0)
     return <PixelPage
         title="Все рассказы"
         description="Страница со всеми рассказами"
     >
         <div className="outer">
             <div className="container">
-                {Object.entries(previews).map(([id, story], idx) =>
+                {pairs.map(([id, story], idx) =>
                     <Link key={idx} href={href('text', { id })}>
                         <TextCard text={story} />
                     </Link>

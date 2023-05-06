@@ -143,12 +143,6 @@ export default function Main({
         </div>
       </header>
       <div className={free ? 'grid' : 'flex'}>
-        <Tile
-          shifted={free} position={[20, -15]}
-          order={2}
-        >
-          <Help hue={hue} />
-        </Tile>
         {[
           sketchTile('posters', [5, -18]),
           sketchTile('atoms', [-20, 0], 1),
@@ -160,7 +154,13 @@ export default function Main({
           sketchTile('number34', [-20, 15]),
           storyTile('salmon', [-8, 12]),
         ]}
-        <Tile shifted={free} position={[0, 0]} order={-2} front>
+        <Tile
+          shifted={free} position={[20, -15]}
+          order={-2}
+        >
+          <Help hue={hue} />
+        </Tile>
+        <Tile shifted={free} position={[0, 0]} order={-2}>
           <AboutCard
             hue={hue}
             onHover={setHl}

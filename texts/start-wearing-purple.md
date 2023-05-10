@@ -2,6 +2,7 @@
 title: Start wearing purple
 date: 30-03-2023
 translation-en: start-wearing-purple-en
+language: ru
 ---
 Его зовут Рик Вилсон. Мы познакомились когда я только переехал в Сиэтл, на вечеринке у Алитеи, у которой я тогда снимал комнату.
 

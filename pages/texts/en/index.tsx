@@ -6,7 +6,7 @@ type Props = {
     previews: TextPostMap,
 };
 export const getStaticProps: GetStaticProps<Props> = async function () {
-    let previews = await getAllPreviews('ru')
+    let previews = await getAllPreviews('en')
     return {
         props: {
             previews,

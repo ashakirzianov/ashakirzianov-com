@@ -18,6 +18,7 @@ export type TextPost = {
         en?: string,
         ru?: string,
     },
+    language?: string,
     date?: string,
     description?: string,
 };
@@ -25,15 +26,17 @@ export type TextPostMap = {
     [id: string]: TextPost,
 };
 
-export async function getAllPreviews(): Promise<TextPostMap> {
+// Gets all previews for all texts
+export async function getAllPreviews(language?: string): Promise<TextPostMap> {
     let result: TextPostMap = {}
     let ids = await getAllTextIds()
     for (let id of ids) {
         let preview = await getTextForId({ id, maxChars: 1000 })
-        if (preview) {
+        if (preview && (language === undefined || preview.language === language)) {
             result[id] = preview
         }
     }
+
     return result
 }
 
@@ -73,6 +76,7 @@ async function getText(fileName: string, maxChars?: number): Promise<TextPost | 
                 en: matterFile.data['original-en'] ?? null,
                 ru: matterFile.data['original-ru'] ?? null,
             },
+            language: matterFile.data.language,
             textSnippet,
         }
     } catch (e) {

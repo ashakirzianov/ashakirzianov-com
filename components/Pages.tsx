@@ -195,6 +195,7 @@ export function TextPostPage({ post }: {
             description={post.description ?? `${post.textSnippet}...`}
         />
         <TextBlock>
+            {post.title && <h1 id={post.id}>{post.title}</h1>}
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
             <nav style={{
                 display: 'flex',
@@ -225,7 +226,7 @@ export function AllStoritesPage({ previews }: {
             <div className="container">
                 {pairs.map(([id, story], idx) =>
                     <Link key={idx} href={href('text', { id })}>
-                        <TextCard text={story} />
+                        <TextCard post={story} />
                     </Link>
                 )}
             </div>

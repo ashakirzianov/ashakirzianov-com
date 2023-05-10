@@ -111,7 +111,7 @@ export default function Main({
       highlight={hl === 'stories'}
     >
       <TextCard
-        text={previews[id]!}
+        post={previews[id]!}
       />
     </Tile>
   }

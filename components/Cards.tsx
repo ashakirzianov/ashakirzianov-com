@@ -22,12 +22,15 @@ export function SketchCard({ sketch, pixelated }: {
     </Card>
 }
 
-export function TextCard({ text }: {
-    text: TextPost,
+export function TextCard({ post }: {
+    post: TextPost,
 }) {
     return <Card>
         <div className="container">
-            <div className="post noselect" dangerouslySetInnerHTML={{ __html: text.html }} />
+            <div className="post noselect">
+                {post.title && <h1>{post.title}</h1>}
+                <div dangerouslySetInnerHTML={{ __html: post.html }} />
+            </div>
             <style jsx>{`
       .container {
         display: flex;

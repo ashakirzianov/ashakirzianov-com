@@ -15,5 +15,5 @@ export const getStaticProps: GetStaticProps<Props> = async function () {
 }
 
 export default function AllStorites({ previews }: Props) {
-    return <AllStoritesPage previews={previews} />
+    return <AllStoritesPage previews={previews} language="en" />
 }

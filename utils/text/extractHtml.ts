@@ -10,7 +10,6 @@ export async function extractHtml(content: string, id: string, maxChars?: number
         .use(remarkParse)
         .use(remarkRehype)
         .use(rehypeTruncate, { maxChars })
-        .use(rehypeAddIdToH1, { id })
         .use(rehypeStringify)
         .process(content)
 

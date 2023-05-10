@@ -10,6 +10,14 @@ export type TextPost = {
     html: string,
     textSnippet: string,
     title?: string,
+    translation?: {
+        en?: string,
+        ru?: string,
+    },
+    original?: {
+        en?: string,
+        ru?: string,
+    },
     date?: string,
     description?: string,
 };
@@ -57,6 +65,14 @@ async function getText(fileName: string, maxChars?: number): Promise<TextPost | 
             html,
             date: matterFile.data.date,
             title: matterFile.data.title,
+            translation: {
+                en: matterFile.data['translation-en'] ?? null,
+                ru: matterFile.data['translation-ru'] ?? null,
+            },
+            original: {
+                en: matterFile.data['original-en'] ?? null,
+                ru: matterFile.data['original-ru'] ?? null,
+            },
             textSnippet,
         }
     } catch (e) {

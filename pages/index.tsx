@@ -282,6 +282,7 @@ function Help({ hue }: {
         color: 'red',
       }}>
         <Link href={href('about-en', { hue })} style={{
+          color: 'red',
         }}>
           Help!
         </Link>

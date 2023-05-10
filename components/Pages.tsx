@@ -186,6 +186,20 @@ export function AllSketchesPage({ collections }: {
     </PixelPage>
 }
 
+function LinkBlock({ children }: {
+    children?: ReactNode,
+}) {
+    return <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        textAlign: 'right',
+        fontStyle: 'italic',
+        width: '100%',
+    }}>
+        {children}
+    </div>
+}
+
 export function TextPostPage({ post }: {
     post: TextPost,
 }) {
@@ -196,6 +210,15 @@ export function TextPostPage({ post }: {
         />
         <TextBlock>
             {post.title && <h1 id={post.id}>{post.title}</h1>}
+            <LinkBlock>
+                {post.translation?.en && <Link href={href('text', { id: post.translation.en })}>English translation</Link>}
+                {post.translation?.ru && <Link href={href('text', { id: post.translation.ru })}>Перевод</Link>}
+                {post.original?.en && <Link href={href('text', { id: post.original.en })}>English original</Link>}
+                {post.original?.ru && <Link href={href('text', { id: post.original.ru })}>Original</Link>}
+            </LinkBlock>
+            <div style={{
+                marginBottom: '1em',
+            }} />
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
             <nav style={{
                 display: 'flex',

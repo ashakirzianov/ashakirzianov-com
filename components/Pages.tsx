@@ -192,8 +192,9 @@ function LinkBlock({ children }: {
     return <div style={{
         display: 'flex',
         flexDirection: 'column',
-        textAlign: 'right',
+        textAlign: 'left',
         fontStyle: 'italic',
+        fontSize: '0.8em',
         width: '100%',
     }}>
         {children}

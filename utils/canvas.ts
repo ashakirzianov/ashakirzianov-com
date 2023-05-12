@@ -2,22 +2,10 @@ import {
     createElement, createRef, RefObject, useEffect, useRef,
 } from "react"
 
-export type UseCanvasesReturn = ReturnType<typeof useCanvasesImpl>;
-export function useCanvases(count: number): UseCanvasesReturn;
-export function useCanvases(dimensions: CanvasDimensions[]): UseCanvasesReturn;
-export function useCanvases(arg: number | CanvasDimensions[]) {
-    if (typeof arg === 'number') {
-        return useCanvasesImpl(Array(arg).fill({
-            width: undefined,
-            height: undefined,
-        }))
-    } else {
-        return useCanvasesImpl(arg)
-    }
-}
+export type UseCanvasesReturn = ReturnType<typeof useCanvases>
 
 type CanvasDimensions = [width: number | undefined, height: number | undefined];
-function useCanvasesImpl(dims: CanvasDimensions[]) {
+export function useCanvases(dims: CanvasDimensions[]) {
     let refs = useRefArray<HTMLCanvasElement>(dims.length)
     let nodes = dims.map(
         ([width, height], idx) => createElement('canvas', {
@@ -38,7 +26,6 @@ function useCanvasesImpl(dims: CanvasDimensions[]) {
     )
 
     let node = createElement('div', {
-        children: nodes,
         style: {
             display: 'grid',
             flexGrow: 1,
@@ -47,7 +34,9 @@ function useCanvasesImpl(dims: CanvasDimensions[]) {
             width: '100%',
             height: '100%',
         }
-    })
+    },
+        nodes,
+    )
 
     useEffect(() => {
         for (let ref of refs) {

@@ -3,24 +3,36 @@ import { href } from "@/utils/refs"
 import Link from "next/link"
 import { ReactNode, useState } from "react"
 
-export function HomeButton() {
+export type Language = 'ru' | 'en'
+
+export function HomeButton({ language }: {
+  language?: Language
+}) {
   let { hue } = useQuery()
+  let text = language === 'en' ? 'Home' : 'Главная'
   return <Link href={href('home', { hue })} draggable={false}>
-    <PixelButton color="skyblue">Главная</PixelButton>
+    <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
 }
 
-export function AllSketchesButton() {
+export function AllSketchesButton({ language }: {
+  language?: Language
+}) {
   let { hue } = useQuery()
+  let text = language === 'en' ? 'All sketches' : 'Все скетчи'
   return <Link href={href('sketch', { hue })} draggable={false}>
-    <PixelButton color="skyblue">Все скетчи</PixelButton>
+    <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
 }
 
-export function AllStoriesButton() {
+export function AllStoriesButton({ language }: {
+  language?: Language
+}) {
   let { hue } = useQuery()
-  return <Link href={href('text', { hue })}>
-    <PixelButton color="skyblue">Все рассказы</PixelButton>
+  let text = language === 'en' ? 'All stories' : 'Все рассказы'
+  let id = language === 'en' ? 'en' : undefined
+  return <Link href={href('text', { hue, id })}>
+    <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
 }
 

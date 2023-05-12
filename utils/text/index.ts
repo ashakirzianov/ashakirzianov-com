@@ -2,12 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { promisify } from 'util'
-import { unified } from 'unified'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import rehypeStringify from 'rehype-stringify'
-import { rehypeTruncate } from './truncate'
-import { rehypeAddIdToH1 } from './addIdToH1'
 import { extractTextSnippet } from './extractSnippet'
 import { extractHtml } from './extractHtml'
 
@@ -16,6 +10,15 @@ export type TextPost = {
     html: string,
     textSnippet: string,
     title?: string,
+    translation?: {
+        en?: string,
+        ru?: string,
+    },
+    original?: {
+        en?: string,
+        ru?: string,
+    },
+    language?: string,
     date?: string,
     description?: string,
 };
@@ -23,15 +26,17 @@ export type TextPostMap = {
     [id: string]: TextPost,
 };
 
-export async function getAllPreviews(): Promise<TextPostMap> {
+// Gets all previews for all texts
+export async function getAllPreviews(language?: string): Promise<TextPostMap> {
     let result: TextPostMap = {}
     let ids = await getAllTextIds()
     for (let id of ids) {
         let preview = await getTextForId({ id, maxChars: 1000 })
-        if (preview) {
+        if (preview && (language === undefined || preview.language === language)) {
             result[id] = preview
         }
     }
+
     return result
 }
 
@@ -63,6 +68,15 @@ async function getText(fileName: string, maxChars?: number): Promise<TextPost | 
             html,
             date: matterFile.data.date,
             title: matterFile.data.title,
+            translation: {
+                en: matterFile.data['translation-en'] ?? null,
+                ru: matterFile.data['translation-ru'] ?? null,
+            },
+            original: {
+                en: matterFile.data['original-en'] ?? null,
+                ru: matterFile.data['original-ru'] ?? null,
+            },
+            language: matterFile.data.language,
             textSnippet,
         }
     } catch (e) {

@@ -2,7 +2,7 @@ import { useQuery } from "@/utils/query"
 import { ReactNode } from "react"
 import { SketchCollectionBlock, SketchMulticollection } from "./SketchCollection"
 import Head from "next/head"
-import { AllSketchesButton, HomeButton } from "./Buttons"
+import { AllSketchesButton, HomeButton, Language } from "./Buttons"
 import { SketchCollection } from "@/sketcher"
 import { href } from "@/utils/refs"
 import { TextPost, TextPostMap } from "@/utils/text"
@@ -186,15 +186,40 @@ export function AllSketchesPage({ collections }: {
     </PixelPage>
 }
 
+function LinkBlock({ children }: {
+    children?: ReactNode,
+}) {
+    return <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        textAlign: 'right',
+        fontStyle: 'italic',
+        width: '100%',
+    }}>
+        {children}
+    </div>
+}
+
 export function TextPostPage({ post }: {
     post: TextPost,
 }) {
+    let language: Language = post.language === 'en' ? 'en' : 'ru'
     return <>
         <PageHead
             title={post.title ?? 'Рассказ'}
             description={post.description ?? `${post.textSnippet}...`}
         />
         <TextBlock>
+            {post.title && <h1 id={post.id}>{post.title}</h1>}
+            <LinkBlock>
+                {post.translation?.en && <Link href={href('text', { id: post.translation.en })}>English translation</Link>}
+                {post.translation?.ru && <Link href={href('text', { id: post.translation.ru })}>Перевод</Link>}
+                {post.original?.en && <Link href={href('text', { id: post.original.en })}>English original</Link>}
+                {post.original?.ru && <Link href={href('text', { id: post.original.ru })}>Original</Link>}
+            </LinkBlock>
+            <div style={{
+                marginBottom: '1em',
+            }} />
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
             <nav style={{
                 display: 'flex',
@@ -205,32 +230,35 @@ export function TextPostPage({ post }: {
                 marginTop: 'calc(4 * var(--padding))',
                 marginBottom: 'var(--padding)',
             }}>
-                <AllStoriesButton />
-                <HomeButton />
+                <AllStoriesButton language={language} />
+                <HomeButton language={language} />
             </nav>
         </TextBlock>
     </>
 }
 
-export function AllStoritesPage({ previews }: {
+export function AllStoritesPage({ previews, language }: {
     previews: TextPostMap,
+    language?: Language,
 }) {
+    let title = language === 'en' ? 'All stories' : 'Все рассказы'
+    let description = language === 'en' ? 'All stories' : 'Страница со всеми рассказами'
     let pairs = Object.entries(previews)
         .sort(([, a], [, b]) => b?.date?.localeCompare(a?.date ?? '') ?? 0)
     return <PixelPage
-        title="Все рассказы"
-        description="Страница со всеми рассказами"
+        title={title}
+        description={description}
     >
         <div className="outer">
             <div className="container">
                 {pairs.map(([id, story], idx) =>
                     <Link key={idx} href={href('text', { id })}>
-                        <TextCard text={story} />
+                        <TextCard post={story} />
                     </Link>
                 )}
             </div>
             <nav className="navigation">
-                <HomeButton />
+                <HomeButton language={language} />
             </nav>
         </div>
         <style jsx>{`

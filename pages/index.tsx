@@ -111,7 +111,7 @@ export default function Main({
       highlight={hl === 'stories'}
     >
       <TextCard
-        text={previews[id]!}
+        post={previews[id]!}
       />
     </Tile>
   }
@@ -282,6 +282,7 @@ function Help({ hue }: {
         color: 'red',
       }}>
         <Link href={href('about-en', { hue })} style={{
+          color: 'red',
         }}>
           Help!
         </Link>

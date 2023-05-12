@@ -24,7 +24,7 @@ Rick said that we were in a former immigration prison building. Now it's an art 
 
 “Hmm. That's a story for some other night.”
 
-On Fridays, we hang out on Capitol Hill. There are clubs and there are bright people around us. We constantly run into his bodies and I fail to remember that many names. Rick used to live here, and I listen to his stories: here was a huge apartment, and this was my "Cafè (un)Americain." I've heard a lot about the café — it was a real speakeasy, with alcohol after 2 a.m. and poker tables all around. He met Brian at the café. They were friends for a couple of years until he turned out to be an undercover cop, but Rick doesn't like to tell that story.
+On Fridays, we hang out on Capitol Hill. There are clubs and there are bright people around us. We constantly run into his bodies and I fail to remember that many names. Rick used to live here, and I listen to his stories: here was a huge apartment, and this was my “Cafè Américain”. I've heard a lot about the café — it was a real speakeasy, with alcohol after 2 a.m. and poker tables all around. He met Brian at the café. They were friends for a couple of years until he turned out to be an undercover cop, but Rick doesn't like to tell that story.
 
 I'm hungry, and I get myself a hot dog on the corner. Rick grew up in Oklahoma and was friends with a cow named Blackie on his granddad's ranch. One day, when he was thirteen, he visited the ranch. ”Grandpa, where's Blackie?” he asked, but neither Grandpa nor anyone else answered. They just grinned, until it turned out that Blackie was on the menu that night. They meant it to be a lesson. It was a lesson, though not of the kind they intended to give — he hasn’t eaten meat ever since.
 

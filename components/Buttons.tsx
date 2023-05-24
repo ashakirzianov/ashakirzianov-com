@@ -1,3 +1,4 @@
+'use client'
 import { useQuery } from "@/utils/query"
 import { href } from "@/utils/refs"
 import Link from "next/link"

@@ -1,3 +1,4 @@
+'use client'
 import { useQuery } from "@/utils/query"
 import { ReactNode } from "react"
 import { SketchCollectionBlock, SketchMulticollection } from "./SketchCollection"
@@ -174,7 +175,6 @@ export function AllSketchesPage({ collections }: {
         }}>
             <SketchMulticollection
                 collections={collections}
-                hrefForIds={(collection, id) => href('sketch', { id, collection })}
             />
             <footer style={{
                 paddingTop: 'calc(4*var(--padding))',

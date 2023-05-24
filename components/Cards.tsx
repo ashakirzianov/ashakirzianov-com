@@ -1,3 +1,4 @@
+'use client'
 import { ReactNode, useEffect, useRef, useState } from "react"
 import { Scene } from "@/sketcher"
 import { href } from "@/utils/refs"

@@ -1,3 +1,4 @@
+'use client'
 import { AllSketchesPage } from "@/components/Pages"
 import { atoms } from "@/sketches/atoms"
 import { misc } from "@/sketches/misc"

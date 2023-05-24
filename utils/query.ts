@@ -1,18 +1,16 @@
-import { useRouter } from "next/router"
+import { useSearchParams } from "next/navigation"
 
-function getNumber(s: string | string[] | undefined) {
-    if (s === undefined) {
+function getNumber(s: string | null) {
+    if (s === null) {
         return undefined
-    } else if (typeof s === 'string') {
-        return parseInt(s, 10)
     } else {
-        return parseInt(s[0] ?? '', 10)
+        return parseInt(s, 10)
     }
 }
 
 export function useQuery() {
-    let { hue } = useRouter().query
+    let sp = useSearchParams()
     return {
-        hue: getNumber(hue),
+        hue: getNumber(sp.get('hue')),
     }
 }

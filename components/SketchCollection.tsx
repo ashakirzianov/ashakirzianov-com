@@ -1,15 +1,16 @@
+'use client'
 import { SketchCollection, sceneId } from "@/sketcher"
 import { SketchCard } from "./Cards"
 import Link from "next/link"
+import { href } from "@/utils/refs"
 
 export function SketchCollectionBlock({
     collection: { meta, sketches },
-    hrefForId,
-    href,
+    collectionId, linkToCollection,
 }: {
     collection: SketchCollection,
-    hrefForId: (id: string) => string,
-    href?: string,
+    collectionId: string,
+    linkToCollection?: boolean,
 }) {
     let titleNode = <span style={{
         display: 'flex',
@@ -20,13 +21,13 @@ export function SketchCollectionBlock({
     </span>
     return <>
         <div className="outer">
-            {href
-                ? <Link href={href}>{titleNode}</Link>
+            {linkToCollection
+                ? <Link href={href('sketch', { collection: collectionId })}>{titleNode}</Link>
                 : titleNode
             }
             <div className="container">
                 {(sketches).map((sketch, idx) =>
-                    <a key={idx} href={hrefForId(sceneId(sketch) ?? idx.toString())}>
+                    <a key={idx} href={href('sketch', { id: sceneId(sketch) ?? idx.toString(), collection: collectionId })}>
                         <SketchCard sketch={sketch} pixelated={false} />
                     </a>
                 )}
@@ -58,10 +59,9 @@ export function SketchCollectionBlock({
 }
 
 export function SketchMulticollection({
-    collections, hrefForIds,
+    collections,
 }: {
     collections: SketchCollection[],
-    hrefForIds: (collectionId: string, id?: string) => string,
 }) {
     return <>
         <div className="collections">
@@ -70,9 +70,8 @@ export function SketchMulticollection({
                     <SketchCollectionBlock
                         key={`${collection.id}-${idx}`}
                         collection={collection}
-                        href={hrefForIds(collection.id
-                        )}
-                        hrefForId={id => hrefForIds(collection.id, id)}
+                        collectionId={collection.id}
+                        linkToCollection={true}
                     />
                 )
             }

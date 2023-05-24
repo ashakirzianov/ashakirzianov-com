@@ -1,8 +1,9 @@
+'use client'
 import { href } from "@/utils/refs"
 import Head from "next/head"
-import { AboutCard, AboutLink } from "./about"
 import { useQuery } from "@/utils/query"
 import { PixelPage } from "@/components/Pages"
+import { AboutCard, AboutLink } from "../about/shared"
 
 export default function AboutPage() {
     let { hue } = useQuery()

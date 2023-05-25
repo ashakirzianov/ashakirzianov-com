@@ -46,14 +46,13 @@ export function PixelPageImpl({ hue, children }: PixelPageProps & {
             gridTemplateAreas: '"mid"',
             backgroundColor: `hsl(${hue},60%,65%)`,
         }}>
-        <div className="flex justify-center items-center w-screen h-screen"
+        <div className="flex justify-center items-center w-screen h-screen max-h-screen"
             style={{
                 gridArea: 'mid',
                 fontSize: 'min(80vh,90vw)',
                 color: `hsl(${hue},45%,65%)`,
             }}>Җ</div>
-        <div
-            className="flex flex-col w-full min-h-screen"
+        <div className="flex flex-col w-full min-h-screen"
             style={{
                 gridArea: 'mid',
             }}>{children}</div>
@@ -82,7 +81,7 @@ export function SketchPage({
                 <div className="flex items-start justify-center h-screen w-screen" style={{
                     padding: 'min(10vh,40pt) min(2vw,20pt)',
                 }}>
-                    <div className="flex aspect-poster m-w-full m-h-full drop-shadow-2xl">
+                    <div className="flex aspect-poster max-w-full max-h-full drop-shadow-2xl">
                         <div className="flex w-full h-full items-stretch rounded-lg overflow-hidden" style={{
                             clipPath: 'border-box',
                         }}>

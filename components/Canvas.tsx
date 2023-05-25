@@ -71,13 +71,8 @@ export function Canvas({
         <canvas
             className="canvas"
             ref={canvasRef}
+            style={{ width: '100%', height: '100%' }}
         />
-        <style jsx>{`
-        .canvas {
-            width: 100%;
-            height: 100%;
-        }
-        `}</style>
     </>
 }
 

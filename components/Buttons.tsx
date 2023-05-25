@@ -52,8 +52,16 @@ export function PixelButton({
   let left = down ? drop : '0px'
   let top = down ? drop : '0px'
   let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
-  return <div className="outer" draggable={false}>
-    <div className="inner pixel-corners" draggable={false}
+  return <div draggable={false} style={{
+    filter, width,
+  }}>
+    <div className="flex p-stn font-pixel verti pixel-corners" draggable={false}
+      style={{
+        position: 'relative',
+        top, left,
+        backgroundColor: color,
+        color: textColor ?? 'white',
+      }}
       onMouseDown={() => setPushed(true)}
       onTouchStart={() => setPushed(true)}
       onMouseUp={() => { setPushed(false) }}
@@ -62,25 +70,6 @@ export function PixelButton({
       onTouchCancel={() => setPushed(false)}
       onClick={onClick}
     >{children}</div>
-    <style jsx>{`
-      .outer {
-        filter: ${filter};
-        ${width ? `width: ${width}` : ''}
-      }
-      .inner {
-        display: flex;
-        position: relative;
-        top: ${top};
-        left: ${left};
-        padding: var(--padding);
-        vertical-align: center;
-        align-items: center;
-        justify-content: center;
-        color: ${textColor ?? 'white'};
-        background-color: ${color};
-        font-family: var(--font-pixel), serif;
-      }
-      `}</style>
   </div>
 }
 
@@ -96,8 +85,17 @@ export function PixelToggle({ color, onClick, pressed }: {
   let left = down ? drop : '0px'
   let top = down ? drop : '0px'
   let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
-  return <div className="outer" draggable={false}>
-    <div className="inner pixel-corners" draggable={false}
+  return <div draggable={false} style={{
+    filter,
+  }}>
+    <div className="font-pixel pixel-corners" draggable={false}
+      style={{
+        position: 'relative',
+        top, left,
+        width: size,
+        height: size,
+        backgroundColor: color,
+      }}
       onMouseDown={() => setPushed(true)}
       onTouchStart={() => setPushed(true)}
       onMouseUp={() => { setPushed(false) }}
@@ -106,19 +104,5 @@ export function PixelToggle({ color, onClick, pressed }: {
       onTouchCancel={() => setPushed(false)}
       onClick={onClick}
     />
-    <style jsx>{`
-      .outer {
-        filter: ${filter};
-      }
-      .inner {
-        position: relative;
-        top: ${top};
-        left: ${left};
-        width: ${size};
-        height: ${size};
-        background-color: ${color};
-        font-family: var(--font-pixel), serif;
-      }
-      `}</style>
   </div>
 }

@@ -14,6 +14,7 @@ import { titleAtom } from "@/sketches/atoms"
 import { titleRythm } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
 import { fourFlowers, letters, number34 } from "@/sketches/misc"
+import { hi } from "date-fns/locale"
 
 // @refresh reset
 
@@ -105,12 +106,12 @@ export function Main({ previews }: {
         title="Анҗан"
         description="Сайт с буквами и картинками"
     >
-        <div className="outer">
-            <header>
-                <div className="help">
+        <div className="flex flex-col flex-nowrap items-center min-h-screen">
+            <header className="flex flex-row flex-wrap justify-between items-center self-end grow-0">
+                <div className="p-stn">
                     {/* <HelpButton hue={hue} /> */}
                 </div>
-                <div className="buttons">
+                <div className="flex flex-row flex-wrap justify-end gap-stn p-stn">
                     <PixelToggle
                         color="red"
                         onClick={() => setFree(v => !v)}
@@ -127,7 +128,23 @@ export function Main({ previews }: {
                     />
                 </div>
             </header>
-            <div className={free ? 'grid' : 'flex'}>
+            <div style={free ? {
+                display: 'grid',
+                gridTemplateAreas: '"mid"',
+                placeItems: 'center center',
+                width: '100%',
+                flexGrow: 1,
+            } : {
+                display: 'flex',
+                flexFlow: 'row wrap',
+                alignContent: 'center',
+                justifyContent: 'center',
+                gap: 'var(--padding)',
+                padding: 'var(--padding)',
+                width: '100%',
+                maxWidth: 'var(--collection)',
+                height: '100%',
+            }}>
                 {[
                     sketchTile('posters', [5, -18]),
                     sketchTile('atoms', [-20, 0], 1),
@@ -153,55 +170,6 @@ export function Main({ previews }: {
                 </Tile>
             </div>
         </div>
-        <style jsx>{`
-      .outer {
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: center;
-        min-height: 100vh;
-      }
-      header {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: space-between;
-        align-items: center;
-        align-self: flex-end;
-        flex-grow: 0;
-      }
-      .help {
-        padding: var(--padding);
-      }
-      .buttons {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: flex-end;
-        gap: var(--padding);
-        padding: var(--padding);
-      }
-      .grid {
-        display: grid;
-        grid-template-areas: "mid";
-        place-items: center center;
-        width: 100%;
-        flex-grow: 1;
-      }
-      .flex {
-        display: flex;
-        flex-flow: row wrap;
-        align-content: center;
-        justify-content: center;
-        gap: var(--padding);
-        padding: var(--padding);
-        width: 100%;
-        max-width: calc(3 * var(--card-width) + 4 * var(--padding));
-        height: 100%;
-      }
-      @media (max-width: 700pt) {
-        .flex {
-          justify-content: center;
-        }
-      }
-      `}</style>
     </PixelPageImpl>
 }
 
@@ -232,7 +200,7 @@ function Tile({
             <Draggable
                 onDrag={lock}
                 onStop={unlock}
-                front={front}
+                front={front || highlight}
                 back={back}
                 disabled={!shifted}
             >

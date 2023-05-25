@@ -39,18 +39,24 @@ export function PixelPage({ children, ...rest }: PixelPageProps) {
 export function PixelPageImpl({ hue, children }: PixelPageProps & {
     hue: number,
 }) {
-    return <div className="grid place-items-center w-full min-h-screen select-none cursor-default font-pixel" style={{
-        gridTemplateAreas: '"mid"',
-        backgroundColor: `hsl(${hue},60%,65%)`,
-    }}>
-        <div style={{
-            gridArea: 'mid',
-            fontSize: 'min(80vh,90vw)',
-            color: `hsl(${hue},45%,65%)`,
-        }}>Җ</div>
-        <div className="flex flex-col w-full min-h-screen" style={{
-            gridArea: 'mid',
-        }}>{children}</div>
+
+    return <div
+        className="grid w-screen h-screen max-h-screen select-none cursor-default font-pixel place-items-start"
+        style={{
+            gridTemplateAreas: '"mid"',
+            backgroundColor: `hsl(${hue},60%,65%)`,
+        }}>
+        <div className="flex justify-center items-center w-screen h-screen"
+            style={{
+                gridArea: 'mid',
+                fontSize: 'min(80vh,90vw)',
+                color: `hsl(${hue},45%,65%)`,
+            }}>Җ</div>
+        <div
+            className="flex flex-col w-full min-h-screen"
+            style={{
+                gridArea: 'mid',
+            }}>{children}</div>
         <style>{`
         body {
             background-color: hsl(${hue},60%,65%);
@@ -76,31 +82,14 @@ export function SketchPage({
                 <div className="flex items-start justify-center h-screen w-screen" style={{
                     padding: 'min(10vh,40pt) min(2vw,20pt)',
                 }}>
-                    <div className="container">
-                        <div className="content">
+                    <div className="flex aspect-poster m-w-full m-h-full drop-shadow-2xl">
+                        <div className="flex w-full h-full items-stretch rounded-lg overflow-hidden" style={{
+                            clipPath: 'border-box',
+                        }}>
                             {children ?? null}
                         </div>
                     </div>
                 </div>
-                <style jsx>{`
-                .container {
-                    display: flex;
-                    aspect-ratio: 3 / 4;
-                    max-width: 100%;
-                    max-height: 100%;
-                    filter: drop-shadow(0px 0px 20px var(--shadow));
-                }
-                .content {
-                    display: flex;
-                    width: 100%;
-                    height: 100%;
-                    align-items: stretch;
-                    justify-items: stretch;
-                    border-radius: var(--radius);
-                    clip-path: border-box;
-                    overflow: hidden;
-                }
-                `}</style>
             </main>
         </>
     )
@@ -112,21 +101,9 @@ export function SketchCollectionPage({ ...rest }: Parameters<typeof SketchCollec
         title={meta.title}
         description={meta.description ?? `Серия скетчей: ${meta.title}`}
     >
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 'var(--padding)',
-            padding: 'var(--padding)',
-        }}>
+        <div className="flex flex-col items-center gap-stn p-stn">
             <SketchCollectionBlock {...rest} />
-            <footer style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 'var(--padding)',
-                padding: 'var(--padding)',
-            }}>
+            <footer className="flex flex-col items-center gap-stn p-stn">
                 <AllSketchesButton />
                 <HomeButton />
             </footer >
@@ -141,19 +118,11 @@ export function AllSketchesPage({ collections }: {
         title="Все скетчи"
         description="Страница со всеми картинками"
     >
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: 'var(--padding)'
-        }}>
+        <div className="flex flex-col items-center p-stn">
             <SketchMulticollection
                 collections={collections}
             />
-            <footer style={{
-                paddingTop: 'calc(4*var(--padding))',
-                paddingBottom: 'var(--padding)',
-            }}>
+            <footer className="pt-l pb-stn">
                 <HomeButton />
             </footer>
         </div>
@@ -163,14 +132,7 @@ export function AllSketchesPage({ collections }: {
 function LinkBlock({ children }: {
     children?: ReactNode,
 }) {
-    return <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        textAlign: 'left',
-        fontStyle: 'italic',
-        fontSize: '0.8em',
-        width: '100%',
-    }}>
+    return <div className="flex flex-col text-left italic text-base w-full">
         {children}
     </div>
 }
@@ -192,19 +154,9 @@ export function TextPostPage({ post }: {
                 {post.original?.en && <Link href={href('text', { id: post.original.en })}>English original</Link>}
                 {post.original?.ru && <Link href={href('text', { id: post.original.ru })}>Original</Link>}
             </LinkBlock>
-            <div style={{
-                marginBottom: '1em',
-            }} />
+            <div className="mb-4" />
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
-            <nav style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 'var(--padding)',
-                justifyContent: 'space-between',
-                marginTop: 'calc(4 * var(--padding))',
-                marginBottom: 'var(--padding)',
-            }}>
+            <nav className="flex flex-col items-center gap-stn justify-between mt-l mb-stn">
                 <AllStoriesButton language={language} />
                 <HomeButton language={language} />
             </nav>
@@ -224,8 +176,8 @@ export function AllStoritesPage({ previews, language }: {
         title={title}
         description={description}
     >
-        <div className="outer">
-            <div className="container">
+        <div className="flex flex-col items-center justify-start max-w-collection">
+            <div className="flex flex-row flex-wrap content-start gap-stn p-stn">
                 {pairs.map(([id, story], idx) =>
                     <Link key={idx} href={href('text', { id })}>
                         <TextCard post={story} />
@@ -236,25 +188,5 @@ export function AllStoritesPage({ previews, language }: {
                 <HomeButton language={language} />
             </nav>
         </div>
-        <style jsx>{`
-        .outer {
-            dispaly:flex;
-            flex-flow: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            display: flex;
-            flex-flow: row wrap;
-            align-content: flex-start;
-            gap: var(--padding);
-            padding: var(--padding);
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-around;
-            padding: var(--padding);
-        }
-        `}</style>
     </PixelPage>
 }

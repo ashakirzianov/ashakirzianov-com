@@ -17,27 +17,14 @@ export function AboutCard({ children }: {
     children: ReactNode,
 }) {
     return <>
-        <div className="container pixel-shadow">
-            <div className="content pixel-corners">
+        <div className="flex flex-col items-center justify-center w-screen p-stn pixel-shadow">
+            <div className="bg-paper-light text-fgl pixel-corners" style={{
+                maxWidth: 'min(540pt, 100%)',
+            }}>
                 <TextBlock font="var(--font-pixel)">
                     {children}
                 </TextBlock>
             </div>
         </div>
-        <style jsx>{`
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100vw;
-            padding: var(--padding);
-        }
-        .content {
-            background-color: var(--paper-light);
-            color: var(--foreground-light);
-            max-width: min(540pt, 100%);
-        }
-        `}</style>
     </>
 }

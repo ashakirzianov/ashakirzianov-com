@@ -12,20 +12,16 @@ export function SketchCollectionBlock({
     collectionId: string,
     linkToCollection?: boolean,
 }) {
-    let titleNode = <span style={{
-        display: 'flex',
-        color: 'white',
-        padding: 'var(--padding)',
-    }}>
+    let titleNode = <span className="flex text-white p-stn">
         {meta.title}
     </span>
     return <>
-        <div className="outer">
+        <div className="flex flex-col flex-wrap items-center p-0 m-0">
             {linkToCollection
                 ? <Link href={href('sketch', { collection: collectionId })}>{titleNode}</Link>
                 : titleNode
             }
-            <div className="container">
+            <div className="container flex flex-row flex-wrap content-start justify-center gap-stn w-full max-w-collection">
                 {(sketches).map((sketch, idx) =>
                     <a key={idx} href={href('sketch', { id: sceneId(sketch) ?? idx.toString(), collection: collectionId })}>
                         <SketchCard sketch={sketch} pixelated={false} />
@@ -33,28 +29,6 @@ export function SketchCollectionBlock({
                 )}
             </div>
         </div>
-        <style jsx>{`
-        .title {
-            display: flex;
-            color: white;
-            padding: var(--padding);
-        }
-        .outer {
-            display: flex;
-            flex-flow: column wrap;
-            align-items: center;
-        }
-        .container {
-            display: flex;
-            flex-flow: row wrap;
-            align-content: flex-start;
-            justify-content: center;
-            gap: var(--padding);
-            padding: var(--padding);
-            width: 100%;
-            max-width: calc(3 * var(--card-width) + 4 * var(--padding));
-        }
-        `}</style>
     </>
 }
 
@@ -64,7 +38,7 @@ export function SketchMulticollection({
     collections: SketchCollection[],
 }) {
     return <>
-        <div className="collections">
+        <div className="flex flex-col items-center">
             {
                 collections.map((collection, idx) =>
                     <SketchCollectionBlock
@@ -76,12 +50,5 @@ export function SketchMulticollection({
                 )
             }
         </div>
-        <style jsx>{`
-        .collections {
-            display: flex;
-            flex-flow: column wrap;
-            align-items: center;
-        }
-        `}</style>
     </>
 }

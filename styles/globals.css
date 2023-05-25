@@ -22,6 +22,7 @@
 html,
 body {
   max-width: 100vw;
+  height: 100vh;
   overflow-x: hidden;
 }
 
@@ -52,6 +53,7 @@ html {
   --card-font-size: 12pt;
   --card-text-height: 41.7em;
   --padding: 10pt;
+  --collection: calc(3 * var(--card) + 4 * var(--padding));
 }
 
 @media (prefers-color-scheme: dark) {

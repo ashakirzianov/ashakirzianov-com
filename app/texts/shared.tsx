@@ -1,6 +1,6 @@
 import { HomeButton, Language } from "@/components/Buttons"
 import { TextCard } from "@/components/Cards"
-import { PixelPage } from "@/components/Pages"
+import { PixelPage } from "@/components/PixelPage"
 import { href } from "@/utils/refs"
 import { TextPostMap } from "@/utils/text"
 import Link from "next/link"

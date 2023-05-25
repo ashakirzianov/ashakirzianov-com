@@ -1,5 +1,5 @@
 'use client'
-import { PixelPage } from "@/components/Pages"
+import { PixelPage } from "@/components/PixelPage"
 import { notFound } from "next/navigation"
 import { SketchCollectionBlock } from "@/components/SketchCollection"
 import { AllSketchesButton, HomeButton } from "@/components/Buttons"

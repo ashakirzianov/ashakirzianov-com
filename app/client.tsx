@@ -12,7 +12,7 @@ import { Scene } from "@/sketcher"
 import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
 import { titleAtom } from "@/sketches/atoms"
 import { titleRythm } from "@/sketches/rythm"
-import { PixelPageImpl } from "@/components/Pages"
+import { PixelPage } from "@/components/PixelPage"
 import { fourFlowers, letters, number34 } from "@/sketches/misc"
 
 // @refresh reset
@@ -100,9 +100,7 @@ export function MainPage({ previews }: {
             />
         </Tile>
     }
-    return <PixelPageImpl
-        hue={hue}
-    >
+    return <PixelPage>
         <div className="flex flex-col flex-nowrap items-center min-h-screen">
             <header className="flex flex-row flex-wrap justify-between items-center self-end grow-0">
                 <div className="p-stn">
@@ -167,7 +165,7 @@ export function MainPage({ previews }: {
                 </Tile>
             </div>
         </div>
-    </PixelPageImpl>
+    </PixelPage>
 }
 
 function Tile({

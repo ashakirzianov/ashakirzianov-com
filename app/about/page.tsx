@@ -1,4 +1,4 @@
-import { PixelPage } from "@/components/Pages"
+import { PixelPage } from "@/components/PixelPage"
 import { href } from "@/utils/refs"
 import { AboutCard, AboutLink } from "./shared"
 import { Metadata } from "next"

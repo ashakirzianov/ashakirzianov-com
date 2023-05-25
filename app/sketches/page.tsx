@@ -1,6 +1,6 @@
 import { HomeButton } from "@/components/Buttons"
 import { AllCollections } from "./client"
-import { PixelPage } from "@/components/Pages"
+import { PixelPage } from "@/components/PixelPage"
 import { buildMetadata } from "@/utils/metadata"
 
 export const metadata = buildMetadata({

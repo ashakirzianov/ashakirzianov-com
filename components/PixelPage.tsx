@@ -11,7 +11,7 @@ export function PixelPage({ children }: {
     </PixelPageImpl>
 }
 
-export function PixelPageImpl({ hue, children }: {
+function PixelPageImpl({ hue, children }: {
     hue: number,
     children: ReactNode,
 }) {

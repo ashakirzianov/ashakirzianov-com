@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import Script from "next/script"
-import { Press_Start_2P } from '@next/font/google'
-import { Cormorant } from '@next/font/google'
+import { Press_Start_2P } from "next/font/google"
+import { Cormorant } from "next/font/google"
 import '../styles/globals.css'
 
 const textFont = Cormorant({

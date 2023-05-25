@@ -1,5 +1,5 @@
+import { collections } from "@/sketches"
 import { CollectionPage } from "./client"
-import { collections } from "./collections"
 
 export async function generateStaticParams() {
     return collections.map(collection => ({

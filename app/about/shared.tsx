@@ -1,4 +1,6 @@
+'use client'
 import { TextBlock } from "@/components/TextBlock"
+import { useQuery } from "@/utils/query"
 import Link from "next/link"
 import { ReactNode } from "react"
 
@@ -6,7 +8,11 @@ export function AboutLink({ href, children }: {
     href: string,
     children: ReactNode,
 }) {
-    return <Link href={href} style={{
+    let hue = useQuery().hue
+    return <Link href={{
+        href,
+        search: hue ? `?hue=${hue}` : undefined,
+    }} style={{
         color: 'skyblue',
     }}>
         {children}

@@ -50,14 +50,14 @@ export function AboutCard({ hue, onHover }: {
 }) {
     return <Card>
         <div className="text-fgl bg-paper-light indent-4 leading-[1.2em] p-[10%] w-full h-full select-none" unselectable="on">
-            —Привет! Меня зовут <span>Анҗан</span>. Я пишу <AboutLink href={href('text', { hue })} highlight="stories" onHover={onHover}>рассказы</AboutLink> и <AboutLink href={href('sketch', { hue })} highlight="posters" onHover={onHover}>генерирую формы</AboutLink>.
+            —Привет! Меня зовут <span>Анҗан</span>. Я пишу <AboutCardLink href={href('text', { hue })} highlight="stories" onHover={onHover}>рассказы</AboutCardLink> и <AboutCardLink href={href('sketch', { hue })} highlight="posters" onHover={onHover}>генерирую формы</AboutCardLink>.
             <p>&nbsp;</p>
-            — Что? Кто ты такой и <AboutLink href={href('about', { hue })}>что это за буква җ?</AboutLink>
+            — Что? Кто ты такой и <AboutCardLink href={href('about', { hue })}>что это за буква җ?</AboutCardLink>
         </div>
     </Card >
 }
 
-function AboutLink({ children, href, highlight, onHover }: {
+function AboutCardLink({ children, href, highlight, onHover }: {
     href: string,
     children?: ReactNode,
     highlight?: HighlightKind,

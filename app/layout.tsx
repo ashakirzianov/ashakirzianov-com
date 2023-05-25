@@ -3,6 +3,7 @@ import Script from "next/script"
 import { Press_Start_2P } from "next/font/google"
 import { Cormorant } from "next/font/google"
 import '../styles/globals.css'
+import { Metadata } from "next"
 
 const textFont = Cormorant({
     subsets: ['cyrillic-ext'],
@@ -15,6 +16,10 @@ const p2p = Press_Start_2P({
     variable: '--font-pixel',
     display: 'block',
 })
+
+export const metadata: Metadata = {
+    metadataBase: new URL('https://www.andjan.art'),
+}
 
 export default function RootLayout({
     children,

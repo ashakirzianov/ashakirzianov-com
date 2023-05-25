@@ -14,7 +14,6 @@ import { titleAtom } from "@/sketches/atoms"
 import { titleRythm } from "@/sketches/rythm"
 import { PixelPageImpl } from "@/components/Pages"
 import { fourFlowers, letters, number34 } from "@/sketches/misc"
-import { hi } from "date-fns/locale"
 
 // @refresh reset
 
@@ -56,7 +55,7 @@ const sketchCards = {
     },
 }
 
-export function Main({ previews }: {
+export function MainPage({ previews }: {
     previews: TextPostMap,
 }) {
     let { hue = 40 } = useQuery()
@@ -103,8 +102,6 @@ export function Main({ previews }: {
     }
     return <PixelPageImpl
         hue={hue}
-        title="Анҗан"
-        description="Сайт с буквами и картинками"
     >
         <div className="flex flex-col flex-nowrap items-center min-h-screen">
             <header className="flex flex-row flex-wrap justify-between items-center self-end grow-0">

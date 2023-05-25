@@ -2,12 +2,16 @@ import { href } from "@/utils/refs"
 import Head from "next/head"
 import { PixelPage } from "@/components/Pages"
 import { AboutCard, AboutLink } from "../about/shared"
+import { Metadata } from "next"
+import { buildMetadata } from "@/utils/metadata"
+
+export const metadata: Metadata = buildMetadata({
+    title: 'Who is Andjan?',
+    description: 'I am Anton Shakirzianov and this is my personal page',
+})
 
 export default function AboutPage() {
-    return <PixelPage
-        title="Who is Andjan?"
-        description="I am Anton Shakirzianov and this is my personal page"
-    >
+    return <PixelPage>
         <Head>
             <title>Who is Andjan?</title>
             <meta name="viewport" content="width=device-width, initial-scale=1" />

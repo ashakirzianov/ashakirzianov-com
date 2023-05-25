@@ -1,12 +1,16 @@
 import { PixelPage } from "@/components/Pages"
 import { href } from "@/utils/refs"
 import { AboutCard, AboutLink } from "./shared"
+import { Metadata } from "next"
+import { buildMetadata } from "@/utils/metadata"
+
+export const metadata: Metadata = buildMetadata({
+    title: 'Who is Andjan?',
+    description: 'I am Anton Shakirzianov and this is my personal page',
+})
 
 export default function AboutPage() {
-    return <PixelPage
-        title="Who is Andjan?"
-        description="I am Anton Shakirzianov and this is my personal page"
-    >
+    return <PixelPage>
         <AboutCard>
             <h1>Кто ты такой и что это за буква җ?</h1>
             <p>{`Ладно, вообще меня зовут Антон Шакирзянов. Буква "җ" взята из татарской версии кирилицы, вот отсюда: "Шөкер Җан".`}</p>

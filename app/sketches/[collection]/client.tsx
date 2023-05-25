@@ -12,10 +12,7 @@ export function CollectionPage({ collectionId }: {
     if (!collection) {
         return notFound()
     }
-    return <PixelPage
-        title={collection.meta.title}
-        description={collection.meta.description ?? `Серия скетчей: ${collection.meta.title}`}
-    >
+    return <PixelPage>
         <div className="flex flex-col items-center gap-stn p-stn">
             <SketchCollectionBlock collection={collection} linkToCollection={false} />
             <footer className="flex flex-col items-center gap-stn p-stn">

@@ -1,7 +1,14 @@
 import { getAllPreviews } from "@/utils/text"
-import { Main } from "./client"
+import { MainPage } from "./client"
+import { Metadata } from "next"
+import { buildMetadata } from "@/utils/metadata"
+
+export const metadata: Metadata = buildMetadata({
+    title: "Анҗан",
+    description: "Сайт с буквами и картинками",
+})
 
 export default async function Page() {
     let previews = await getAllPreviews()
-    return <Main previews={previews} />
+    return <MainPage previews={previews} />
 }

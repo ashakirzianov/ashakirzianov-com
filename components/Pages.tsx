@@ -1,36 +1,20 @@
 'use client'
 import { useQuery } from "@/utils/query"
 import { ReactNode } from "react"
-import Head from "next/head"
 
-export type PageHeaderProps = {
-    title: string,
-    description: string,
-}
-export function PageHead({ title, description }: PageHeaderProps) {
-    return <Head>
-        <title>{title}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content={description} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-    </Head>
-}
-
-type PixelPageProps = PageHeaderProps & {
+export function PixelPage({ children }: {
     children: ReactNode,
-};
-export function PixelPage({ children, ...rest }: PixelPageProps) {
+}) {
     let { hue } = useQuery()
-    return <PixelPageImpl hue={hue ?? 40} {...rest}>
+    return <PixelPageImpl hue={hue ?? 40}>
         {children}
     </PixelPageImpl>
 }
 
-export function PixelPageImpl({ hue, children }: PixelPageProps & {
+export function PixelPageImpl({ hue, children }: {
     hue: number,
+    children: ReactNode,
 }) {
-
     return <div
         className="grid w-screen h-screen max-h-screen select-none cursor-default font-pixel place-items-start"
         style={{

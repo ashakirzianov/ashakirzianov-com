@@ -36,47 +36,27 @@ export function PixelPage({ children, ...rest }: PixelPageProps) {
     </PixelPageImpl>
 }
 
-export function PixelPageImpl({ hue, children, ...header }: PixelPageProps & {
+export function PixelPageImpl({ hue, children }: PixelPageProps & {
     hue: number,
 }) {
-    return <>
-        <PageHead {...header} />
-        <div className="page">
-            <div className="back">Җ</div>
-            <div className="content">{children}</div>
-        </div>
-        <style jsx>{`
-        .page {
-          display: grid;
-          grid-template-areas: "mid";
-          place-items: center center;
-          width: 100%;
-          min-height: 100vh;
-          -webkit-user-select: none; /* Safari */
-          -ms-user-select: none; /* IE 10 and IE 11 */
-          user-select: none; /* Standard syntax */
-          cursor: default;
-          font-family: var(--font-pixel), serif;
-        }
-        .back {
-          grid-area: mid;
-          font-size: min(80vh,90vw);
-          color: hsl(${hue},45%,65%);
-        }
-        .content {
-          grid-area: mid;
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          min-height: 100vh;
-        }
-      `}</style>
-        <style jsx global>{`
+    return <div className="grid place-items-center w-full min-h-screen select-none cursor-default font-pixel" style={{
+        gridTemplateAreas: '"mid"',
+        backgroundColor: `hsl(${hue},60%,65%)`,
+    }}>
+        <div style={{
+            gridArea: 'mid',
+            fontSize: 'min(80vh,90vw)',
+            color: `hsl(${hue},45%,65%)`,
+        }}>Җ</div>
+        <div className="flex flex-col w-full min-h-screen" style={{
+            gridArea: 'mid',
+        }}>{children}</div>
+        <style>{`
         body {
             background-color: hsl(${hue},60%,65%);
         }
       `}</style>
-    </>
+    </div>
 }
 
 export function SketchPage({
@@ -93,7 +73,9 @@ export function SketchPage({
                 description={description ?? title ?? 'Generative sketch'}
             />
             <main>
-                <div className="page">
+                <div className="flex items-start justify-center h-screen w-screen" style={{
+                    padding: 'min(10vh,40pt) min(2vw,20pt)',
+                }}>
                     <div className="container">
                         <div className="content">
                             {children ?? null}
@@ -101,14 +83,6 @@ export function SketchPage({
                     </div>
                 </div>
                 <style jsx>{`
-                .page {
-                    display: flex;
-                    align-items: start;
-                    justify-content: center;
-                    height: 100vh;
-                    width: 100vw;
-                    padding: min(10vh,40pt) min(2vw,20pt);
-                }
                 .container {
                     display: flex;
                     aspect-ratio: 3 / 4;

@@ -101,29 +101,10 @@ body {
   filter: drop-shadow(10px 10px 0px #222);
 }
 
-.paper {
-  background-color: var(--paper);
-  color: var(--foreground);
-}
-
-.card-frame {
-  display: flex;
-  overflow: hidden;
-  aspect-ratio: 3/4;
-  width: var(--card-width);
-  font-size: var(--card-font-size);
-}
-
 @media (max-width: 350pt) {
   html {
     --card-width: 100pt;
     --card-font-size: 7.8pt;
     --card-text-height: 40.7em;
   }
-}
-
-.noselect {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }

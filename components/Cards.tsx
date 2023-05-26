@@ -123,7 +123,7 @@ function Card({
 
     return (
         <div className="pixel-shadow" ref={cardRef}>
-            <div className="card-frame pixel-corners">{children}</div>
+            <div className="flex overflow-hidden aspect-poster w-card text-card pixel-corners">{children}</div>
         </div>
     )
 }

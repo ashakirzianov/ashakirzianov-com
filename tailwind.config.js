@@ -16,7 +16,6 @@ module.exports = {
         's': 'var(--padding)',
         'stn': 'var(--padding)',
         'l': 'calc(4 * var(--padding))',
-        'card': 'var(--card)',
         'card-height': 'var(--card-text-height)',
         'collection': 'var(--collection)',
       },
@@ -28,6 +27,12 @@ module.exports = {
       },
       maxWidth: {
         'collection': 'var(--collection)',
+      },
+      fontSize: {
+        card: 'var(--card-font-size)',
+      },
+      width: {
+        'card': 'var(--card-width)',
       },
     },
   },

@@ -13,8 +13,8 @@ export function AllStoritesPage({ previews, language }: {
         .sort(([, a], [, b]) => b?.date?.localeCompare(a?.date ?? '') ?? 0)
     return <PixelPage
     >
-        <div className="flex flex-col items-center justify-start max-w-collection">
-            <div className="flex flex-row flex-wrap content-start gap-stn p-stn">
+        <div className="flex flex-col items-center justify-start w-full">
+            <div className="flex flex-row flex-wrap content-start max-w-collection gap-stn p-stn">
                 {pairs.map(([id, story], idx) =>
                     <Link key={idx} href={href('text', { id })}>
                         <TextCard post={story} />

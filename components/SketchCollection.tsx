@@ -20,7 +20,7 @@ export function SketchCollectionBlock({
                 ? <Link href={href('sketch', { collection: id })}>{titleNode}</Link>
                 : titleNode
             }
-            <div className="container flex flex-row flex-wrap content-start justify-center gap-stn w-full max-w-collection">
+            <div className="flex flex-row flex-wrap content-start justify-center gap-stn w-full max-w-collection">
                 {(sketches).map((sketch, idx) =>
                     <a key={idx} href={href('sketch', { id: sceneId(sketch) ?? idx.toString(), collection: id })}>
                         <SketchCard sketch={sketch} pixelated={false} />

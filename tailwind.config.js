@@ -25,7 +25,10 @@ module.exports = {
         'paper-light': 'var(--paper-light)',
         'fg': 'var(--foreground)',
         'fgl': 'var(--foreground-light)',
-      }
+      },
+      maxWidth: {
+        'collection': 'var(--collection)',
+      },
     },
   },
   plugins: [],

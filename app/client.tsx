@@ -222,19 +222,17 @@ function Tile({
 function Help({ hue }: {
     hue: number,
 }) {
-    return <>
-        <div className="container pixel-shadow">
-            <div className="content pixel-corners" style={{
-                backgroundColor: 'white',
-                padding: 'var(--padding)',
+    return <div className="container pixel-shadow">
+        <div className="content pixel-corners" style={{
+            backgroundColor: 'white',
+            padding: 'var(--padding)',
+            color: 'red',
+        }}>
+            <Link href={href('about-en', { hue })} style={{
                 color: 'red',
             }}>
-                <Link href={href('about-en', { hue })} style={{
-                    color: 'red',
-                }}>
-                    Help!
-                </Link>
-            </div>
+                Help!
+            </Link>
         </div>
-    </>
+    </div>
 }

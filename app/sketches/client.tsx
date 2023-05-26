@@ -3,7 +3,7 @@ import { SketchCollectionBlock } from "@/components/SketchCollection"
 import { collections } from "@/sketches"
 
 export function AllCollections() {
-    return <div className="flex flex-col items-center">
+    return <div className="flex flex-col items-center gap-stn">
         {
             collections.map((collection, idx) =>
                 <SketchCollectionBlock

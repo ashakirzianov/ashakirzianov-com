@@ -14,19 +14,17 @@ export function SketchCollectionBlock({
     let titleNode = <span className="flex text-white p-stn">
         {meta.title}
     </span>
-    return <>
-        <div className="flex flex-col flex-wrap items-center p-0 m-0">
-            {linkToCollection
-                ? <Link href={href('sketch', { collection: id })}>{titleNode}</Link>
-                : titleNode
-            }
-            <div className="flex flex-row flex-wrap content-start justify-center gap-stn w-full max-w-collection">
-                {(sketches).map((sketch, idx) =>
-                    <a key={idx} href={href('sketch', { id: sceneId(sketch) ?? idx.toString(), collection: id })}>
-                        <SketchCard sketch={sketch} pixelated={false} />
-                    </a>
-                )}
-            </div>
+    return <div className="flex flex-col flex-wrap items-center p-0 m-0">
+        {linkToCollection
+            ? <Link href={href('sketch', { collection: id })}>{titleNode}</Link>
+            : titleNode
+        }
+        <div className="flex flex-row flex-wrap content-start justify-center gap-stn w-full max-w-collection">
+            {(sketches).map((sketch, idx) =>
+                <a key={idx} href={href('sketch', { id: sceneId(sketch) ?? idx.toString(), collection: id })}>
+                    <SketchCard sketch={sketch} pixelated={false} />
+                </a>
+            )}
         </div>
-    </>
+    </div>
 }

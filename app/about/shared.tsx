@@ -22,15 +22,13 @@ export function AboutLink({ href, children }: {
 export function AboutCard({ children }: {
     children: ReactNode,
 }) {
-    return <>
-        <div className="flex flex-col items-center justify-center w-screen p-stn pixel-shadow">
-            <div className="bg-paper-light text-fgl pixel-corners" style={{
-                maxWidth: 'min(540pt, 100%)',
-            }}>
-                <TextBlock font="var(--font-pixel)">
-                    {children}
-                </TextBlock>
-            </div>
+    return <div className="flex flex-col items-center justify-center w-screen p-stn pixel-shadow">
+        <div className="bg-paper-light text-fgl pixel-corners" style={{
+            maxWidth: 'min(540pt, 100%)',
+        }}>
+            <TextBlock font="var(--font-pixel)">
+                {children}
+            </TextBlock>
         </div>
-    </>
+    </div>
 }

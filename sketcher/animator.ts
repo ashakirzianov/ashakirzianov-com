@@ -3,7 +3,7 @@ import { Canvas } from "./render"
 
 export type AnimatorContext = {
     frame: number,
-    getCanvas: (n: number) => Canvas | undefined,
+    getCanvas: (n: number) => Canvas<unknown> | undefined,
 };
 export type Animator<State> = (state: State, context: AnimatorContext) => State;
 

@@ -9,10 +9,8 @@ export function AboutLink({ href, children }: {
     children: ReactNode,
 }) {
     let hue = useQuery().hue
-    return <Link href={{
-        href,
-        search: hue ? `?hue=${hue}` : undefined,
-    }} style={{
+    let withHue = hue ? `${href}?hue=${hue}` : href
+    return <Link href={withHue} style={{
         color: 'skyblue',
     }}>
         {children}

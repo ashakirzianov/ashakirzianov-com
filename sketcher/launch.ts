@@ -2,7 +2,8 @@ import { Layer } from "./layer"
 import { Canvas } from "./render"
 import { Scene } from "./scene"
 
-export type CanvasGetter = (idx: number) => Canvas | undefined;
+type CanvasKind = Layer['kind']
+export type CanvasGetter = (idx: number, kind: CanvasKind) => Canvas<any> | undefined;
 export type LaunchProps<State> = {
     scene: Scene<State>,
     getCanvas: CanvasGetter,
@@ -22,7 +23,10 @@ export function launcher<State>({
     let renderState = makeRenderState({ layers, getCanvas })
     function loop(current?: number) {
         if (animator) {
-            state = animator(state, { frame, getCanvas })
+            state = animator(state, {
+                frame,
+                getCanvas: i => getCanvas(i, layers[i]!.kind),
+            })
         }
         if (renderState(state, frame)) {
             if (period) { // If animated
@@ -68,9 +72,9 @@ function makeRenderState<State>({ layers, getCanvas }: {
         height: 0,
     }))
     return function renderLayers(state: State, frame: number) {
-        let canvases: Canvas[] = []
+        let canvases: Canvas<any>[] = []
         for (let idx = 0; idx < layerData.length; idx++) {
-            let canvas = getCanvas(idx)
+            let canvas = getCanvas(idx, layerData[idx]!.layer.kind)
             if (canvas === undefined) {
                 return false
             }

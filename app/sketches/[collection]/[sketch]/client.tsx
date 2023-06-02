@@ -16,7 +16,7 @@ export function SingleSketch({ collectionId, sketchId }: {
     return <SingleSketchImpl scene={sketch} />
 }
 
-function SingleSketchImpl({ scene }: {
+export function SingleSketchImpl({ scene }: {
     scene: Scene,
 }) {
     let { node } = useSketcher({

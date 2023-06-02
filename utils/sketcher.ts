@@ -11,7 +11,10 @@ export function useSketcher<State>(props: UseSketcherProps<State> & {
     useEffect(() => {
         let { start, cleanup } = launcher({
             ...props,
-            getCanvas: idx => getCanvasFromRef(refs[idx]),
+            getCanvas: idx => getCanvasFromRef(
+                refs[idx],
+                props.scene.layers[idx]?.kind === '3d' ? 'webgl' : '2d',
+            ),
         })
         start()
 
@@ -27,7 +30,10 @@ export function useSketcherPlayer<State>(props: UseSketcherProps<State> & {
     let { node, refs } = useCanvases(dims)
     let { start, pause, isPaused, cleanup } = launcher({
         ...props,
-        getCanvas: idx => getCanvasFromRef(refs[idx]),
+        getCanvas: idx => getCanvasFromRef(
+            refs[idx],
+            props.scene.layers[idx]?.kind === '3d' ? 'webgl' : '2d',
+        ),
     })
     function setPlay(play: boolean) {
         if (isPaused() && play) {

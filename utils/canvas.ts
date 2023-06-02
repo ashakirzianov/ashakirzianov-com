@@ -50,11 +50,11 @@ export function useCanvases(dims: CanvasDimensions[]) {
     return { node, refs }
 }
 
-export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement> | undefined) {
+export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement> | undefined, kind: '2d' | 'webgl') {
     if (!canvasRef?.current) {
         return undefined
     }
-    let context = canvasRef.current.getContext('2d')
+    let context = canvasRef.current.getContext(kind)
     if (!context) {
         return undefined
     }

@@ -1,10 +1,10 @@
-import { Canvas, Render, WithSets } from "./render"
+import { Canvas2d, Render, WithSets } from "./render"
 import { WithPosition } from "./object"
 import { Vector } from "./vector"
 
 export type RenderTransform<State> = (render: Render<State>) => Render<State>;
 export function transform<State>(
-    draw: (canvas: Canvas, state: State) => void,
+    draw: (canvas: Canvas2d, state: State) => void,
 ): RenderTransform<State> {
     return function (render) {
         return function ({ canvas, frame, state }) {

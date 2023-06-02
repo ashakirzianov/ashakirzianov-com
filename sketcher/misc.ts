@@ -1,6 +1,6 @@
 import { Box, boundingBox, cornerBoxes, multBox } from "./box"
 import { WithPosition, WithVelocity } from "./object"
-import { Canvas, zoomToFit } from "./render"
+import { Canvas2d, zoomToFit } from "./render"
 import { Vector, vector } from "./vector"
 
 export function removeUndefined<T>(array: Array<T | undefined>): T[] {
@@ -90,7 +90,7 @@ export function xSets<O extends WithVelocity>({
 }
 
 export function zoomToBoundingBox({ objects, scale, canvas }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     objects: WithPosition[],
     scale: number,
 }) {

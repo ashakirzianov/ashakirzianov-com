@@ -1,28 +1,29 @@
-import { boundingBox, Box, boxRange } from "./box"
+import exp from "constants"
+import { Box, boxRange } from "./box"
 import {
     Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops,
 } from "./color"
-import {
-    Dimensions, layoutElement, LayoutElement, PositionedElement,
-} from "./layout"
 import { NumRange, rangeLength } from "./range"
 import { Vector } from "./vector"
 
-export type Canvas2DContext = CanvasRenderingContext2D;
-export type Canvas = {
-    context: Canvas2DContext,
+export type Canvas2DContext = CanvasRenderingContext2D
+export type Canvas3DContext = WebGLRenderingContext
+export type CanvasContext = Canvas2DContext | Canvas3DContext
+export type Canvas<Context> = {
+    context: Context,
     width: number,
     height: number,
-};
-export type RenderProps<State> = {
-    canvas: Canvas,
+}
+export type Canvas2d = Canvas<Canvas2DContext>
+export type RenderProps<State, Context = Canvas2DContext> = {
+    canvas: Canvas<Context>,
     frame: number,
     state: State,
 };
-export type Render<State> = (props: RenderProps<State>) => void;
+export type Render<State, Context = Canvas2DContext> = (props: RenderProps<State, Context>) => void;
 
 export type WithSets<T> = { sets: T[] };
-export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas, object: ObjectT }) => void,
+export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas2d, object: ObjectT }) => void,
 ): Render<WithSets<ObjectT[]>> {
     return function render({ canvas, state }) {
         for (let set of state.sets) {
@@ -188,7 +189,7 @@ export function colorRect({
 export function drawCorner({
     canvas, offset, angle, border, color,
 }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     offset: number,
     angle: number,
     border?: number,
@@ -253,7 +254,7 @@ export function drawCorner({
     context.restore()
 }
 
-export function clearCanvas(canvas: Canvas) {
+export function clearCanvas(canvas: Canvas2d) {
     canvas.context.save()
     canvas.context.resetTransform()
     canvas.context.clearRect(0, 0, canvas.width, canvas.height)
@@ -262,7 +263,7 @@ export function clearCanvas(canvas: Canvas) {
 
 export function clearFrame({ color, canvas: { context, width, height } }: {
     color: Color,
-    canvas: Canvas,
+    canvas: Canvas2d,
 }) {
     context.save()
     context.resetTransform()
@@ -273,7 +274,7 @@ export function clearFrame({ color, canvas: { context, width, height } }: {
 }
 
 export function zoomToFit({ canvas, box }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     box: Box,
 }) {
     let { widthRange, heightRange } = boxRange(box)
@@ -295,7 +296,7 @@ export function zoomToFit({ canvas, box }: {
 }
 
 export function zoomToFill({ canvas, box }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     box: Box,
 }) {
     let { widthRange, heightRange } = boxRange(box)
@@ -318,7 +319,7 @@ export function zoomToFill({ canvas, box }: {
 
 export function centerOnPoint({ canvas, point }: {
     point: Vector,
-    canvas: Canvas,
+    canvas: Canvas2d,
 }) {
     canvas.context.translate(-point.x, -point.y)
 }
@@ -339,7 +340,7 @@ export function drawGrid({
     canvas, rows, columns,
     lineWidth, color,
 }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     rows: number,
     columns: number,
     lineWidth?: number,
@@ -374,7 +375,7 @@ export function drawBlueprint({
     lineColor = 'rgb(155,239,248)',
     rows = 4, columns = 3,
 }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     lineColor?: Color,
     background?: Color,
     rows?: number,

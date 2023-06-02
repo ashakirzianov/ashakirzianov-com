@@ -1,6 +1,6 @@
 import { Animator } from "./animator"
 import { Layer } from "./layer"
-import { Dimensions } from "./layout"
+import { RenderProps } from "./render"
 
 export type SceneMeta = {
     id?: string,
@@ -38,8 +38,9 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
         layers: scenes.map((scene, idx) => {
             return scene.layers.map((layer): Layer<unknown[]> => {
                 return {
+                    kind: layer.kind,
                     hidden: layer.hidden,
-                    prepare({ canvas, frame, state }) {
+                    prepare({ canvas, frame, state }: RenderProps<any, any>) {
                         if (layer.prepare) {
                             layer.prepare({
                                 canvas, frame,
@@ -47,7 +48,7 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
                             })
                         }
                     },
-                    render({ canvas, frame, state }) {
+                    render({ canvas, frame, state }: RenderProps<any, any>) {
                         if (layer.render) {
                             layer.render({
                                 canvas, frame,

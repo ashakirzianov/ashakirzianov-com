@@ -5,7 +5,7 @@ import {
     PositionedElement, PositionedLayout, SizeEnvironment,
 } from "./layout"
 import { removeUndefined } from "./misc"
-import { Canvas, Canvas2DContext } from "./render"
+import { Canvas2d, Canvas2DContext } from "./render"
 
 export type TextFont = {
     font?: string,
@@ -34,7 +34,7 @@ export type TextLayoutProps = TextStyle & {
 export type TextLayout = LayoutElement<TextLayoutProps>;
 export type PositionedTextLayout = PositionedLayout<TextLayoutProps>;
 
-export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
+export function layoutOnCanvas(canvas: Canvas2d, root: TextLayout) {
     return layoutText({
         canvas,
         position: { top: 0, left: 0 },
@@ -46,7 +46,7 @@ export function layoutOnCanvas(canvas: Canvas, root: TextLayout) {
 export function layoutText({
     canvas, position, dimensions, root,
 }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     position: Position,
     dimensions: Dimensions,
     root: TextLayout,
@@ -112,7 +112,7 @@ function transformDimensions(dimensions: Dimensions, context: Canvas2DContext): 
 }
 
 export function layoutAndRender({ canvas, root, style }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     root: TextLayout,
     style?: TextStyle,
 }) {
@@ -126,7 +126,7 @@ export function layoutAndRender({ canvas, root, style }: {
 }
 
 export function renderPositionedLayout({ canvas, layout }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     layout: PositionedTextLayout,
 }) {
     canvas.context.save()
@@ -139,7 +139,7 @@ export function renderPositionedLayout({ canvas, layout }: {
 export function renderPositionedElement({
     canvas, positioned: { element, position, dimensions },
 }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     positioned: PositionedElement<TextLayoutProps>,
 }) {
     if (element.hidden) {
@@ -195,7 +195,7 @@ export function renderPositionedElement({
     context.restore()
 }
 
-export function applyTextStyle(canvas: Canvas, style: TextStyle) {
+export function applyTextStyle(canvas: Canvas2d, style: TextStyle) {
     let font = resolveFont(style, canvas)
     if (font) {
         canvas.context.font = font
@@ -218,7 +218,7 @@ type SideProps = string | TextLayout | SideProps[];
 export function sidesTextLayout({
     canvas, texts, padding, inside, style,
 }: {
-    canvas: Canvas,
+    canvas: Canvas2d,
     texts: {
         left?: SideProps,
         top?: SideProps,

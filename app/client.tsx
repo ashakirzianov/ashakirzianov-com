@@ -149,7 +149,7 @@ export function MainPage({ previews }: {
                     sketchTile('rythm', [25, 10], -1),
                     sketchTile('rave', [10, -6]),
                     sketchTile('number34', [-20, 15]),
-                    storyTile('apart', [-8, 12]),
+                    storyTile('dummy', [-8, 12]),
                 ]}
                 <Tile
                     shifted={free} position={[20, -15]}

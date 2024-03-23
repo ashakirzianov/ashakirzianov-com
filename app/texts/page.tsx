@@ -12,6 +12,7 @@ export default async function AllStorites() {
     let previews = await getPreviews([
         'dummy',
         'start-wearing-purple',
+        'april-fools',
         'apart',
         'thirty-four',
     ])

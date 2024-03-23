@@ -40,6 +40,18 @@ export async function getAllPreviews(language?: string): Promise<TextPostMap> {
     return result
 }
 
+export async function getPreviews(ids: string[]): Promise<TextPostMap> {
+    let result: TextPostMap = {}
+    for (let id of ids) {
+        let preview = await getTextForId({ id, maxChars: 1000 })
+        if (preview) {
+            result[id] = preview
+        }
+    }
+
+    return result
+}
+
 export async function getTextForId({ id, maxChars }: {
     id: string, maxChars?: number
 }) {

@@ -10,7 +10,6 @@ export function AllStoritesPage({ previews, language }: {
     language?: Language,
 }) {
     let pairs = Object.entries(previews)
-        .sort(([, a], [, b]) => b?.date?.localeCompare(a?.date ?? '') ?? 0)
     return <PixelPage
     >
         <div className="flex flex-col items-center justify-start w-full">

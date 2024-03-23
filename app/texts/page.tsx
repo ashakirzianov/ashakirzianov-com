@@ -1,4 +1,4 @@
-import { getAllPreviews } from "@/utils/text"
+import { getPreviews } from "@/utils/text"
 import { AllStoritesPage } from "./shared"
 import { Metadata } from "next"
 import { buildMetadata } from "@/utils/metadata"
@@ -9,6 +9,13 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function AllStorites() {
-    let previews = await getAllPreviews('ru')
+    let previews = await getPreviews([
+        'dummy',
+        'start-wearing-purple',
+        'april-fools',
+        'grandpa',
+        'apart',
+        'thirty-four',
+    ])
     return <AllStoritesPage previews={previews} />
 }

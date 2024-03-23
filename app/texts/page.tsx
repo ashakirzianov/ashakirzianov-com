@@ -13,6 +13,7 @@ export default async function AllStorites() {
         'dummy',
         'start-wearing-purple',
         'april-fools',
+        'grandpa',
         'apart',
         'thirty-four',
     ])

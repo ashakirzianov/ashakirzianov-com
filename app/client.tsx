@@ -145,7 +145,7 @@ export function MainPage({ previews }: {
                     sketchTile('atoms', [-20, 0], 1),
                     sketchTile('typography', [13, 17]),
                     storyTile('start-wearing-purple', [-15, -10]),
-                    storyTile('thirty-four', [7, 5]),
+                    storyTile('grandpa', [7, 5]),
                     sketchTile('rythm', [25, 10], -1),
                     sketchTile('rave', [10, -6]),
                     sketchTile('number34', [-20, 15]),

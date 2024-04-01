@@ -4,7 +4,6 @@ date: 10-04-2023
 translation-ru: dont-trust
 language: en
 ---
-# April Fools’
 When I was in my first year of school our teacher (we had a single teacher for every class in elementary school) tried to explain to us the concept of April Fools’:
 
 “You are supposed to do silly things on April Fools. Make some pranks, be goofy, be weird. Maybe next time all the boys will come in wearing girls' clothes and all the girls will be wearing boys’ clothes? Things like that, you know.”

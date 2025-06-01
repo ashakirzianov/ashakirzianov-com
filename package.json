@@ -17,7 +17,7 @@
     "eslint-config-next": "13.1.6",
     "gray-matter": "^4.0.3",
     "mdast-util-to-string": "^3.2.0",
-    "next": "^13.4.3",
+    "next": "^15.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-ga": "^3.3.1",

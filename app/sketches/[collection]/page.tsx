@@ -9,9 +9,10 @@ export async function generateStaticParams() {
     }))
 }
 
-export async function generateMetadata({ params: { collection: collectionId } }: {
-    params: { collection: string },
+export async function generateMetadata({ params }: {
+    params: Promise<{ collection: string }>,
 }): Promise<Metadata> {
+    const { collection: collectionId } = await params
     let collection = collections.find(c => c.id === collectionId)
     return buildMetadata({
         title: collection?.meta.title ?? "Скетчи",
@@ -19,8 +20,9 @@ export async function generateMetadata({ params: { collection: collectionId } }:
     })
 }
 
-export default function Collection({ params: { collection } }: {
-    params: { collection: string },
+export default async function Collection({ params }: {
+    params: Promise<{ collection: string }>,
 }) {
+    const { collection } = await params
     return <CollectionPage collectionId={collection} />
 }

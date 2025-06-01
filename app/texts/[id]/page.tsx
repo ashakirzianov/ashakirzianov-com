@@ -14,10 +14,11 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({
-    params: { id },
+    params,
 }: {
-    params: { id: string, },
+    params: Promise<{ id: string, }>,
 }): Promise<Metadata> {
+    const { id } = await params
     let post = await getTextForId({ id })
     let title = post?.title ?? 'Рассказ'
     let description = post?.description ?? `${post?.textSnippet}...`
@@ -26,9 +27,10 @@ export async function generateMetadata({
     })
 }
 
-export default async function Page({ params: { id } }: {
-    params: { id: string },
+export default async function Page({ params }: {
+    params: Promise<{ id: string }>,
 }) {
+    const { id } = await params
     let post = await getTextForId({ id })
     if (!post) {
         return notFound()

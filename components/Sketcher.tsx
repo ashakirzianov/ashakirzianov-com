@@ -1,9 +1,10 @@
+'use client'
 import { LaunchProps, launcher } from "@/sketcher"
 import { useEffect } from "react"
-import { getCanvasFromRef, useCanvases } from "./canvas"
+import { getCanvasFromRef, useCanvases } from "@/utils/canvas"
 
-type UseSketcherProps<S> = Omit<LaunchProps<S>, 'getCanvas'>;
-export function useSketcher<State>(props: UseSketcherProps<State> & {
+type SketcherProps<S> = Omit<LaunchProps<S>, 'getCanvas'>;
+export function Sketcher<State>(props: SketcherProps<State> & {
     dimensions?: [width: number, height: number],
 }) {
     let dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined])
@@ -20,10 +21,10 @@ export function useSketcher<State>(props: UseSketcherProps<State> & {
 
         return cleanup
     }, [])
-    return { node }
+    return node
 }
 
-export function useSketcherPlayer<State>(props: UseSketcherProps<State> & {
+export function useSketcherPlayer<State>(props: SketcherProps<State> & {
     dimensions?: [width: number, height: number],
 }) {
     let dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined])

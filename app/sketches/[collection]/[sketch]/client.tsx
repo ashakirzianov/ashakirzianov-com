@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation"
 import { Scene } from "@/sketcher"
-import { useSketcher } from "@/utils/sketcher"
+import { Sketcher } from "@/components/Sketcher"
 import { findCollectionSketch } from "@/app/collection"
 
 export function SingleSketch({ collectionId, sketchId }: {
@@ -19,10 +19,6 @@ export function SingleSketch({ collectionId, sketchId }: {
 export function SingleSketchImpl({ scene }: {
     scene: Scene,
 }) {
-    let { node } = useSketcher({
-        scene,
-        period: 40,
-    })
     return <main>
         <div className="flex items-start justify-center h-screen w-screen" style={{
             padding: 'min(10vh,40pt) min(2vw,20pt)',
@@ -31,7 +27,7 @@ export function SingleSketchImpl({ scene }: {
                 <div className="flex w-full h-full items-stretch rounded-lg overflow-hidden" style={{
                     clipPath: 'border-box',
                 }}>
-                    {node}
+                    <Sketcher scene={scene} period={40} />
                 </div>
             </div>
         </div>

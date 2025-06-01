@@ -2,7 +2,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react"
 import { Scene } from "@/sketcher"
 import { href } from "@/utils/refs"
-import { useSketcherPlayer } from "@/utils/sketcher"
+import { useSketcherPlayer } from "@/components/Sketcher"
 import { TextPost } from "@/utils/text"
 import Link from "next/link"
 

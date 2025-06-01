@@ -5,7 +5,7 @@ import { href } from "@/utils/refs"
 import { TextPostMap } from "@/utils/text"
 import Link from "next/link"
 
-export function AllStoritesPage({ previews, language, hue }: {
+export function StoriesCollection({ previews, language, hue }: {
     previews: TextPostMap,
     language?: Language,
     hue: number | undefined,

@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation"
 import { Scene } from "@/sketcher"
 import { useSketcher } from "@/utils/sketcher"
-import { findCollectionSketch } from "./shared"
+import { findCollectionSketch } from "@/app/collection"
 
 export function SingleSketch({ collectionId, sketchId }: {
     collectionId: string,

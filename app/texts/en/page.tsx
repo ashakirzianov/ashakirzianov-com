@@ -1,7 +1,7 @@
 import { getAllPreviews } from "@/utils/text"
-import { AllStoritesPage } from "../shared"
 import { Metadata } from "next"
 import { buildMetadata } from "@/utils/metadata"
+import { StoriesCollection } from "@/components/StoriesCollection"
 
 export const metadata: Metadata = buildMetadata({
     title: 'All Short Stories',
@@ -13,5 +13,5 @@ export default async function AllStorites({ searchParams }: {
 }) {
     const { hue } = await searchParams
     let previews = await getAllPreviews('en')
-    return <AllStoritesPage previews={previews} language="en" hue={hue} />
+    return <StoriesCollection previews={previews} language="en" hue={hue} />
 }

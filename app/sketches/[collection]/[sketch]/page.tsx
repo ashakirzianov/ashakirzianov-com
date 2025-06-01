@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { SingleSketch } from "./client"
-import { findCollectionSketch } from "./shared"
 import { buildMetadata } from "@/utils/metadata"
+import { findCollectionSketch } from "@/app/collection"
 
 export async function generateMetadata({
     params,

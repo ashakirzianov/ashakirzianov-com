@@ -1,7 +1,7 @@
 import { href } from "@/utils/refs"
 import Head from "next/head"
 import { PixelPage } from "@/components/PixelPage"
-import { AboutCard, AboutLink } from "../about/shared"
+import { AboutCard, AboutLink } from "@/components/About"
 import { Metadata } from "next"
 import { buildMetadata } from "@/utils/metadata"
 

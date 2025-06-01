@@ -1,6 +1,6 @@
 import { PixelPage } from "@/components/PixelPage"
 import { href } from "@/utils/refs"
-import { AboutCard, AboutLink } from "./shared"
+import { AboutCard, AboutLink } from "@/components/About"
 import { Metadata } from "next"
 import { buildMetadata } from "@/utils/metadata"
 

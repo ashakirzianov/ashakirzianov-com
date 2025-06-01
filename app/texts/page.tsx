@@ -1,7 +1,7 @@
 import { getPreviews } from "@/utils/text"
-import { AllStoritesPage } from "./shared"
 import { Metadata } from "next"
 import { buildMetadata } from "@/utils/metadata"
+import { StoriesCollection } from "@/components/StoriesCollection"
 
 export const metadata: Metadata = buildMetadata({
     title: 'Все рассказы',
@@ -20,5 +20,5 @@ export default async function AllStorites({ searchParams }: {
         'apart',
         'thirty-four',
     ])
-    return <AllStoritesPage previews={previews} hue={hue} />
+    return <StoriesCollection previews={previews} hue={hue} />
 }

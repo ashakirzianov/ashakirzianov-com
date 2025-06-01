@@ -20,9 +20,11 @@ export async function generateMetadata({ params }: {
     })
 }
 
-export default async function Collection({ params }: {
+export default async function Collection({ params, searchParams }: {
     params: Promise<{ collection: string }>,
+    searchParams: Promise<{ hue?: number }>,
 }) {
+    const { hue } = await searchParams
     const { collection } = await params
-    return <CollectionPage collectionId={collection} />
+    return <CollectionPage collectionId={collection} hue={hue} />
 }

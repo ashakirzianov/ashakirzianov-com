@@ -8,7 +8,10 @@ export const metadata: Metadata = buildMetadata({
     description: 'Страница со всеми рассказами',
 })
 
-export default async function AllStorites() {
+export default async function AllStorites({ searchParams }: {
+    searchParams: Promise<{ hue?: number }>
+}) {
+    const { hue } = await searchParams
     let previews = await getPreviews([
         'dummy',
         'start-wearing-purple',
@@ -17,5 +20,5 @@ export default async function AllStorites() {
         'apart',
         'thirty-four',
     ])
-    return <AllStoritesPage previews={previews} />
+    return <AllStoritesPage previews={previews} hue={hue} />
 }

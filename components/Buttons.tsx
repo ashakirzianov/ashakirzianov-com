@@ -1,35 +1,34 @@
 'use client'
-import { useQuery } from "@/utils/query"
 import { href } from "@/utils/refs"
 import Link from "next/link"
-import { ReactNode, useState } from "react"
+import { ReactNode, use, useState } from "react"
 
 export type Language = 'ru' | 'en'
 
-export function HomeButton({ language }: {
+export function HomeButton({ language, hue }: {
   language?: Language
+  hue: number | undefined,
 }) {
-  let { hue } = useQuery()
   let text = language === 'en' ? 'Home' : 'Главная'
   return <Link href={href('home', { hue })} draggable={false}>
     <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
 }
 
-export function AllSketchesButton({ language }: {
+export function AllSketchesButton({ language, hue }: {
   language?: Language
+  hue: number | undefined,
 }) {
-  let { hue } = useQuery()
   let text = language === 'en' ? 'All sketches' : 'Все скетчи'
   return <Link href={href('sketch', { hue })} draggable={false}>
     <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
 }
 
-export function AllStoriesButton({ language }: {
+export function AllStoriesButton({ language, hue }: {
   language?: Language
+  hue: number | undefined,
 }) {
-  let { hue } = useQuery()
   let text = language === 'en' ? 'All stories' : 'Все рассказы'
   let id = language === 'en' ? 'en' : undefined
   return <Link href={href('text', { hue, id })}>

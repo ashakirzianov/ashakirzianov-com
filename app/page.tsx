@@ -8,7 +8,10 @@ export const metadata: Metadata = buildMetadata({
     description: "Сайт с буквами и картинками",
 })
 
-export default async function Page() {
+export default async function Page({ searchParams }: {
+    searchParams: Promise<{ hue?: number }>
+}) {
+    const { hue } = await searchParams
     let previews = await getAllPreviews()
-    return <MainPage previews={previews} />
+    return <MainPage previews={previews} hue={hue} />
 }

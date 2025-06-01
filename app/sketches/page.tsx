@@ -8,12 +8,15 @@ export const metadata = buildMetadata({
     description: "Страница со всеми картинками",
 })
 
-export default function AllSketches() {
-    return <PixelPage>
+export default async function AllSketches({ searchParams }: {
+    searchParams: Promise<{ hue?: number }>
+}) {
+    const { hue } = await searchParams
+    return <PixelPage hue={hue}>
         <div className="flex flex-col items-center p-stn">
             <AllCollections />
             <footer className="pt-l pb-stn">
-                <HomeButton />
+                <HomeButton hue={hue} />
             </footer>
         </div>
     </PixelPage>

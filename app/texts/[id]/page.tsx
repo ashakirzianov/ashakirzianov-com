@@ -27,9 +27,11 @@ export async function generateMetadata({
     })
 }
 
-export default async function Page({ params }: {
+export default async function Page({ params, searchParams }: {
     params: Promise<{ id: string }>,
+    searchParams: Promise<{ hue?: number }>
 }) {
+    const { hue } = await searchParams
     const { id } = await params
     let post = await getTextForId({ id })
     if (!post) {
@@ -47,8 +49,8 @@ export default async function Page({ params }: {
         <div className="mb-4" />
         <div dangerouslySetInnerHTML={{ __html: post.html }} />
         <nav className="flex flex-col items-center gap-stn justify-between mt-l mb-stn">
-            <AllStoriesButton language={language} />
-            <HomeButton language={language} />
+            <AllStoriesButton language={language} hue={hue} />
+            <HomeButton language={language} hue={hue} />
         </nav>
     </TextBlock>
 }

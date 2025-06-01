@@ -3,7 +3,6 @@ import { ReactNode, useState } from "react"
 import Link from "next/link"
 import { TextPostMap } from "@/utils/text"
 import { Draggable } from "@/components/Draggable"
-import { useQuery } from "@/utils/query"
 import { useRouter } from "next/navigation"
 import { PixelToggle } from "@/components/Buttons"
 import { href } from "@/utils/refs"
@@ -55,10 +54,10 @@ const sketchCards = {
     },
 }
 
-export function MainPage({ previews }: {
+export function MainPage({ previews, hue }: {
     previews: TextPostMap,
+    hue: number | undefined,
 }) {
-    let { hue = 40 } = useQuery()
     let router = useRouter()
 
     let [hl, setHl] = useState<HighlightKind | undefined>(undefined)
@@ -100,7 +99,7 @@ export function MainPage({ previews }: {
             />
         </Tile>
     }
-    return <PixelPage>
+    return <PixelPage hue={hue}>
         <div className="flex flex-col flex-nowrap items-center min-h-screen">
             <header className="flex flex-row flex-wrap justify-between items-center self-end grow-0">
                 <div className="p-stn">
@@ -220,7 +219,7 @@ function Tile({
 }
 
 function Help({ hue }: {
-    hue: number,
+    hue: number | undefined,
 }) {
     return <div className="container pixel-shadow">
         <div className="content pixel-corners" style={{

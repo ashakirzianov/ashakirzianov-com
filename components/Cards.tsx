@@ -45,7 +45,7 @@ export function TextCard({ post }: {
 
 export type HighlightKind = 'stories' | 'posters';
 export function AboutCard({ hue, onHover }: {
-    hue: number,
+    hue: number | undefined,
     onHover?: (target?: HighlightKind) => void,
 }) {
     return <Card>

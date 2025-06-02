@@ -21,7 +21,7 @@ export async function handleSaveCommand({ switches, commands }: CommandLineArgs)
   const time = parseInt(switches.time ?? '0')
   const outputPath = switches.output
     ? path.resolve(switches.output)
-    : path.join('output', `${collectionId}-${sketchId}.png`)
+    : path.join('output', `${collectionId}-${sketchId}-${time}ms.png`)
   return saveSketch({
     collectionId,
     sketchId,

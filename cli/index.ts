@@ -1,4 +1,5 @@
 import { handleSaveCommand } from './save';
+import { handleSaveVideoCommand } from './save-video';
 
 // Parse command-line arguments
 export type CommandLineArgs = {
@@ -41,9 +42,11 @@ async function main() {
   switch (command) {
     case 'save':
       return await handleSaveCommand({ switches, commands: rest })
+    case 'save-video':
+      return await handleSaveVideoCommand({ switches, commands: rest })
     default:
       console.error(`Unknown command: ${command}`)
-      console.error('Available commands: save')
+      console.error('Available commands: save, save-video')
       process.exit(1)
   }
 }

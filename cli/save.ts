@@ -12,7 +12,7 @@ export async function handleSaveCommand({ switches, commands }: CommandLineArgs)
   const [name] = commands
   const [collectionId, sketchId] = name?.split('/') ?? []
   if (!collectionId || !sketchId) {
-    throw new Error('Usage: save <collectionId>/<sketchId> [--width=<width>] [--time=<time>] [--output=<outputPath>]');
+    throw new Error('Usage: save <collectionId>/<sketchId> [--width <width>] [--time <time>] [--output <outputPath>]');
   }
   const width = parseInt(switches.width ?? '800')
   const height = switches.height
@@ -21,7 +21,7 @@ export async function handleSaveCommand({ switches, commands }: CommandLineArgs)
   const time = parseInt(switches.time ?? '0')
   const outputPath = switches.output
     ? path.resolve(switches.output)
-    : `${collectionId}-${sketchId}.png`
+    : path.join('output', `${collectionId}-${sketchId}.png`)
   return saveSketch({
     collectionId,
     sketchId,

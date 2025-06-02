@@ -1,9 +1,9 @@
 import { Layer } from "./layer"
-import { Canvas } from "./render"
+import { SketcherCanvas } from "./render"
 import { Scene } from "./scene"
 
 type CanvasKind = Layer['kind']
-export type CanvasGetter = (idx: number, kind: CanvasKind) => Canvas<any> | undefined;
+export type CanvasGetter = (idx: number, kind: CanvasKind) => SketcherCanvas<any> | undefined;
 export type LaunchProps<State> = {
     scene: Scene<State>,
     getCanvas: CanvasGetter,
@@ -72,7 +72,7 @@ function makeRenderState<State>({ layers, getCanvas }: {
         height: 0,
     }))
     return function renderLayers(state: State, frame: number) {
-        let canvases: Canvas<any>[] = []
+        let canvases: SketcherCanvas<any>[] = []
         for (let idx = 0; idx < layerData.length; idx++) {
             let canvas = getCanvas(idx, layerData[idx]!.layer.kind)
             if (canvas === undefined) {

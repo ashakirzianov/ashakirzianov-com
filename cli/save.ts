@@ -1,13 +1,11 @@
-import { Canvas, createCanvas } from 'canvas';
-import fs from 'fs';
-import path from 'path';
-import { Canvas as SketecherCanvas, Canvas2DContext, CanvasContext } from '../sketcher/render';
-import { SketchCollection } from '../sketcher/collection';
-import { Scene, sceneId } from '../sketcher/scene';
-import { Layer } from '../sketcher/layer';
-import { collections } from '../sketches';
-import type { CommandLineArgs } from './index';
-import { launcher } from '@/sketcher';
+import { Canvas, createCanvas } from 'canvas'
+import fs from 'fs'
+import path from 'path'
+import { SketcherCanvas, Canvas2DContext, CanvasContext } from '../sketcher/render'
+import { Scene, sceneId } from '../sketcher/scene'
+import { collections } from '../sketches'
+import type { CommandLineArgs } from './index'
+import { launcher } from '@/sketcher'
 
 export async function handleSaveCommand({ switches, commands }: CommandLineArgs) {
   const [name] = commands
@@ -107,7 +105,7 @@ async function renderSceneToCanvas({
   time: number,
 }): Promise<Buffer> {
   type CanvasObject = {
-    sketcherCanvas: SketecherCanvas<CanvasContext>,
+    sketcherCanvas: SketcherCanvas<CanvasContext>,
     canvas: Canvas,
   }
   const canvases: CanvasObject[] = []

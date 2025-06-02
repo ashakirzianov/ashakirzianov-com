@@ -1,7 +1,7 @@
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
-import stylisticTs from '@stylistic/eslint-plugin-ts'
+import stylistic from '@stylistic/eslint-plugin'
 import parserTs from '@typescript-eslint/parser'
 
 
@@ -17,7 +17,7 @@ const eslintConfig = [
     ...compat.extends('next/core-web-vitals', 'next/typescript'),
     {
         plugins: {
-            '@stylistic/ts': stylisticTs
+            '@stylistic/ts': stylistic
         },
         languageOptions: {
             parser: parserTs,

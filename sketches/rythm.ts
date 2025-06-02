@@ -1325,6 +1325,7 @@ function water() {
     let stepx = 30
     let stepy = 40
     return scene({
+        title: 'Water',
         state: filterUndefined(vals(n).map(
             (_, i) => vals(n).map(
                 (_, j) => {

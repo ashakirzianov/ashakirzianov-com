@@ -1,15 +1,16 @@
 import {
-    createElement, createRef, RefObject, useEffect, useRef,
+    createElement, createRef, RefObject, useEffect, useMemo, useRef,
 } from "react"
 
 export type UseCanvasesReturn = ReturnType<typeof useCanvases>
 
 type CanvasDimensions = [width: number | undefined, height: number | undefined];
-export function useCanvases(dims: CanvasDimensions[]) {
-    let refs = useRefArray<HTMLCanvasElement>(dims.length)
-    let nodes = dims.map(
-        ([width, height], idx) => createElement('canvas', {
-            ref: refs[idx],
+export function useCanvases([width, height]: CanvasDimensions, count: number) {
+    let array = useRefArray<HTMLCanvasElement>(count)
+    const refs = array.current
+    let nodes = useMemo(() => refs.map(
+        (ref, idx) => createElement('canvas', {
+            ref: ref,
             key: `layer-${idx}`,
             width: width,
             height: height,
@@ -23,9 +24,9 @@ export function useCanvases(dims: CanvasDimensions[]) {
                 imageRendering: 'pixelated',
             },
         }),
-    )
+    ), [refs, width, height])
 
-    let node = createElement('div', {
+    let node = useMemo(() => createElement('div', {
         style: {
             display: 'grid',
             flexGrow: 1,
@@ -36,7 +37,7 @@ export function useCanvases(dims: CanvasDimensions[]) {
         }
     },
         nodes,
-    )
+    ), nodes)
 
     useEffect(() => {
         for (let ref of refs) {
@@ -46,8 +47,14 @@ export function useCanvases(dims: CanvasDimensions[]) {
             }
         }
     })
+    const result = useMemo(() => {
+        return {
+            node,
+            refs,
+        }
+    }, [node, refs])
 
-    return { node, refs }
+    return result
 }
 
 export function getCanvasFromRef(canvasRef: RefObject<HTMLCanvasElement> | undefined, kind: '2d' | 'webgl') {
@@ -89,11 +96,12 @@ export function setupCanvas(canvas: HTMLCanvasElement) {
 }
 
 function useRefArray<T>(count: number) {
-    let { current: refs } = useRef<Array<RefObject<T>>>([])
+    let array = useRef<Array<RefObject<T>>>([])
+    const refs = array.current
     if (refs.length !== count) {
         for (let idx = 0; idx < count; idx++) {
             refs[idx] = refs[idx] ?? createRef()
         }
     }
-    return refs
+    return array
 }

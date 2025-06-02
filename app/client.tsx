@@ -1,27 +1,26 @@
 'use client'
-import { ReactNode, useState } from "react"
-import Link from "next/link"
-import { TextPostMap } from "@/utils/text"
-import { Draggable } from "@/components/Draggable"
-import { useQuery } from "@/utils/query"
-import { useRouter } from "next/navigation"
-import { PixelToggle } from "@/components/Buttons"
-import { href } from "@/utils/refs"
-import { AboutCard, HighlightKind, SketchCard, TextCard } from "@/components/Cards"
-import { Scene } from "@/sketcher"
-import { loveMeTwoTimes } from "@/sketches/posters/loveMeTwoTimes"
-import { titleAtom } from "@/sketches/atoms"
-import { titleRythm } from "@/sketches/rythm"
-import { PixelPage } from "@/components/PixelPage"
-import { fourFlowers, letters, number34 } from "@/sketches/misc"
+import { ReactNode, useState } from 'react'
+import Link from 'next/link'
+import { TextPostMap } from '@/utils/text'
+import { Draggable } from '@/components/Draggable'
+import { useRouter } from 'next/navigation'
+import { PixelToggle } from '@/components/Buttons'
+import { href } from '@/utils/refs'
+import { AboutCard, HighlightKind, SketchCard, TextCard } from '@/components/Cards'
+import { Scene } from '@/sketcher'
+import { loveMeTwoTimes } from '@/sketches/posters/loveMeTwoTimes'
+import { titleAtom } from '@/sketches/atoms'
+import { titleRythm } from '@/sketches/rythm'
+import { PixelPage } from '@/components/PixelPage'
+import { fourFlowers, letters, number34 } from '@/sketches/misc'
 
 // @refresh reset
 
 type SketchCardProps = {
-    sketch: Scene,
+    sketch: Scene<any>,
     id?: string,
     collection?: string,
-};
+}
 const sketchCards = {
     posters: {
         id: undefined,
@@ -53,21 +52,21 @@ const sketchCards = {
         collection: 'rythm',
         sketch: titleRythm(),
     },
-}
+} satisfies Record<string, SketchCardProps>
 
-export function MainPage({ previews }: {
+export function MainPage({ previews, hue }: {
     previews: TextPostMap,
+    hue: number | undefined,
 }) {
-    let { hue = 40 } = useQuery()
-    let router = useRouter()
+    const router = useRouter()
 
-    let [hl, setHl] = useState<HighlightKind | undefined>(undefined)
-    let [free, setFree] = useState(true)
-    let [pixelated, setPixelated] = useState(false)
+    const [hl, setHl] = useState<HighlightKind | undefined>(undefined)
+    const [free, setFree] = useState(true)
+    const [pixelated, setPixelated] = useState(false)
     function nextHue() {
-        let hues = [40, 210, 340, 100]
-        let idx = hues.findIndex(h => h === hue) + 1
-        let nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!
+        const hues = [40, 210, 340, 100]
+        const idx = hues.findIndex(h => h === hue) + 1
+        const nextHue = idx >= 0 && idx < hues.length ? hues[idx]! : hues[0]!
         router.push(`/?hue=${nextHue}`)
     }
     function sketchTile(
@@ -75,7 +74,7 @@ export function MainPage({ previews }: {
         position: [number, number],
         order?: number,
     ) {
-        let { id, collection, sketch } = sketchCards[key]
+        const { id, collection, sketch } = sketchCards[key]
         return <Tile
             key={'sketch-' + key}
             shifted={free}
@@ -100,7 +99,7 @@ export function MainPage({ previews }: {
             />
         </Tile>
     }
-    return <PixelPage>
+    return <PixelPage hue={hue}>
         <div className="flex flex-col flex-nowrap items-center min-h-screen">
             <header className="flex flex-row flex-wrap justify-between items-center self-end grow-0">
                 <div className="p-stn">
@@ -113,7 +112,7 @@ export function MainPage({ previews }: {
                         pressed={!free}
                     />
                     <PixelToggle
-                        color={pixelated ? "black" : "yellow"}
+                        color={pixelated ? 'black' : 'yellow'}
                         onClick={() => setPixelated(true)}
                         pressed={pixelated}
                     />
@@ -185,7 +184,7 @@ function Tile({
     let navigable = true
     function lock() { navigable = false }
     function unlock() { setTimeout(() => { navigable = true }) }
-    let content = link
+    const content = link
         ? <Link draggable={false} href={link}
             onClick={event => {
                 if (!navigable)
@@ -220,7 +219,7 @@ function Tile({
 }
 
 function Help({ hue }: {
-    hue: number,
+    hue: number | undefined,
 }) {
     return <div className="container pixel-shadow">
         <div className="content pixel-corners" style={{

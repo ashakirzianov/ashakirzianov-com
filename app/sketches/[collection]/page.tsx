@@ -1,7 +1,7 @@
-import { collections } from "@/sketches"
-import { CollectionPage } from "./client"
-import { Metadata } from "next"
-import { buildMetadata } from "@/utils/metadata"
+import { collections } from '@/sketches'
+import { CollectionPage } from './client'
+import { Metadata } from 'next'
+import { buildMetadata } from '@/utils/metadata'
 
 export async function generateStaticParams() {
     return collections.map(collection => ({
@@ -9,18 +9,22 @@ export async function generateStaticParams() {
     }))
 }
 
-export async function generateMetadata({ params: { collection: collectionId } }: {
-    params: { collection: string },
+export async function generateMetadata({ params }: {
+    params: Promise<{ collection: string }>,
 }): Promise<Metadata> {
-    let collection = collections.find(c => c.id === collectionId)
+    const { collection: collectionId } = await params
+    const collection = collections.find(c => c.id === collectionId)
     return buildMetadata({
-        title: collection?.meta.title ?? "Скетчи",
+        title: collection?.meta.title ?? 'Скетчи',
         description: collection?.meta?.description ?? `Серия скетчей: ${collection?.meta.title}`,
     })
 }
 
-export default function Collection({ params: { collection } }: {
-    params: { collection: string },
+export default async function Collection({ params, searchParams }: {
+    params: Promise<{ collection: string }>,
+    searchParams: Promise<{ hue?: number }>,
 }) {
-    return <CollectionPage collectionId={collection} />
+    const { hue } = await searchParams
+    const { collection } = await params
+    return <CollectionPage collectionId={collection} hue={hue} />
 }

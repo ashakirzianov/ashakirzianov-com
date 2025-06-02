@@ -1,39 +1,43 @@
-import { AllStoriesButton, HomeButton, Language } from "@/components/Buttons"
-import { TextBlock } from "@/components/TextBlock"
-import { buildMetadata } from "@/utils/metadata"
-import { href } from "@/utils/refs"
-import { getAllTextIds, getTextForId } from "@/utils/text"
-import { Metadata } from "next"
-import Link from "next/link"
+import { AllStoriesButton, HomeButton, Language } from '@/components/Buttons'
+import { TextBlock } from '@/components/TextBlock'
+import { buildMetadata } from '@/utils/metadata'
+import { href } from '@/utils/refs'
+import { getAllTextIds, getTextForId } from '@/utils/text'
+import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ReactNode } from "react"
+import { ReactNode } from 'react'
 
 export async function generateStaticParams() {
-    let ids = await getAllTextIds()
+    const ids = await getAllTextIds()
     return ids.map(id => ({ id }))
 }
 
 export async function generateMetadata({
-    params: { id },
+    params,
 }: {
-    params: { id: string, },
+    params: Promise<{ id: string, }>,
 }): Promise<Metadata> {
-    let post = await getTextForId({ id })
-    let title = post?.title ?? 'Рассказ'
-    let description = post?.description ?? `${post?.textSnippet}...`
+    const { id } = await params
+    const post = await getTextForId({ id })
+    const title = post?.title ?? 'Рассказ'
+    const description = post?.description ?? `${post?.textSnippet}...`
     return buildMetadata({
         title, description,
     })
 }
 
-export default async function Page({ params: { id } }: {
-    params: { id: string },
+export default async function Page({ params, searchParams }: {
+    params: Promise<{ id: string }>,
+    searchParams: Promise<{ hue?: number }>
 }) {
-    let post = await getTextForId({ id })
+    const { hue } = await searchParams
+    const { id } = await params
+    const post = await getTextForId({ id })
     if (!post) {
         return notFound()
     }
-    let language: Language = post.language === 'en' ? 'en' : 'ru'
+    const language: Language = post.language === 'en' ? 'en' : 'ru'
     return <TextBlock>
         {post.title && <h1 id={post.id}>{post.title}</h1>}
         <LinkBlock>
@@ -45,8 +49,8 @@ export default async function Page({ params: { id } }: {
         <div className="mb-4" />
         <div dangerouslySetInnerHTML={{ __html: post.html }} />
         <nav className="flex flex-col items-center gap-stn justify-between mt-l mb-stn">
-            <AllStoriesButton language={language} />
-            <HomeButton language={language} />
+            <AllStoriesButton language={language} hue={hue} />
+            <HomeButton language={language} hue={hue} />
         </nav>
     </TextBlock>
 }

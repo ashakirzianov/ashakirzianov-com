@@ -1,21 +1,21 @@
 'use client'
-import { ReactNode, useEffect, useRef, useState } from "react"
-import { Scene } from "@/sketcher"
-import { href } from "@/utils/refs"
-import { useSketcherPlayer } from "@/utils/sketcher"
-import { TextPost } from "@/utils/text"
-import Link from "next/link"
+import { ReactNode, useEffect, useRef, useState } from 'react'
+import { Scene } from '@/sketcher'
+import { href } from '@/utils/refs'
+import { useSketcherPlayer } from '@/components/Sketcher'
+import { TextPost } from '@/utils/text'
+import Link from 'next/link'
 
 export function SketchCard({ sketch, pixelated }: {
     sketch: Scene<any>,
     pixelated: boolean,
 }) {
-    let u = 20
-    let { node, setPlay } = useSketcherPlayer({
+    const u = 20
+    const { node, setPlay } = useSketcherPlayer({
         scene: sketch, period: 40,
         dimensions: pixelated ? [3 * u, 4 * u] : undefined,
     })
-    let [onVisibilityChanged] = useState(() => setPlay)
+    const [onVisibilityChanged] = useState(() => setPlay)
     return <Card
         onVisibilityChanged={onVisibilityChanged}
     >
@@ -43,9 +43,9 @@ export function TextCard({ post }: {
     </Card>
 }
 
-export type HighlightKind = 'stories' | 'posters';
+export type HighlightKind = 'stories' | 'posters'
 export function AboutCard({ hue, onHover }: {
-    hue: number,
+    hue: number | undefined,
     onHover?: (target?: HighlightKind) => void,
 }) {
     return <Card>
@@ -97,7 +97,7 @@ function Card({
 
     useEffect(() => {
         if (!onVisibilityChanged || !cardRef.current) return
-        let ref = cardRef.current
+        const ref = cardRef.current
 
         let lastVisibility: boolean | null = null
 

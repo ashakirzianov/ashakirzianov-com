@@ -1,10 +1,10 @@
-import { ReactNode } from "react"
+import { ReactNode } from 'react'
 
 export function TextBlock({ font, children }: {
     font?: string,
     children?: ReactNode,
 }) {
-    let family = font ?? 'var(--font-text), serif'
+    const family = font ?? 'var(--font-text), serif'
     return <div className="flex justify-center items-center w-full">
         <div className="p-stn text-[140%]" style={{
             fontFamily: family,

@@ -1,8 +1,8 @@
 'use client'
-import { SketchCollection, sceneId } from "@/sketcher"
-import { SketchCard } from "./Cards"
-import Link from "next/link"
-import { href } from "@/utils/refs"
+import { SketchCollection, sceneId } from '@/sketcher'
+import { SketchCard } from './Cards'
+import Link from 'next/link'
+import { href } from '@/utils/refs'
 
 export function SketchCollectionBlock({
     collection: { id, meta, sketches },
@@ -11,7 +11,7 @@ export function SketchCollectionBlock({
     collection: SketchCollection,
     linkToCollection?: boolean,
 }) {
-    let titleNode = <span className="flex text-white p-stn">
+    const titleNode = <span className="flex text-white p-stn">
         {meta.title}
     </span>
     return <div className="flex flex-col flex-wrap items-center p-0 m-0">

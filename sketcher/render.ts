@@ -9,14 +9,14 @@ import { Vector } from "./vector"
 export type Canvas2DContext = CanvasRenderingContext2D
 export type Canvas3DContext = WebGLRenderingContext
 export type CanvasContext = Canvas2DContext | Canvas3DContext
-export type Canvas<Context> = {
+export type SketcherCanvas<Context> = {
     context: Context,
     width: number,
     height: number,
 }
-export type Canvas2d = Canvas<Canvas2DContext>
+export type Canvas2d = SketcherCanvas<Canvas2DContext>
 export type RenderProps<State, Context = Canvas2DContext> = {
-    canvas: Canvas<Context>,
+    canvas: SketcherCanvas<Context>,
     frame: number,
     state: State,
 };

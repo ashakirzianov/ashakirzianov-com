@@ -1,9 +1,9 @@
-import { ReactNode } from "react"
-import Script from "next/script"
-import { Press_Start_2P } from "next/font/google"
-import { Cormorant } from "next/font/google"
+import { ReactNode } from 'react'
+import Script from 'next/script'
+import { Press_Start_2P } from 'next/font/google'
+import { Cormorant } from 'next/font/google'
 import '../styles/globals.css'
-import { Metadata } from "next"
+import { Metadata } from 'next'
 
 const textFont = Cormorant({
     subsets: ['cyrillic-ext'],

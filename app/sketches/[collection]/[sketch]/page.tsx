@@ -1,25 +1,27 @@
-import { Metadata } from "next"
-import { SingleSketch } from "./client"
-import { findCollectionSketch } from "./shared"
-import { buildMetadata } from "@/utils/metadata"
+import { Metadata } from 'next'
+import { SingleSketch } from './client'
+import { buildMetadata } from '@/utils/metadata'
+import { findCollectionSketch } from '@/app/collection'
 
 export async function generateMetadata({
-    params: { collection: collectionId, sketch: sketchId },
+    params,
 }: {
-    params: {
+    params: Promise<{
         collection: string,
         sketch: string,
-    },
+    }>,
 }): Promise<Metadata> {
-    let { sketch, collection } = findCollectionSketch(collectionId, sketchId)
+    const { collection: collectionId, sketch: sketchId } = await params
+    const { sketch, collection } = findCollectionSketch(collectionId, sketchId)
     return buildMetadata({
         title: sketch?.title ?? collection?.meta.title ?? 'Sketch',
         description: sketch?.description ?? collection?.meta.description ?? 'Generative Sketch',
     })
 }
 
-export default function Sketch({ params: { collection, sketch } }: {
-    params: { collection: string, sketch: string },
+export default async function Sketch({ params }: {
+    params: Promise<{ collection: string, sketch: string }>,
 }) {
+    const { collection, sketch } = await params
     return <SingleSketch collectionId={collection} sketchId={sketch} />
 }

@@ -1,7 +1,7 @@
-import { Metadata } from "next"
-import { SingleSketch } from "./client"
-import { buildMetadata } from "@/utils/metadata"
-import { findCollectionSketch } from "@/app/collection"
+import { Metadata } from 'next'
+import { SingleSketch } from './client'
+import { buildMetadata } from '@/utils/metadata'
+import { findCollectionSketch } from '@/app/collection'
 
 export async function generateMetadata({
     params,
@@ -12,7 +12,7 @@ export async function generateMetadata({
     }>,
 }): Promise<Metadata> {
     const { collection: collectionId, sketch: sketchId } = await params
-    let { sketch, collection } = findCollectionSketch(collectionId, sketchId)
+    const { sketch, collection } = findCollectionSketch(collectionId, sketchId)
     return buildMetadata({
         title: sketch?.title ?? collection?.meta.title ?? 'Sketch',
         description: sketch?.description ?? collection?.meta.description ?? 'Generative Sketch',

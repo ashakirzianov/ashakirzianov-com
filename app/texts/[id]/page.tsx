@@ -1,15 +1,15 @@
-import { AllStoriesButton, HomeButton, Language } from "@/components/Buttons"
-import { TextBlock } from "@/components/TextBlock"
-import { buildMetadata } from "@/utils/metadata"
-import { href } from "@/utils/refs"
-import { getAllTextIds, getTextForId } from "@/utils/text"
-import { Metadata } from "next"
-import Link from "next/link"
+import { AllStoriesButton, HomeButton, Language } from '@/components/Buttons'
+import { TextBlock } from '@/components/TextBlock'
+import { buildMetadata } from '@/utils/metadata'
+import { href } from '@/utils/refs'
+import { getAllTextIds, getTextForId } from '@/utils/text'
+import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ReactNode } from "react"
+import { ReactNode } from 'react'
 
 export async function generateStaticParams() {
-    let ids = await getAllTextIds()
+    const ids = await getAllTextIds()
     return ids.map(id => ({ id }))
 }
 
@@ -19,9 +19,9 @@ export async function generateMetadata({
     params: Promise<{ id: string, }>,
 }): Promise<Metadata> {
     const { id } = await params
-    let post = await getTextForId({ id })
-    let title = post?.title ?? 'Рассказ'
-    let description = post?.description ?? `${post?.textSnippet}...`
+    const post = await getTextForId({ id })
+    const title = post?.title ?? 'Рассказ'
+    const description = post?.description ?? `${post?.textSnippet}...`
     return buildMetadata({
         title, description,
     })
@@ -33,11 +33,11 @@ export default async function Page({ params, searchParams }: {
 }) {
     const { hue } = await searchParams
     const { id } = await params
-    let post = await getTextForId({ id })
+    const post = await getTextForId({ id })
     if (!post) {
         return notFound()
     }
-    let language: Language = post.language === 'en' ? 'en' : 'ru'
+    const language: Language = post.language === 'en' ? 'en' : 'ru'
     return <TextBlock>
         {post.title && <h1 id={post.id}>{post.title}</h1>}
         <LinkBlock>

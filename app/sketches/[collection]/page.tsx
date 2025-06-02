@@ -1,7 +1,7 @@
-import { collections } from "@/sketches"
-import { CollectionPage } from "./client"
-import { Metadata } from "next"
-import { buildMetadata } from "@/utils/metadata"
+import { collections } from '@/sketches'
+import { CollectionPage } from './client'
+import { Metadata } from 'next'
+import { buildMetadata } from '@/utils/metadata'
 
 export async function generateStaticParams() {
     return collections.map(collection => ({
@@ -13,9 +13,9 @@ export async function generateMetadata({ params }: {
     params: Promise<{ collection: string }>,
 }): Promise<Metadata> {
     const { collection: collectionId } = await params
-    let collection = collections.find(c => c.id === collectionId)
+    const collection = collections.find(c => c.id === collectionId)
     return buildMetadata({
-        title: collection?.meta.title ?? "Скетчи",
+        title: collection?.meta.title ?? 'Скетчи',
         description: collection?.meta?.description ?? `Серия скетчей: ${collection?.meta.title}`,
     })
 }

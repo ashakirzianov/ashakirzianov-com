@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode } from "react"
+import { ReactNode } from 'react'
 
 export function PixelPage({ hue, children }: {
     hue: number | undefined,

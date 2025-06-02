@@ -1,7 +1,7 @@
 'use client'
-import { href } from "@/utils/refs"
-import Link from "next/link"
-import { ReactNode, use, useState } from "react"
+import { href } from '@/utils/refs'
+import Link from 'next/link'
+import { ReactNode, useState } from 'react'
 
 export type Language = 'ru' | 'en'
 
@@ -9,7 +9,7 @@ export function HomeButton({ language, hue }: {
   language?: Language
   hue: number | undefined,
 }) {
-  let text = language === 'en' ? 'Home' : 'Главная'
+  const text = language === 'en' ? 'Home' : 'Главная'
   return <Link href={href('home', { hue })} draggable={false}>
     <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
@@ -19,7 +19,7 @@ export function AllSketchesButton({ language, hue }: {
   language?: Language
   hue: number | undefined,
 }) {
-  let text = language === 'en' ? 'All sketches' : 'Все скетчи'
+  const text = language === 'en' ? 'All sketches' : 'Все скетчи'
   return <Link href={href('sketch', { hue })} draggable={false}>
     <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
@@ -29,8 +29,8 @@ export function AllStoriesButton({ language, hue }: {
   language?: Language
   hue: number | undefined,
 }) {
-  let text = language === 'en' ? 'All stories' : 'Все рассказы'
-  let id = language === 'en' ? 'en' : undefined
+  const text = language === 'en' ? 'All stories' : 'Все рассказы'
+  const id = language === 'en' ? 'en' : undefined
   return <Link href={href('text', { hue, id })}>
     <PixelButton color="skyblue">{text}</PixelButton>
   </Link>
@@ -45,12 +45,12 @@ export function PixelButton({
   textColor?: string
   onClick?: () => void,
 }) {
-  let drop = '8px'
-  let [pushed, setPushed] = useState(false)
-  let down = pushed
-  let left = down ? drop : '0px'
-  let top = down ? drop : '0px'
-  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
+  const drop = '8px'
+  const [pushed, setPushed] = useState(false)
+  const down = pushed
+  const left = down ? drop : '0px'
+  const top = down ? drop : '0px'
+  const filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
   return <div draggable={false} style={{
     filter, width,
   }}>
@@ -77,13 +77,13 @@ export function PixelToggle({ color, onClick, pressed }: {
   onClick?: () => void,
   pressed?: boolean,
 }) {
-  let size = '30px'
-  let drop = '8px'
-  let [pushed, setPushed] = useState(false)
-  let down = pushed || pressed
-  let left = down ? drop : '0px'
-  let top = down ? drop : '0px'
-  let filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
+  const size = '30px'
+  const drop = '8px'
+  const [pushed, setPushed] = useState(false)
+  const down = pushed || pressed
+  const left = down ? drop : '0px'
+  const top = down ? drop : '0px'
+  const filter = down ? 'none' : `drop-shadow(${drop} ${drop} 0px #222)`
   return <div draggable={false} style={{
     filter,
   }}>

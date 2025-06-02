@@ -1,8 +1,8 @@
-import { PixelPage } from "@/components/PixelPage"
-import { href } from "@/utils/refs"
-import { AboutCard, AboutLink } from "@/components/About"
-import { Metadata } from "next"
-import { buildMetadata } from "@/utils/metadata"
+import { PixelPage } from '@/components/PixelPage'
+import { href } from '@/utils/refs'
+import { AboutCard, AboutLink } from '@/components/About'
+import { Metadata } from 'next'
+import { buildMetadata } from '@/utils/metadata'
 
 export const metadata: Metadata = buildMetadata({
     title: 'Who is Andjan?',

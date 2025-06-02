@@ -1,9 +1,9 @@
 import {
     MouseEvent, ReactNode, useCallback, useEffect, useRef, useState,
-} from "react"
+} from 'react'
 
 let globalZ = 2
-export type Position = { x: number, y: number };
+export type Position = { x: number, y: number }
 export function Draggable({
     children, onDrag, onStop, front, back, disabled,
 }: {
@@ -14,19 +14,19 @@ export function Draggable({
     onDrag?: () => void,
     onStop?: () => void,
 }) {
-    let divRef = useRef<HTMLDivElement>(null)
-    let [dragging, setDragging] = useState(false)
-    let [state, setState] = useState({
+    const divRef = useRef<HTMLDivElement>(null)
+    const [dragging, setDragging] = useState(false)
+    const [state, setState] = useState({
         offset: { x: 0, y: 0 },
         touchStart: { x: 0, y: 0 },
     })
-    let [zIndex, setZIndex] = useState(
+    const [zIndex, setZIndex] = useState(
         front ? 2
             : back ? 0 : 1
     )
-    let [cursorChanged, setCursorChanged] = useState(false)
+    const [cursorChanged, setCursorChanged] = useState(false)
 
-    let handleStartDragging = useCallback(function handleStartDragging({ x, y }: Position) {
+    const handleStartDragging = useCallback(function handleStartDragging({ x, y }: Position) {
         if (!disabled) {
             setDragging(true)
             setZIndex(globalZ++)
@@ -40,12 +40,12 @@ export function Draggable({
             }))
         }
     }, [disabled])
-    let handleDragging = useCallback(function handleDragging({ x, y }: Position) {
+    const handleDragging = useCallback(function handleDragging({ x, y }: Position) {
         if (dragging && !disabled) {
             setState(state => {
-                let MIN_STEP = 200
-                let dx = Math.abs(x - (state.touchStart.x - state.offset.x))
-                let dy = Math.abs(y - (state.touchStart.y - state.offset.y))
+                const MIN_STEP = 200
+                const dx = Math.abs(x - (state.touchStart.x - state.offset.x))
+                const dy = Math.abs(y - (state.touchStart.y - state.offset.y))
                 if (dx > MIN_STEP || dy > MIN_STEP) {
                     if (onDrag) {
                         onDrag()
@@ -63,7 +63,7 @@ export function Draggable({
             })
         }
     }, [dragging, disabled, onDrag])
-    let handleEndDragging = useCallback(function handleEndDragging() {
+    const handleEndDragging = useCallback(function handleEndDragging() {
         if (onStop) {
             onStop()
         }
@@ -72,11 +72,11 @@ export function Draggable({
     }, [onStop])
 
     function getTouchPosition(event: globalThis.TouchEvent) {
-        let touches = event.targetTouches
+        const touches = event.targetTouches
         if (touches.length !== 1) {
             return undefined
         }
-        let touch = event.targetTouches[0]!
+        const touch = event.targetTouches[0]!
         return {
             x: touch.clientX,
             y: touch.clientY,
@@ -91,14 +91,14 @@ export function Draggable({
 
     useEffect(() => {
         function handleTouchStart(event: globalThis.TouchEvent) {
-            let position = getTouchPosition(event)
+            const position = getTouchPosition(event)
             if (position) {
                 handleStartDragging(position)
             }
         }
         function handleTouchMove(event: globalThis.TouchEvent) {
             if (dragging) {
-                let position = getTouchPosition(event)
+                const position = getTouchPosition(event)
                 if (position) {
                     event.preventDefault()
                     handleDragging(position)
@@ -108,7 +108,7 @@ export function Draggable({
         function handleTouchEnd() {
             handleEndDragging()
         }
-        let ref = divRef.current
+        const ref = divRef.current
         if (ref) {
             ref.addEventListener('touchstart', handleTouchStart)
             ref.addEventListener('touchmove', handleTouchMove, { passive: false })

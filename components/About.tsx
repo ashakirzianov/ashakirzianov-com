@@ -1,7 +1,7 @@
 'use client'
-import { TextBlock } from "@/components/TextBlock"
-import Link from "next/link"
-import { ReactNode } from "react"
+import { TextBlock } from '@/components/TextBlock'
+import Link from 'next/link'
+import { ReactNode } from 'react'
 
 export function AboutLink({ href, children }: {
     href: string,

@@ -1,16 +1,16 @@
 'use client'
-import { LaunchProps, launcher } from "@/sketcher"
-import { useEffect } from "react"
-import { getCanvasFromRef, useCanvases } from "@/utils/canvas"
+import { LaunchProps, launcher } from '@/sketcher'
+import { useEffect } from 'react'
+import { getCanvasFromRef, useCanvases } from '@/utils/canvas'
 
-type SketcherProps<S> = Omit<LaunchProps<S>, 'getCanvas'>;
+type SketcherProps<S> = Omit<LaunchProps<S>, 'getCanvas'>
 export function Sketcher<State>(props: SketcherProps<State> & {
     dimensions?: [width: number, height: number],
 }) {
-    let dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined])
-    let { node, refs } = useCanvases(dims)
+    const dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined])
+    const { node, refs } = useCanvases(dims)
     useEffect(() => {
-        let { start, cleanup } = launcher({
+        const { start, cleanup } = launcher({
             ...props,
             getCanvas: idx => getCanvasFromRef(
                 refs[idx],
@@ -27,9 +27,9 @@ export function Sketcher<State>(props: SketcherProps<State> & {
 export function useSketcherPlayer<State>(props: SketcherProps<State> & {
     dimensions?: [width: number, height: number],
 }) {
-    let dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined])
-    let { node, refs } = useCanvases(dims)
-    let { start, pause, isPaused, cleanup } = launcher({
+    const dims = Array(props.scene.layers.length).fill(props.dimensions ?? props.scene.dimensions ?? [undefined, undefined])
+    const { node, refs } = useCanvases(dims)
+    const { start, pause, isPaused, cleanup } = launcher({
         ...props,
         getCanvas: idx => getCanvasFromRef(
             refs[idx],

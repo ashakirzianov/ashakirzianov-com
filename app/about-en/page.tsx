@@ -1,9 +1,9 @@
-import { href } from "@/utils/refs"
-import Head from "next/head"
-import { PixelPage } from "@/components/PixelPage"
-import { AboutCard, AboutLink } from "@/components/About"
-import { Metadata } from "next"
-import { buildMetadata } from "@/utils/metadata"
+import { href } from '@/utils/refs'
+import Head from 'next/head'
+import { PixelPage } from '@/components/PixelPage'
+import { AboutCard, AboutLink } from '@/components/About'
+import { Metadata } from 'next'
+import { buildMetadata } from '@/utils/metadata'
 
 export const metadata: Metadata = buildMetadata({
     title: 'Who is Andjan?',

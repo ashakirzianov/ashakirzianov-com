@@ -1,11 +1,11 @@
-import { HomeButton } from "@/components/Buttons"
-import { AllCollections } from "./client"
-import { PixelPage } from "@/components/PixelPage"
-import { buildMetadata } from "@/utils/metadata"
+import { HomeButton } from '@/components/Buttons'
+import { AllCollections } from './client'
+import { PixelPage } from '@/components/PixelPage'
+import { buildMetadata } from '@/utils/metadata'
 
 export const metadata = buildMetadata({
-    title: "Все скетчи",
-    description: "Страница со всеми картинками",
+    title: 'Все скетчи',
+    description: 'Страница со всеми картинками',
 })
 
 export default async function AllSketches({ searchParams }: {

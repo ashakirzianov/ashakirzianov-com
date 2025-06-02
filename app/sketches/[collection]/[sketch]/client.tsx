@@ -1,15 +1,15 @@
 'use client'
 
-import { notFound } from "next/navigation"
-import { Scene } from "@/sketcher"
-import { Sketcher } from "@/components/Sketcher"
-import { findCollectionSketch } from "@/app/collection"
+import { notFound } from 'next/navigation'
+import { Scene } from '@/sketcher'
+import { Sketcher } from '@/components/Sketcher'
+import { findCollectionSketch } from '@/app/collection'
 
 export function SingleSketch({ collectionId, sketchId }: {
     collectionId: string,
     sketchId: string,
 }) {
-    let { sketch } = findCollectionSketch(collectionId, sketchId)
+    const { sketch } = findCollectionSketch(collectionId, sketchId)
     if (!sketch) {
         return notFound()
     }

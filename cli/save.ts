@@ -1,11 +1,12 @@
-import { Canvas, createCanvas } from 'canvas'
 import fs from 'fs'
 import path from 'path'
-import { SketcherCanvas, Canvas2DContext, CanvasContext } from '../sketcher/render'
-import { Scene, sceneId } from '../sketcher/scene'
-import { collections } from '../sketches'
+import { Canvas, createCanvas } from 'canvas'
+import { collections } from '@/sketches'
+import {
+  SketcherCanvas, Canvas2DContext, CanvasContext, Scene,
+  sceneId, launcher,
+} from '@/sketcher'
 import type { CommandLineArgs } from './index'
-import { launcher } from '@/sketcher'
 
 export async function handleSaveCommand({ switches, commands }: CommandLineArgs) {
   const [name] = commands

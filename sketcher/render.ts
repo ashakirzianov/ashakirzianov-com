@@ -1,10 +1,10 @@
-import exp from "constants"
-import { Box, boxRange } from "./box"
+import exp from 'constants'
+import { Box, boxRange } from './box'
 import {
     Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops,
-} from "./color"
-import { NumRange, rangeLength } from "./range"
-import { Vector } from "./vector"
+} from './color'
+import { NumRange, rangeLength } from './range'
+import { Vector } from './vector'
 
 export type Canvas2DContext = CanvasRenderingContext2D
 export type Canvas3DContext = WebGLRenderingContext
@@ -19,15 +19,15 @@ export type RenderProps<State, Context = Canvas2DContext> = {
     canvas: SketcherCanvas<Context>,
     frame: number,
     state: State,
-};
-export type Render<State, Context = Canvas2DContext> = (props: RenderProps<State, Context>) => void;
+}
+export type Render<State, Context = Canvas2DContext> = (props: RenderProps<State, Context>) => void
 
-export type WithSets<T> = { sets: T[] };
+export type WithSets<T> = { sets: T[] }
 export function objectSetsRender<ObjectT>(drawObject: (props: { canvas: Canvas2d, object: ObjectT }) => void,
 ): Render<WithSets<ObjectT[]>> {
     return function render({ canvas, state }) {
-        for (let set of state.sets) {
-            for (let object of set) {
+        for (const set of state.sets) {
+            for (const object of set) {
                 drawObject({ canvas, object })
             }
         }
@@ -40,7 +40,7 @@ export type ShapeProps = {
     stroke?: Color,
     center: Vector,
     context: Canvas2DContext,
-};
+}
 
 export function rect({
     lineWidth, fill, stroke,
@@ -115,6 +115,32 @@ export function circle({
     context.restore()
 }
 
+export function ellipse({
+    lineWidth, fill, stroke,
+    center: { x, y }, radius, radius2, rotation,
+    context,
+}: ShapeProps & {
+    rotation: number,
+    radius: number,
+    radius2: number,
+}) {
+    context.save()
+    if (lineWidth) {
+        context.lineWidth = lineWidth
+    }
+    context.beginPath()
+    context.ellipse(x, y, radius, radius2, rotation, 0, Math.PI * 2)
+    if (fill) {
+        context.fillStyle = resolveColor(fill, context)
+        context.fill()
+    }
+    if (stroke) {
+        context.strokeStyle = resolveColor(stroke, context)
+        context.stroke()
+    }
+    context.restore()
+}
+
 export function concentringCircles({
     context, position, radius, fills,
 }: {
@@ -123,9 +149,9 @@ export function concentringCircles({
     radius: number,
     fills: Color[],
 }) {
-    let n = fills.length
+    const n = fills.length
     for (let i = 0; i < n; i++) {
-        let fill = fills[i]!
+        const fill = fills[i]!
         circle({
             context, fill, center: position,
             radius: radius * (n - i + 1) / n,
@@ -195,7 +221,7 @@ export function drawCorner({
     border?: number,
     color: RGBAColor,
 }) {
-    let { context, width, height } = canvas
+    const { context, width, height } = canvas
     context.save()
 
     function wall({
@@ -205,7 +231,7 @@ export function drawCorner({
         border?: number,
     }) {
         context.save()
-        var gradient = context.createLinearGradient(0, 0, 0, height)
+        const gradient = context.createLinearGradient(0, 0, 0, height)
         stops.forEach(
             ({ offset, color }) => gradient.addColorStop(offset, resolvePrimitiveColor(color)),
         )
@@ -225,13 +251,13 @@ export function drawCorner({
         context.restore()
     }
 
-    let base = fromRGBA(color)
-    let lightest = fromRGBA(multRGBA(color, 1.2))
-    let light = fromRGBA(multRGBA(color, 1.05))
-    let dark = fromRGBA(multRGBA(color, 0.95))
+    const base = fromRGBA(color)
+    const lightest = fromRGBA(multRGBA(color, 1.2))
+    const light = fromRGBA(multRGBA(color, 1.05))
+    const dark = fromRGBA(multRGBA(color, 0.95))
     context.fillStyle = lightest
     context.fillRect(0, 0, width, height)
-    let skew = Math.cos(-Math.PI * angle)
+    const skew = Math.cos(-Math.PI * angle)
     context.save()
     context.translate(-offset * width, 0)
     context.transform(1, skew, 0, 1, 0, 0)
@@ -277,14 +303,14 @@ export function zoomToFit({ canvas, box }: {
     canvas: Canvas2d,
     box: Box,
 }) {
-    let { widthRange, heightRange } = boxRange(box)
-    let uwidth = rangeLength(widthRange)
-    let uheight = rangeLength(heightRange)
-    let xratio = canvas.width / uwidth
-    let yratio = canvas.height / uheight
-    let ratio = Math.min(xratio, yratio)
-    let shiftx = (canvas.width - uwidth * ratio) / 2
-    let shifty = (canvas.height - uheight * ratio) / 2
+    const { widthRange, heightRange } = boxRange(box)
+    const uwidth = rangeLength(widthRange)
+    const uheight = rangeLength(heightRange)
+    const xratio = canvas.width / uwidth
+    const yratio = canvas.height / uheight
+    const ratio = Math.min(xratio, yratio)
+    const shiftx = (canvas.width - uwidth * ratio) / 2
+    const shifty = (canvas.height - uheight * ratio) / 2
     canvas.context.translate(
         shiftx, shifty,
     )
@@ -299,14 +325,14 @@ export function zoomToFill({ canvas, box }: {
     canvas: Canvas2d,
     box: Box,
 }) {
-    let { widthRange, heightRange } = boxRange(box)
-    let uwidth = rangeLength(widthRange)
-    let uheight = rangeLength(heightRange)
-    let xratio = canvas.width / uwidth
-    let yratio = canvas.height / uheight
-    let ratio = Math.max(xratio, yratio)
-    let shiftx = (canvas.width - uwidth * ratio) / 2
-    let shifty = (canvas.height - uheight * ratio) / 2
+    const { widthRange, heightRange } = boxRange(box)
+    const uwidth = rangeLength(widthRange)
+    const uheight = rangeLength(heightRange)
+    const xratio = canvas.width / uwidth
+    const yratio = canvas.height / uheight
+    const ratio = Math.max(xratio, yratio)
+    const shiftx = (canvas.width - uwidth * ratio) / 2
+    const shifty = (canvas.height - uheight * ratio) / 2
     canvas.context.translate(
         shiftx, shifty,
     )
@@ -347,7 +373,7 @@ export function drawGrid({
     color?: Color,
 }) {
     // Draw grid
-    let { context, width, height } = canvas
+    const { context, width, height } = canvas
     context.save()
     if (lineWidth) {
         context.lineWidth = lineWidth

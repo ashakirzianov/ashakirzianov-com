@@ -67,26 +67,49 @@ export async function playgroundScene(): Promise<Scene<any>> {
         angularVelocity: 0, // No rotation for circles
         growthRate: 0, // No growth for circles
     }
+    // const circles: ObjectType[] = [
+    //     {
+    //         ...circleDefault,
+    //         velocity: { x: -5, y: 5, z: 0 },
+    //         position: { x: -100, y: -50, z: 0 },
+    //     },
+    //     {
+    //         ...circleDefault,
+    //         velocity: { x: 1, y: -3, z: 0 },
+    //         position: { x: 50, y: 60, z: 0 },
+    //     },
+    //     {
+    //         ...circleDefault,
+    //         velocity: { x: -1, y: -3, z: 0 },
+    //         position: { x: 75, y: -100, z: 0 },
+    //     },
+    //     {
+    //         ...circleDefault,
+    //         velocity: { x: 2, y: 5, z: 0 },
+    //         position: { x: -30, y: 100, z: 0 },
+    //     },
+    // ]
+
     const circles: ObjectType[] = [
         {
             ...circleDefault,
             velocity: { x: -5, y: 5, z: 0 },
-            position: { x: -100, y: -50, z: 0 },
+            position: { x: -100, y: -100, z: 0 },
         },
         {
             ...circleDefault,
-            velocity: { x: 1, y: -3, z: 0 },
-            position: { x: 50, y: 60, z: 0 },
+            velocity: { x: 5, y: -5, z: 0 },
+            position: { x: 100, y: 100, z: 0 },
         },
         {
             ...circleDefault,
-            velocity: { x: -1, y: -3, z: 0 },
-            position: { x: 75, y: -100, z: 0 },
+            velocity: { x: -5, y: -5, z: 0 },
+            position: { x: 100, y: -100, z: 0 },
         },
         {
             ...circleDefault,
-            velocity: { x: 2, y: 5, z: 0 },
-            position: { x: -30, y: 100, z: 0 },
+            velocity: { x: 5.5, y: 5, z: 0 },
+            position: { x: -100, y: 100, z: 0 },
         },
     ]
 
@@ -106,7 +129,8 @@ export async function playgroundScene(): Promise<Scene<any>> {
             velocity: { x: 1, y: 1, z: 0 },
             position: { x: -10, y: -10, z: 0 },
             angularVelocity: 0.05, // Random rotation speed between -0.05 and 0.05
-            growthRate: 0.05, // Slow growth rate
+            growthRate: 0.0, // Slow growth rate
+            radius: 80,
         },
     ]
 
@@ -211,13 +235,13 @@ export async function playgroundScene(): Promise<Scene<any>> {
                 clearFrame({ canvas, color: 'black' })
             }
         }, {
-            // prepare({ canvas, state }) {
-            //     zoomToBoundingBox({
-            //         canvas,
-            //         objects: state.flat(),
-            //         scale: 2,
-            //     })
-            // },
+            prepare({ canvas, state }) {
+                // zoomToBoundingBox({
+                //     canvas,
+                //     objects: state.flat(),
+                //     scale: 2,
+                // })
+            },
             render({ canvas, state }) {
                 canvas.context.save()
                 zoomToBoundingBox({
@@ -249,6 +273,7 @@ export async function playgroundScene(): Promise<Scene<any>> {
                                 context: canvas.context,
                                 fill: { h: 50, s: 100, l: 60 },
                                 stroke: 'black',
+                                // stroke: { h: 50, s: 100, l: 30 },
                                 lineWidth: 1,
                             })
                         }

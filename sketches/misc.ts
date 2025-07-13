@@ -3,6 +3,7 @@ import {
     randomRange, rainbow, modItem, vals, concentringCircles, scene,
     randomObject, xSets, zoomToBoundingBox, clearFrame, randomBoxes, cubicBox, Color, circle, gray, SketchCollection, drawBlueprint, hslaRange,
 } from '@/sketcher'
+import { couchAndTable } from './couchAndTable'
 
 export const misc: SketchCollection = {
     id: 'misc',
@@ -13,6 +14,7 @@ export const misc: SketchCollection = {
         number34(),
         fourFlowers(),
         letters(),
+        couchAndTable(),
     ],
 }
 

@@ -1,4 +1,4 @@
-import { Scene } from "@/sketcher"
+import { Scene } from '@/sketcher'
 import { WebGLRenderer, Scene as ThreeScene, PerspectiveCamera, BoxGeometry, MeshPhongMaterial, Mesh, DirectionalLight } from 'three'
 
 export function playgroundScene(): Scene<any> {
@@ -8,13 +8,13 @@ export function playgroundScene(): Scene<any> {
         layers: [{
             kind: '3d',
             render({ canvas: { context, width, height }, frame }) {
-                let r = new WebGLRenderer({
+                const r = new WebGLRenderer({
                     context,
                     canvas: context.canvas,
                 })
-                let scene = new ThreeScene()
-                let camera = new PerspectiveCamera(75, width / height, 0.1, 1000)
-                let geometry = new BoxGeometry(1, 1, 1)
+                const scene = new ThreeScene()
+                const camera = new PerspectiveCamera(75, width / height, 0.1, 1000)
+                const geometry = new BoxGeometry(1, 1, 1)
                 const material = new MeshPhongMaterial({ color: 0x00ff00 })
                 const cube = new Mesh(geometry, material)
                 scene.add(cube)

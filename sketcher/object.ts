@@ -5,18 +5,20 @@ import { randomRange } from './random'
 import { NumRange } from './range'
 import { Vector, vector } from './vector'
 
-export type FullObject = WithPosition & WithVelocity & WithMass & WithRadius;
-export type GravityObject = WithPosition & WithMass;
-export type WithPosition = { position: Vector };
-export type WithVelocity = { velocity: Vector };
-export type WithMass = { mass: number };
-export type WithRadius = { radius: number };
-export type WithColor = { color: Color };
-export type WithAnchor = { anchor: GravityObject };
+export type FullObject = WithPosition & WithVelocity & WithMass & WithRadius
+export type GravityObject = WithPosition & WithMass
+export type WithPosition = { position: Vector }
+export type WithVelocity = { velocity: Vector }
+export type WithMass = { mass: number }
+export type WithRadius = { radius: number }
+export type WithColor = { color: Color }
+export type WithAnchor = { anchor: GravityObject }
+export type WithRotation = { rotation: number }
+export type WithAngularVelocity = { angular: number }
 
 
-type Objects<ObjectT> = ObjectT[];
-type ObjectAnimator<ObjectT> = Animator<Objects<ObjectT>>;
+type Objects<ObjectT> = ObjectT[]
+type ObjectAnimator<ObjectT> = Animator<Objects<ObjectT>>
 
 
 export function randomObject({
@@ -27,8 +29,8 @@ export function randomObject({
     maxVelocity: number,
     rToM: number,
 }) {
-    let mass = randomRange(massRange)
-    let velocityRange = {
+    const mass = randomRange(massRange)
+    const velocityRange = {
         min: -maxVelocity, max: maxVelocity,
     }
     return {
@@ -41,11 +43,11 @@ export function randomObject({
 
 type ObjectMap<Keys extends keyof FullObject, T> = {
     [k in Keys]: T;
-};
+}
 export function randomObjects<Keys extends keyof FullObject>(count: number, props: ObjectMap<Keys, NumRange>): Pick<FullObject, Keys>[] {
     return Array(count).fill(undefined).map(() => {
-        let object: any = {}
-        let {
+        const object: any = {}
+        const {
             position, velocity, radius, mass,
         } = props as ObjectMap<keyof FullObject, NumRange | undefined>
         if (position) {
@@ -85,7 +87,7 @@ export function createObjects({
 
 export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): ObjectAnimator<ObjectT> {
     return function velocityLaw(objects) {
-        let next = objects.map(object => ({
+        const next = objects.map(object => ({
             ...object,
             position: vector.add(object.position, object.velocity),
         }))
@@ -95,7 +97,7 @@ export function velocityStep<ObjectT extends WithVelocity & WithPosition>(): Obj
 
 export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: ObjectAnimator<ObjectT>): ObjectAnimator<ObjectT> {
     function calculateMomentum(objects: Objects<ObjectT>) {
-        let momentum = objects.reduce(
+        const momentum = objects.reduce(
             (sum, obj) => sum + vector.length(obj.velocity) * obj.mass,
             0,
         )
@@ -103,11 +105,11 @@ export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: O
     }
 
     return function preserveLaw(objects, frame) {
-        let momentum = calculateMomentum(objects)
-        let next = law(objects, frame)
-        let nextmom = calculateMomentum(next)
-        let coef = momentum / nextmom
-        for (let object of objects) {
+        const momentum = calculateMomentum(objects)
+        const next = law(objects, frame)
+        const nextmom = calculateMomentum(next)
+        const coef = momentum / nextmom
+        for (const object of objects) {
             object.velocity = vector.mults(object.velocity, coef)
         }
         return next
@@ -117,20 +119,20 @@ export function preserveMomentum<ObjectT extends WithVelocity & WithMass>(law: O
 export type GravityProps = {
     gravity: number,
     power: number,
-};
+}
 export function getGravity({ gravity, power, from, to }: {
     gravity: number,
     power: number,
     from: GravityObject,
     to: GravityObject,
 }): Vector {
-    let direction = vector.sub(to.position, from.position)
-    let dist = vector.length(direction)
+    const direction = vector.sub(to.position, from.position)
+    const dist = vector.length(direction)
     if (dist === 0) {
         return vector.value(0)
     }
-    let multiplier = (from.mass * to.mass * gravity) / (dist ** power)
-    let result = vector.mults(direction, multiplier)
+    const multiplier = (from.mass * to.mass * gravity) / (dist ** power)
+    const result = vector.mults(direction, multiplier)
     return result
 }
 
@@ -139,9 +141,9 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
         objects = objects.map(obj => ({ ...obj }))
         for (let fromi = 0; fromi < objects.length; fromi++) {
             for (let toi = fromi + 1; toi < objects.length; toi++) {
-                let from = objects[fromi]!
-                let to = objects[toi]!
-                let force = getGravity({
+                const from = objects[fromi]!
+                const to = objects[toi]!
+                const force = getGravity({
                     gravity, power, from, to,
                 })
                 from.velocity = vector.add(from.velocity, force)
@@ -153,7 +155,7 @@ export function gravity<ObjectT extends WithVelocity & WithMass & WithPosition>(
 }
 
 export function resultingBody(objects: GravityObject[]): GravityObject {
-    let result = objects.reduce(
+    const result = objects.reduce(
         (sum, curr) => ({
             position: vector.add(sum.position, vector.mults(curr.position, curr.mass)),
             mass: sum.mass + curr.mass,
@@ -163,17 +165,26 @@ export function resultingBody(objects: GravityObject[]): GravityObject {
     return result
 }
 
-export type AnchorObject = WithAnchor & GravityObject & WithVelocity;
+export type AnchorObject = WithAnchor & GravityObject & WithVelocity
 export function pullToAnchor<O extends AnchorObject>({
     gravity, power,
 }: GravityProps): Animator<O> {
     return function pullAnimator(state) {
-        let force = getGravity({
+        const force = getGravity({
             gravity, power, from: state, to: state.anchor,
         })
         return {
             ...state,
             position: vector.add(state.position, force),
         }
+    }
+}
+
+export function rotationStep<O extends WithRotation & WithAngularVelocity>(): ObjectAnimator<O> {
+    return function rotationLaw(objects) {
+        return objects.map(object => ({
+            ...object,
+            rotation: object.rotation + object.angular,
+        }))
     }
 }

@@ -2,20 +2,8 @@ import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     scene, drawImage, zoomToBoundingBox, clearFrame, Scene,
     circle, combineAnimators,
+    loadImage,
 } from '@/sketcher'
-
-async function loadImage(src: string): Promise<HTMLImageElement | undefined> {
-    return new Promise((resolve, reject) => {
-        if (typeof window === 'undefined') {
-            resolve(undefined) // No images in SSR context
-            return
-        }
-        const img = new Image()
-        img.onload = () => resolve(img)
-        img.onerror = reject
-        img.src = src
-    })
-}
 
 export function playgroundScene(): Scene<any> {
     async function buildState() {
@@ -184,7 +172,7 @@ export function playgroundScene(): Scene<any> {
                             : object.radius * 2
                         const width = size
                         const height = size
-                        if (kind === 'crown' && image !== undefined) {
+                        if (kind === 'crown') {
                             drawImage({
                                 image,
                                 center: object.position,
@@ -193,6 +181,7 @@ export function playgroundScene(): Scene<any> {
                                 rotation: object.rotation,
                             })
                         } else {
+                            // Fallback to drawing shapes when images aren't available
                             circle({
                                 center: object.position,
                                 radius: object.radius,

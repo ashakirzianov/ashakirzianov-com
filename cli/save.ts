@@ -12,7 +12,7 @@ export async function handleSaveCommand({ switches, commands }: CommandLineArgs)
   const [name] = commands
   const [collectionId, sketchId] = name?.split('/') ?? []
   if (!collectionId || !sketchId) {
-    throw new Error('Usage: save <collectionId>/<sketchId> [--width <width>] [--time <time>] [--output <outputPath>]');
+    throw new Error('Usage: save <collectionId>/<sketchId> [--width <width>] [--time <time>] [--output <outputPath>]')
   }
   const width = parseInt(switches.width ?? '800')
   const height = switches.height
@@ -49,36 +49,36 @@ async function saveSketch({
   outputPath: string,
 }) {
   // Find the specified collection
-  const collection = collections.find(c => c.id === collectionId);
+  const collection = collections.find(c => c.id === collectionId)
   if (!collection) {
-    throw new Error(`Collection '${collectionId}' not found`);
+    throw new Error(`Collection '${collectionId}' not found`)
   }
 
   // Find the specified sketch in the collection
   const sketch = collection.sketches.find(s => {
     // Try to match by id field first
     if (s.id === sketchId) {
-      return true;
+      return true
     }
     // Otherwise use sceneId function to derive id from title
-    const id = sceneId(s);
-    return id === sketchId;
-  });
+    const id = sceneId(s)
+    return id === sketchId
+  })
 
   if (!sketch) {
-    throw new Error(`Sketch '${sketchId}' not found in collection '${collectionId}'`);
+    throw new Error(`Sketch '${sketchId}' not found in collection '${collectionId}'`)
   }
 
   if (!height) {
     // Calculate height based on aspect ratio
     if (sketch.dimensions) {
-      const [sketchWidth, sketchHeight] = sketch.dimensions;
+      const [sketchWidth, sketchHeight] = sketch.dimensions
       // Use sketch's aspect ratio if dimensions are available
-      const aspectRatio = sketchWidth / sketchHeight;
-      height = Math.round(width / aspectRatio);
+      const aspectRatio = sketchWidth / sketchHeight
+      height = Math.round(width / aspectRatio)
     } else {
       // Default to square if no dimensions provided
-      height = width;
+      height = width
     }
   }
 
@@ -91,10 +91,10 @@ async function saveSketch({
   })
 
   // Save the buffer to a file
-  fs.writeFileSync(outputPath, buffer as any as Uint8Array);
+  fs.writeFileSync(outputPath, buffer as any as Uint8Array)
 
   console.log(`Saved sketch to ${outputPath}`)
-  return outputPath;
+  return outputPath
 }
 
 async function renderSceneToCanvas({
@@ -116,13 +116,13 @@ async function renderSceneToCanvas({
     getCanvas: idx => {
       const kind = scene.layers[idx]?.kind
       if (kind !== undefined && kind !== '2d') {
-        throw new Error(`Unsupported scetch: Layer ${idx} is not a 2D layer`);
+        throw new Error(`Unsupported scetch: Layer ${idx} is not a 2D layer`)
       }
       let canvasObject = canvases[idx]
       if (!canvasObject) {
         // Create a canvas with the specified dimensions
-        const renderCanvas = createCanvas(width, height);
-        const context = renderCanvas.getContext('2d') as any as Canvas2DContext;
+        const renderCanvas = createCanvas(width, height)
+        const context = renderCanvas.getContext('2d') as any as Canvas2DContext
 
         // Return a wrapper for the canvas
         canvasObject = {
@@ -147,12 +147,12 @@ async function renderSceneToCanvas({
   const finalContext = finalCanvas.getContext('2d')
   for (const canvas of canvases) {
     if (canvas) {
-      finalContext.drawImage(canvas.canvas, 0, 0, width, height);
+      finalContext.drawImage(canvas.canvas, 0, 0, width, height)
     }
   }
   return finalCanvas.toBuffer('image/png')
 }
 
 async function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms))
 }

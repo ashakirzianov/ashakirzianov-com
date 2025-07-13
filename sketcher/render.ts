@@ -1,4 +1,3 @@
-import exp from 'constants'
 import { Box, boxRange } from './box'
 import {
     Color, ColorStop, fromRGBA, multRGBA, resolveColor, resolvePrimitiveColor, RGBAColor, unifromStops,
@@ -431,4 +430,45 @@ export function drawBlueprint({
         columns: columns * 10,
         color: lineColor,
     })
+}
+
+export function drawImage({
+    image,
+    center,
+    context,
+    width,
+    height,
+    rotation,
+}: {
+    image: CanvasImageSource,
+    center: Vector,
+    context: Canvas2DContext,
+    width?: number,
+    height?: number,
+    rotation?: number,
+}) {
+    context.save()
+    
+    // Move to center position
+    context.translate(center.x, center.y)
+    
+    // Apply rotation if specified
+    if (rotation) {
+        context.rotate(rotation)
+    }
+    
+    // Determine dimensions
+    const imageWidth = width ?? (image as HTMLImageElement).naturalWidth ?? (image as HTMLCanvasElement).width
+    const imageHeight = height ?? (image as HTMLImageElement).naturalHeight ?? (image as HTMLCanvasElement).height
+    
+    // Draw image centered at the current origin
+    context.drawImage(
+        image,
+        -imageWidth / 2,
+        -imageHeight / 2,
+        imageWidth,
+        imageHeight
+    )
+    
+    context.restore()
 }

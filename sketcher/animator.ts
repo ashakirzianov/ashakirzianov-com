@@ -1,21 +1,21 @@
-import { NumRange } from "./range"
-import { SketcherCanvas } from "./render"
+import { NumRange } from './range'
+import { SketcherCanvas } from './render'
 
 export type AnimatorContext = {
     frame: number,
     getCanvas: (n: number) => SketcherCanvas<unknown> | undefined,
-};
-export type Animator<State> = (state: State, context: AnimatorContext) => State;
+}
+export type Animator<State> = (state: State, context: AnimatorContext) => State
 
 export type CombineAnimatorsObject<State> = {
     [k in keyof State]: Animator<State[k]>;
-};
+}
 export function combineAnimators<State>(object: CombineAnimatorsObject<State>): Animator<State> {
     return function (state, context) {
-        let next = Object.entries(object).reduce(
+        const next = Object.entries(object).reduce(
             (s, [key, value]) => {
-                let animator = value as Animator<any>
-                let curr = s as any
+                const animator = value as Animator<any>
+                const curr = s as any
                 curr[key] = animator(curr[key], context)
                 return s
             },
@@ -43,13 +43,13 @@ export function arrayAnimator<State>(animator: Animator<State>): Animator<State[
 type AlternateAnimatorsObject<S> = {
     duration: number,
     animator: Animator<S>,
-};
+}
 export function alternateAnimators<State>(animators: AlternateAnimatorsObject<State>[]): Animator<State> {
-    let total = animators.reduce((r, a) => r + a.duration, 0)
+    const total = animators.reduce((r, a) => r + a.duration, 0)
     return function alternate(state, context) {
-        let target = context.frame % total
+        const target = context.frame % total
         let current = 0
-        for (let { duration, animator } of animators) {
+        for (const { duration, animator } of animators) {
             current += duration
             if (current > target) {
                 return animator(state, context)
@@ -66,8 +66,8 @@ export type WithTrace<State> = {
 }
 export function traceAnimator<O extends WithTrace<O>, K extends keyof O>(key: K, length: number): Animator<O> {
     return function trace(state) {
-        let value = state[key]
-        let current = [...(state.trace[key] ?? []), value]
+        const value = state[key]
+        const current = [...(state.trace[key] ?? []), value]
         if (current.length > length) {
             current.shift()
         }
@@ -82,7 +82,7 @@ export function traceAnimator<O extends WithTrace<O>, K extends keyof O>(key: K,
 }
 
 export function counter(range?: Partial<NumRange>): Animator<number> {
-    let min = range?.min ?? 0
-    let max = range?.max ?? Number.MAX_SAFE_INTEGER
+    const min = range?.min ?? 0
+    const max = range?.max ?? Number.MAX_SAFE_INTEGER
     return c => c < max ? c + 1 : min
 }

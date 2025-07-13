@@ -1,6 +1,6 @@
-import { Animator } from "./animator"
-import { Layer } from "./layer"
-import { RenderProps } from "./render"
+import { Animator } from './animator'
+import { Layer } from './layer'
+import { RenderProps } from './render'
 
 export type SceneMeta = {
     id?: string,
@@ -9,10 +9,10 @@ export type SceneMeta = {
     title?: string,
 }
 export type Scene<State = unknown> = {
-    state: State,
+    state: State | Promise<State>,
     layers: Layer<State>[],
     animator?: Animator<State>,
-} & SceneMeta;
+} & SceneMeta
 
 export function scene<T>(scene: Scene<T>): Scene<T> {
     return scene
@@ -20,18 +20,18 @@ export function scene<T>(scene: Scene<T>): Scene<T> {
 
 export function sceneMeta(meta: SceneMeta): Scene {
     return {
-        state: null,
+        state: Promise.resolve(null),
         layers: [],
         ...meta,
     }
 }
 
 export function combineScenes(...scenes: Scene<any>[]): Scene {
-    let result: Scene<unknown[]> = {
-        state: scenes.map(s => s.state),
+    const result: Scene<unknown[]> = {
+        state: Promise.all(scenes.map(s => s.state)),
         animator(states: any[], frame) {
             return states.map((state, idx) => {
-                let animator = scenes[idx]?.animator
+                const animator = scenes[idx]?.animator
                 return animator ? animator(state, frame) : state
             })
         },
@@ -89,7 +89,7 @@ export function combineScenes(...scenes: Scene<any>[]): Scene {
 
 export function fromLayers(...layers: Layer<unknown>[]): Scene<unknown> {
     return {
-        state: undefined,
+        state: Promise.resolve(undefined),
         layers,
     }
 }

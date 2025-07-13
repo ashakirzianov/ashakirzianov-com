@@ -1,34 +1,35 @@
-import { Layer } from "./layer"
-import { SketcherCanvas } from "./render"
-import { Scene } from "./scene"
+import { Layer } from './layer'
+import { SketcherCanvas } from './render'
+import { Scene } from './scene'
 
 type CanvasKind = Layer['kind']
-export type CanvasGetter = (idx: number, kind: CanvasKind) => SketcherCanvas<any> | undefined;
+export type CanvasGetter = (idx: number, kind: CanvasKind) => SketcherCanvas<any> | undefined
 export type LaunchProps<State> = {
     scene: Scene<State>,
     getCanvas: CanvasGetter,
     period?: number,
     skip?: number,
     chunk?: number,
-};
-export type Launcher = ReturnType<typeof launcher>;
+}
+export type Launcher = ReturnType<typeof launcher>
 export function launcher<State>({
     scene: { state, animator, layers },
     period, skip, chunk,
     getCanvas,
 }: LaunchProps<State>) {
     let paused = true
-    let timer = makeTimer()
+    const timer = makeTimer()
     let frame = 0
-    let renderState = makeRenderState({ layers, getCanvas })
-    function loop(current?: number) {
+    const renderState = makeRenderState({ layers, getCanvas })
+    async function loop(current?: number) {
+        const awaitedState = await state
         if (animator) {
-            state = animator(state, {
+            state = Promise.resolve(animator(awaitedState, {
                 frame,
                 getCanvas: i => getCanvas(i, layers[i]!.kind),
-            })
+            }))
         }
-        if (renderState(state, frame)) {
+        if (renderState(awaitedState, frame)) {
             if (period) { // If animated
                 if (frame < (skip ?? 0) // Still skiping
                     && (current ?? 0) < (chunk ?? 100)) { // But do it in chunks
@@ -65,21 +66,21 @@ function makeRenderState<State>({ layers, getCanvas }: {
     layers: Layer<State>[],
     getCanvas: CanvasGetter,
 }) {
-    let layerData = layers.map(layer => ({
+    const layerData = layers.map(layer => ({
         layer,
         prepared: false,
         width: 0,
         height: 0,
     }))
     return function renderLayers(state: State, frame: number) {
-        let canvases: SketcherCanvas<any>[] = []
+        const canvases: SketcherCanvas<any>[] = []
         for (let idx = 0; idx < layerData.length; idx++) {
-            let canvas = getCanvas(idx, layerData[idx]!.layer.kind)
+            const canvas = getCanvas(idx, layerData[idx]!.layer.kind)
             if (canvas === undefined) {
                 return false
             }
             canvases.push(canvas)
-            let ld = layerData[idx]!
+            const ld = layerData[idx]!
             if (ld.width !== canvas.width || ld.height !== canvas.height) {
                 ld.width = canvas.width
                 ld.height = canvas.height
@@ -87,11 +88,11 @@ function makeRenderState<State>({ layers, getCanvas }: {
             }
         }
         for (let idx = 0; idx < layerData.length; idx++) {
-            let { layer, prepared } = layerData[idx]!
+            const { layer, prepared } = layerData[idx]!
             if (layer.hidden) {
                 continue
             }
-            let canvas = canvases[idx]!
+            const canvas = canvases[idx]!
             if (!prepared && layer.prepare) {
                 canvas.context.resetTransform()
                 layer.prepare({ canvas, state, frame: 0 })
@@ -105,7 +106,7 @@ function makeRenderState<State>({ layers, getCanvas }: {
     }
 }
 
-type Timer = ReturnType<typeof makeTimer>;
+// type Timer = ReturnType<typeof makeTimer>
 function makeTimer() {
     let timeout: any
     function schedule(f: () => void, t: number) {

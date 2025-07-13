@@ -39,7 +39,13 @@ function loadCrownImage(): Promise<HTMLImageElement> {
     })
 }
 
-export function playgroundScene(): Scene<any> {
+export async function playgroundScene(): Promise<Scene<any>> {
+    // Load images once at initialization
+    const [circleImg, crownImg] = await Promise.all([
+        loadCircleImage(),
+        loadCrownImage()
+    ])
+
     const maxVelocity = 5
     const fixedMass = 2
     const fixedRadius = 50
@@ -135,38 +141,21 @@ export function playgroundScene(): Scene<any> {
                     scale: 1.2,
                 })
             },
-            async render({ canvas, state }) {
-                try {
-                    const [circleImg, crownImg] = await Promise.all([
-                        loadCircleImage(),
-                        loadCrownImage()
-                    ])
-                    
-                    state.forEach((set) => set.forEach(
-                        object => {
-                            const image = (object as any).imageType === 'crown' ? crownImg : circleImg
-                            const rotation = (object as any).imageType === 'crown' ? (object as any).rotation : undefined
-                            drawImage({
-                                image,
-                                center: object.position,
-                                context: canvas.context,
-                                width: object.radius * 2,
-                                height: object.radius * 2,
-                                rotation,
-                            })
-                        }
-                    ))
-                } catch (error) {
-                    // Fallback to drawing circles if images fail to load
-                    state.forEach((set) => set.forEach(
-                        object => {
-                            canvas.context.beginPath()
-                            canvas.context.arc(object.position.x, object.position.y, object.radius, 0, Math.PI * 2)
-                            canvas.context.fillStyle = (object as any).imageType === 'crown' ? '#FFD700' : '#FFA500'
-                            canvas.context.fill()
-                        }
-                    ))
-                }
+            render({ canvas, state }) {
+                state.forEach((set) => set.forEach(
+                    object => {
+                        const image = (object as any).imageType === 'crown' ? crownImg : circleImg
+                        const rotation = (object as any).imageType === 'crown' ? (object as any).rotation : undefined
+                        drawImage({
+                            image,
+                            center: object.position,
+                            context: canvas.context,
+                            width: object.radius * 2,
+                            height: object.radius * 2,
+                            rotation,
+                        })
+                    }
+                ))
             },
         }],
     })

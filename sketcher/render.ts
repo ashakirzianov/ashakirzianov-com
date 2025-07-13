@@ -318,6 +318,11 @@ export function zoomToFit({ canvas, box }: {
         - widthRange.min,
         - heightRange.min,
     )
+    return {
+        ratio,
+        shiftx,
+        shifty,
+    }
 }
 
 export function zoomToFill({ canvas, box }: {
@@ -448,19 +453,19 @@ export function drawImage({
     rotation?: number,
 }) {
     context.save()
-    
+
     // Move to center position
     context.translate(center.x, center.y)
-    
+
     // Apply rotation if specified
     if (rotation) {
         context.rotate(rotation)
     }
-    
+
     // Determine dimensions
     const imageWidth = width ?? (image as HTMLImageElement).naturalWidth ?? (image as HTMLCanvasElement).width
     const imageHeight = height ?? (image as HTMLImageElement).naturalHeight ?? (image as HTMLCanvasElement).height
-    
+
     // Draw image centered at the current origin
     context.drawImage(
         image,
@@ -469,6 +474,6 @@ export function drawImage({
         imageWidth,
         imageHeight
     )
-    
+
     context.restore()
 }

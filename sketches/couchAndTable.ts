@@ -152,12 +152,13 @@ export function couchAndTable(): Scene<any> {
             //     zoomToBoundingBox({
             //         canvas,
             //         objects: state.sets.flat(),
-            //         scale: 2,
+            //         scale: 3,
             //     })
             // },
             render({ canvas, state }) {
                 canvas.context.save()
-                zoomToBoundingBox({
+
+                const { } = zoomToBoundingBox({
                     canvas,
                     objects: state.sets.flat(),
                     scale: 1.5,
@@ -184,7 +185,7 @@ export function couchAndTable(): Scene<any> {
                         } else {
                             circle({
                                 center: object.position,
-                                radius: object.radius,
+                                radius: object.radius, // / ratio * 2,
                                 context: canvas.context,
                                 fill: { h: 50, s: 100, l: 60 },
                                 stroke: 'black',

@@ -1,11 +1,11 @@
-import { Box, boundingBox, cornerBoxes, multBox } from "./box"
-import { WithPosition, WithVelocity } from "./object"
-import { Canvas2d, zoomToFit } from "./render"
-import { Vector, vector } from "./vector"
+import { Box, boundingBox, cornerBoxes, multBox } from './box'
+import { WithPosition, WithVelocity } from './object'
+import { Canvas2d, zoomToFit } from './render'
+import { Vector, vector } from './vector'
 
 export function removeUndefined<T>(array: Array<T | undefined>): T[] {
-    let result: T[] = []
-    for (let element of array) {
+    const result: T[] = []
+    for (const element of array) {
         if (element !== undefined) {
             result.push(element)
         }
@@ -22,7 +22,7 @@ export function vals<T>(count: number, val?: T): T[] {
 }
 
 export function nums(to: number, from?: number): number[] {
-    let result = []
+    const result = []
     for (let n = from ?? 0; n < to; n++) {
         result.push(n)
     }
@@ -33,20 +33,20 @@ export function breakIntoLines(text: string, lineLength: number): string[] {
     if (lineLength <= 0) {
         return [text]
     }
-    let lines = []
+    const lines = []
     let current = ''
-    let words = text.split(' ')
+    const words = text.split(' ')
     for (let word of words) {
         while (word.length > lineLength) {
             if (current !== '') {
                 lines.push(current)
                 current = ''
             }
-            let front = word.substring(0, lineLength)
+            const front = word.substring(0, lineLength)
             lines.push(front)
             word = word.substring(lineLength)
         }
-        let next = current === '' ? word : `${current} ${word}`
+        const next = current === '' ? word : `${current} ${word}`
         if (next.length > lineLength) {
             lines.push(current)
             current = word
@@ -73,15 +73,15 @@ export function xSets<O extends WithVelocity>({
     velocity: number,
     creareObjects: (box: Box) => O[],
 }) {
-    let vels: Vector[] = [
+    const vels: Vector[] = [
         vector.fromTuple([velocity, velocity, 0]),
         vector.fromTuple([-velocity, velocity, 0]),
         vector.fromTuple([velocity, -velocity, 0]),
         vector.fromTuple([-velocity, -velocity, 0]),
     ]
-    let boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size })
+    const boxes = cornerBoxes({ rows: 3 * size, cols: 4 * size })
     return boxes.map((box, bi) => {
-        let objects = creareObjects(box)
+        const objects = creareObjects(box)
         return objects.map(object => ({
             ...object,
             velocity: vector.add(object.velocity, vels[bi]!),
@@ -94,9 +94,9 @@ export function zoomToBoundingBox({ objects, scale, canvas }: {
     objects: WithPosition[],
     scale: number,
 }) {
-    let points = objects.map(o => o.position)
-    let box = multBox(boundingBox(points), scale)
-    zoomToFit({ box, canvas })
+    const points = objects.map(o => o.position)
+    const box = multBox(boundingBox(points), scale)
+    return zoomToFit({ box, canvas })
 }
 
 export function filterUndefined<T>(arr: Array<T | undefined>): T[] {

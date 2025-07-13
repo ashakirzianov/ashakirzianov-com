@@ -17,14 +17,14 @@ export const misc: SketchCollection = {
 }
 
 export function fourFlowers() {
-    let batchRange = { min: 10, max: 10 }
-    let maxVelocity = 1
-    let massRange = { min: 1, max: 20 }
-    let palette = rainbow({ count: 120, s: 100, l: 70 })
-    let sets = xSets({
+    const batchRange = { min: 10, max: 10 }
+    const maxVelocity = 1
+    const massRange = { min: 1, max: 20 }
+    const palette = rainbow({ count: 120, s: 100, l: 70 })
+    const sets = xSets({
         size: 1, velocity: 1,
         creareObjects(box) {
-            let batch = Math.floor(randomRange(batchRange))
+            const batch = Math.floor(randomRange(batchRange))
             return vals(batch).map(() => randomObject({
                 massRange, maxVelocity, box,
                 rToM: 2,
@@ -51,8 +51,8 @@ export function fourFlowers() {
                 })
                 state.forEach((set, seti) => set.forEach(
                     object => {
-                        let offset = seti * 30 + frame
-                        let fills = vals(5).map(
+                        const offset = seti * 30 + frame
+                        const fills = vals(5).map(
                             (_, i) => modItem(palette, offset - 3 * i)
                         )
                         concentringCircles({
@@ -70,11 +70,11 @@ export function fourFlowers() {
 }
 
 export function letters(text: string = 'For Whom the Bell Tolls?') {
-    let maxVelocity = 2
-    let massRange = { min: 0.1, max: 2 }
-    let boxes = [cubicBox(600)]
-    let sets = boxes.map(box => {
-        let batch = text.length
+    const maxVelocity = 2
+    const massRange = { min: 0.1, max: 2 }
+    const boxes = [cubicBox(600)]
+    const sets = boxes.map(box => {
+        const batch = text.length
         return vals(batch).map(
             () => randomObject({
                 massRange, maxVelocity, box, rToM: 4,
@@ -104,7 +104,7 @@ export function letters(text: string = 'For Whom the Bell Tolls?') {
                 })
             },
             render({ canvas, state }) {
-                let colors = hslaRange({
+                const colors = hslaRange({
                     from: { h: 0, s: 0, l: 0 },
                     to: { l: 50 },
                     count: 5,
@@ -113,7 +113,7 @@ export function letters(text: string = 'For Whom the Bell Tolls?') {
                     (object, index) => {
                         canvas.context.font = '20vh sans-serif'
                         canvas.context.lineWidth = .1
-                        let sub = text.at((seti + index) % text.length)!
+                        const sub = text.at((seti + index) % text.length)!
                         canvas.context.strokeStyle = modItem(colors, index)
                         canvas.context.strokeText(sub, object.position.x, object.position.y)
                     }
@@ -124,23 +124,23 @@ export function letters(text: string = 'For Whom the Bell Tolls?') {
 }
 
 export function number34(batches?: number) {
-    let batchRange = { min: 5, max: 20 }
-    let maxVelocity = 5
-    let massRange = { min: 0.1, max: 4 }
-    let boxes = randomBoxes({
+    const batchRange = { min: 5, max: 20 }
+    const maxVelocity = 5
+    const massRange = { min: 0.1, max: 4 }
+    const boxes = randomBoxes({
         box: cubicBox(500),
         size: 250,
         count: batches ?? 7,
     })
-    let sets = boxes.map(box => {
-        let batch = Math.floor(randomRange(batchRange))
+    const sets = boxes.map(box => {
+        const batch = Math.floor(randomRange(batchRange))
         return Array(batch).fill(undefined).map(
             () => randomObject({
                 massRange, maxVelocity, box, rToM: 4,
             }),
         )
     })
-    let palette: Color[] = [
+    const palette: Color[] = [
         '#F5EAEA', '#FFB84C', '#F16767', '#A459D1',
     ]
     return scene({

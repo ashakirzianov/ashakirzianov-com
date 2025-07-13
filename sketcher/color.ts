@@ -1,13 +1,13 @@
-import type { Canvas2DContext } from "./render"
+import type { Canvas2DContext } from './render'
 
-export type StringColor = string;
+export type StringColor = string
 export type RGBAColor = {
     kind?: undefined,
     r?: number,
     g?: number,
     b?: number,
     a?: number,
-};
+}
 export type HSLAColor = {
     kind?: undefined,
     h?: number,
@@ -15,19 +15,19 @@ export type HSLAColor = {
     l?: number,
     a?: number,
 }
-export type TupleColor = [r: number, g: number, b: number, a?: number];
+export type TupleColor = [r: number, g: number, b: number, a?: number]
 export type GradientColor = {
     kind: 'gradient',
     start: [number, number],
     end: [number, number],
     stops: ColorStop[],
-};
-export type PrimitiveColor = StringColor | RGBAColor | HSLAColor | TupleColor;
-export type Color = PrimitiveColor | GradientColor;
-export type ColorStop = { offset: number, color: PrimitiveColor };
-export type ResolvedColor = StringColor | CanvasGradient;
-export type ColorGetter<T> = (x: T) => Color;
-export type ColorOrGetter<T> = Color | ColorGetter<T>;
+}
+export type PrimitiveColor = StringColor | RGBAColor | HSLAColor | TupleColor
+export type Color = PrimitiveColor | GradientColor
+export type ColorStop = { offset: number, color: PrimitiveColor }
+export type ResolvedColor = StringColor | CanvasGradient
+export type ColorGetter<T> = (x: T) => Color
+export type ColorOrGetter<T> = Color | ColorGetter<T>
 
 export function getColor<T>(colorOrGetter: ColorOrGetter<T>, x: T) {
     return typeof colorOrGetter === 'function'
@@ -57,7 +57,7 @@ export function resolveColor(color: Color, context: Canvas2DContext): ResolvedCo
     if (isPrimitiveColor(color)) {
         return resolvePrimitiveColor(color)
     } else {
-        let gradient = context.createLinearGradient(
+        const gradient = context.createLinearGradient(
             color.start[0], color.start[1], color.end[0], color.end[1],
         )
         color.stops.forEach(
@@ -111,7 +111,7 @@ export function mapStops({ colors, func }: {
     colors: PrimitiveColor[],
     func: (value: number) => number,
 }): ColorStop[] {
-    let delta = 1 / colors.length
+    const delta = 1 / colors.length
     return colors.map((color, i) => ({
         offset: func(i * delta),
         color,
@@ -159,20 +159,20 @@ export function hslaRange({ from, to, count }: {
     if (count === 0) {
         return []
     }
-    let rfrom = {
+    const rfrom = {
         h: from.h ?? 0,
         s: from.s ?? 0,
         l: from.l ?? 0,
         a: from.a ?? 1,
     }
-    let rto = {
+    const rto = {
         h: to.h ?? rfrom.h,
         s: to.s ?? rfrom.s,
         l: to.l ?? rfrom.l,
         a: to.a ?? rfrom.a,
     }
-    let divisor = Math.max(1, count - 1)
-    let delta = {
+    const divisor = Math.max(1, count - 1)
+    const delta = {
         h: (rto.h - rfrom.h) / divisor,
         s: (rto.s - rfrom.s) / divisor,
         l: (rto.l - rfrom.l) / divisor,
@@ -191,19 +191,19 @@ export function rgbaRange({ from, to, count }: {
     if (count === 0) {
         return []
     }
-    let rfrom = {
+    const rfrom = {
         r: from.r ?? 0,
         g: from.g ?? 0,
         b: from.b ?? 0,
         a: from.a ?? 1,
     }
-    let rto = {
+    const rto = {
         r: to.r ?? rfrom.r,
         g: to.g ?? rfrom.g,
         b: to.b ?? rfrom.b,
         a: to.a ?? rfrom.a,
     }
-    let delta = {
+    const delta = {
         r: (rto.r - rfrom.r) / count,
         g: (rto.g - rfrom.g) / count,
         b: (rto.b - rfrom.b) / count,
@@ -215,6 +215,6 @@ export function rgbaRange({ from, to, count }: {
 }
 
 export function pulsating<T>(palette: T[]): T[] {
-    let back = [...palette].reverse()
+    const back = [...palette].reverse()
     return [...palette, ...back]
 }

@@ -40,7 +40,7 @@ function loadCrownImage(): Promise<HTMLImageElement> {
     })
 }
 
-export async function playgroundScene(): Promise<Scene<any>> {
+export async function couchAndTable(): Promise<Scene<any>> {
     // Load images once at initialization
     const [circleImg, crownImg] = await Promise.all([
         loadCircleImage(),
@@ -104,13 +104,11 @@ export async function playgroundScene(): Promise<Scene<any>> {
         {
             ...couchDefault,
             velocity: { x: 1, y: 1, z: 0 },
-            position: { x: -10, y: -10, z: 0 },
+            position: { x: -100, y: -100, z: 0 },
             angularVelocity: 0.05, // Random rotation speed between -0.05 and 0.05
             growthRate: 0.05, // Slow growth rate
         },
     ]
-
-    const centerGravity = 0.30
 
     // const maxVelocity = 10
     // const fixedMass = 2
@@ -157,7 +155,8 @@ export async function playgroundScene(): Promise<Scene<any>> {
     const sets = [circles, couches]
 
     return scene({
-        id: 'playground',
+        id: 'couch-and-table',
+        title: 'Couch and Table',
         state: sets,
         animator: arrayAnimator(reduceAnimators(
             gravity({ gravity: 0.2, power: 2 }),
@@ -166,6 +165,7 @@ export async function playgroundScene(): Promise<Scene<any>> {
             (objects) => {
                 const centerX = 0
                 const centerY = 0
+                const centerGravity = 0.5
 
                 return objects.map(obj => {
                     const dx = centerX - obj.position.x
@@ -211,19 +211,19 @@ export async function playgroundScene(): Promise<Scene<any>> {
                 clearFrame({ canvas, color: 'black' })
             }
         }, {
-            // prepare({ canvas, state }) {
-            //     zoomToBoundingBox({
-            //         canvas,
-            //         objects: state.flat(),
-            //         scale: 2,
-            //     })
-            // },
+            prepare({ canvas, state }) {
+                // zoomToBoundingBox({
+                //     canvas,
+                //     objects: state.flat(),
+                //     scale: 2,
+                // })
+            },
             render({ canvas, state }) {
                 canvas.context.save()
                 zoomToBoundingBox({
                     canvas,
                     objects: state.flat(),
-                    scale: 1.5,
+                    scale: 2,
                 })
                 state.forEach((set) => set.forEach(
                     object => {
@@ -247,9 +247,9 @@ export async function playgroundScene(): Promise<Scene<any>> {
                                 center: object.position,
                                 radius: object.radius,
                                 context: canvas.context,
-                                fill: { h: 50, s: 100, l: 60 },
+                                fill: '#f4d644',
                                 stroke: 'black',
-                                lineWidth: 1,
+                                lineWidth: 2,
                             })
                         }
                     }

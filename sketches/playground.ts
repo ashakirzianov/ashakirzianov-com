@@ -1,7 +1,7 @@
 import {
     velocityStep, gravity, reduceAnimators, arrayAnimator,
     cubicBox, scene, drawImage,
-    gray, randomObject, zoomToBoundingBox, clearFrame, Scene,
+    randomObject, zoomToBoundingBox, clearFrame, Scene,
 } from '@/sketcher'
 
 let circleImage: HTMLImageElement | null = null
@@ -46,9 +46,10 @@ export async function playgroundScene(): Promise<Scene<any>> {
         loadCrownImage()
     ])
 
-    const maxVelocity = 5
+    const maxVelocity = 10
     const fixedMass = 2
-    const fixedRadius = 50
+    const circleRadius = 40  // Smaller circles
+    const crownRadius = 80   // Much larger crowns
     const box = cubicBox(500)
 
     // First set: 4 circle objects
@@ -59,9 +60,13 @@ export async function playgroundScene(): Promise<Scene<any>> {
             box,
             rToM: 1,
         })
-        obj.radius = fixedRadius
-        ;(obj as any).imageType = 'circle'
-        return obj
+        return {
+            ...obj,
+            radius: circleRadius,
+            imageType: 'circle',
+            rotation: 0,
+            angularVelocity: 0, // No rotation for circles
+        }
     })
 
     // Second set: 3 crown objects
@@ -72,11 +77,13 @@ export async function playgroundScene(): Promise<Scene<any>> {
             box,
             rToM: 1,
         })
-        obj.radius = fixedRadius
-        ;(obj as any).imageType = 'crown'
-        ;(obj as any).rotation = 0
-        ;(obj as any).rotationSpeed = (Math.random() - 0.5) * 0.1 // Random rotation speed between -0.05 and 0.05
-        return obj
+        return {
+            ...obj,
+            radius: crownRadius,
+            imageType: 'crown',
+            rotation: 0,
+            angularVelocity: (Math.random() - 0.5) * 0.1, // Random rotation speed between -0.05 and 0.05
+        }
     })
 
     const sets = [circleSet, crownSet]
@@ -116,22 +123,18 @@ export async function playgroundScene(): Promise<Scene<any>> {
                     return obj
                 })
             },
-            // Custom rotation animator for crowns
+            // Custom rotation animator for all objects
             (objects) => {
-                return objects.map(obj => {
-                    if ((obj as any).imageType === 'crown') {
-                        const rotation = (obj as any).rotation || 0
-                        const rotationSpeed = (obj as any).rotationSpeed || 0
-                        ;(obj as any).rotation = rotation + rotationSpeed
-                    }
-                    return obj
-                })
+                return objects.map(obj => ({
+                    ...obj,
+                    rotation: obj.rotation + obj.angularVelocity,
+                }))
             },
             velocityStep(),
         )),
         layers: [{
             prepare({ canvas }) {
-                clearFrame({ canvas, color: gray(230) })
+                clearFrame({ canvas, color: 'black' })
             }
         }, {
             prepare({ canvas, state }) {
@@ -144,15 +147,14 @@ export async function playgroundScene(): Promise<Scene<any>> {
             render({ canvas, state }) {
                 state.forEach((set) => set.forEach(
                     object => {
-                        const image = (object as any).imageType === 'crown' ? crownImg : circleImg
-                        const rotation = (object as any).imageType === 'crown' ? (object as any).rotation : undefined
+                        const image = object.imageType === 'crown' ? crownImg : circleImg
                         drawImage({
                             image,
                             center: object.position,
                             context: canvas.context,
                             width: object.radius * 2,
                             height: object.radius * 2,
-                            rotation,
+                            rotation: object.rotation,
                         })
                     }
                 ))
